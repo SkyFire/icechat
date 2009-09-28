@@ -1,0 +1,30 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.4.2.3" ctype="Workspace" />
+  <MonoDevelop.Ide.DebuggingService>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Controls\ConsoleTabWindow.cs" ctype="Workbench">
+    <Files>
+      <File FileName="Forms\FormMain.cs" Line="199" Column="1" />
+      <File FileName="d:\2009\IceChat2009\IceChat2009\IceChatOptions.cs" Line="192" Column="39" />
+      <File FileName="Controls\ChannelList.cs" Line="134" Column="20" />
+      <File FileName="IRCConnection.cs" Line="308" Column="14" />
+      <File FileName="Controls\ConsoleTabWindow.cs" Line="217" Column="75" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="IceChat2009" expanded="True">
+            <Node name="Controls" expanded="True">
+              <Node name="ConsoleTabWindow.cs" selected="True" />
+            </Node>
+            <Node name="Forms" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+</Properties>
