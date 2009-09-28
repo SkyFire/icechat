@@ -348,7 +348,7 @@ namespace IceChat2009
                     {
                         SwapTabPages(drag_Tab, hover_Tab);
                         this.SelectedTab = drag_Tab;
-                        this.Invalidate();
+                        //this.Invalidate();
                     }
                 }
             }
@@ -411,7 +411,7 @@ namespace IceChat2009
 
             //which tab was selected
             selectedTabIndex = SelectedMenuTab();
-            FormMain.Instance.WindowMessage(null, "Console", "Selected:" + selectedTabIndex, 1);
+            //FormMain.Instance.WindowMessage(null, "Console", "Selected:" + selectedTabIndex, 1);
 
         }
 
