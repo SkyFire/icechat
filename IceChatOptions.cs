@@ -249,43 +249,6 @@ namespace IceChat2009
 
     }
 
-    //seperate file for all the highlite items
-    public class IceChatHighLites
-    {
-        [XmlArray("HighLites")]
-        [XmlArrayItem("Item", typeof(HighLiteItem))]
-        public ArrayList listHighLites;
-
-        public IceChatHighLites()
-        {
-            listHighLites = new ArrayList();
-        }
-        public void AddHighLight(HighLiteItem hli)
-        {
-            listHighLites.Add(hli);
-        }
-    }
-
-    public class HighLiteItem
-    {
-        [XmlElement("Match")]
-        public string Match
-        { get; set; }
-
-        [XmlElement("Color")]
-        public int Color
-        { get; set; }
-
-        [XmlElement("Command")]
-        public string Command
-        { get; set; }
-
-        [XmlElement("Enabled")]
-        public bool Enabled
-        { get; set; }
-    }
-
-
     //seperate file(s) for all the aliases
     public class IceChatAliases
     {

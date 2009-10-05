@@ -29,7 +29,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using IceChatPlugin;
 
 namespace IceChat2009
 {
@@ -91,6 +91,13 @@ namespace IceChat2009
 
             textDefaultNick.Text = iceChatOptions.DefaultNick;
             checkIdentServer.Checked = iceChatOptions.IdentServer;
+
+            //load any plugin addons
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                ipc.LoadSettingsForm(this.tabControlOptions);
+            }
+
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)

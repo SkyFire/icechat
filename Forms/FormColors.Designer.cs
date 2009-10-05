@@ -35,9 +35,8 @@
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Ctcp");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DCC");
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Other");
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControlColors = new System.Windows.Forms.TabControl();
             this.tabPageMessages = new System.Windows.Forms.TabPage();
-            this.textFormattedText = new IceChat2009.TextWindow();
             this.label4 = new System.Windows.Forms.Label();
             this.checkBGColor = new System.Windows.Forms.CheckBox();
             this.treeMessages = new System.Windows.Forms.TreeView();
@@ -98,19 +97,12 @@
             this.labelAdmin = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
-            this.tabPageHighlight = new System.Windows.Forms.TabPage();
-            this.buttonRemove = new System.Windows.Forms.Button();
-            this.buttonEdit = new System.Windows.Forms.Button();
-            this.buttonAdd = new System.Windows.Forms.Button();
-            this.listHighLite = new System.Windows.Forms.ListView();
-            this.columnMatch = new System.Windows.Forms.ColumnHeader();
-            this.columnCommand = new System.Windows.Forms.ColumnHeader();
-            this.columnColor = new System.Windows.Forms.ColumnHeader();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.tabControl1.SuspendLayout();
+            this.textFormattedText = new IceChat2009.TextWindow();
+            this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabPageTabBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabDefault)).BeginInit();
@@ -138,24 +130,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureOperator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).BeginInit();
-            this.tabPageHighlight.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabControl1
+            // tabControlColors
             // 
-            this.tabControl1.Controls.Add(this.tabPageMessages);
-            this.tabControl1.Controls.Add(this.tabPageTabBar);
-            this.tabControl1.Controls.Add(this.tabPageBackGround);
-            this.tabControl1.Controls.Add(this.tabPageNickNames);
-            this.tabControl1.Controls.Add(this.tabPageHighlight);
-            this.tabControl1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(718, 368);
-            this.tabControl1.TabIndex = 0;
-            this.tabControl1.Tag = "";
+            this.tabControlColors.Controls.Add(this.tabPageMessages);
+            this.tabControlColors.Controls.Add(this.tabPageTabBar);
+            this.tabControlColors.Controls.Add(this.tabPageBackGround);
+            this.tabControlColors.Controls.Add(this.tabPageNickNames);
+            this.tabControlColors.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControlColors.Location = new System.Drawing.Point(0, 0);
+            this.tabControlColors.Margin = new System.Windows.Forms.Padding(4);
+            this.tabControlColors.Name = "tabControlColors";
+            this.tabControlColors.SelectedIndex = 0;
+            this.tabControlColors.Size = new System.Drawing.Size(718, 368);
+            this.tabControlColors.TabIndex = 0;
+            this.tabControlColors.Tag = "";
             // 
             // tabPageMessages
             // 
@@ -176,20 +166,6 @@
             this.tabPageMessages.Size = new System.Drawing.Size(710, 339);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
-            // 
-            // textFormattedText
-            // 
-            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedText.IRCBackColor = 0;
-            this.textFormattedText.IRCForeColor = 0;
-            this.textFormattedText.Location = new System.Drawing.Point(22, 305);
-            this.textFormattedText.Name = "textFormattedText";
-            this.textFormattedText.NoColorMode = false;
-            this.textFormattedText.ShowTimeStamp = true;
-            this.textFormattedText.SingleLine = true;
-            this.textFormattedText.Size = new System.Drawing.Size(607, 23);
-            this.textFormattedText.TabIndex = 37;
             // 
             // label4
             // 
@@ -828,86 +804,6 @@
             this.labelOwner.TabIndex = 54;
             this.labelOwner.Text = "~ Channel Owner";
             // 
-            // tabPageHighlight
-            // 
-            this.tabPageHighlight.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPageHighlight.Controls.Add(this.buttonRemove);
-            this.tabPageHighlight.Controls.Add(this.buttonEdit);
-            this.tabPageHighlight.Controls.Add(this.buttonAdd);
-            this.tabPageHighlight.Controls.Add(this.listHighLite);
-            this.tabPageHighlight.Location = new System.Drawing.Point(4, 25);
-            this.tabPageHighlight.Name = "tabPageHighlight";
-            this.tabPageHighlight.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageHighlight.Size = new System.Drawing.Size(710, 339);
-            this.tabPageHighlight.TabIndex = 2;
-            this.tabPageHighlight.Text = "Highlighting";
-            // 
-            // buttonRemove
-            // 
-            this.buttonRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonRemove.Location = new System.Drawing.Point(291, 96);
-            this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(75, 27);
-            this.buttonRemove.TabIndex = 4;
-            this.buttonRemove.Text = "Remove";
-            this.buttonRemove.UseVisualStyleBackColor = true;
-            this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
-            // 
-            // buttonEdit
-            // 
-            this.buttonEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonEdit.Location = new System.Drawing.Point(291, 63);
-            this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(75, 27);
-            this.buttonEdit.TabIndex = 3;
-            this.buttonEdit.Text = "Edit";
-            this.buttonEdit.UseVisualStyleBackColor = true;
-            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
-            // 
-            // buttonAdd
-            // 
-            this.buttonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonAdd.Location = new System.Drawing.Point(291, 30);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(75, 27);
-            this.buttonAdd.TabIndex = 2;
-            this.buttonAdd.Text = "Add";
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-            // 
-            // listHighLite
-            // 
-            this.listHighLite.CheckBoxes = true;
-            this.listHighLite.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnMatch,
-            this.columnCommand,
-            this.columnColor});
-            this.listHighLite.FullRowSelect = true;
-            this.listHighLite.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.listHighLite.HideSelection = false;
-            this.listHighLite.LabelWrap = false;
-            this.listHighLite.Location = new System.Drawing.Point(25, 30);
-            this.listHighLite.MultiSelect = false;
-            this.listHighLite.Name = "listHighLite";
-            this.listHighLite.ShowGroups = false;
-            this.listHighLite.Size = new System.Drawing.Size(250, 288);
-            this.listHighLite.TabIndex = 1;
-            this.listHighLite.UseCompatibleStateImageBehavior = false;
-            this.listHighLite.View = System.Windows.Forms.View.Details;
-            // 
-            // columnMatch
-            // 
-            this.columnMatch.Text = "Text Highlite";
-            this.columnMatch.Width = 250;
-            // 
-            // columnCommand
-            // 
-            this.columnCommand.Width = 0;
-            // 
-            // columnColor
-            // 
-            this.columnColor.Width = 0;
-            // 
             // panelColorPicker
             // 
             this.panelColorPicker.BackColor = System.Drawing.SystemColors.Control;
@@ -950,6 +846,20 @@
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current:";
             // 
+            // textFormattedText
+            // 
+            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFormattedText.IRCBackColor = 0;
+            this.textFormattedText.IRCForeColor = 0;
+            this.textFormattedText.Location = new System.Drawing.Point(22, 306);
+            this.textFormattedText.Name = "textFormattedText";
+            this.textFormattedText.NoColorMode = false;
+            this.textFormattedText.ShowTimeStamp = true;
+            this.textFormattedText.SingleLine = true;
+            this.textFormattedText.Size = new System.Drawing.Size(607, 26);
+            this.textFormattedText.TabIndex = 37;
+            // 
             // FormColors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -959,7 +869,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.panelColorPicker);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControlColors);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -969,7 +879,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Color Settings";
-            this.tabControl1.ResumeLayout(false);
+            this.tabControlColors.ResumeLayout(false);
             this.tabPageMessages.ResumeLayout(false);
             this.tabPageMessages.PerformLayout();
             this.tabPageTabBar.ResumeLayout(false);
@@ -998,17 +908,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureOperator)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).EndInit();
-            this.tabPageHighlight.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControlColors;
         private System.Windows.Forms.TabPage tabPageMessages;
         private System.Windows.Forms.TabPage tabPageNickNames;
-        private TextWindow textFormattedText;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox checkBGColor;
         private System.Windows.Forms.TreeView treeMessages;
@@ -1020,7 +928,6 @@
         private System.Windows.Forms.Panel panelColorPicker;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.TabPage tabPageHighlight;
         private System.Windows.Forms.TabPage tabPageTabBar;
         private System.Windows.Forms.TabPage tabPageBackGround;
         private System.Windows.Forms.Label labelTabCurrent;
@@ -1073,12 +980,6 @@
         private System.Windows.Forms.Label labelTabBarCurrent2;
         private System.Windows.Forms.Label labelTabBarCurrent1;
         private System.Windows.Forms.Label labelCurrent;
-        private System.Windows.Forms.Button buttonAdd;
-        private System.Windows.Forms.ListView listHighLite;
-        private System.Windows.Forms.Button buttonRemove;
-        private System.Windows.Forms.Button buttonEdit;
-        private System.Windows.Forms.ColumnHeader columnMatch;
-        private System.Windows.Forms.ColumnHeader columnCommand;
-        private System.Windows.Forms.ColumnHeader columnColor;
+        private TextWindow textFormattedText;
     }
 }

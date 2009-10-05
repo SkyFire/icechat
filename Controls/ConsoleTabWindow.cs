@@ -214,16 +214,20 @@ namespace IceChat2009
                         //System.Diagnostics.Debug.WriteLine("middle:" + ((ConsoleTab)consoleTab.TabPages[i]).Connection.IsConnected);
                         //check if connected or not
                         if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsConnected)
-                            ((ConsoleTab)consoleTab.TabPages[i]).Connection.SendData("QUIT :" + ((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.QuitMessage);
-                        else
                         {
-                            //close all the windows related to this tab
-                            FormMain.Instance.CloseAllWindows(((ConsoleTab)consoleTab.TabPages[i]).Connection);
-                            //remove the server connection from the collection
-                            ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
-                            FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
-        					consoleTab.TabPages.Remove(consoleTab.TabPages[i]);
+                            if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsFullyConnected)
+                            {
+                                ((ConsoleTab)consoleTab.TabPages[i]).Connection.SendData("QUIT :" + ((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.QuitMessage);
+                                return;
+                            }
                         }
+                        
+                        //close all the windows related to this tab
+                        FormMain.Instance.CloseAllWindows(((ConsoleTab)consoleTab.TabPages[i]).Connection);
+                        //remove the server connection from the collection
+                        ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
+                        FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
+                        consoleTab.TabPages.Remove(consoleTab.TabPages[i]);
                     }
                 }
             }

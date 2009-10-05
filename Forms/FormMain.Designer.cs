@@ -94,6 +94,9 @@ namespace IceChat2009
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.tabPageImages = new System.Windows.Forms.ImageList(this.components);
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
             this.contextMenuToolBar = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -105,18 +108,14 @@ namespace IceChat2009
             this.toolStripSystemTray = new System.Windows.Forms.ToolStripButton();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabMain = new IceChat2009.IceTabControl();
             this.inputPanel = new IceChat2009.InputPanel();
-            this.contextMenuNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMainStrip.SuspendLayout();
             this.panelRightBottom.SuspendLayout();
             this.tabPanelRight.SuspendLayout();
+            this.contextMenuNotify.SuspendLayout();
             this.toolStripMain.SuspendLayout();
             this.contextMenuToolBar.SuspendLayout();
             this.statusStripMain.SuspendLayout();
-            this.contextMenuNotify.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuMainStrip
@@ -332,6 +331,28 @@ namespace IceChat2009
             this.notifyIcon.Text = "IceChat 2009";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMouseDoubleClick);
             // 
+            // contextMenuNotify
+            // 
+            this.contextMenuNotify.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.restoreToolStripMenuItem,
+            this.exitToolStripMenuItem1});
+            this.contextMenuNotify.Name = "contextMenuNotify";
+            this.contextMenuNotify.Size = new System.Drawing.Size(114, 48);
+            // 
+            // restoreToolStripMenuItem
+            // 
+            this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.restoreToolStripMenuItem.Text = "Restore";
+            this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem1
+            // 
+            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(113, 22);
+            this.exitToolStripMenuItem1.Text = "Exit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
+            // 
             // panelLeft
             // 
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
@@ -437,24 +458,6 @@ namespace IceChat2009
             this.toolStripStatus.Size = new System.Drawing.Size(58, 17);
             this.toolStripStatus.Text = "Status:";
             // 
-            // tabMain
-            // 
-            this.tabMain.AllowDrop = true;
-            this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabMain.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabMain.ImageList = this.tabPageImages;
-            this.tabMain.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tabMain.ItemSize = new System.Drawing.Size(0, 25);
-            this.tabMain.Location = new System.Drawing.Point(184, 63);
-            this.tabMain.Margin = new System.Windows.Forms.Padding(0);
-            this.tabMain.Multiline = true;
-            this.tabMain.Name = "tabMain";
-            this.tabMain.Padding = new System.Drawing.Point(0, 0);
-            this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(542, 467);
-            this.tabMain.TabIndex = 1;
-            this.tabMain.TabStop = false;
-            // 
             // inputPanel
             // 
             this.inputPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -463,30 +466,10 @@ namespace IceChat2009
             this.inputPanel.Size = new System.Drawing.Size(904, 26);
             this.inputPanel.TabIndex = 0;
             // 
-            // contextMenuNotify
-            // 
-            this.contextMenuNotify.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.restoreToolStripMenuItem,
-            this.exitToolStripMenuItem1});
-            this.contextMenuNotify.Name = "contextMenuNotify";
-            this.contextMenuNotify.Size = new System.Drawing.Size(153, 70);
-            // 
-            // restoreToolStripMenuItem
-            // 
-            this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.restoreToolStripMenuItem.Text = "Restore";
-            this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
-            // 
-            // exitToolStripMenuItem1
-            // 
-            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem1.Text = "Exit";
-            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
-            // 
             // FormMain
             // 
+            this.tabMain = new IceTabControl();
+            
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
@@ -509,12 +492,12 @@ namespace IceChat2009
             this.menuMainStrip.PerformLayout();
             this.panelRightBottom.ResumeLayout(false);
             this.tabPanelRight.ResumeLayout(false);
+            this.contextMenuNotify.ResumeLayout(false);
             this.toolStripMain.ResumeLayout(false);
             this.toolStripMain.PerformLayout();
             this.contextMenuToolBar.ResumeLayout(false);
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
-            this.contextMenuNotify.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -360,8 +360,10 @@ namespace IceChat2009
                             //channel is fully joined                            
                             TabWindow c = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
                             if (c != null)
+                            {
                                 c.IsFullyJoined = true;
-                            
+                                FormMain.Instance.NickList.RefreshList(c);
+                            }
                             break;
 
                         case "372": //motd

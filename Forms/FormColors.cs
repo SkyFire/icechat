@@ -30,6 +30,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using IceChatPlugin;
+
 
 namespace IceChat2009
 {
@@ -44,11 +46,10 @@ namespace IceChat2009
 
         private IceChatMessageFormat iceChatMessages;
         private IceChatColors iceChatColors;
-        private IceChatHighLites iceChatHighLites;
 
         private object currentColorPick;
 
-        public FormColors(IceChatMessageFormat MessageFormat, IceChatColors IceChatColors, IceChatHighLites IceChatHighLites)
+        public FormColors(IceChatMessageFormat MessageFormat, IceChatColors IceChatColors)
         {
             InitializeComponent();
 
@@ -221,15 +222,10 @@ namespace IceChat2009
 
             treeMessages.ExpandAll();
 
-            this.iceChatHighLites = IceChatHighLites;
-
-            foreach (HighLiteItem hli in iceChatHighLites.listHighLites)
+            //load any plugin addons
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ListViewItem lvi = this.listHighLite.Items.Add(hli.Match);
-                lvi.SubItems.Add(hli.Command);
-                lvi.SubItems.Add(hli.Color.ToString());
-                lvi.ForeColor = IrcColor.colors[hli.Color];
-                lvi.Checked = hli.Enabled;
+                ipc.LoadColorsForm(this.tabControlColors);
             }
 
         }
@@ -526,7 +522,7 @@ namespace IceChat2009
         private void colorPicker_OnClick(int colorSelected)
         {
 
-            if (tabControl1.SelectedTab.Text == "Messages")
+            if (tabControlColors.SelectedTab.Text == "Messages")
             {
                 if (treeMessages.SelectedNode == null)
                     return;
@@ -556,7 +552,7 @@ namespace IceChat2009
                 }
             }
 
-            if (tabControl1.SelectedTab.Text == "Nick Names")
+            if (tabControlColors.SelectedTab.Text == "Nick Names")
             {
                 if (currentColorPick != null)
                 {
@@ -564,7 +560,7 @@ namespace IceChat2009
                     ((PictureBox)currentColorPick).Tag = colorSelected;
                 }
             }
-            if (tabControl1.SelectedTab.Text == "Tab Bar")
+            if (tabControlColors.SelectedTab.Text == "Tab Bar")
             {
                 if (currentColorPick != null)
                 {
@@ -572,7 +568,7 @@ namespace IceChat2009
                     ((PictureBox)currentColorPick).Tag = colorSelected;
                 }
             }
-            if (tabControl1.SelectedTab.Text == "Background")
+            if (tabControlColors.SelectedTab.Text == "Background")
             {
                 if (currentColorPick != null)
                 {
@@ -793,21 +789,12 @@ namespace IceChat2009
             iceChatColors.TabBarOtherBG1 = (int)pictureTabBarOther1.Tag;
             iceChatColors.TabBarOtherBG2 = (int)pictureTabBarOther2.Tag;
 
-
-            iceChatHighLites.listHighLites.Clear();
-
-            //save all the highlite items
-            foreach (ListViewItem item in listHighLite.Items)
+            //load any plugin addons
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                HighLiteItem hli = new HighLiteItem();
-                hli.Match = item.Text;
-                hli.Command = item.SubItems[1].Text;
-                hli.Color = Convert.ToInt32(item.SubItems[2].Text);
-                hli.Enabled = item.Checked;
-                iceChatHighLites.AddHighLight(hli);
+                ipc.SaveColorsForm();
             }
 
-            FormMain.Instance.IceChatHighLites = iceChatHighLites;
 
             if (SaveColors != null)
                 SaveColors();
@@ -821,64 +808,5 @@ namespace IceChat2009
             this.Close();
         }
 
-        private void buttonAdd_Click(object sender, EventArgs e)
-        {
-            FormHighLite fi = new FormHighLite(new HighLiteItem(), 0);
-            fi.SaveHighLite += new FormHighLite.SaveHighLiteDelegate(SaveNewHighLite);
-            fi.ShowDialog(this);
-        }
-
-        private void SaveNewHighLite(HighLiteItem hli, int listIndex)
-        {
-            if (hli.Match.Length > 0)
-            {
-                ListViewItem lvi = this.listHighLite.Items.Add(hli.Match);
-                lvi.SubItems.Add(hli.Command);
-                lvi.SubItems.Add(hli.Color.ToString());
-                lvi.ForeColor = IrcColor.colors[hli.Color];
-                lvi.Checked = true;
-            }
-        }
-
-        private void UpdateHighLite(HighLiteItem hli, int listIndex)
-        {
-            foreach (ListViewItem item in listHighLite.SelectedItems)
-            {
-                if (item.Index == listIndex)
-                {
-                    item.Text = hli.Match;
-                    item.SubItems[1].Text = hli.Command;
-                    item.SubItems[2].Text = hli.Color.ToString();
-                    item.ForeColor = IrcColor.colors[hli.Color];
-                    break;
-                }
-            }
-        }
-
-        private void buttonEdit_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem item in listHighLite.SelectedItems)
-            {
-                HighLiteItem hli = new HighLiteItem();
-                
-                hli.Match = item.Text;
-                hli.Command = item.SubItems[1].Text;
-                hli.Color = Convert.ToInt32(item.SubItems[2].Text);
-                
-                FormHighLite fi = new FormHighLite(hli, item.Index);
-                fi.SaveHighLite += new FormHighLite.SaveHighLiteDelegate(UpdateHighLite);
-                fi.ShowDialog(this);
-
-            }
-        }
-
-        private void buttonRemove_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem item in listHighLite.SelectedItems)
-            {
-                listHighLite.Items.Remove(item);
-            }
-        
-        }
     }
 }

@@ -139,7 +139,7 @@ namespace IceChat2009
         {
             Socket client = (Socket)ar.AsyncState;
             client.EndDisconnect(ar);
-
+            
             string msg = GetMessageFormat("Server Disconnect");
             msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
             
