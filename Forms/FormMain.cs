@@ -1103,7 +1103,7 @@ namespace IceChat2009
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$message", message);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+			CurrentWindowMessage(connection, msg, 1);
         }
 
         /// <summary>
