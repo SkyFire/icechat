@@ -321,7 +321,6 @@ namespace IceChat2009
 
         private void channelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //
             if (currentPopup == "Channel") return;
 
             UpdateCurrentPopupMenus();

@@ -110,22 +110,27 @@ namespace IceChat2009
                     channelModes += mode;
                 }
                 //update channelMode Parameters
-                if (channelModeParams.Contains(param) && !addMode)
+                if (param.Length > 0)
                 {
-                    channelModeParams = channelModeParams.Replace(param, "");
-                }
-                else if (!channelModeParams.Contains(param) && addMode)
-                {
-                    channelModeParams += " " + param;
+                    if (channelModeParams.Contains(param) && !addMode)
+                    {
+                        channelModeParams = channelModeParams.Replace(param, "");
+                    }
+                    else if (!channelModeParams.Contains(param) && addMode)
+                    {
+                        channelModeParams += " " + param;
+                    }
                 }
                 
                 if (channelModeParams == " ")
                     channelModeParams = "";
 
+                System.Diagnostics.Debug.WriteLine(channelModes + "::" + channelModeParams);
+
             }
             catch (Exception e)
             {
-                FormMain.Instance.ReportError(e.Message, e.StackTrace, "TabWindow::UpdateMode");
+                FormMain.Instance.ReportError(e.Message, e.StackTrace, "TabWindow::UpdateMode:" + mode + ":" + param + ":" + addMode);
             }
         }
 
@@ -173,10 +178,6 @@ namespace IceChat2009
                     if (FormMain.Instance.CurrentWindow.WindowName == this.windowName)
                         if (FormMain.Instance.CurrentWindow.Connection == this.connection)
                             FormMain.Instance.NickList.RefreshList(this);
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("does not contain:" + nick);
             }
         }
 
@@ -349,6 +350,7 @@ namespace IceChat2009
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine(value);
                 channelModes = value;
             }
         }

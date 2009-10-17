@@ -78,7 +78,6 @@ namespace IceChat2009
 
         private void OnPopupMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine(e.ClickedItem.Text + ":" + e.ClickedItem.Tag.ToString() + ":" + selectedTabIndex);
             //send the command to the proper window
             if (e.ClickedItem.Tag == null) return;
             
@@ -128,7 +127,22 @@ namespace IceChat2009
             AddPopupMenu("Channel", menu);
             return menu;
         }
-        
+
+        private ContextMenuStrip QueryPopupMenu()
+        {
+            ContextMenuStrip menu = new ContextMenuStrip();
+
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
+            menu.Items.Add(NewMenuItem("Close Window", "/part $1"));
+            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1"));
+            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1"));
+
+            //add then channel popup menu
+            AddPopupMenu("Query", menu);
+            return menu;
+
+        }
+
         private ToolStripMenuItem NewMenuItem(string caption, string command)
         {
             ToolStripMenuItem t = new ToolStripMenuItem(caption);
@@ -139,6 +153,8 @@ namespace IceChat2009
         private void AddPopupMenu(string PopupType, ContextMenuStrip mainMenu)
         {
             //add the console menu popup
+            if (FormMain.Instance == null) return;
+            
             if (FormMain.Instance.IceChatPopupMenus == null) return;
 
             foreach (PopupMenuItem p in FormMain.Instance.IceChatPopupMenus.listPopups)
@@ -202,7 +218,7 @@ namespace IceChat2009
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            System.Diagnostics.Debug.WriteLine(selectedTabIndex +  ":command:" + command);
+            //System.Diagnostics.Debug.WriteLine(selectedTabIndex +  ":command:" + command);
 
             if (selectedTabIndex == 0)
             {
@@ -379,6 +395,15 @@ namespace IceChat2009
                         popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         popupMenu.Show(this, e.Location);
                     }
+                    else if (((TabWindow)TabPages[selectedTabIndex]).WindowStyle == TabWindow.WindowType.Query)
+                    {
+                        popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        popupMenu.Items.Clear();
+                        popupMenu = QueryPopupMenu();
+                        popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        popupMenu.Show(this, e.Location);
+                    }
+                    
                 }
             }
             
@@ -564,143 +589,5 @@ namespace IceChat2009
             this.ResumeLayout(false);
 
         }
-
-        /*
-        //new DrawTab attempted by Akarf
-        private void DrawTab(Graphics g, TabPage tabPage, int nIndex)
-        {
-            //http://www.codeproject.com/KB/tabs/flattabcontrol.aspx
-            
-            Rectangle r = (Rectangle)this.GetTabRect(nIndex);
-            //r.Width += 50;
-            RectangleF tabTextArea = (RectangleF)this.GetTabRect(nIndex);
-            //tabTextArea.Width += 50.0f;
-            bool bSelected = (this.SelectedIndex == nIndex);
-            //r.Inflate(20, 0);
-
-            string title;
-            if (nIndex == 0)
-            {
-                title = "Console";
-            }
-            else
-            {
-                title = ((TabWindow)tabPage).WindowName;
-            }
-
-            Font f;
-            Brush b;
-            SolidBrush l;
-            
-            if (bSelected)
-            {
-                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
-                //l = new LinearGradientBrush(r, Color.Orange, Color.White, 100);
-                l = new SolidBrush(Color.Orange);
-                f = new Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, FontStyle.Italic);                
-            }
-            else
-            {
-                if (nIndex == 0)
-                    b = new SolidBrush(Color.Gray);
-                else
-                {
-                    //get the font color from the last message type in the channel            
-                    switch (((TabWindow)tabPage).LastMessageType)
-                    {
-                        case FormMain.ServerMessageType.JoinChannel:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelJoin]);
-                            break;
-                        case FormMain.ServerMessageType.PartChannel:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelPart]);
-                            break;
-                        case FormMain.ServerMessageType.Message:
-                        case FormMain.ServerMessageType.Action:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarNewMessage]);
-                            break;
-                        case FormMain.ServerMessageType.QuitServer:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerQuit]);
-                            break;
-                        case FormMain.ServerMessageType.ServerMessage:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerMessage]);
-                            break;
-                        case FormMain.ServerMessageType.Other:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherMessage]);
-                            break;
-                        default:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
-                            break;
-                    }
-                }
-                //l = new LinearGradientBrush(r, Color.DarkGray, Color.White, 270);
-                l = new SolidBrush(Color.DarkGray);
-                f = new Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize);
-            }
-            
-            // Measure the text
-            tabTextArea.Width = g.MeasureString(title, f).Width;
-            r.Width = (int)tabTextArea.Width + 25;
-            
-            // Here you want to have the largest tab width saved so all tabs have some congeniality
-            if (lastr.Width < r.Width) {
-            	lastr = r;
-            }
-            
-            // Update all tabs to the largest tab's size
-            if (this.ItemSize.Width != lastr.Size.Width)
-            	this.ItemSize = lastr.Size;
-            
-            // If the current tab is less than the largest tab, make sure width is update so it is drawn correctly
-            if (r.Width < lastr.Width)
-            	r.Width = lastr.Width;
-            
-            Point[] pt = new Point[7];
-            pt[0] = new Point(r.Left+1, r.Bottom);
-            if (bSelected)
-            {
-                pt[1] = new Point(r.Left + 1, r.Top + 3);
-                pt[2] = new Point(r.Left + 4, r.Top);
-                pt[3] = new Point(r.Right - 4, r.Top);
-                pt[4] = new Point(r.Right - 1, r.Top + 3);
-            }
-            else
-            {
-                pt[1] = new Point(r.Left + 1, r.Top + 6);
-                pt[2] = new Point(r.Left + 4, r.Top + 3);
-                pt[3] = new Point(r.Right - 4, r.Top + 3);
-                pt[4] = new Point(r.Right - 1, r.Top + 6);
-            }
-            pt[5] = new Point(r.Right-1, r.Bottom);
-            pt[6] = new Point(r.Left+1, r.Bottom);
-            
-            // fill the polygon region with the brush color            
-            g.FillPolygon(l, pt);
-            // draw the border around the control
-            g.DrawPolygon(new Pen(Color.Black, 1), pt);
-
-            //draw the icon
-            Image img = this.ImageList.Images[tabPage.ImageIndex];
-            Rectangle rimage = new Rectangle(r.X,r.Y, img.Width, img.Height);
-
-            if(bSelected)
-            {
-                rimage.Offset(3, 4);
-                g.DrawImage(img, rimage);
-                tabTextArea.Offset(20, 2);
-            }
-            else
-            {
-                rimage.Offset(3, 6);
-                g.DrawImage(img, rimage);
-                tabTextArea.Offset(20, 4);
-            }
-            
-            g.DrawString(title, f, b, tabTextArea);
-            f.Dispose();
-            l.Dispose();
-            b.Dispose();
-        }
-          
-        */
     }
 }

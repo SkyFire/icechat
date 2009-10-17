@@ -265,6 +265,7 @@ namespace IceChat2009
                             else
                                 b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
 
+                            break;
                         }
                     }
 

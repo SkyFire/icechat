@@ -109,6 +109,7 @@ namespace IceChat2009
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.inputPanel = new IceChat2009.InputPanel();
+            this.tabMain = new IceChat2009.IceTabControl();
             this.menuMainStrip.SuspendLayout();
             this.panelRightBottom.SuspendLayout();
             this.tabPanelRight.SuspendLayout();
@@ -466,10 +467,17 @@ namespace IceChat2009
             this.inputPanel.Size = new System.Drawing.Size(904, 26);
             this.inputPanel.TabIndex = 0;
             // 
+            // tabMain
+            // 
+            this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabMain.Location = new System.Drawing.Point(184, 63);
+            this.tabMain.Name = "tabMain";
+            this.tabMain.SelectedIndex = 0;
+            this.tabMain.Size = new System.Drawing.Size(542, 467);
+            this.tabMain.TabIndex = 2;
+            // 
             // FormMain
             // 
-            this.tabMain = new IceTabControl();
-            
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;

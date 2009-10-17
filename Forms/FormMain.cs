@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
+
 using IceChat2009.Properties;
 using IceChatPlugin;
 
@@ -155,7 +156,7 @@ namespace IceChat2009
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - September 24 2009";
+            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - October 14 2009";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -173,10 +174,9 @@ namespace IceChat2009
 
             LoadAliases();
             LoadPopups();
-            //LoadHighLites();
+
             LoadMessageFormat();
             LoadFonts();
-
 
             channelList = new ChannelList();
             
@@ -198,20 +198,8 @@ namespace IceChat2009
             inputPanel.OnCommand +=new InputPanel.OnCommandDelegate(inputPanel_OnCommand);
 
             this.tabMain.AllowDrop = true;
-            this.tabMain.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabMain.ImageList = this.tabPageImages;
-            this.tabMain.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tabMain.ItemSize = new System.Drawing.Size(0, 25);
-            this.tabMain.Location = new System.Drawing.Point(184, 63);
-            this.tabMain.Margin = new System.Windows.Forms.Padding(0);
             this.tabMain.Multiline = true;
-            this.tabMain.Name = "tabMain";
-            this.tabMain.Padding = new System.Drawing.Point(0, 0);
-            this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(542, 467);
-            this.tabMain.TabIndex = 1;
-            this.tabMain.TabStop = false;
-            this.tabMain.Dock = DockStyle.Fill;
 
             tabMain.SelectedIndexChanged += new EventHandler(TabMainSelectedIndexChanged);
             tabMain.MouseClick += new MouseEventHandler(TabMainMouseClick);            
@@ -946,7 +934,7 @@ namespace IceChat2009
         {
             foreach (TabWindow t in tabMain.WindowTabs)
             {
-                if (t.WindowName == name && t.WindowStyle == windowType)
+                if (t.WindowName.ToLower() == name.ToLower() && t.WindowStyle == windowType)
                 {
                     if (t.Connection == connection)
                         return t;
@@ -1342,6 +1330,8 @@ namespace IceChat2009
                                 msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor);
                             else
                                 msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                            
+                            break;
                         }
                     } 
                     if (msg.Contains("$color"))
@@ -2265,6 +2255,13 @@ namespace IceChat2009
 
                 switch (command)
                 {
+                    case "/userinfo":
+                        FormUserInfo fui = new FormUserInfo();
+                            
+                        fui.ShowDialog(this);
+                        
+                        break;
+                    
                     case "/channelinfo":
                         if (data.Length > 0)
                         {
@@ -2304,7 +2301,7 @@ namespace IceChat2009
                                 ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.ClearTextWindow();
                                 return;
                             }
-                            else if (data == "all console")
+                            else if (data.ToLower() == "all console")
                             {
                                 //clear all the console windows and channel/queries
                                 foreach (ConsoleTab c in ((ConsoleTabWindow)TabMain.TabPages[0]).ConsoleTab.TabPages)
@@ -2349,7 +2346,6 @@ namespace IceChat2009
                             System.Diagnostics.Process.Start("http://www.google.com/search?q=" + data);
                         }
                         break;
-
                     case "/hop":
                         if (data.Length == 0)
                         {
@@ -2376,6 +2372,30 @@ namespace IceChat2009
                     case "/join":
                         if (data.Length > 0)
                             SendData(connection, "JOIN " + data);
+                        break;
+                    case "/kick":
+                        if (data.Length > 0)
+                        {
+                            //kick #channel nick reason
+                            if (data.IndexOf(' ') > 0)
+                            {
+                                //get the channel
+                                temp = data.Substring(0, data.IndexOf(' '));
+                                data = data.Substring(temp.Length + 1);
+                                
+                                if (data.IndexOf(' ') > 0)
+                                {
+                                    //there is a kick reason
+                                    string msg = data.Substring(data.IndexOf(' ') + 1);
+                                    data = data.Substring(0, data.IndexOf(' '));
+                                    SendData(connection, "KICK " + temp + " " + data + " :"  + msg);
+                                }
+                                else
+                                {
+                                    SendData(connection, "KICK " + temp + " " + data);
+                                }
+                            }
+                        }
                         break;
                     case "/me":
                         //check if in channel, query, etc
@@ -2424,6 +2444,19 @@ namespace IceChat2009
                     case "/part":
                         if (data.Length > 0)
                         {
+                            //check if it is a query window
+                            TabWindow q = GetWindow(connection, data, TabWindow.WindowType.Query);
+                            if (q != null)
+                            {
+                                RemoveWindow(connection, q.WindowName);
+                                return;
+                            }
+                            else if (CurrentWindowType == TabWindow.WindowType.Query)
+                            {
+                                RemoveWindow(connection, CurrentWindow.WindowName);
+                                return;
+                            }
+                            
                             //is there a part message
                             if (data.IndexOf(' ') > -1)
                             {
@@ -2467,6 +2500,10 @@ namespace IceChat2009
                             if (CurrentWindowType == TabWindow.WindowType.Channel)
                             {
                                 SendData(connection, "PART " + CurrentWindow.WindowName);
+                                RemoveWindow(connection, CurrentWindow.WindowName);
+                            }
+                            else if (CurrentWindowType == TabWindow.WindowType.Query)
+                            {
                                 RemoveWindow(connection, CurrentWindow.WindowName);
                             }
                         }
@@ -2513,6 +2550,8 @@ namespace IceChat2009
                                             msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
                                         else
                                             msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                        
+                                        break;
                                     }
                                 } 
                                 if (msg.Contains("$color"))
@@ -2535,6 +2574,49 @@ namespace IceChat2009
 
                             CurrentWindow.TextWindow.AppendText(msg, 1);
                             CurrentWindow.LastMessageType = ServerMessageType.Message;
+                        }
+                        break;
+                    case "/server":
+                        if (data.Length > 0)
+                        {
+                            //check if default nick name has been set
+                            if (iceChatOptions.DefaultNick.Length == 0)
+                            {
+                                CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1);
+                            }
+                            else
+                            {
+                                ServerSetting s = new ServerSetting();
+                                //get the server name
+                                //if there is a port name. extract it
+                                if (data.Contains(" "))
+                                {
+                                    s.ServerName = data.Substring(0, data.IndexOf(' '));
+                                    s.ServerPort = data.Substring(data.IndexOf(' ') + 1);
+                                    if (s.ServerPort.IndexOf(' ') > 0)
+                                    {
+                                        s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));
+                                    }
+                                }
+                                else if (data.Contains(":"))
+                                {
+                                    s.ServerName = data.Substring(0, data.IndexOf(':'));
+                                    s.ServerPort = data.Substring(data.IndexOf(':') + 1);
+                                    if (s.ServerPort.IndexOf(' ') > 0)
+                                    {
+                                        s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));
+                                    }
+                                }
+                                else
+                                {
+                                    s.ServerName = data;
+                                    s.ServerPort = "6667";
+                                }
+                                
+                                s.NickName = iceChatOptions.DefaultNick;
+
+                                NewServerConnection(s);
+                            }
                         }
                         break;
                     case "/topic":
@@ -2574,40 +2656,6 @@ namespace IceChat2009
                     case "/whois":
                         if (data.Length > 0)
                             SendData(connection,"WHOIS " + data);
-                        break;
-                    case "/server":
-                        if (data.Length > 0)
-                        {
-                            //check if default nick name has been set
-                            if (iceChatOptions.DefaultNick.Length == 0)
-                            {
-                                CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1);
-                            }
-                            else
-                            {
-                                ServerSetting s = new ServerSetting();
-                                //get the server name
-                                //if there is a port name. extract it
-                                if (data.Contains(" "))
-                                {
-                                    s.ServerName = data.Substring(0, data.IndexOf(' '));
-                                    s.ServerPort = data.Substring(data.IndexOf(' ')+1);
-                                }
-                                else if (data.Contains(":"))
-                                {
-                                    s.ServerName = data.Substring(0, data.IndexOf(':'));
-                                    s.ServerPort = data.Substring(data.IndexOf(':') + 1);
-                                }
-                                else
-                                {
-                                    
-                                    s.ServerName = data;
-                                }
-                                s.NickName = iceChatOptions.DefaultNick;
-
-                                NewServerConnection(s);
-                            }
-                        }
                         break;
                     case "/quote":
                     case "/raw":
@@ -2655,6 +2703,8 @@ namespace IceChat2009
                                             msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
                                         else
                                             msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                        
+                                        break;
                                     }
                                 } 
                                 
@@ -2681,7 +2731,7 @@ namespace IceChat2009
                         }
                         else if (CurrentWindowType == TabWindow.WindowType.Console)
                         {
-                            WindowMessage(connection, "Console", data, 1);
+                            WindowMessage(connection, "Console", data, 4);
                         }
                     }
                     else
@@ -2808,7 +2858,11 @@ namespace IceChat2009
                     case "$uptime":
                         System.Diagnostics.PerformanceCounter upTime = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
                         upTime.NextValue();
-                        data = data.Replace(m.Value, TimeSpan.FromSeconds(upTime.NextValue()).ToString());
+                        TimeSpan ts = TimeSpan.FromSeconds(upTime.NextValue());
+                        string d = ts.Hours + " hours " + ts.Minutes + " minutes " +  ts.Seconds + " seconds";
+                        if (ts.Days > 0)
+                            d = ts.Days + " days " + d;
+                        data = data.Replace(m.Value, d);
                         break;
                 }
             }
@@ -2851,60 +2905,7 @@ namespace IceChat2009
                 {
                     switch (word)
                     {
-                        /*
-                        case "$me":
-                            if (connection != null)
-                                changedData[count] = connection.ServerSetting.NickName;
-                            else
-                                changedData[count] = "$null";
-                            break;
-                        case "$network":
-                            if (connection != null)
-                                changedData[count] =  connection.ServerSetting.NetworkName;
-                            else
-                                changedData[count] =  "$null";
-                            break;
-                        case "$port":
-                            if (connection != null)
-                                changedData[count] =  connection.ServerSetting.ServerPort;
-                            else
-                                changedData[count] =  "$null";
-                            break;
-                        case "$server":
-                            if (connection != null)
-                            {
-                                if (connection.ServerSetting.RealServerName.Length > 0)
-                                    changedData[count] =  connection.ServerSetting.RealServerName;
-                                else
-                                    changedData[count] =  connection.ServerSetting.ServerName;
-                            }
-                            else
-                                changedData[count] =  "$null";
-                            break;
-                        case "$serverip":
-                            if (connection != null)
-                                changedData[count] =  connection.ServerSetting.ServerIP;
-                            else
-                                changedData[count] =  "$null";
-                            break;
-
                         
-                        //identifiers that do not require a connection
-                        case "$os":
-                            changedData[count] = Environment.OSVersion.ToString();
-                            break;
-                        case "$ossp":
-                            changedData[count] = Environment.OSVersion.ServicePack.ToString();
-                            break;
-                        case "$icechat":
-                            changedData[count] = Settings.Default.ProgramID + " " + Settings.Default.Version;
-                            break;
-                        case "$uptime":
-                            System.Diagnostics.PerformanceCounter upTime = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
-                            upTime.NextValue();
-                            changedData[count] = TimeSpan.FromSeconds(upTime.NextValue()).ToString();
-                            break;
-                        */
                         default:
                             //search for identifiers that are numbers
                             //used for replacing values passed to the function
@@ -3217,13 +3218,6 @@ namespace IceChat2009
                         
                         if (ass != null)
                         {
-                            /*
-                            foreach (Type type in ass.GetTypes())
-                            {
-                                System.Diagnostics.Debug.WriteLine("type:" + type.ToString());
-                                   
-                            }
-                            */
                             ObjType = ass.GetType("IceChatPlugin.Plugin");
                         }
                         else
