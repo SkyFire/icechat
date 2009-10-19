@@ -3197,7 +3197,7 @@ namespace IceChat2009
 
         private void LoadPlugins()
         {
-            string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
+            string[] pluginFiles = Directory.GetFiles(currentFolder, "*.dll");
 
             for (int i = 0; i < pluginFiles.Length; i++)
             {
