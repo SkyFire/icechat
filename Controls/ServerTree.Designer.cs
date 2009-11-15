@@ -35,10 +35,6 @@
             this.buttonEdit = new System.Windows.Forms.Button();
             this.buttonDisconnect = new System.Windows.Forms.Button();
             this.buttonConnect = new System.Windows.Forms.Button();
-            this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
             this.imageListServers = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuChannel = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -46,9 +42,15 @@
             this.closeChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reJoinChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoPerformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panelButtons.SuspendLayout();
-            this.contextMenuServer.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
+            this.contextMenuServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelButtons
@@ -124,36 +126,6 @@
             this.buttonConnect.UseVisualStyleBackColor = true;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
-            // contextMenuServer
-            // 
-            this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripMenuItem,
-            this.disconnectToolStripMenuItem,
-            this.editToolStripMenuItem});
-            this.contextMenuServer.Name = "contextMenuServer";
-            this.contextMenuServer.Size = new System.Drawing.Size(134, 70);
-            // 
-            // connectToolStripMenuItem
-            // 
-            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.connectToolStripMenuItem.Text = "Connect";
-            this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
-            // 
-            // disconnectToolStripMenuItem
-            // 
-            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.disconnectToolStripMenuItem.Text = "Disconnect";
-            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
-            // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
-            this.editToolStripMenuItem.Text = "Edit";
-            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
-            // 
             // vScrollBar
             // 
             this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
@@ -214,6 +186,52 @@
             this.channelInformationToolStripMenuItem.Text = "Channel Information";
             this.channelInformationToolStripMenuItem.Click += new System.EventHandler(this.channelInformationToolStripMenuItem_Click);
             // 
+            // connectToolStripMenuItem
+            // 
+            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.connectToolStripMenuItem.Text = "Connect";
+            this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.editToolStripMenuItem.Text = "Edit";
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // autoJoinToolStripMenuItem
+            // 
+            this.autoJoinToolStripMenuItem.Name = "autoJoinToolStripMenuItem";
+            this.autoJoinToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.autoJoinToolStripMenuItem.Text = "Auto Join";
+            this.autoJoinToolStripMenuItem.Click += new System.EventHandler(this.autoJoinToolStripMenuItem_Click);
+            // 
+            // autoPerformToolStripMenuItem
+            // 
+            this.autoPerformToolStripMenuItem.Name = "autoPerformToolStripMenuItem";
+            this.autoPerformToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.autoPerformToolStripMenuItem.Text = "Auto Perform";
+            this.autoPerformToolStripMenuItem.Click += new System.EventHandler(this.autoPerformToolStripMenuItem_Click);
+            // 
+            // contextMenuServer
+            // 
+            this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectToolStripMenuItem,
+            this.disconnectToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.autoJoinToolStripMenuItem,
+            this.autoPerformToolStripMenuItem});
+            this.contextMenuServer.Name = "contextMenuServer";
+            this.contextMenuServer.Size = new System.Drawing.Size(147, 114);
+            // 
             // ServerTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 14F);
@@ -226,8 +244,8 @@
             this.Name = "ServerTree";
             this.Size = new System.Drawing.Size(180, 323);
             this.panelButtons.ResumeLayout(false);
-            this.contextMenuServer.ResumeLayout(false);
             this.contextMenuChannel.ResumeLayout(false);
+            this.contextMenuServer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -241,10 +259,6 @@
         private System.Windows.Forms.Button buttonDisconnect;
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonAdd;
-        private System.Windows.Forms.ContextMenuStrip contextMenuServer;
-        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScrollBar;
         private System.Windows.Forms.ImageList imageListServers;
         private System.Windows.Forms.ContextMenuStrip contextMenuChannel;
@@ -252,5 +266,11 @@
         private System.Windows.Forms.ToolStripMenuItem closeChannelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reJoinChannelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem channelInformationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoJoinToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoPerformToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuServer;
     }
 }

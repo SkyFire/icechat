@@ -2295,6 +2295,23 @@ namespace IceChat2009
                             }
                         }                        
                         break;                    
+                    case "/autojoin":
+                        foreach (string chan in connection.ServerSetting.AutoJoinChannels)
+                        {
+                            if (!chan.StartsWith(";"))
+                                SendData(connection, "JOIN " + chan);
+                        }
+
+                        break;
+                    case "/autoperform":
+                        foreach (string ap in connection.ServerSetting.AutoPerform)
+                        {
+                            string autoCommand = ap.Replace("\r", String.Empty);
+                            if (!autoCommand.StartsWith(";"))
+                                ParseOutGoingCommand(connection, autoCommand);
+                        }
+
+                        break;
                     case "/clear":
                         if (data.Length == 0)
                         {
@@ -3210,7 +3227,7 @@ namespace IceChat2009
 
         private void LoadPlugins()
         {
-            string[] pluginFiles = Directory.GetFiles(currentFolder, "*.dll");
+            string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
 
             for (int i = 0; i < pluginFiles.Length; i++)
             {

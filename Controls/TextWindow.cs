@@ -70,8 +70,11 @@ namespace IceChat2009
         private ContextMenuStrip popupMenu;
         private string linkedWord = "";
         
-        private string wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[&#95;.a-z0-9-]+\.[a-z0-9\/&#95;:@=.+?,##%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
+        //private string wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[a-z0-9-]+\.[a-z0-9\/:@=.+?,#%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
 
+        //works but no www.
+        private string wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+        
         private int startHighLine = -1;
         private int startHighChar;
         private int curHighLine;
@@ -135,10 +138,13 @@ namespace IceChat2009
             //get the current line mouse is over
             int line = ((this.Height + (lineSize/2)) - e.Y)  / lineSize;
             line = totalDisplayLines - line;
-            
+
+            line = (line - (totalDisplayLines - vScrollBar.Value));
+
             linkedWord = ReturnWord(line, e.Location.X);
+            
             if (linkedWord.Length > 0)
-            {
+            {                
                 Regex re = new Regex(wwwMatch);
                 MatchCollection matches = re.Matches(linkedWord);
                 if (matches.Count > 0)
@@ -664,10 +670,39 @@ namespace IceChat2009
 
             Invalidate();
         }
-
-        internal void ScrollWindow(bool scrollUp)
+        /// <summary>
+        /// Used to scroll the Text Window a Page at a Time
+        /// </summary>
+        /// <param name="scrollUp"></param>
+        internal void ScrollWindowPage(bool scrollUp)
         {
-            //System.Diagnostics.Debug.WriteLine("ScrollWindow:" + scrollUp);
+            if (vScrollBar.Enabled == false)
+                return;
+
+            if (scrollUp == true)
+            {
+                if (vScrollBar.Value > vScrollBar.LargeChange)
+                {
+                    vScrollBar.Value = vScrollBar.Value - vScrollBar.LargeChange;
+                    Invalidate();
+                }
+            }
+            else
+            {
+                if (vScrollBar.Value <= vScrollBar.Maximum - (vScrollBar.LargeChange * 2))
+                    vScrollBar.Value = vScrollBar.Value + vScrollBar.LargeChange;
+                else
+                    vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange +1;
+                Invalidate();
+            }
+
+        }
+        /// <summary>
+        /// Used to scroll the Text Window a Single Line at a Time
+        /// </summary>
+        /// <param name="scrollUp"></param>
+        internal void ScrollWindow(bool scrollUp)
+        {            
             if (vScrollBar.Enabled == false)
                 return;
 
@@ -775,29 +810,30 @@ namespace IceChat2009
         /// <param name="endLine"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        private void UpdateScrollBar(int newValue)
+        private void UpdateScrollBarValue(int newValue)
         {
             showMaxLines = (this.Height / lineSize) + 1;
             totalDisplayLines = FormatLines(totalLines, 1, 0);
 
-            if (showMaxLines < totalDisplayLines)
-            {
-                vScrollBar.LargeChange = showMaxLines;
-                vScrollBar.Enabled = true;
-            }
-            else
-            {
-                vScrollBar.LargeChange = totalDisplayLines;
-                vScrollBar.Enabled = false;
-            }
 
             if (this.InvokeRequired)
             {
-                ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBar);
+                ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBarValue);
                 this.Invoke(s, new object[] { newValue });
             }
             else
             {
+                if (showMaxLines < totalDisplayLines)
+                {
+                    vScrollBar.LargeChange = showMaxLines;
+                    vScrollBar.Enabled = true;
+                }
+                else
+                {
+                    vScrollBar.LargeChange = totalDisplayLines;
+                    vScrollBar.Enabled = false;
+                }
+                
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
@@ -811,7 +847,7 @@ namespace IceChat2009
         {
             showMaxLines = (this.Height / lineSize) + 1;
             totalDisplayLines = FormatLines(totalLines, 1, 0);
-            UpdateScrollBar(totalDisplayLines);
+            UpdateScrollBarValue(totalDisplayLines);
         }
 
 
@@ -1379,6 +1415,7 @@ namespace IceChat2009
             MatchCollection matches = re.Matches(data);
             foreach (Match m in matches)
             {
+                System.Diagnostics.Debug.WriteLine(m.Value);
                 data = data.Replace(StripCodes(m.Value), urlStart + StripCodes(m.Value) + urlEnd);
             }
 

@@ -285,7 +285,9 @@ namespace IceChat2009
                         this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                             this.connectToolStripMenuItem,
                             this.disconnectToolStripMenuItem,
-                            this.editToolStripMenuItem});
+                            this.editToolStripMenuItem,
+                            this.autoJoinToolStripMenuItem,
+                            this.autoPerformToolStripMenuItem});
 
                         //add in the popup menu
                         AddPopupMenu("Console", contextMenuServer);
@@ -297,8 +299,6 @@ namespace IceChat2009
                         //check if it is a channel or query window
                         if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Channel)
                         {
-
-
                             contextMenuChannel.Items.Clear();
                             this.contextMenuChannel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                             this.clearWindowToolStripMenuItem,
@@ -327,7 +327,7 @@ namespace IceChat2009
                 {
                     //add a break
                     mainMenu.Items.Add(new ToolStripSeparator());
-
+                    
                     string[] menuItems = p.Menu;
 
                     //build the menu
@@ -359,21 +359,22 @@ namespace IceChat2009
                             command = "";
                         }
 
-                        t = new ToolStripMenuItem(caption);
-
                         //parse out the command/$identifiers    
-                        
 
+                        if (caption.Length > 0)
+                        {
+                            t = new ToolStripMenuItem(caption);
 
-                        t.Click += new EventHandler(OnPopupMenuClick);
-                        t.Tag = command;
+                            t.Click += new EventHandler(OnPopupMenuClick);
+                            t.Tag = command;
 
-                        if (menuDepth == 0)
-                            subMenu = mainMenu.Items.Add(t);
-                        else
-                            ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+                            if (menuDepth == 0)
+                                subMenu = mainMenu.Items.Add(t);
+                            else
+                                ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
 
-                        t = null;
+                            t = null;
+                        }
                     }
                 }
             }
@@ -748,6 +749,41 @@ namespace IceChat2009
             buttonEdit.PerformClick();
         }
 
+        private void autoJoinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0) return;
+
+            foreach (IRCConnection c in serverConnections.Values)
+            {
+                if (c.ServerSetting.ID == selectedServerIndex)
+                {
+                    if (c.IsConnected)
+                        FormMain.Instance.ParseOutGoingCommand(c, "/autojoin");
+                    return;
+                }
+            }
+        }
+
+        private void autoPerformToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0) return;
+
+            foreach (IRCConnection c in serverConnections.Values)
+            {
+                if (c.ServerSetting.ID == selectedServerIndex)
+                {
+                    if (c.IsConnected)
+                        FormMain.Instance.ParseOutGoingCommand(c, "/autoperform");
+                    return;
+                }
+            }
+
+        }
+        
         private void clearWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //clear the channel window for the selected channel
@@ -785,6 +821,7 @@ namespace IceChat2009
         }
 
         #endregion
+
 
         
     }

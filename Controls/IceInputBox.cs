@@ -51,7 +51,11 @@ namespace IceChat2009
         private delegate void ScrollWindowDelegate(bool scrollup);
         private delegate void ScrollConsoleWindowDelegate(bool scrollup);
 
-		public IceInputBox()
+        private delegate void ScrollWindowPageDelegate(bool scrollup);
+        private delegate void ScrollConsoleWindowPageDelegate(bool scrollup);
+
+        
+        public IceInputBox()
 		{
 			InitializeComponent();
 			buffer = new ArrayList();
@@ -100,6 +104,30 @@ namespace IceChat2009
             else
                 FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
         }
+
+        private void ScrollConsoleWindowPage(bool scrollUp)
+        {
+            if (this.InvokeRequired)
+            {
+                ScrollConsoleWindowPageDelegate s = new ScrollConsoleWindowPageDelegate(ScrollConsoleWindowPage);
+                this.Invoke(s, new object[] { scrollUp });
+            }
+            else
+                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow.ScrollWindowPage(scrollUp);
+
+        }
+
+        private void ScrollWindowPage(bool scrollUp)
+        {
+            if (this.InvokeRequired)
+            {
+                ScrollWindowPageDelegate s = new ScrollWindowPageDelegate(ScrollWindowPage);
+                this.Invoke(s, new object[] { scrollUp });
+            }
+            else
+                FormMain.Instance.CurrentWindow.TextWindow.ScrollWindowPage(scrollUp);
+        }
+
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -325,7 +353,41 @@ namespace IceChat2009
 				base.SelectionStart = base.Text.Length;
 				return;
 			}
-			
+
+
+            if (e.KeyCode == Keys.PageDown)
+            {
+                //scroll window down one page
+                if (FormMain.Instance.CurrentWindowType != TabWindow.WindowType.Console)
+                {
+                    if (FormMain.Instance.CurrentWindow != null)
+                        ScrollWindowPage(false);
+                }
+                else
+                {
+                    //make a scroll window for the console
+                    //find the current window for the console
+                    ScrollConsoleWindowPage(false);
+                }
+            }
+
+            if (e.KeyCode == Keys.PageUp)
+            {
+                //scroll window down one page
+                if (FormMain.Instance.CurrentWindowType != TabWindow.WindowType.Console)
+                {
+                    if (FormMain.Instance.CurrentWindow != null)
+                        ScrollWindowPage(true);
+                }
+                else
+                {
+                    //make a scroll window for the console
+                    //find the current window for the console
+                    ScrollConsoleWindowPage(true);
+                }
+            }
+
+
 			if (e.KeyCode == Keys.Escape)
 			{
 				e.Handled=true;				
@@ -355,6 +417,7 @@ namespace IceChat2009
 				else
 					return;
 			}
+
 			if (e.KeyChar == (char)13 || ctrlKeyUsed)
 			{
 				if (command.Length == 0) 
