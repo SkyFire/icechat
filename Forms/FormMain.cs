@@ -156,7 +156,7 @@ namespace IceChat2009
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - October 14 2009";
+            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - November 14 2009";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -674,7 +674,7 @@ namespace IceChat2009
             
             tabMain.TabPages.Add(t);
             tabMain.SelectedTab = t;
-
+            
             WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1);
             WindowMessage(null, "Console", "\x00034** This is an Alpha version, not fully functional **", 1);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.63", 1);
@@ -1131,6 +1131,9 @@ namespace IceChat2009
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
             ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1);
+            
+            ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
+
         }
 
         /// <summary>
@@ -1144,6 +1147,8 @@ namespace IceChat2009
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
             ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
+
         }
 
         /// <summary>
@@ -1173,6 +1178,9 @@ namespace IceChat2009
             //send it to the current window as well
             if (CurrentWindowType != TabWindow.WindowType.Console)
                 CurrentWindowMessage(connection, message, 4);
+
+            ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
+
         }
 
         /// <summary>
@@ -1185,6 +1193,13 @@ namespace IceChat2009
         {
             //send whois data to the current window for now
             CurrentWindowMessage(connection, data, 12);
+            
+            //check if there is a query window open
+            TabWindow t = GetWindow(connection, nick, TabWindow.WindowType.Query);
+            if (t != null)
+            {
+                t.TextWindow.AppendText(data, 12);
+            }
         }
 
         /// <summary>
@@ -1218,8 +1233,6 @@ namespace IceChat2009
                 if (!ishandled)
                     t.TextWindow.AppendText(msg, 1);
 
-
-                //t.TextWindow.AppendText(msg, 1);
                 t.LastMessageType = ServerMessageType.Action;
             }
         }

@@ -111,6 +111,8 @@ namespace IceChat2009
                     lastMessageType = value;
                     //repaint the tab
                     ((IceTabControl)this.Parent).RefreshTabs();
+
+                    FormMain.Instance.ServerTree.Invalidate();
                 }
             }
         }
