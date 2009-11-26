@@ -104,13 +104,14 @@ namespace IceChat2009
 
         private delegate void ScrollValueDelegate(int value);
 
+        private readonly int MaxTextLines = 500;
 
         public TextWindow()
         {
             InitializeComponent();
 
-            displayLines = new DisplayLine[2000];
-            textLines = new TextLine[500];
+            displayLines = new DisplayLine[MaxTextLines * 4];
+            textLines = new TextLine[MaxTextLines];
 
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
@@ -138,7 +139,6 @@ namespace IceChat2009
             //get the current line mouse is over
             int line = ((this.Height + (lineSize/2)) - e.Y)  / lineSize;
             line = totalDisplayLines - line;
-
             line = (line - (totalDisplayLines - vScrollBar.Value));
 
             linkedWord = ReturnWord(line, e.Location.X);
@@ -160,6 +160,7 @@ namespace IceChat2009
             //get the current character the mouse is over. 
             curHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
             curHighLine = totalDisplayLines - curHighLine;
+            curHighLine = (curHighLine - (totalDisplayLines - vScrollBar.Value));            
             curHighChar = ReturnChar(line, e.Location.X);
             
             if (startHighLine!=-1)
@@ -285,6 +286,8 @@ namespace IceChat2009
             //get the current character the mouse is over. 
             startHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
             startHighLine = totalDisplayLines - startHighLine;
+            startHighLine = (startHighLine - (totalDisplayLines - vScrollBar.Value));
+            
             startHighChar = ReturnChar(startHighLine, e.Location.X);
 
             //what kind of a popupmenu do we want?
@@ -325,7 +328,7 @@ namespace IceChat2009
                         string[] menuItems = p.Menu;
 
                         //build the menu
-                        ToolStripMenuItem t;
+                        ToolStripItem t;
                         int subMenu = 0;
 
                         popupMenu.Items.Clear();
@@ -354,34 +357,45 @@ namespace IceChat2009
                                 caption = menuItem;
                                 command = "";
                             }
-
-                            t = new ToolStripMenuItem(caption);
-
-                            //parse out the command/$identifiers                            
-                            command = command.Replace("$1", windowName);
-
-                            if (popupType == "Channel")
+                            
+                            if (caption.Length > 0)
                             {
-                                command = command.Replace("$chan", windowName);
-                            }
-                            else if (popupType == "Query")
-                            {
-                                command = command.Replace("$nick", windowName);
-                            }
-                            else if (popupType == "Console")
-                            {
-                                command = command.Replace("$server", windowName);
-                            }
- 
-                            t.Click += new EventHandler(OnPopupMenuClick);
-                            t.Tag = command;
+                                if (popupType == "Channel")
+                                {
+                                    caption = caption.Replace("$chan", windowName);
+                                    command = command.Replace("$chan", windowName);
+                                }
+                                else if (popupType == "Query")
+                                {
+                                    caption = caption.Replace("$nick", windowName);
+                                    command = command.Replace("$nick", windowName);
+                                }
+                                else if (popupType == "Console")
+                                {
+                                    caption = caption.Replace("$server", windowName);
+                                    command = command.Replace("$server", windowName);
+                                }
 
-                            if (menuDepth == 0)
-                                subMenu = popupMenu.Items.Add(t);
-                            else
-                                ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+                                if (caption == "-")
+                                    t = new ToolStripSeparator();
+                                else
+                                {
+                                    t = new ToolStripMenuItem(caption);
 
-                            t = null;
+                                    //parse out the command/$identifiers                            
+                                    command = command.Replace("$1", windowName);
+
+                                    t.Click += new EventHandler(OnPopupMenuClick);
+                                    t.Tag = command;
+                                }
+
+                                if (menuDepth == 0)
+                                    subMenu = popupMenu.Items.Add(t);
+                                else
+                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+
+                                t = null;
+                            }
                         }
 
                         popupMenu.Show(this, e.Location);
@@ -596,8 +610,6 @@ namespace IceChat2009
 
             totalLines++;
 
-            //add line numbers for temp measure
-            //newLine = totalLines.ToString() + ":" + newLine; 
 
             //emoticons not being parsed as of yet
             //newLine = ParseEmoticons(newLine);
@@ -605,36 +617,39 @@ namespace IceChat2009
             if (singleLine) totalLines = 1;
 
             //check if 500 lines, and trim if so
-            if (totalLines >= 500)
+            if (totalLines == MaxTextLines)
             {
-                int x = 0;
-                for (int i = totalLines - 450; i <= totalLines - 1; i++)
+                int x = 1;
+                for (int i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
                 {
                     textLines[x].totalLines = textLines[i].totalLines;
                     textLines[x].width = textLines[i].width;
                     textLines[x].line = textLines[i].line;
+                    textLines[x].textColor = textLines[i].textColor;
                     x++;
                 }
 
-                for (int i = 450; i <= 499; i++)
+                for (int i = (MaxTextLines - 49); i < MaxTextLines; i++)
                 {
                     textLines[i].totalLines = 0;
                     textLines[i].line = "";
                     textLines[i].width = 0;
                 }
 
-                totalLines = 450;
+                totalLines = MaxTextLines - 50;
 
                 if (this.Height != 0)
                 {
                     UpdateScrollBar();
-
                     Invalidate();
                 }
 
-                totalLines = 451;
+                totalLines++;
 
             }
+
+            //add line numbers for temp measure
+            //newLine = totalLines.ToString() + ":" + newLine; 
 
             textLines[totalLines].line = newLine;
 
@@ -683,16 +698,16 @@ namespace IceChat2009
             {
                 if (vScrollBar.Value > vScrollBar.LargeChange)
                 {
-                    vScrollBar.Value = vScrollBar.Value - vScrollBar.LargeChange;
+                    vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
                     Invalidate();
                 }
             }
             else
             {
                 if (vScrollBar.Value <= vScrollBar.Maximum - (vScrollBar.LargeChange * 2))
-                    vScrollBar.Value = vScrollBar.Value + vScrollBar.LargeChange;
+                    vScrollBar.Value = vScrollBar.Value + (vScrollBar.LargeChange - 1);
                 else
-                    vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange +1;
+                    vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange + 1;
                 Invalidate();
             }
 
@@ -864,7 +879,8 @@ namespace IceChat2009
         #endregion
 
         #region Emoticon and Color Parsing
-
+		
+		/*
         private string ParseEmoticons(string line)
         {
             string allEmoticons = ":)|:P|:D";
@@ -877,7 +893,7 @@ namespace IceChat2009
             return line;
             
         }
-
+		*/
         private string RedefineColorCodes(string line)
         {
             //redefine the irc server colors to own standard
@@ -1415,7 +1431,7 @@ namespace IceChat2009
             MatchCollection matches = re.Matches(data);
             foreach (Match m in matches)
             {
-                System.Diagnostics.Debug.WriteLine(m.Value);
+                //System.Diagnostics.Debug.WriteLine(m.Value);
                 data = data.Replace(StripCodes(m.Value), urlStart + StripCodes(m.Value) + urlEnd);
             }
 

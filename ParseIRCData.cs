@@ -354,7 +354,11 @@ namespace IceChat2009
                                     JoinChannel(this, channel, nickName, "", false);
                             }
                             break;
-
+                        case "365":  //End of Links
+                            msg = JoinString(ircData, 4, true);
+                            if (ServerMessage != null)
+                                ServerMessage(this, msg);                            
+                            break;
                         case "366":     //end of names
                             channel = ircData[3];
                             //channel is fully joined                            
@@ -362,7 +366,9 @@ namespace IceChat2009
                             if (c != null)
                             {
                                 c.IsFullyJoined = true;
-                                FormMain.Instance.NickList.RefreshList(c);
+                                if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Channel)
+                                    if ((FormMain.Instance.NickList.CurrentWindow.WindowName == c.WindowName) && (FormMain.Instance.NickList.CurrentWindow.Connection == c.Connection))
+                                        FormMain.Instance.NickList.RefreshList(c);
                             }
                             break;
 
@@ -407,6 +413,20 @@ namespace IceChat2009
                                         OutGoingCommand(this, autoCommand);
                                 }
                             }
+
+                            if (serverSetting.RejoinChannels)
+                            {
+                                //rejoin any channels that are open
+                                foreach (TabWindow tw in FormMain.Instance.TabMain.WindowTabs)
+                                {
+                                    if (tw.WindowStyle == TabWindow.WindowType.Channel)
+                                    {
+                                        if (tw.Connection == this)
+                                            SendData("JOIN " + tw.WindowName);
+                                    }
+                                }
+                            }
+
                             //run autojoins
                             if (serverSetting.AutoJoinEnable)
                             {
@@ -419,6 +439,7 @@ namespace IceChat2009
                                         SendData("JOIN " + chan);
                                 }
                             }
+
                             fullyConnected = true;
                             
                             //read the command queue
@@ -448,16 +469,17 @@ namespace IceChat2009
                         case "PRIVMSG":
                             channel = ircData[2];
                             msg = JoinString(ircData, 3, true);
+                            
                             if (channel == serverSetting.NickName)
                             {
                                 //this is a private message to you
                                 //check if it was an notice/action
-                                if (msg.StartsWith(((char)1).ToString()))
+                                if (msg[0] == (char)1)
                                 {
                                     //drop the 1st and last CTCP Character
                                     msg = msg.Substring(1, msg.Length - 2);
                                     //check for action
-                                    switch (msg.Split(' ')[0])
+                                    switch (msg.Split(' ')[0].ToUpper())
                                     {
                                         case "ACTION":
                                             msg = msg.Substring(6);
@@ -465,16 +487,18 @@ namespace IceChat2009
                                                 QueryAction(this, nick, host, msg);
                                             break;
                                         case "VERSION":
-                                            if (CtcpMessage != null)
-                                                CtcpMessage(this, nick, "VERSION");
-                                            break;
                                         case "TIME":
-                                            if (CtcpMessage != null)
-                                                CtcpMessage(this, nick, "TIME");
-                                            break;
                                         case "PING":
+                                        case "USERINFO":
+                                        case "CLIENTINFO":
+                                        case "SOURCE":
+                                        case "FINGER":
                                             if (CtcpMessage != null)
-                                                CtcpMessage(this, nick, "PING");
+                                                CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
+                                            break;
+                                        default:
+                                            if (UserNotice != null)
+                                                UserNotice(this, nick, msg);
                                             break;
                                     }
                                 }
@@ -486,11 +510,41 @@ namespace IceChat2009
                             }
                             else
                             {
-                                if (msg.StartsWith(((char)1).ToString() + "ACTION"))
+                                if (msg[0] == (char)1)
                                 {
-                                    msg = msg.Substring(7, msg.Length - 8);
-                                    if (ChannelAction != null)
-                                        ChannelAction(this, channel, nick, host, msg);
+                                    msg = msg.Substring(1, msg.Length - 2);
+                                    switch (msg.Split(' ')[0].ToUpper())
+                                    {
+                                        case "ACTION":
+                                            msg = msg.Substring(7);
+                                            if (ChannelAction != null)
+                                                ChannelAction(this, channel, nick, host, msg);
+                                            break;
+                                        case "VERSION":
+                                        case "TIME":
+                                        case "PING":
+                                        case "USERINFO":
+                                        case "CLIENTINFO":
+                                        case "SOURCE":
+                                        case "FINGER":
+                                            if (CtcpMessage != null)
+                                                CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
+                                            break;
+                                        default:
+                                            if (msg.Substring(7).ToUpper() == "ACTION ")
+                                            {
+                                                msg = msg.Substring(7);
+                                                if (ChannelAction != null)
+                                                    ChannelAction(this, channel, nick, host, msg);
+                                            }
+                                            else
+                                            //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
+                                            {
+                                                if (ChannelNotice != null)
+                                                    ChannelNotice(this, nick, host,(char)32,channel, msg);
+                                            }
+                                            break;
+                                    }
                                 }
                                 else
                                 {
@@ -504,7 +558,6 @@ namespace IceChat2009
                             if (ChannelInvite != null)
                                 ChannelInvite(this, channel, nick, host);
                             break;
-
 
                         case "NOTICE":
                             msg = JoinString(ircData, 3, true);

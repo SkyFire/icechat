@@ -40,6 +40,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormUserInfo";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "User Information";
             this.ResumeLayout(false);

@@ -1,25 +1,39 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Forms/FormMain.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" ActiveRuntime="Mono 2.4.2.3" ctype="Workspace" />
+  <MonoDevelop.Ide.DebuggingService>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Controls\ChannelList.cs" ctype="Workbench">
     <Files>
-      <File FileName="Forms/FormMain.cs" Line="2259" Column="27" />
+      <File FileName="Controls\ConsoleTabWindow.cs" Line="255" Column="101" />
+      <File FileName="Forms\FormMain.cs" Line="146" Column="17" />
+      <File FileName="Forms\FormEditor.cs" Line="274" Column="6" />
+      <File FileName="Controls\IceTabControl.cs" Line="52" Column="4" />
+      <File FileName="Forms\FormOptions.cs" Line="197" Column="15" />
+      <File FileName="Forms\FormUserInfo.cs" Line="13" Column="27" />
+      <File FileName="Settings.cs" Line="38" Column="1" />
+      <File FileName="Controls\ServerTree.cs" Line="47" Column="9" />
+      <File FileName="Controls\TextWindow.cs" Line="892" Column="5" />
+      <File FileName="Controls\ChannelList.cs" Line="134" Column="13" />
+      <File FileName="IRCConnection.cs" Line="338" Column="21" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="IceChat2009" expanded="True">
-            <Node name="Forms" expanded="True">
-              <Node name="FormMain.cs" selected="True" />
+            <Node name="Controls" expanded="True">
+              <Node name="ChannelList.cs" selected="True" />
             </Node>
+            <Node name="Forms" expanded="True" />
           </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />
       </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" ctype="Workspace" />
 </Properties>

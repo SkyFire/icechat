@@ -180,6 +180,9 @@ namespace IceChat2009
         private string _timeStamp = "[hh:mm.ss] ";
         private bool _saveWindow = true;
         private bool _identServer = true;
+        private bool _logConsole = true;
+        private bool _logChannel = true;
+        private bool _logQuery = true;
 
         [XmlElement("TimeStamp")]
         public string TimeStamp
@@ -214,6 +217,26 @@ namespace IceChat2009
             set { this._identServer = value; }
         }
 
+        [XmlElement("LogConsole")]
+        public bool LogConsole
+        {
+            get { return this._logConsole; }
+            set { this._logConsole = value; }
+        }
+
+        [XmlElement("LogChannel")]
+        public bool LogChannel
+        {
+            get { return this._logChannel; }
+            set { this._logChannel = value; }
+        }
+
+        [XmlElement("LogQuery")]
+        public bool LogQuery
+        {
+            get { return this._logQuery; }
+            set { this._logQuery = value; }
+        }
     }
     
     [XmlRoot("IceChatMessageFormat")]

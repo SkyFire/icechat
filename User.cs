@@ -33,7 +33,7 @@ namespace IceChat2009
         private string nickName;
         private IRCConnection connection;
 
-        public string Host;
+        public string Host = "";
         public bool[] Level;
 
         public int CompareTo(object obj)

@@ -81,6 +81,11 @@ namespace IceChat2009
             textServerListFont.Text = icechatFonts.FontSettings[4].FontName;
             textServerListFontSize.Text = icechatFonts.FontSettings[4].FontSize.ToString();
 
+            textInputFont.Font = new Font(icechatFonts.FontSettings[5].FontName, 10);
+            textInputFont.Text = icechatFonts.FontSettings[5].FontName;
+            textInputFontSize.Text = icechatFonts.FontSettings[5].FontSize.ToString();
+
+
             //textChannelBarFont.Font = new Font(icechatFonts.FontSettings[6].FontName, 10);
             //textChannelBarFont.Text = icechatFonts.FontSettings[6].FontName;
             //textChannelBarFontSize.Text = icechatFonts.FontSettings[6].FontSize.ToString();
@@ -88,6 +93,9 @@ namespace IceChat2009
             //populate the settings
             textTimeStamp.Text = iceChatOptions.TimeStamp;
             checkSaveWindowPosition.Checked = iceChatOptions.SaveWindowPosition;
+            checkLogConsole.Checked = iceChatOptions.LogConsole;
+            checkLogChannel.Checked = iceChatOptions.LogChannel;
+            checkLogQuery.Checked = iceChatOptions.LogQuery;
 
             textDefaultNick.Text = iceChatOptions.DefaultNick;
             checkIdentServer.Checked = iceChatOptions.IdentServer;
@@ -113,6 +121,9 @@ namespace IceChat2009
             iceChatOptions.TimeStamp = textTimeStamp.Text;
             iceChatOptions.DefaultNick = textDefaultNick.Text;
             iceChatOptions.IdentServer = checkIdentServer.Checked;
+            iceChatOptions.LogConsole = checkLogConsole.Checked;
+            iceChatOptions.LogChannel = checkLogChannel.Checked;
+            iceChatOptions.LogQuery = checkLogQuery.Checked;
 
             //set all the fonts
             icechatFonts.FontSettings[0].FontName = textConsoleFont.Text;
@@ -130,6 +141,9 @@ namespace IceChat2009
             icechatFonts.FontSettings[4].FontName = textServerListFont.Text;
             icechatFonts.FontSettings[4].FontSize = float.Parse(textServerListFontSize.Text);
 
+            icechatFonts.FontSettings[5].FontName = textInputFont.Text;
+            icechatFonts.FontSettings[5].FontSize = float.Parse(textInputFontSize.Text);
+            
             //icechatFonts.FontSettings[6].FontName = textChannelBarFont.Text;
             //icechatFonts.FontSettings[6].FontSize = float.Parse(textChannelBarFontSize.Text);
             
@@ -143,12 +157,12 @@ namespace IceChat2009
         {
             FontDialog fd = new FontDialog();
             //load the current font
-            fd.Font = new Font(textConsoleFont.Text,float.Parse( textConsoleFontSize.Text));
-            if (fd.ShowDialog() != DialogResult.Cancel)
+            fd.Font = new Font(textConsoleFont.Text,float.Parse( textConsoleFontSize.Text) , textConsoleFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textConsoleFont.Text = fd.Font.Name;
                 textConsoleFontSize.Text = fd.Font.Size.ToString();
-                textConsoleFont.Font = new Font(fd.Font.Name,10);
+                textConsoleFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
             }
         }
 
@@ -156,12 +170,12 @@ namespace IceChat2009
         {
             FontDialog fd = new FontDialog();
             //load the current font
-            fd.Font = new Font(textChannelFont.Text, float.Parse(textChannelFontSize.Text));
-            if (fd.ShowDialog() != DialogResult.Cancel)
+            fd.Font = new Font(textChannelFont.Text, float.Parse(textChannelFontSize.Text), textChannelFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textChannelFont.Text = fd.Font.Name;
                 textChannelFontSize.Text = fd.Font.Size.ToString();
-                textChannelFont.Font = new Font(fd.Font.Name, 10);
+                textChannelFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
             }
         }
 
@@ -169,12 +183,12 @@ namespace IceChat2009
         {
             FontDialog fd = new FontDialog();
             //load the current font
-            fd.Font = new Font(textQueryFont.Text, float.Parse(textQueryFontSize.Text));
-            if (fd.ShowDialog() != DialogResult.Cancel)
+            fd.Font = new Font(textQueryFont.Text, float.Parse(textQueryFontSize.Text), textQueryFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textQueryFont.Text = fd.Font.Name;
                 textQueryFontSize.Text = fd.Font.Size.ToString();
-                textQueryFont.Font = new Font(fd.Font.Name, 10);
+                textQueryFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
             }
         }
 
@@ -196,15 +210,13 @@ namespace IceChat2009
         private void buttonNickListFont_Click(object sender, EventArgs e)
         {
             FontDialog fd = new FontDialog();
-            fd.AllowVerticalFonts = false;
-            fd.FontMustExist = true;
             //load the current font
-            fd.Font = new Font(textNickListFont.Text, float.Parse(textNickListFontSize.Text));
-            if (fd.ShowDialog() != DialogResult.Cancel)
+            fd.Font = new Font(textNickListFont.Text, float.Parse(textNickListFontSize.Text), textNickListFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textNickListFont.Text = fd.Font.Name;
                 textNickListFontSize.Text = fd.Font.Size.ToString();
-                textNickListFont.Font = new Font(fd.Font.Name, 10);
+                textNickListFont.Font = new Font(fd.Font.Name, 10,fd.Font.Style);
             }
             
         }
@@ -212,17 +224,30 @@ namespace IceChat2009
         private void buttonServerListFont_Click(object sender, EventArgs e)
         {
             FontDialog fd = new FontDialog();
-            //load the current font
-            fd.Font = new Font(textServerListFont.Text, float.Parse(textServerListFontSize.Text));
-            if (fd.ShowDialog() != DialogResult.Cancel)
+            //load the current font            
+            fd.Font = new Font(textServerListFont.Text, float.Parse(textServerListFontSize.Text), textServerListFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textServerListFont.Text = fd.Font.Name;
                 textServerListFontSize.Text = fd.Font.Size.ToString();
-                textServerListFont.Font = new Font(fd.Font.Name, 10);
+                textServerListFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
             }
 
         }
 
-
+        private void buttonInputFont_Click(object sender, EventArgs e)
+        {
+            FontDialog fd = new FontDialog();
+            fd.AllowVerticalFonts = false;
+            fd.FontMustExist = true;            
+            //load the current font
+            fd.Font = new Font(textInputFont.Text, float.Parse(textInputFontSize.Text), textInputFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
+            {
+                textInputFont.Text = fd.Font.Name;
+                textInputFontSize.Text = fd.Font.Size.ToString();
+                textInputFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
+            }
+        }
    }
 }

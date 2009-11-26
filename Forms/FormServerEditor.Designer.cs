@@ -143,7 +143,7 @@
             // 
             // textAltNickName
             // 
-            this.textAltNickName.Location = new System.Drawing.Point(391, 69);
+            this.textAltNickName.Location = new System.Drawing.Point(459, 73);
             this.textAltNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAltNickName.Name = "textAltNickName";
             this.textAltNickName.Size = new System.Drawing.Size(150, 23);
@@ -152,7 +152,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(283, 68);
+            this.label9.Location = new System.Drawing.Point(351, 72);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(99, 16);
             this.label9.TabIndex = 47;
@@ -180,7 +180,7 @@
             this.textQuitMessage.Location = new System.Drawing.Point(115, 162);
             this.textQuitMessage.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textQuitMessage.Name = "textQuitMessage";
-            this.textQuitMessage.Size = new System.Drawing.Size(218, 23);
+            this.textQuitMessage.Size = new System.Drawing.Size(228, 23);
             this.textQuitMessage.TabIndex = 6;
             // 
             // label8
@@ -206,7 +206,7 @@
             this.textFullName.Location = new System.Drawing.Point(115, 131);
             this.textFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textFullName.Name = "textFullName";
-            this.textFullName.Size = new System.Drawing.Size(218, 23);
+            this.textFullName.Size = new System.Drawing.Size(228, 23);
             this.textFullName.TabIndex = 5;
             // 
             // textIdentName
@@ -228,7 +228,7 @@
             // 
             // textServerPort
             // 
-            this.textServerPort.Location = new System.Drawing.Point(391, 8);
+            this.textServerPort.Location = new System.Drawing.Point(459, 12);
             this.textServerPort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServerPort.Name = "textServerPort";
             this.textServerPort.Size = new System.Drawing.Size(53, 23);
@@ -239,7 +239,7 @@
             this.textServername.Location = new System.Drawing.Point(115, 8);
             this.textServername.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServername.Name = "textServername";
-            this.textServername.Size = new System.Drawing.Size(150, 23);
+            this.textServername.Size = new System.Drawing.Size(228, 23);
             this.textServername.TabIndex = 0;
             // 
             // textNickName
@@ -253,7 +253,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(283, 7);
+            this.label3.Location = new System.Drawing.Point(351, 11);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(83, 16);
             this.label3.TabIndex = 39;

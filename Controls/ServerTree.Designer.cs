@@ -48,9 +48,15 @@
             this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoPerformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuQuery = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearWindowToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.userInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.silenceUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
+            this.contextMenuQuery.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelButtons
@@ -232,6 +238,44 @@
             this.contextMenuServer.Name = "contextMenuServer";
             this.contextMenuServer.Size = new System.Drawing.Size(147, 114);
             // 
+            // contextMenuQuery
+            // 
+            this.contextMenuQuery.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearWindowToolStripMenuItem1,
+            this.closeWindowToolStripMenuItem,
+            this.userInformationToolStripMenuItem,
+            this.silenceUserToolStripMenuItem});
+            this.contextMenuQuery.Name = "contextMenuQuery";
+            this.contextMenuQuery.Size = new System.Drawing.Size(164, 114);
+            // 
+            // clearWindowToolStripMenuItem1
+            // 
+            this.clearWindowToolStripMenuItem1.Name = "clearWindowToolStripMenuItem1";
+            this.clearWindowToolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
+            this.clearWindowToolStripMenuItem1.Text = "Clear Window";
+            this.clearWindowToolStripMenuItem1.Click += new System.EventHandler(this.clearWindowToolStripMenuItem1_Click);
+            // 
+            // closeWindowToolStripMenuItem
+            // 
+            this.closeWindowToolStripMenuItem.Name = "closeWindowToolStripMenuItem";
+            this.closeWindowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.closeWindowToolStripMenuItem.Text = "Close Window";
+            this.closeWindowToolStripMenuItem.Click += new System.EventHandler(this.closeWindowToolStripMenuItem_Click);
+            // 
+            // userInformationToolStripMenuItem
+            // 
+            this.userInformationToolStripMenuItem.Name = "userInformationToolStripMenuItem";
+            this.userInformationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.userInformationToolStripMenuItem.Text = "User Information";
+            this.userInformationToolStripMenuItem.Click += new System.EventHandler(this.userInformationToolStripMenuItem_Click);
+            // 
+            // silenceUserToolStripMenuItem
+            // 
+            this.silenceUserToolStripMenuItem.Name = "silenceUserToolStripMenuItem";
+            this.silenceUserToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.silenceUserToolStripMenuItem.Text = "Silence User";
+            this.silenceUserToolStripMenuItem.Click += new System.EventHandler(this.silenceUserToolStripMenuItem_Click);
+            // 
             // ServerTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 14F);
@@ -246,6 +290,7 @@
             this.panelButtons.ResumeLayout(false);
             this.contextMenuChannel.ResumeLayout(false);
             this.contextMenuServer.ResumeLayout(false);
+            this.contextMenuQuery.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -272,5 +317,10 @@
         private System.Windows.Forms.ToolStripMenuItem autoJoinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoPerformToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuServer;
+        private System.Windows.Forms.ContextMenuStrip contextMenuQuery;
+        private System.Windows.Forms.ToolStripMenuItem clearWindowToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem closeWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem userInformationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem silenceUserToolStripMenuItem;
     }
 }

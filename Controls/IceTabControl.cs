@@ -1,4 +1,4 @@
-﻿/******************************************************************************\
+/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
  * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
@@ -48,7 +48,8 @@ namespace IceChat2009
 
         public IceTabControl()
         {
-            
+            InitializeComponent();
+			
             this.MouseDown += new MouseEventHandler(OnMouseDown);
             this.MouseMove += new MouseEventHandler(OnMouseMove);
             this.DragOver += new DragEventHandler(OnDragOver);
@@ -167,7 +168,7 @@ namespace IceChat2009
                     string[] menuItems = p.Menu;
 
                     //build the menu
-                    ToolStripMenuItem t;
+                    ToolStripItem t;
                     int subMenu = 0;
 
                     foreach (string menu in menuItems)
@@ -194,18 +195,56 @@ namespace IceChat2009
                             caption = menuItem;
                             command = "";
                         }
+                        
+                        
+                        if (caption.Length > 0)
+                        {
+                            //parse out $identifiers
+                            TabWindow tw = null;
+                            if (selectedTabIndex != 0)
+                            {
+                                tw = ((TabWindow)FormMain.Instance.TabMain.TabPages[selectedTabIndex]);
+                            }
 
-                        t = new ToolStripMenuItem(caption);
+                            if (p.PopupType == "Channel")
+                            {
+                                if (tw != null)
+                                {
+                                    caption = caption.Replace("$chan", tw.WindowName);
+                                    command = command.Replace("$chan", tw.WindowName);
+                                    caption = caption.Replace("$1", tw.WindowName);
+                                    command = command.Replace("$1", tw.WindowName);
+                                }
+                            }
 
-                        t.Click += new EventHandler(OnPopupExtraMenuClick);
-                        t.Tag = command;
+                            if (p.PopupType == "Query")
+                            {
+                                if (tw != null)
+                                {
+                                    caption = caption.Replace("$nick", tw.WindowName);
+                                    command = command.Replace("$nick", tw.WindowName);
+                                    caption = caption.Replace("$1", tw.WindowName);
+                                    command = command.Replace("$1", tw.WindowName);
+                                }
+                            }
+                            
+                            if (caption == "-")
+                                t = new ToolStripSeparator();
+                            else
+                            {
+                                t = new ToolStripMenuItem(caption);
 
-                        if (menuDepth == 0)
-                            subMenu = mainMenu.Items.Add(t);
-                        else
-                            ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+                                t.Click += new EventHandler(OnPopupExtraMenuClick);
+                                t.Tag = command;
+                            }
 
-                        t = null;
+                            if (menuDepth == 0)
+                                subMenu = mainMenu.Items.Add(t);
+                            else
+                                ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+
+                            t = null;
+                        }
                     }
                 }
             }

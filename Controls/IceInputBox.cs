@@ -64,7 +64,7 @@ namespace IceChat2009
             nickCompleteNames = new ArrayList();
 
 		}
-
+        
         private void IceInputBox_MouseWheel(object sender, MouseEventArgs e)
         {
             //120 -- scroll up
@@ -397,6 +397,7 @@ namespace IceChat2009
 			base.OnKeyDown (e);			
 		
 		}
+        
         public void OnEnterKey()
         {
             OnKeyPress(new KeyPressEventArgs((char)13));

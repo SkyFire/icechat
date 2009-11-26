@@ -34,6 +34,13 @@ namespace IceChat2009
             }
         }
 
+        internal Font InputBoxFont
+        {
+            get { return textInput.Font; }
+            set { textInput.Font = value; }
+
+        }
+
         internal void SendCommand(string data)
         {
             if (OnCommand != null)

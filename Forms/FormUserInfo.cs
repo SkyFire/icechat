@@ -21,8 +21,7 @@ namespace IceChat2009
         public void SetUser(User nick)
         {
             user = nick;
-
+            this.Text = nick.NickName;
         }
-
     }
 }

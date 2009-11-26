@@ -150,12 +150,13 @@ namespace IceChat2009
                     if (t.Connection == this)
                     {
                         t.ClearNicks();
+                        t.IsFullyJoined = false;
 
                         t.TextWindow.AppendText(msg, 1);
                         t.LastMessageType = FormMain.ServerMessageType.ServerMessage;
 
                         if (FormMain.Instance.CurrentWindow == t)
-                            FormMain.Instance.NickList.Invalidate();
+                            FormMain.Instance.NickList.Header = t.WindowName + ":0";                            
                     }
                 }
             }
@@ -272,13 +273,25 @@ namespace IceChat2009
             //get the proper encoding            
             byte[] bytData = Encoding.ASCII.GetBytes(data + "\n");
             if (bytData.Length > 0)
-            {
+            {                
                 if (serverSocket.Connected)
                 {
-                    serverSocket.BeginSend(bytData, 0, bytData.Length, 0, new AsyncCallback(OnSendData), serverSocket);
-                    //raise an event for the debug window
-                    if (RawServerOutgoingData != null)
-                        RawServerOutgoingData(this, data);
+                    try
+                    {
+
+                        serverSocket.BeginSend(bytData, 0, bytData.Length, 0, new AsyncCallback(OnSendData), serverSocket);
+                        //raise an event for the debug window
+                        if (RawServerOutgoingData != null)
+                            RawServerOutgoingData(this, data);
+                    }
+                    catch (SocketException se)
+                    {
+                        //some kind of a socket error
+                        if (ServerError != null)
+                            ServerError(this, "Error: You are not Connected - Can not send:" + se.Message);
+
+                        disconnectError = true;
+                    }
                 }
                 else
                 {
@@ -372,22 +385,23 @@ namespace IceChat2009
                 }
                 else
                 {
-                    //connection lost
-                    if (ServerError != null)
-                        ServerError(this, "Connection Lost");
-                    
+                    //connection lost                    
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                    
+                    if (ServerError != null)
+                        ServerError(this, "Connection Lost");
                 }
             }
             catch (Exception e)
             {
-                if (ServerError != null)
-                    ServerError(this, "Receive Data Error:" + e.Source + ":" + e.Message.ToString() + ":" + serverSocket.Connected);
-
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                
+                if (ServerError != null)
+                    ServerError(this, "OnReceiveData Error:" + e.Source + ":" + e.Message.ToString());
+
             }             
         }
         
@@ -410,11 +424,11 @@ namespace IceChat2009
                 // (typical in the IPv6 case).
                 foreach (IPAddress address in hostEntry.AddressList)
                 {
-                    IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
-                    Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
                     try
                     {
+                        IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
+                        Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
                         if (ServerMessage != null)
                         {
                             string msg = GetMessageFormat("Server Connect");

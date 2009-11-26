@@ -31,12 +31,16 @@ namespace IceChat2009
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabMain = new System.Windows.Forms.TabPage();
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabDisplay = new System.Windows.Forms.TabPage();
             this.checkSaveWindowPosition = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabLogging = new System.Windows.Forms.TabPage();
+            this.checkLogQuery = new System.Windows.Forms.CheckBox();
+            this.checkLogChannel = new System.Windows.Forms.CheckBox();
+            this.checkLogConsole = new System.Windows.Forms.CheckBox();
+            this.tabFonts = new System.Windows.Forms.TabPage();
             this.buttonInputFont = new System.Windows.Forms.Button();
             this.buttonServerListFont = new System.Windows.Forms.Button();
             this.textInputFont = new System.Windows.Forms.TextBox();
@@ -67,17 +71,18 @@ namespace IceChat2009
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.tabSounds = new System.Windows.Forms.TabPage();
+            this.tabEvents = new System.Windows.Forms.TabPage();
+            this.tabServer = new System.Windows.Forms.TabPage();
+            this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage6.SuspendLayout();
+            this.tabMain.SuspendLayout();
+            this.tabDisplay.SuspendLayout();
+            this.tabLogging.SuspendLayout();
+            this.tabFonts.SuspendLayout();
+            this.tabServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSave
@@ -107,12 +112,13 @@ namespace IceChat2009
             // 
             // tabControlOptions
             // 
-            this.tabControlOptions.Controls.Add(this.tabPage1);
-            this.tabControlOptions.Controls.Add(this.tabPage2);
-            this.tabControlOptions.Controls.Add(this.tabPage3);
-            this.tabControlOptions.Controls.Add(this.tabPage4);
-            this.tabControlOptions.Controls.Add(this.tabPage5);
-            this.tabControlOptions.Controls.Add(this.tabPage6);
+            this.tabControlOptions.Controls.Add(this.tabMain);
+            this.tabControlOptions.Controls.Add(this.tabDisplay);
+            this.tabControlOptions.Controls.Add(this.tabLogging);
+            this.tabControlOptions.Controls.Add(this.tabFonts);
+            this.tabControlOptions.Controls.Add(this.tabSounds);
+            this.tabControlOptions.Controls.Add(this.tabEvents);
+            this.tabControlOptions.Controls.Add(this.tabServer);
             this.tabControlOptions.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Margin = new System.Windows.Forms.Padding(4);
@@ -121,18 +127,18 @@ namespace IceChat2009
             this.tabControlOptions.Size = new System.Drawing.Size(637, 242);
             this.tabControlOptions.TabIndex = 0;
             // 
-            // tabPage1
+            // tabMain
             // 
-            this.tabPage1.Controls.Add(this.textTimeStamp);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(629, 213);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Main Settings";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabMain.Controls.Add(this.textTimeStamp);
+            this.tabMain.Controls.Add(this.label2);
+            this.tabMain.Location = new System.Drawing.Point(4, 25);
+            this.tabMain.Margin = new System.Windows.Forms.Padding(4);
+            this.tabMain.Name = "tabMain";
+            this.tabMain.Padding = new System.Windows.Forms.Padding(4);
+            this.tabMain.Size = new System.Drawing.Size(629, 213);
+            this.tabMain.TabIndex = 0;
+            this.tabMain.Text = "Main Settings";
+            this.tabMain.UseVisualStyleBackColor = true;
             // 
             // textTimeStamp
             // 
@@ -146,74 +152,117 @@ namespace IceChat2009
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(8, 11);
+            this.label2.Location = new System.Drawing.Point(12, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 16);
             this.label2.TabIndex = 40;
             this.label2.Text = "Time Stamp";
             // 
-            // tabPage2
+            // tabDisplay
             // 
-            this.tabPage2.Controls.Add(this.checkSaveWindowPosition);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(629, 213);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Display";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabDisplay.Controls.Add(this.checkSaveWindowPosition);
+            this.tabDisplay.Location = new System.Drawing.Point(4, 25);
+            this.tabDisplay.Margin = new System.Windows.Forms.Padding(4);
+            this.tabDisplay.Name = "tabDisplay";
+            this.tabDisplay.Padding = new System.Windows.Forms.Padding(4);
+            this.tabDisplay.Size = new System.Drawing.Size(629, 213);
+            this.tabDisplay.TabIndex = 1;
+            this.tabDisplay.Text = "Display";
+            this.tabDisplay.UseVisualStyleBackColor = true;
             // 
             // checkSaveWindowPosition
             // 
             this.checkSaveWindowPosition.AutoSize = true;
-            this.checkSaveWindowPosition.Location = new System.Drawing.Point(8, 11);
+            this.checkSaveWindowPosition.Location = new System.Drawing.Point(12, 11);
             this.checkSaveWindowPosition.Name = "checkSaveWindowPosition";
             this.checkSaveWindowPosition.Size = new System.Drawing.Size(229, 20);
             this.checkSaveWindowPosition.TabIndex = 0;
             this.checkSaveWindowPosition.Text = "Save Window Positions on Exit";
             this.checkSaveWindowPosition.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // tabLogging
             // 
-            this.tabPage3.Controls.Add(this.buttonInputFont);
-            this.tabPage3.Controls.Add(this.buttonServerListFont);
-            this.tabPage3.Controls.Add(this.textInputFont);
-            this.tabPage3.Controls.Add(this.label16);
-            this.tabPage3.Controls.Add(this.textInputFontSize);
-            this.tabPage3.Controls.Add(this.textServerListFontSize);
-            this.tabPage3.Controls.Add(this.label15);
-            this.tabPage3.Controls.Add(this.textServerListFont);
-            this.tabPage3.Controls.Add(this.buttonNickListFont);
-            this.tabPage3.Controls.Add(this.textNickListFontSize);
-            this.tabPage3.Controls.Add(this.label14);
-            this.tabPage3.Controls.Add(this.textNickListFont);
-            this.tabPage3.Controls.Add(this.buttonQueryFont);
-            this.tabPage3.Controls.Add(this.label10);
-            this.tabPage3.Controls.Add(this.textQueryFontSize);
-            this.tabPage3.Controls.Add(this.textQueryFont);
-            this.tabPage3.Controls.Add(this.buttonChannelFont);
-            this.tabPage3.Controls.Add(this.textChannelFontSize);
-            this.tabPage3.Controls.Add(this.label9);
-            this.tabPage3.Controls.Add(this.textChannelFont);
-            this.tabPage3.Controls.Add(this.label8);
-            this.tabPage3.Controls.Add(this.buttonConsoleFont);
-            this.tabPage3.Controls.Add(this.textConsoleFontSize);
-            this.tabPage3.Controls.Add(this.textConsoleFont);
-            this.tabPage3.Controls.Add(this.label7);
-            this.tabPage3.Controls.Add(this.label6);
-            this.tabPage3.Controls.Add(this.label5);
-            this.tabPage3.Controls.Add(this.label4);
-            this.tabPage3.Controls.Add(this.label3);
-            this.tabPage3.Controls.Add(this.label1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage3.Size = new System.Drawing.Size(629, 213);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Fonts";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabLogging.Controls.Add(this.checkLogQuery);
+            this.tabLogging.Controls.Add(this.checkLogChannel);
+            this.tabLogging.Controls.Add(this.checkLogConsole);
+            this.tabLogging.Location = new System.Drawing.Point(4, 25);
+            this.tabLogging.Name = "tabLogging";
+            this.tabLogging.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLogging.Size = new System.Drawing.Size(629, 213);
+            this.tabLogging.TabIndex = 6;
+            this.tabLogging.Text = "Logging";
+            this.tabLogging.UseVisualStyleBackColor = true;
+            // 
+            // checkLogQuery
+            // 
+            this.checkLogQuery.AutoSize = true;
+            this.checkLogQuery.Location = new System.Drawing.Point(12, 63);
+            this.checkLogQuery.Name = "checkLogQuery";
+            this.checkLogQuery.Size = new System.Drawing.Size(66, 20);
+            this.checkLogQuery.TabIndex = 3;
+            this.checkLogQuery.Text = "Query";
+            this.checkLogQuery.UseVisualStyleBackColor = true;
+            // 
+            // checkLogChannel
+            // 
+            this.checkLogChannel.AutoSize = true;
+            this.checkLogChannel.Location = new System.Drawing.Point(12, 37);
+            this.checkLogChannel.Name = "checkLogChannel";
+            this.checkLogChannel.Size = new System.Drawing.Size(79, 20);
+            this.checkLogChannel.TabIndex = 2;
+            this.checkLogChannel.Text = "Channel";
+            this.checkLogChannel.UseVisualStyleBackColor = true;
+            // 
+            // checkLogConsole
+            // 
+            this.checkLogConsole.AutoSize = true;
+            this.checkLogConsole.Location = new System.Drawing.Point(12, 11);
+            this.checkLogConsole.Name = "checkLogConsole";
+            this.checkLogConsole.Size = new System.Drawing.Size(78, 20);
+            this.checkLogConsole.TabIndex = 1;
+            this.checkLogConsole.Text = "Console";
+            this.checkLogConsole.UseVisualStyleBackColor = true;
+            // 
+            // tabFonts
+            // 
+            this.tabFonts.Controls.Add(this.buttonInputFont);
+            this.tabFonts.Controls.Add(this.buttonServerListFont);
+            this.tabFonts.Controls.Add(this.textInputFont);
+            this.tabFonts.Controls.Add(this.label16);
+            this.tabFonts.Controls.Add(this.textInputFontSize);
+            this.tabFonts.Controls.Add(this.textServerListFontSize);
+            this.tabFonts.Controls.Add(this.label15);
+            this.tabFonts.Controls.Add(this.textServerListFont);
+            this.tabFonts.Controls.Add(this.buttonNickListFont);
+            this.tabFonts.Controls.Add(this.textNickListFontSize);
+            this.tabFonts.Controls.Add(this.label14);
+            this.tabFonts.Controls.Add(this.textNickListFont);
+            this.tabFonts.Controls.Add(this.buttonQueryFont);
+            this.tabFonts.Controls.Add(this.label10);
+            this.tabFonts.Controls.Add(this.textQueryFontSize);
+            this.tabFonts.Controls.Add(this.textQueryFont);
+            this.tabFonts.Controls.Add(this.buttonChannelFont);
+            this.tabFonts.Controls.Add(this.textChannelFontSize);
+            this.tabFonts.Controls.Add(this.label9);
+            this.tabFonts.Controls.Add(this.textChannelFont);
+            this.tabFonts.Controls.Add(this.label8);
+            this.tabFonts.Controls.Add(this.buttonConsoleFont);
+            this.tabFonts.Controls.Add(this.textConsoleFontSize);
+            this.tabFonts.Controls.Add(this.textConsoleFont);
+            this.tabFonts.Controls.Add(this.label7);
+            this.tabFonts.Controls.Add(this.label6);
+            this.tabFonts.Controls.Add(this.label5);
+            this.tabFonts.Controls.Add(this.label4);
+            this.tabFonts.Controls.Add(this.label3);
+            this.tabFonts.Controls.Add(this.label1);
+            this.tabFonts.Location = new System.Drawing.Point(4, 25);
+            this.tabFonts.Margin = new System.Windows.Forms.Padding(4);
+            this.tabFonts.Name = "tabFonts";
+            this.tabFonts.Padding = new System.Windows.Forms.Padding(4);
+            this.tabFonts.Size = new System.Drawing.Size(629, 213);
+            this.tabFonts.TabIndex = 2;
+            this.tabFonts.Text = "Fonts";
+            this.tabFonts.UseVisualStyleBackColor = true;
             // 
             // buttonInputFont
             // 
@@ -223,6 +272,7 @@ namespace IceChat2009
             this.buttonInputFont.TabIndex = 46;
             this.buttonInputFont.Text = "Select";
             this.buttonInputFont.UseVisualStyleBackColor = true;
+            this.buttonInputFont.Click += new System.EventHandler(this.buttonInputFont_Click);
             // 
             // buttonServerListFont
             // 
@@ -478,39 +528,49 @@ namespace IceChat2009
             this.label1.TabIndex = 0;
             this.label1.Text = "Console";
             // 
-            // tabPage4
+            // tabSounds
             // 
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Size = new System.Drawing.Size(629, 213);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Sounds";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tabSounds.Location = new System.Drawing.Point(4, 25);
+            this.tabSounds.Margin = new System.Windows.Forms.Padding(4);
+            this.tabSounds.Name = "tabSounds";
+            this.tabSounds.Padding = new System.Windows.Forms.Padding(4);
+            this.tabSounds.Size = new System.Drawing.Size(629, 213);
+            this.tabSounds.TabIndex = 3;
+            this.tabSounds.Text = "Sounds";
+            this.tabSounds.UseVisualStyleBackColor = true;
             // 
-            // tabPage5
+            // tabEvents
             // 
-            this.tabPage5.Location = new System.Drawing.Point(4, 25);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(629, 213);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Events";
-            this.tabPage5.UseVisualStyleBackColor = true;
+            this.tabEvents.Location = new System.Drawing.Point(4, 25);
+            this.tabEvents.Name = "tabEvents";
+            this.tabEvents.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEvents.Size = new System.Drawing.Size(629, 213);
+            this.tabEvents.TabIndex = 4;
+            this.tabEvents.Text = "Events";
+            this.tabEvents.UseVisualStyleBackColor = true;
             // 
-            // tabPage6
+            // tabServer
             // 
-            this.tabPage6.Controls.Add(this.checkIdentServer);
-            this.tabPage6.Controls.Add(this.textDefaultNick);
-            this.tabPage6.Controls.Add(this.label13);
-            this.tabPage6.Location = new System.Drawing.Point(4, 25);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(629, 213);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Default Server";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            this.tabServer.Controls.Add(this.checkIdentServer);
+            this.tabServer.Controls.Add(this.textDefaultNick);
+            this.tabServer.Controls.Add(this.label13);
+            this.tabServer.Location = new System.Drawing.Point(4, 25);
+            this.tabServer.Name = "tabServer";
+            this.tabServer.Padding = new System.Windows.Forms.Padding(3);
+            this.tabServer.Size = new System.Drawing.Size(629, 213);
+            this.tabServer.TabIndex = 5;
+            this.tabServer.Text = "Default Server";
+            this.tabServer.UseVisualStyleBackColor = true;
+            // 
+            // checkIdentServer
+            // 
+            this.checkIdentServer.AutoSize = true;
+            this.checkIdentServer.Location = new System.Drawing.Point(11, 42);
+            this.checkIdentServer.Name = "checkIdentServer";
+            this.checkIdentServer.Size = new System.Drawing.Size(166, 20);
+            this.checkIdentServer.TabIndex = 43;
+            this.checkIdentServer.Text = "Ident Server Enabled";
+            this.checkIdentServer.UseVisualStyleBackColor = true;
             // 
             // textDefaultNick
             // 
@@ -530,16 +590,6 @@ namespace IceChat2009
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
-            // checkIdentServer
-            // 
-            this.checkIdentServer.AutoSize = true;
-            this.checkIdentServer.Location = new System.Drawing.Point(11, 42);
-            this.checkIdentServer.Name = "checkIdentServer";
-            this.checkIdentServer.Size = new System.Drawing.Size(166, 20);
-            this.checkIdentServer.TabIndex = 43;
-            this.checkIdentServer.Text = "Ident Server Enabled";
-            this.checkIdentServer.UseVisualStyleBackColor = true;
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -558,14 +608,16 @@ namespace IceChat2009
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "IceChat Settings";
             this.tabControlOptions.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
+            this.tabMain.ResumeLayout(false);
+            this.tabMain.PerformLayout();
+            this.tabDisplay.ResumeLayout(false);
+            this.tabDisplay.PerformLayout();
+            this.tabLogging.ResumeLayout(false);
+            this.tabLogging.PerformLayout();
+            this.tabFonts.ResumeLayout(false);
+            this.tabFonts.PerformLayout();
+            this.tabServer.ResumeLayout(false);
+            this.tabServer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -575,14 +627,14 @@ namespace IceChat2009
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.TabControl tabControlOptions;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TabPage tabMain;
+        private System.Windows.Forms.TabPage tabDisplay;
+        private System.Windows.Forms.TabPage tabFonts;
+        private System.Windows.Forms.TabPage tabSounds;
         private System.Windows.Forms.TextBox textTimeStamp;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkSaveWindowPosition;
-        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.TabPage tabEvents;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label6;
@@ -601,7 +653,7 @@ namespace IceChat2009
         private System.Windows.Forms.TextBox textQueryFontSize;
         private System.Windows.Forms.TextBox textQueryFont;
         private System.Windows.Forms.Button buttonQueryFont;
-        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.TabPage tabServer;
         private System.Windows.Forms.TextBox textDefaultNick;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button buttonNickListFont;
@@ -617,5 +669,9 @@ namespace IceChat2009
         private System.Windows.Forms.TextBox textInputFont;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.CheckBox checkIdentServer;
+        private System.Windows.Forms.TabPage tabLogging;
+        private System.Windows.Forms.CheckBox checkLogConsole;
+        private System.Windows.Forms.CheckBox checkLogChannel;
+        private System.Windows.Forms.CheckBox checkLogQuery;
     }
 }

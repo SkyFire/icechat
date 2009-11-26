@@ -131,7 +131,7 @@ namespace IceChat2009
             this.menuMainStrip.Location = new System.Drawing.Point(0, 0);
             this.menuMainStrip.Name = "menuMainStrip";
             this.menuMainStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuMainStrip.Size = new System.Drawing.Size(904, 24);
+            this.menuMainStrip.Size = new System.Drawing.Size(796, 24);
             this.menuMainStrip.TabIndex = 12;
             this.menuMainStrip.Text = "menuStripMain";
             // 
@@ -249,9 +249,9 @@ namespace IceChat2009
             // panelRight
             // 
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(729, 63);
+            this.panelRight.Location = new System.Drawing.Point(621, 63);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(175, 467);
+            this.panelRight.Size = new System.Drawing.Size(175, 465);
             this.panelRight.TabIndex = 14;
             // 
             // panelRightBottom
@@ -301,7 +301,7 @@ namespace IceChat2009
             this.splitterLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitterLeft.Location = new System.Drawing.Point(181, 63);
             this.splitterLeft.Name = "splitterLeft";
-            this.splitterLeft.Size = new System.Drawing.Size(3, 467);
+            this.splitterLeft.Size = new System.Drawing.Size(3, 465);
             this.splitterLeft.TabIndex = 15;
             this.splitterLeft.TabStop = false;
             // 
@@ -309,9 +309,9 @@ namespace IceChat2009
             // 
             this.splitterRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitterRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitterRight.Location = new System.Drawing.Point(726, 63);
+            this.splitterRight.Location = new System.Drawing.Point(618, 63);
             this.splitterRight.Name = "splitterRight";
-            this.splitterRight.Size = new System.Drawing.Size(3, 467);
+            this.splitterRight.Size = new System.Drawing.Size(3, 465);
             this.splitterRight.TabIndex = 16;
             this.splitterRight.TabStop = false;
             // 
@@ -359,7 +359,7 @@ namespace IceChat2009
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLeft.Location = new System.Drawing.Point(0, 63);
             this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(181, 467);
+            this.panelLeft.Size = new System.Drawing.Size(181, 465);
             this.panelLeft.TabIndex = 13;
             // 
             // toolStripMain
@@ -377,7 +377,7 @@ namespace IceChat2009
             this.toolStripMain.Location = new System.Drawing.Point(0, 24);
             this.toolStripMain.Name = "toolStripMain";
             this.toolStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStripMain.Size = new System.Drawing.Size(904, 39);
+            this.toolStripMain.Size = new System.Drawing.Size(796, 39);
             this.toolStripMain.TabIndex = 17;
             this.toolStripMain.Text = "toolStripMain";
             // 
@@ -446,9 +446,9 @@ namespace IceChat2009
             this.statusStripMain.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.statusStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatus});
-            this.statusStripMain.Location = new System.Drawing.Point(0, 556);
+            this.statusStripMain.Location = new System.Drawing.Point(0, 554);
             this.statusStripMain.Name = "statusStripMain";
-            this.statusStripMain.Size = new System.Drawing.Size(904, 22);
+            this.statusStripMain.Size = new System.Drawing.Size(796, 22);
             this.statusStripMain.SizingGrip = false;
             this.statusStripMain.TabIndex = 18;
             // 
@@ -462,9 +462,9 @@ namespace IceChat2009
             // inputPanel
             // 
             this.inputPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.inputPanel.Location = new System.Drawing.Point(0, 530);
+            this.inputPanel.Location = new System.Drawing.Point(0, 528);
             this.inputPanel.Name = "inputPanel";
-            this.inputPanel.Size = new System.Drawing.Size(904, 26);
+            this.inputPanel.Size = new System.Drawing.Size(796, 26);
             this.inputPanel.TabIndex = 0;
             // 
             // tabMain
@@ -473,7 +473,7 @@ namespace IceChat2009
             this.tabMain.Location = new System.Drawing.Point(184, 63);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(542, 467);
+            this.tabMain.Size = new System.Drawing.Size(434, 465);
             this.tabMain.TabIndex = 2;
             // 
             // FormMain
@@ -481,7 +481,7 @@ namespace IceChat2009
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(904, 578);
+            this.ClientSize = new System.Drawing.Size(796, 576);
             this.Controls.Add(this.tabMain);
             this.Controls.Add(this.splitterRight);
             this.Controls.Add(this.splitterLeft);

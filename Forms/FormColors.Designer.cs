@@ -35,8 +35,21 @@
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Ctcp");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DCC");
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Other");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Channel Messages");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Server Messages");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Private Messages");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Self Messages");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Ctcp");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("DCC");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Other");
             this.tabControlColors = new System.Windows.Forms.TabControl();
             this.tabPageMessages = new System.Windows.Forms.TabPage();
+            this.tabMessages = new System.Windows.Forms.TabControl();
+            this.tabBasic = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.treeBasicMessages = new System.Windows.Forms.TreeView();
+            this.tabAdvanced = new System.Windows.Forms.TabPage();
+            this.textRawMessage = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.checkBGColor = new System.Windows.Forms.CheckBox();
             this.treeMessages = new System.Windows.Forms.TreeView();
@@ -44,7 +57,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelEdit = new System.Windows.Forms.Label();
-            this.textRawMessage = new System.Windows.Forms.TextBox();
             this.tabPageTabBar = new System.Windows.Forms.TabPage();
             this.pictureTabDefault = new System.Windows.Forms.PictureBox();
             this.labelTabDefault = new System.Windows.Forms.Label();
@@ -101,9 +113,15 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
+            this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textFormattedBasic = new IceChat2009.TextWindow();
             this.textFormattedText = new IceChat2009.TextWindow();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
+            this.tabMessages.SuspendLayout();
+            this.tabBasic.SuspendLayout();
+            this.tabAdvanced.SuspendLayout();
             this.tabPageTabBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabDefault)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabOther)).BeginInit();
@@ -143,52 +161,62 @@
             this.tabControlColors.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlColors.Name = "tabControlColors";
             this.tabControlColors.SelectedIndex = 0;
-            this.tabControlColors.Size = new System.Drawing.Size(718, 368);
+            this.tabControlColors.Size = new System.Drawing.Size(738, 414);
             this.tabControlColors.TabIndex = 0;
             this.tabControlColors.Tag = "";
             // 
             // tabPageMessages
             // 
             this.tabPageMessages.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPageMessages.Controls.Add(this.textFormattedText);
-            this.tabPageMessages.Controls.Add(this.label4);
-            this.tabPageMessages.Controls.Add(this.checkBGColor);
-            this.tabPageMessages.Controls.Add(this.treeMessages);
-            this.tabPageMessages.Controls.Add(this.listIdentifiers);
-            this.tabPageMessages.Controls.Add(this.label3);
-            this.tabPageMessages.Controls.Add(this.label1);
-            this.tabPageMessages.Controls.Add(this.labelEdit);
-            this.tabPageMessages.Controls.Add(this.textRawMessage);
+            this.tabPageMessages.Controls.Add(this.tabMessages);
             this.tabPageMessages.Location = new System.Drawing.Point(4, 25);
             this.tabPageMessages.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageMessages.Name = "tabPageMessages";
             this.tabPageMessages.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageMessages.Size = new System.Drawing.Size(710, 339);
+            this.tabPageMessages.Size = new System.Drawing.Size(730, 385);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
             // 
-            // label4
+            // tabMessages
             // 
-            this.label4.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label4.Location = new System.Drawing.Point(25, 4);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(312, 16);
-            this.label4.TabIndex = 36;
-            this.label4.Text = "IRC Messages - Click to Select and Edit";
+            this.tabMessages.Controls.Add(this.tabBasic);
+            this.tabMessages.Controls.Add(this.tabAdvanced);
+            this.tabMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabMessages.Location = new System.Drawing.Point(4, 4);
+            this.tabMessages.Name = "tabMessages";
+            this.tabMessages.SelectedIndex = 0;
+            this.tabMessages.Size = new System.Drawing.Size(722, 377);
+            this.tabMessages.TabIndex = 39;
             // 
-            // checkBGColor
+            // tabBasic
             // 
-            this.checkBGColor.Location = new System.Drawing.Point(337, 283);
-            this.checkBGColor.Name = "checkBGColor";
-            this.checkBGColor.Size = new System.Drawing.Size(236, 24);
-            this.checkBGColor.TabIndex = 35;
-            this.checkBGColor.Text = "Change Background Color";
+            this.tabBasic.BackColor = System.Drawing.SystemColors.Control;
+            this.tabBasic.Controls.Add(this.checkChangeBGBasic);
+            this.tabBasic.Controls.Add(this.label6);
+            this.tabBasic.Controls.Add(this.textFormattedBasic);
+            this.tabBasic.Controls.Add(this.label2);
+            this.tabBasic.Controls.Add(this.treeBasicMessages);
+            this.tabBasic.Location = new System.Drawing.Point(4, 25);
+            this.tabBasic.Name = "tabBasic";
+            this.tabBasic.Padding = new System.Windows.Forms.Padding(3);
+            this.tabBasic.Size = new System.Drawing.Size(714, 348);
+            this.tabBasic.TabIndex = 2;
+            this.tabBasic.Text = "Basic";
             // 
-            // treeMessages
+            // label2
             // 
-            this.treeMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeMessages.Location = new System.Drawing.Point(22, 23);
-            this.treeMessages.Name = "treeMessages";
+            this.label2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label2.Location = new System.Drawing.Point(19, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(312, 16);
+            this.label2.TabIndex = 47;
+            this.label2.Text = "IRC Messages - Click to Select and Edit";
+            // 
+            // treeBasicMessages
+            // 
+            this.treeBasicMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.treeBasicMessages.Location = new System.Drawing.Point(16, 31);
+            this.treeBasicMessages.Name = "treeBasicMessages";
             treeNode1.Name = "";
             treeNode1.Text = "Channel Messages";
             treeNode2.Name = "";
@@ -203,7 +231,7 @@
             treeNode6.Text = "DCC";
             treeNode7.Name = "";
             treeNode7.Text = "Other";
-            this.treeMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            this.treeBasicMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
@@ -211,54 +239,120 @@
             treeNode5,
             treeNode6,
             treeNode7});
+            this.treeBasicMessages.Size = new System.Drawing.Size(352, 258);
+            this.treeBasicMessages.TabIndex = 46;
+            // 
+            // tabAdvanced
+            // 
+            this.tabAdvanced.BackColor = System.Drawing.SystemColors.Control;
+            this.tabAdvanced.Controls.Add(this.textFormattedText);
+            this.tabAdvanced.Controls.Add(this.textRawMessage);
+            this.tabAdvanced.Controls.Add(this.label4);
+            this.tabAdvanced.Controls.Add(this.checkBGColor);
+            this.tabAdvanced.Controls.Add(this.treeMessages);
+            this.tabAdvanced.Controls.Add(this.listIdentifiers);
+            this.tabAdvanced.Controls.Add(this.label3);
+            this.tabAdvanced.Controls.Add(this.label1);
+            this.tabAdvanced.Controls.Add(this.labelEdit);
+            this.tabAdvanced.Location = new System.Drawing.Point(4, 25);
+            this.tabAdvanced.Name = "tabAdvanced";
+            this.tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAdvanced.Size = new System.Drawing.Size(714, 348);
+            this.tabAdvanced.TabIndex = 1;
+            this.tabAdvanced.Text = "Advanced";
+            // 
+            // textRawMessage
+            // 
+            this.textRawMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textRawMessage.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textRawMessage.Location = new System.Drawing.Point(13, 267);
+            this.textRawMessage.Name = "textRawMessage";
+            this.textRawMessage.Size = new System.Drawing.Size(607, 23);
+            this.textRawMessage.TabIndex = 39;
+            // 
+            // label4
+            // 
+            this.label4.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label4.Location = new System.Drawing.Point(16, 12);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(312, 16);
+            this.label4.TabIndex = 45;
+            this.label4.Text = "IRC Messages - Click to Select and Edit";
+            // 
+            // checkBGColor
+            // 
+            this.checkBGColor.Location = new System.Drawing.Point(328, 291);
+            this.checkBGColor.Name = "checkBGColor";
+            this.checkBGColor.Size = new System.Drawing.Size(236, 24);
+            this.checkBGColor.TabIndex = 44;
+            this.checkBGColor.Text = "Change Background Color";
+            // 
+            // treeMessages
+            // 
+            this.treeMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.treeMessages.Location = new System.Drawing.Point(13, 31);
+            this.treeMessages.Name = "treeMessages";
+            treeNode8.Name = "";
+            treeNode8.Text = "Channel Messages";
+            treeNode9.Name = "";
+            treeNode9.Text = "Server Messages";
+            treeNode10.Name = "";
+            treeNode10.Text = "Private Messages";
+            treeNode11.Name = "";
+            treeNode11.Text = "Self Messages";
+            treeNode12.Name = "";
+            treeNode12.Text = "Ctcp";
+            treeNode13.Name = "";
+            treeNode13.Text = "DCC";
+            treeNode14.Name = "";
+            treeNode14.Text = "Other";
+            this.treeMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12,
+            treeNode13,
+            treeNode14});
             this.treeMessages.Size = new System.Drawing.Size(352, 207);
-            this.treeMessages.TabIndex = 29;
+            this.treeMessages.TabIndex = 38;
             // 
             // listIdentifiers
             // 
             this.listIdentifiers.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listIdentifiers.Location = new System.Drawing.Point(389, 23);
+            this.listIdentifiers.Location = new System.Drawing.Point(380, 31);
             this.listIdentifiers.Name = "listIdentifiers";
             this.listIdentifiers.Size = new System.Drawing.Size(296, 82);
-            this.listIdentifiers.TabIndex = 34;
+            this.listIdentifiers.TabIndex = 43;
             this.listIdentifiers.TabStop = false;
             // 
             // label3
             // 
             this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label3.Location = new System.Drawing.Point(25, 285);
+            this.label3.Location = new System.Drawing.Point(16, 293);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(264, 16);
-            this.label3.TabIndex = 33;
+            this.label3.TabIndex = 42;
             this.label3.Text = "Formatted message (Read only):";
             // 
             // label1
             // 
             this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(379, 4);
+            this.label1.Location = new System.Drawing.Point(370, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(337, 16);
-            this.label1.TabIndex = 32;
+            this.label1.TabIndex = 41;
             this.label1.Text = "Identifiers (Double click to add to Raw Message)";
             // 
             // labelEdit
             // 
             this.labelEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
             this.labelEdit.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelEdit.Location = new System.Drawing.Point(25, 243);
+            this.labelEdit.Location = new System.Drawing.Point(16, 251);
             this.labelEdit.Name = "labelEdit";
             this.labelEdit.Size = new System.Drawing.Size(496, 16);
-            this.labelEdit.TabIndex = 31;
+            this.labelEdit.TabIndex = 40;
             this.labelEdit.Text = "Edit message here (Click Color below for Color)";
-            // 
-            // textRawMessage
-            // 
-            this.textRawMessage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textRawMessage.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textRawMessage.Location = new System.Drawing.Point(22, 259);
-            this.textRawMessage.Name = "textRawMessage";
-            this.textRawMessage.Size = new System.Drawing.Size(607, 23);
-            this.textRawMessage.TabIndex = 30;
             // 
             // tabPageTabBar
             // 
@@ -283,7 +377,7 @@
             this.tabPageTabBar.Location = new System.Drawing.Point(4, 25);
             this.tabPageTabBar.Name = "tabPageTabBar";
             this.tabPageTabBar.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTabBar.Size = new System.Drawing.Size(710, 339);
+            this.tabPageTabBar.Size = new System.Drawing.Size(730, 385);
             this.tabPageTabBar.TabIndex = 3;
             this.tabPageTabBar.Text = "Tab Bar";
             // 
@@ -473,7 +567,7 @@
             this.tabPageBackGround.Location = new System.Drawing.Point(4, 25);
             this.tabPageBackGround.Name = "tabPageBackGround";
             this.tabPageBackGround.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBackGround.Size = new System.Drawing.Size(710, 339);
+            this.tabPageBackGround.Size = new System.Drawing.Size(730, 385);
             this.tabPageBackGround.TabIndex = 4;
             this.tabPageBackGround.Text = "Background";
             // 
@@ -677,7 +771,7 @@
             this.tabPageNickNames.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageNickNames.Name = "tabPageNickNames";
             this.tabPageNickNames.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageNickNames.Size = new System.Drawing.Size(710, 339);
+            this.tabPageNickNames.Size = new System.Drawing.Size(730, 385);
             this.tabPageNickNames.TabIndex = 1;
             this.tabPageNickNames.Text = "Nick Names";
             // 
@@ -808,7 +902,7 @@
             // 
             this.panelColorPicker.BackColor = System.Drawing.SystemColors.Control;
             this.panelColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.panelColorPicker.Location = new System.Drawing.Point(3, 375);
+            this.panelColorPicker.Location = new System.Drawing.Point(2, 428);
             this.panelColorPicker.Name = "panelColorPicker";
             this.panelColorPicker.Size = new System.Drawing.Size(288, 40);
             this.panelColorPicker.TabIndex = 20;
@@ -816,7 +910,7 @@
             // buttonCancel
             // 
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonCancel.Location = new System.Drawing.Point(619, 383);
+            this.buttonCancel.Location = new System.Drawing.Point(618, 436);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -829,7 +923,7 @@
             // 
             this.buttonSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(498, 383);
+            this.buttonSave.Location = new System.Drawing.Point(497, 436);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -840,11 +934,42 @@
             // 
             // labelCurrent
             // 
-            this.labelCurrent.Location = new System.Drawing.Point(304, 374);
+            this.labelCurrent.Location = new System.Drawing.Point(303, 427);
             this.labelCurrent.Name = "labelCurrent";
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current:";
+            // 
+            // checkChangeBGBasic
+            // 
+            this.checkChangeBGBasic.Location = new System.Drawing.Point(332, 291);
+            this.checkChangeBGBasic.Name = "checkChangeBGBasic";
+            this.checkChangeBGBasic.Size = new System.Drawing.Size(236, 24);
+            this.checkChangeBGBasic.TabIndex = 50;
+            this.checkChangeBGBasic.Text = "Change Background Color";
+            // 
+            // label6
+            // 
+            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label6.Location = new System.Drawing.Point(20, 293);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(264, 16);
+            this.label6.TabIndex = 49;
+            this.label6.Text = "Formatted message:";
+            // 
+            // textFormattedBasic
+            // 
+            this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textFormattedBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFormattedBasic.IRCBackColor = 0;
+            this.textFormattedBasic.IRCForeColor = 0;
+            this.textFormattedBasic.Location = new System.Drawing.Point(16, 316);
+            this.textFormattedBasic.Name = "textFormattedBasic";
+            this.textFormattedBasic.NoColorMode = false;
+            this.textFormattedBasic.ShowTimeStamp = true;
+            this.textFormattedBasic.SingleLine = true;
+            this.textFormattedBasic.Size = new System.Drawing.Size(607, 26);
+            this.textFormattedBasic.TabIndex = 48;
             // 
             // textFormattedText
             // 
@@ -852,19 +977,19 @@
             this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textFormattedText.IRCBackColor = 0;
             this.textFormattedText.IRCForeColor = 0;
-            this.textFormattedText.Location = new System.Drawing.Point(22, 306);
+            this.textFormattedText.Location = new System.Drawing.Point(13, 314);
             this.textFormattedText.Name = "textFormattedText";
             this.textFormattedText.NoColorMode = false;
             this.textFormattedText.ShowTimeStamp = true;
             this.textFormattedText.SingleLine = true;
             this.textFormattedText.Size = new System.Drawing.Size(607, 26);
-            this.textFormattedText.TabIndex = 37;
+            this.textFormattedText.TabIndex = 46;
             // 
             // FormColors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(731, 425);
+            this.ClientSize = new System.Drawing.Size(742, 477);
             this.Controls.Add(this.labelCurrent);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -881,7 +1006,10 @@
             this.Text = "Color Settings";
             this.tabControlColors.ResumeLayout(false);
             this.tabPageMessages.ResumeLayout(false);
-            this.tabPageMessages.PerformLayout();
+            this.tabMessages.ResumeLayout(false);
+            this.tabBasic.ResumeLayout(false);
+            this.tabAdvanced.ResumeLayout(false);
+            this.tabAdvanced.PerformLayout();
             this.tabPageTabBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabDefault)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabOther)).EndInit();
@@ -917,14 +1045,6 @@
         private System.Windows.Forms.TabControl tabControlColors;
         private System.Windows.Forms.TabPage tabPageMessages;
         private System.Windows.Forms.TabPage tabPageNickNames;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckBox checkBGColor;
-        private System.Windows.Forms.TreeView treeMessages;
-        private System.Windows.Forms.ListBox listIdentifiers;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelEdit;
-        private System.Windows.Forms.TextBox textRawMessage;
         private System.Windows.Forms.Panel panelColorPicker;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonSave;
@@ -980,6 +1100,22 @@
         private System.Windows.Forms.Label labelTabBarCurrent2;
         private System.Windows.Forms.Label labelTabBarCurrent1;
         private System.Windows.Forms.Label labelCurrent;
+        private System.Windows.Forms.TabControl tabMessages;
+        private System.Windows.Forms.TabPage tabAdvanced;
         private TextWindow textFormattedText;
+        private System.Windows.Forms.TextBox textRawMessage;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox checkBGColor;
+        private System.Windows.Forms.TreeView treeMessages;
+        private System.Windows.Forms.ListBox listIdentifiers;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelEdit;
+        private System.Windows.Forms.TabPage tabBasic;
+        private TextWindow textFormattedBasic;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TreeView treeBasicMessages;
+        private System.Windows.Forms.CheckBox checkChangeBGBasic;
+        private System.Windows.Forms.Label label6;
     }
 }

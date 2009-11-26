@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -116,6 +116,9 @@ namespace IceChat2009
             {
                 textPopups.AppendText(m + Environment.NewLine);
             }
+
+            textPopups.SelectionStart = 0;
+            textPopups.SelectionLength = 0;
 
         }
 
@@ -268,8 +271,9 @@ namespace IceChat2009
 
         private void testSubToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+			//
         }
+		
         private void UpdateCurrentPopupMenus()
         {
             string[] popups = textPopups.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);

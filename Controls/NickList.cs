@@ -49,6 +49,9 @@ namespace IceChat2009
         private int selectedIndex = -1;
         private string headerCaption = "";
 
+        private ToolTip toolTip;
+        private int toolTipNode = -1;
+
         private ArrayList sortedNicks = null;
         
         private ContextMenuStrip popupMenu;
@@ -59,6 +62,7 @@ namespace IceChat2009
 
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
+            this.MouseMove += new MouseEventHandler(OnMouseMove);
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
@@ -71,8 +75,12 @@ namespace IceChat2009
 
             this.UpdateStyles();
 
+            toolTip = new ToolTip();
+            //toolTip.IsBalloon = true;
+
             popupMenu = new ContextMenuStrip();
         }
+
 
         private void OnScroll(object sender, ScrollEventArgs e)
         {
@@ -137,7 +145,8 @@ namespace IceChat2009
                         string[] menuItems = p.Menu;
                         
                         //build the menu
-                        ToolStripMenuItem t;
+                        ToolStripItem t;
+                        
                         int subMenu = 0;
 
                         popupMenu.Items.Clear();
@@ -172,27 +181,74 @@ namespace IceChat2009
                                 command = "";
                             }
                             
-                            t = new ToolStripMenuItem(caption);
-                            
-                            //parse out the command/$identifiers                            
-                            command = command.Replace("$1", nick);
-                            command = command.Replace("$nick", nick);
-                            
-                            t.Click += new EventHandler(OnPopupMenuClick);
-                            t.Tag = command;
+                            if (caption.Length > 0)
+                            {
+                                if (currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+                                {
+                                    caption = caption.Replace("$chan", currentWindow.WindowName);
+                                    command = command.Replace("$chan", currentWindow.WindowName);
+                                }
+                                caption = caption.Replace("$nick", nick);
+                                command = command.Replace("$nick", nick);
+                                
+                                if (caption == "-")
+                                    t = new ToolStripSeparator();
+                                else
+                                {
+                                    t = new ToolStripMenuItem(caption);
 
-                            if (menuDepth == 0)
-                                subMenu = popupMenu.Items.Add(t);
-                            else                               
-                                ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
-                            
-                            t = null;
+                                    //parse out the command/$identifiers                            
+                                    command = command.Replace("$1", nick);
+                                    command = command.Replace("$nick", nick);
+
+                                    t.Click += new EventHandler(OnPopupMenuClick);
+                                    t.Tag = command;
+                                }
+                                if (menuDepth == 0)
+                                    subMenu = popupMenu.Items.Add(t);
+                                else
+                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+
+                                t = null;
+                            }
                         }
                         popupMenu.Show(this, e.Location);
                     }
                 }
             }            
+        }
 
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Y <= headerHeight)
+                return;
+
+            if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                Graphics g = this.CreateGraphics();
+
+                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                //find the nickname number, add 1 to it to make it a non-zero value
+                int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + topIndex;
+
+                if (nickNumber < currentWindow.Nicks.Count)
+                {                    
+                    
+                    if (toolTipNode != nickNumber)
+                    {
+                        User u = currentWindow.GetNick(sortedNicks[nickNumber].ToString());
+                        toolTip.ToolTipTitle = "User Information";
+                        if (u.Host.Length > 0)
+                            toolTip.SetToolTip(this,u.ToString() + "\r\n" + u.Host);
+                        else
+                            toolTip.SetToolTip(this,u.ToString());
+                        
+                        toolTipNode = nickNumber;
+                    }
+                }
+                else
+                    toolTip.RemoveAll();
+            }
 
         }
 
@@ -201,9 +257,7 @@ namespace IceChat2009
             if (((ToolStripMenuItem)sender).Tag == null) return;
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
-            //System.Diagnostics.Debug.WriteLine(command);
             FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, command);
-            
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
@@ -320,40 +374,11 @@ namespace IceChat2009
             FormMain.Instance.FocusInputBox();
         }
 
-        
-       
-
-       /// <summary>
-       /// Replace user mode chars and open a query with the selected nick
-       /// </summary>
-       /// <param name="sender"></param>
-       /// <param name="e"></param>
-       /*
-        private void OnNickListDoubleClick(object sender, EventArgs e)
-       {
-            //open a query, if it does not exist, if not, go to it
-            if (listNicks.Text.Length > 0)
-            {
-                string nick = listNicks.Text;
-                //replace any of the modes
-
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
-                
-                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query))
-                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
-                else
-                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
-            }
-        }
-        
-       
         /// <summary>
         /// Erase the Nicklist and change the Header to the Console
         /// </summary>
         /// <param name="cwindow"></param>
-        */
-        internal void RefreshList(ConsoleTabWindow cwindow)
+        internal void RefreshList()
         {
             this.currentWindow = null;
             UpdateHeader("Console");            

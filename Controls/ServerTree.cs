@@ -1,4 +1,4 @@
-﻿/******************************************************************************\
+/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
  * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
@@ -50,6 +50,8 @@ namespace IceChat2009
         private int selectedServerIndex = 0;
 
         private string headerCaption = "";
+        private ToolTip toolTip;
+        private int toolTipNode = -1;
         
         private List<KeyValuePair<string,object>> serverNodes;
 
@@ -64,6 +66,7 @@ namespace IceChat2009
             
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
+            this.MouseMove += new MouseEventHandler(OnMouseMove);
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
@@ -86,10 +89,16 @@ namespace IceChat2009
                 if (s.AltNickName == null)
                     s.AltNickName = s.NickName + "_";
             }
-            
+
+            toolTip = new ToolTip();
+            //toolTip.AutoPopDelay = 5000;
+            //toolTip.InitialDelay = 2000;
+            //toolTip.ReshowDelay = 2000;
+            toolTip.IsBalloon = true;
             Invalidate();
 
         }
+
 
         private void OnScroll(object sender, ScrollEventArgs e)
         {
@@ -155,7 +164,6 @@ namespace IceChat2009
             object findNode = FindNodeValue(selectedNodeIndex);
             if (findNode != null)
             {
-                //System.Diagnostics.Debug.WriteLine(findNode.ToString());
                 if (findNode.GetType() == typeof(ServerSetting))
                 {
                     //this is a server, switch to console
@@ -190,6 +198,67 @@ namespace IceChat2009
                 
             }
         }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Y <= headerHeight)
+                return;
+
+            Graphics g = this.CreateGraphics();
+
+            int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+            //find the server number, add 1 to it to make it a non-zero value
+            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1;
+
+            if (nodeNumber <= serverNodes.Count)
+            {
+                object findNode = FindNodeValue(nodeNumber);
+                if (findNode != null)
+                {
+                    if (findNode.GetType() == typeof(ServerSetting))
+                    {
+                        if (toolTipNode != nodeNumber)
+                        {
+                            string t = "";
+                            if (((ServerSetting)findNode).RealServerName.Length > 0 )
+                                t = ((ServerSetting)findNode).RealServerName + ":" + ((ServerSetting)findNode).ServerPort;
+                            else
+                                t = ((ServerSetting)findNode).ServerName + ":" + ((ServerSetting)findNode).ServerPort;
+
+                            toolTip.ToolTipTitle = t; 
+                            toolTip.SetToolTip(this, ((ServerSetting)findNode).NickName);
+                            
+                            toolTipNode = nodeNumber;
+                        }
+                    }
+                    else if (findNode.GetType() == typeof(TabWindow))
+                    {
+                        //this is a window, switch to this channel/query
+                        if (toolTipNode != nodeNumber)
+                        {
+                            if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Channel)
+                            {
+                                toolTip.ToolTipTitle = "Channel Information";
+                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName + " [" + ((TabWindow)findNode).Nicks.Count + "]");
+                            }
+                            else
+                            {
+                                toolTip.ToolTipTitle = "User Information";
+                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName);
+                            }
+                            toolTipNode = nodeNumber;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                toolTip.RemoveAll();
+            }
+
+            g.Dispose();
+        }
+
 
         public void SelectTab(object selectedNode)
         {
@@ -311,6 +380,20 @@ namespace IceChat2009
 
                             contextMenuChannel.Show(this, new Point(e.X, e.Y));
                         }
+                        else if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Query)
+                        {
+                            contextMenuQuery.Items.Clear();
+                            this.contextMenuQuery.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                            this.clearWindowToolStripMenuItem1,
+                            this.closeWindowToolStripMenuItem,
+                            this.userInformationToolStripMenuItem,
+                            this.silenceUserToolStripMenuItem});
+
+                            //add in the popup menu
+                            AddPopupMenu("Query", contextMenuQuery);
+
+                            contextMenuQuery.Show(this, new Point(e.X, e.Y));
+                        }
                     }
                 }
             }
@@ -331,7 +414,7 @@ namespace IceChat2009
                     string[] menuItems = p.Menu;
 
                     //build the menu
-                    ToolStripMenuItem t;
+                    ToolStripItem t;
                     int subMenu = 0;
 
                     foreach (string menu in menuItems)
@@ -359,14 +442,59 @@ namespace IceChat2009
                             command = "";
                         }
 
-                        //parse out the command/$identifiers    
 
                         if (caption.Length > 0)
                         {
-                            t = new ToolStripMenuItem(caption);
 
-                            t.Click += new EventHandler(OnPopupMenuClick);
-                            t.Tag = command;
+                            //parse out $identifiers    
+                            object findNode = FindNodeValue(selectedNodeIndex);
+                            if (findNode != null)
+                            {
+                                if (p.PopupType == "Channel")
+                                {
+                                    if (findNode.GetType() == typeof(TabWindow))
+                                    {
+                                        caption = caption.Replace("$chan", ((TabWindow)findNode).WindowName);
+                                        command = command.Replace("$chan", ((TabWindow)findNode).WindowName);
+                                    }
+                                }
+
+                                if (p.PopupType == "Query")
+                                {
+                                    if (findNode.GetType() == typeof(TabWindow))
+                                    {
+                                        caption = caption.Replace("$nick", ((TabWindow)findNode).WindowName);
+                                        command = command.Replace("$nick", ((TabWindow)findNode).WindowName);
+                                    }
+                                }
+
+                                if (p.PopupType == "Console")
+                                {
+                                    if (findNode.GetType() == typeof(ServerSetting))
+                                    {
+                                        if (((ServerSetting)findNode).RealServerName.Length > 0)
+                                        {
+                                            caption = caption.Replace("$server", ((ServerSetting)findNode).RealServerName);
+                                            command = command.Replace("$server", ((ServerSetting)findNode).RealServerName);
+                                        }
+                                        else
+                                        {
+                                            caption = caption.Replace("$server", ((ServerSetting)findNode).ServerName);
+                                            command = command.Replace("$server", ((ServerSetting)findNode).ServerName);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (caption == "-")
+                                t = new ToolStripSeparator();
+                            else
+                            {
+                                t = new ToolStripMenuItem(caption);
+
+                                t.Click += new EventHandler(OnPopupMenuClick);
+                                t.Tag = command;
+                            }
 
                             if (menuDepth == 0)
                                 subMenu = mainMenu.Items.Add(t);
@@ -471,7 +599,7 @@ namespace IceChat2009
                 
                 g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
                 
-                g.DrawString(nodes[0] + ":" + nodes[3], this.Font, b, x+ 16, currentY);
+                g.DrawString(nodes[3], this.Font, b, x+ 16, currentY);
                 currentY += lineSize;
                 b.Dispose();
             }
@@ -546,8 +674,17 @@ namespace IceChat2009
                     {
                         if (t.Connection.ServerSetting == s && t.WindowStyle == TabWindow.WindowType.Query)
                         {
+                            //get the color
+                            int colorQ = 0;
+                            if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                            else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                            else
+                                colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
                             nodeCount++;
-                            serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":3:1:" + t.WindowName, t));
+                            serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":3:" + colorQ.ToString() +  ":" + t.WindowName, t));
                         }
                     }
                 }
@@ -645,7 +782,6 @@ namespace IceChat2009
             {
                 if (c.ServerSetting.ID == selectedServerIndex)
                 {
-                    //System.Diagnostics.Debug.WriteLine("c:" + c.ServerSetting.ID + ":" + c.IsConnected);
                     if (!c.IsConnected)
                     {
                         //switch to the Console
@@ -820,8 +956,40 @@ namespace IceChat2009
                 FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/channelinfo " + ((TabWindow)findNode).WindowName);
         }
 
-        #endregion
+        private void clearWindowToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //clear query window
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(TabWindow))
+                ((TabWindow)findNode).TextWindow.ClearTextWindow();
+        }
 
+        private void closeWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //close query window
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(TabWindow))
+                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/part " + ((TabWindow)findNode).WindowName);
+
+        }
+
+        private void userInformationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //user information for query nick
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(TabWindow))
+                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/userinfo " + ((TabWindow)findNode).WindowName);
+        }
+
+        private void silenceUserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //silence query user
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(TabWindow))
+                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/silence +" + ((TabWindow)findNode).WindowName);
+        }
+
+        #endregion
 
         
     }

@@ -34,7 +34,6 @@ namespace IceChat2009
     public class ConsoleTabWindow : System.Windows.Forms.TabPage
     {
         private TabControl consoleTab;
-
         private FormMain.ServerMessageType lastMessageType;
 
         public ConsoleTabWindow() : base()
@@ -141,7 +140,7 @@ namespace IceChat2009
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="serverName"></param>
-        internal void AddConsoleTab(int connection, string serverName)
+        internal void AddConsoleTab(string serverName)
         {
             //this is only used for now, to show the "Welcome" Tab
             ConsoleTab t = new ConsoleTab(serverName);
@@ -165,7 +164,7 @@ namespace IceChat2009
         /// <param name="e"></param>
         private void OnSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0)
+			if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0)
             {
                 FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
 
@@ -208,10 +207,10 @@ namespace IceChat2009
         {
             //get the current tab
             if (e.Button == MouseButtons.Middle)
-            {
+            {                
                 for (int i = consoleTab.TabPages.Count - 1; i >=0; i--)
-                {
-                    if (consoleTab.GetTabRect(i).Contains(e.Location))
+                {                    
+					if (consoleTab.GetTabRect(i).Contains(e.Location))
                     {
                         if (((ConsoleTab)consoleTab.TabPages[i]).Connection != null)
                         {
@@ -230,15 +229,14 @@ namespace IceChat2009
                             //remove the server connection from the collection
                             ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
                             FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
-                            consoleTab.TabPages.Remove(consoleTab.TabPages[i]);
+							consoleTab.TabPages.RemoveAt(i);
+                            return;
                         }
                     }
                 }
             }
         }
-
-
-
+		
         private void InitializeComponent()
         {
             this.consoleTab = new TabControl();

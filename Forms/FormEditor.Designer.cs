@@ -90,7 +90,7 @@
             // 
             // textAliases
             // 
-            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textAliases.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textAliases.Location = new System.Drawing.Point(3, 3);
             this.textAliases.Multiline = true;
@@ -113,7 +113,7 @@
             // 
             // textPopups
             // 
-            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textPopups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textPopups.Location = new System.Drawing.Point(3, 3);
             this.textPopups.Multiline = true;
@@ -136,7 +136,7 @@
             // 
             // textScripts
             // 
-            this.textScripts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textScripts.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textScripts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textScripts.Location = new System.Drawing.Point(3, 3);
             this.textScripts.Multiline = true;
@@ -285,28 +285,28 @@
             // nickListToolStripMenuItem
             // 
             this.nickListToolStripMenuItem.Name = "nickListToolStripMenuItem";
-            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.nickListToolStripMenuItem.Text = "NickList";
             this.nickListToolStripMenuItem.Click += new System.EventHandler(this.nickListToolStripMenuItem_Click);
             // 
             // consoleToolStripMenuItem
             // 
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
-            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.consoleToolStripMenuItem.Text = "Console";
             this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
             // 
             // channelToolStripMenuItem
             // 
             this.channelToolStripMenuItem.Name = "channelToolStripMenuItem";
-            this.channelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.channelToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.channelToolStripMenuItem.Text = "Channel";
             this.channelToolStripMenuItem.Click += new System.EventHandler(this.channelToolStripMenuItem_Click);
             // 
             // queryToolStripMenuItem
             // 
             this.queryToolStripMenuItem.Name = "queryToolStripMenuItem";
-            this.queryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.queryToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.queryToolStripMenuItem.Text = "Query";
             this.queryToolStripMenuItem.Click += new System.EventHandler(this.queryToolStripMenuItem_Click);
             // 

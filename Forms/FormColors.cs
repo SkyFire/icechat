@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using IceChatPlugin;
 
@@ -48,6 +49,8 @@ namespace IceChat2009
         private IceChatColors iceChatColors;
 
         private object currentColorPick;
+        
+        private const char newColorChar = '\xFF03';
 
         public FormColors(IceChatMessageFormat MessageFormat, IceChatColors IceChatColors)
         {
@@ -165,7 +168,11 @@ namespace IceChat2009
             textRawMessage.TextChanged+=new EventHandler(textRawMessage_TextChanged);
             textRawMessage.KeyDown += new KeyEventHandler(textRawMessage_KeyDown);
             listIdentifiers.DoubleClick += new EventHandler(listIdentifiers_DoubleClick);
-            
+
+            treeBasicMessages.AfterSelect += new TreeViewEventHandler(treeBasicMessages_AfterSelect);
+
+            tabMessages.SelectedTab = tabBasic;
+
             iceChatMessages = MessageFormat;
 
             textFormattedText.SingleLine = true;
@@ -178,49 +185,79 @@ namespace IceChat2009
                     if (msg.MessageName.StartsWith("Channel"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
+                        t.Tag = msg.FormattedMessage;                        
                         treeMessages.Nodes[0].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;                        
+                        treeBasicMessages.Nodes[0].Nodes.Add(t2);
                     }
                     else if (msg.MessageName.StartsWith("Server"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[1].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[1].Nodes.Add(t2);
                     }
                     else if (msg.MessageName.StartsWith("Private"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[2].Nodes.Add(t);
+                        
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[2].Nodes.Add(t2);
+
                     }
                     else if (msg.MessageName.StartsWith("Self"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[3].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[3].Nodes.Add(t2);
                     }
                     else if (msg.MessageName.StartsWith("Ctcp"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[4].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[4].Nodes.Add(t2);
                     }
                     else if (msg.MessageName.StartsWith("DCC"))
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[5].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[5].Nodes.Add(t2);
                     }
                     else
                     {
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[6].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[6].Nodes.Add(t2);
                     }
                 }
             }
 
             treeMessages.ExpandAll();
+            treeBasicMessages.ExpandAll();    
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -524,31 +561,60 @@ namespace IceChat2009
 
             if (tabControlColors.SelectedTab.Text == "Messages")
             {
-                if (treeMessages.SelectedNode == null)
-                    return;
-
-                //add in the color code in the current place in the textbox
-                if (this.checkBGColor.Checked == true)
+                //check if we are in basic or advanced
+                if (tabMessages.SelectedTab.Text == "Advanced")
                 {
-                    textFormattedText.IRCBackColor = colorSelected;
+
+                    if (treeMessages.SelectedNode == null)
+                        return;
+
+                    //add in the color code in the current place in the textbox
+                    if (this.checkBGColor.Checked == true)
+                    {
+                        textFormattedText.IRCBackColor = colorSelected;
+                    }
+                    else
+                    {
+                        if (textRawMessage.Text.StartsWith(""))
+                        {
+                            if (textRawMessage.SelectionStart == 0)
+                            {
+                                int result;
+                                if (int.TryParse(textRawMessage.Text.Substring(1, 2), out result))
+                                    textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(3);
+                                else
+                                    textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(2);
+                            }
+                            else
+                                this.textRawMessage.SelectedText = "" + colorSelected.ToString();
+                        }
+                        else
+                            this.textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text;
+                    }
                 }
                 else
                 {
-                    if (textRawMessage.Text.StartsWith(""))
+                    //basic settings
+                    if (treeBasicMessages.SelectedNode == null)
+                        return;
+                    if (this.checkChangeBGBasic.Checked == true)
                     {
-                        if (textRawMessage.SelectionStart == 0)
-                        {
-                            int result;
-                            if (int.TryParse(textRawMessage.Text.Substring(1, 2), out result))
-                                textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(3);
-                            else
-                                textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(2);
-                        }
-                        else
-                            this.textRawMessage.SelectedText = "" + colorSelected.ToString();
+                        textFormattedBasic.IRCBackColor = colorSelected;
                     }
                     else
-                        this.textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text;
+                    {
+                        
+                        string message = treeBasicMessages.SelectedNode.Tag.ToString();
+                        message = message.Replace("&#x3;", ((char)3).ToString());
+                        message = RemoveColorCodes(message);
+                        
+                        message = "" + colorSelected.ToString() + message;
+                        message = message.Replace(((char)3).ToString(),"&#x3;");
+
+                        treeBasicMessages.SelectedNode.Tag = message;
+                        
+                        UpdateBasicText();
+                    }
                 }
             }
 
@@ -560,6 +626,7 @@ namespace IceChat2009
                     ((PictureBox)currentColorPick).Tag = colorSelected;
                 }
             }
+            
             if (tabControlColors.SelectedTab.Text == "Tab Bar")
             {
                 if (currentColorPick != null)
@@ -568,6 +635,7 @@ namespace IceChat2009
                     ((PictureBox)currentColorPick).Tag = colorSelected;
                 }
             }
+            
             if (tabControlColors.SelectedTab.Text == "Background")
             {
                 if (currentColorPick != null)
@@ -593,6 +661,63 @@ namespace IceChat2009
             }
 
             */
+        }
+
+        private void treeBasicMessages_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Parent == null)
+            {
+                textFormattedBasic.ClearTextWindow();
+                return;
+            }
+
+            if (treeBasicMessages.SelectedNode == null)
+                return;
+
+            if (treeBasicMessages.SelectedNode.Parent == null)
+                return;
+
+            string type = e.Node.Text.Split(' ').GetValue(0).ToString();
+            if (type == "Server")
+                textFormattedBasic.IRCBackColor = iceChatColors.ConsoleBackColor;
+            else if (type == "User")
+                textFormattedBasic.IRCBackColor = iceChatColors.ConsoleBackColor;
+            else if (type == "Channel")
+                textFormattedBasic.IRCBackColor = iceChatColors.ChannelBackColor;
+            else if (type == "Private")
+                textFormattedBasic.IRCBackColor = iceChatColors.QueryBackColor;
+            else if (type == "Self")
+            {
+                type = e.Node.Text.Split(' ').GetValue(1).ToString();
+                if (type == "Server")
+                    textFormattedBasic.IRCBackColor = iceChatColors.ConsoleBackColor;
+                else if (type == "Channel")
+                    textFormattedBasic.IRCBackColor = iceChatColors.ChannelBackColor;
+                else if (type == "Nick")
+                    textFormattedBasic.IRCBackColor = iceChatColors.ChannelBackColor;
+                else if (type == "Private")
+                    textFormattedBasic.IRCBackColor = iceChatColors.QueryBackColor;
+                else
+                    textFormattedBasic.IRCBackColor = 0;
+            }
+            else
+                textFormattedBasic.IRCBackColor = 0;
+
+            this.listIdentifiers.Items.Clear();
+
+            IDictionaryEnumerator msgIdent = messageIdentifiers.GetEnumerator();
+            while (msgIdent.MoveNext())
+            {
+                if (msgIdent.Key.ToString().ToLower() == e.Node.Text.ToLower())
+                {
+                    ArrayList idents = (ArrayList)msgIdent.Value;
+                    foreach (object ident in idents)
+                        this.listIdentifiers.Items.Add(ident);
+                }
+            }
+
+            UpdateBasicText();
+        
         }
 
         private void treeMessages_AfterSelect(object sender, TreeViewEventArgs e)
@@ -655,6 +780,79 @@ namespace IceChat2009
             UpdateFormattedText();
 
         }
+
+        private void UpdateBasicText()
+        {
+            this.textFormattedBasic.ClearTextWindow();
+
+            string message = treeBasicMessages.SelectedNode.Tag.ToString();
+
+            SetMessageFormat(treeBasicMessages.SelectedNode.Text, message);
+
+            //replace some of the basic identifiers to make it look right            
+            if (CheckIdentifier("$status"))
+                message = message.Replace("$status", "@");
+
+            if (CheckIdentifier("$nick"))
+                message = message.Replace("$nick", "Nick");
+
+            if (CheckIdentifier("$newnick"))
+                message = message.Replace("$newnick", "NewNick");
+
+            if (CheckIdentifier("$kickee"))
+                message = message.Replace("$kickee", "ThisNick");
+
+            if (CheckIdentifier("$kicker"))
+                message = message.Replace("$kicker", "WhoKicked");
+
+            if (CheckIdentifier("$channel"))
+                message = message.Replace("$channel", "#channel");
+
+            if (CheckIdentifier("$host"))
+                message = message.Replace("$host", "ident@host.com");
+
+            if (CheckIdentifier("$reason"))
+                message = message.Replace("$reason", "Reason");
+
+            if (CheckIdentifier("$message"))
+                message = message.Replace("$message", "message");
+
+            if (CheckIdentifier("$modeparam"))
+                message = message.Replace("$modeparam", "nick!ident@host");
+
+            if (CheckIdentifier("$mode"))
+                message = message.Replace("$mode", "+o");
+
+            if (CheckIdentifier("$ctcp"))
+                message = message.Replace("$ctcp", "VERSION");
+
+            if (CheckIdentifier("$reply"))
+                message = message.Replace("$reply", "CTCP Reply");
+
+            if (CheckIdentifier("$serverip"))
+                message = message.Replace("$serverip", "192.168.1.101");
+
+            if (CheckIdentifier("$server"))
+                message = message.Replace("$server", "irc.server.com");
+
+            if (CheckIdentifier("$port"))
+                message = message.Replace("$port", "6667");
+
+            if (CheckIdentifier("$topic"))
+                message = message.Replace("$topic", "The Channel Topic");
+
+            if (CheckIdentifier("$filesize"))
+                message = message.Replace("$filesize", "512");
+
+            if (CheckIdentifier("$file"))
+                message = message.Replace("$file", "file.ext");
+
+            message = message.Replace("$color", ((char)3).ToString() + "12");
+
+            this.textFormattedBasic.AppendText(message, 1);
+
+        }
+
 
         private void UpdateFormattedText()
         {
@@ -734,6 +932,7 @@ namespace IceChat2009
             this.textFormattedText.AppendText(message, 1);
 
         }
+
         private bool CheckIdentifier(string identifier)
         {
             foreach (string m in listIdentifiers.Items)
@@ -806,6 +1005,17 @@ namespace IceChat2009
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        
+        private string RemoveColorCodes(string line)
+        {
+            string ParseBackColor = @"\x03([0-9]{1,2}),([0-9]{1,2})";
+            string ParseForeColor = @"\x03[0-9]{1,2}";
+            string ParseColorChar = @"\x03";
+
+            Regex ParseIRCCodes = new Regex(ParseBackColor + "|" + ParseForeColor + "|" + ParseColorChar);
+
+            return ParseIRCCodes.Replace(line, "");
         }
 
     }
