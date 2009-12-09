@@ -1077,8 +1077,8 @@ namespace IceChat2009
             tabMain.SelectedIndex = 0;
 
             inputPanel.CurrentConnection = c;
-            serverTree.ServerConnections.Add(c.ServerSetting.ID, c);
-
+            serverTree.AddConnection(c);
+            
             c.ConnectSocket();
 
         }

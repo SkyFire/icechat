@@ -47,7 +47,7 @@ namespace IceChat2009
         private int topIndex = 0;
         private int headerHeight = 23;
         private int selectedNodeIndex = 0;
-        private int selectedServerIndex = 0;
+        private int selectedServerID = 0;
 
         private string headerCaption = "";
         private ToolTip toolTip;
@@ -59,7 +59,6 @@ namespace IceChat2009
 
         public ServerTree()
         {
-            
             InitializeComponent();
 
             headerCaption = "Favorite Servers";
@@ -108,27 +107,25 @@ namespace IceChat2009
 
         private void OnDoubleClick(object sender, EventArgs e)
         {
-            if (selectedServerIndex == 0)
+            if (selectedServerID == 0)
                 return;            
             
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c != null) 
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
+                if (c.IsConnected)
+                    c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
+                else
                 {
-                    if (c.IsConnected)
-                        c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
-                    else
-                    {
-                        //switch to Console
-                        FormMain.Instance.TabMain.SelectedIndex = 0;
-                        c.ConnectSocket();
-                    }
-                    return;
+                    //switch to Console
+                    FormMain.Instance.TabMain.SelectedIndex = 0;
+                    c.ConnectSocket();
                 }
+                return;
             }
 
             if (NewServerConnection != null)
-                NewServerConnection(GetServerSetting(selectedServerIndex));
+                NewServerConnection(GetServerSetting(selectedServerID));
             
         }
 
@@ -148,55 +145,10 @@ namespace IceChat2009
             //find the server number, add 1 to it to make it a non-zero value
             int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1;
             
-            if (nodeNumber <= serverNodes.Count)
-                selectedNodeIndex = nodeNumber;
-            else
-            {
-                selectedNodeIndex = 0;
-                selectedServerIndex = 0;
-            }
-
-
             g.Dispose();
 
-            Invalidate();
+            SelectNodeByIndex(nodeNumber);
 
-            object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode != null)
-            {
-                if (findNode.GetType() == typeof(ServerSetting))
-                {
-                    //this is a server, switch to console
-                    FormMain.Instance.TabMain.SelectTab(0);
-
-                    //(ConsoleTabWindow)tabMain.TabPages[0]//find the correct tab for the server tab
-                    foreach (ConsoleTab c in ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.TabPages)
-                    {
-                        if (c.Connection != null)
-                        {
-                            if (c.Connection.ServerSetting == ((ServerSetting)findNode))
-                            {
-                                //found the connection, switch to this tab in the Console Tab Window
-                                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedTab = c;
-                                return;
-                            }
-                        }
-                    }
-
-                    //select the default console window
-                    ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedIndex = 0;
-                    return;
-                }
-                
-                else if (findNode.GetType() == typeof(TabWindow))
-                {
-                    //this is a window, switch to this channel/query
-                    FormMain.Instance.TabMain.SelectTab((TabWindow)findNode);
-                    return;
-                }
-                
-                
-            }
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
@@ -259,30 +211,73 @@ namespace IceChat2009
             g.Dispose();
         }
 
+        internal void SelectNodeByIndex(int nodeNumber)
+        {
+            if (nodeNumber <= serverNodes.Count)
+                selectedNodeIndex = nodeNumber;
+            else
+                selectedNodeIndex = 0;
+            selectedServerID = 0;
+
+			Invalidate();
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode != null)
+            {
+                if (findNode.GetType() == typeof(ServerSetting))
+                {
+                    //this is a server, switch to console
+                    FormMain.Instance.TabMain.SelectTab(0);
+
+                    //(ConsoleTabWindow)tabMain.TabPages[0]//find the correct tab for the server tab
+                    foreach (ConsoleTab c in ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.TabPages)
+                    {
+                        if (c.Connection != null)
+                        {
+                            if (c.Connection.ServerSetting == ((ServerSetting)findNode))
+                            {
+                                //found the connection, switch to this tab in the Console Tab Window
+                                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedTab = c;
+                                return;
+                            }
+                        }
+                    }
+
+                    //select the default console window
+                    ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedIndex = 0;
+                    return;
+                }
+                
+                else if (findNode.GetType() == typeof(TabWindow))
+                {
+                    //this is a window, switch to this channel/query
+                    FormMain.Instance.TabMain.SelectTab((TabWindow)findNode);
+                    return;
+                }
+            }
+        }
 
         internal void SelectTab(object selectedNode)
         {
             if (selectedNode.GetType() == typeof(ServerSetting))
             {
                 //this is a console tab
-                selectedNodeIndex = FindServerNodeMatch(selectedNode);
+                SelectNodeByIndex(FindServerNodeMatch(selectedNode));
             }
             else if (selectedNode.GetType() == typeof(TabWindow))
             {
                 //this is a window tab
-                selectedNodeIndex = FindWindowNodeMatch(selectedNode);
+                SelectNodeByIndex(FindWindowNodeMatch(selectedNode));
             }
             else if (selectedNode.GetType() == typeof(ConsoleTabWindow))
             {
                 //this is the main console tab
                 if (((ConsoleTab)((ConsoleTabWindow)selectedNode).ConsoleTab.SelectedTab).Connection != null)
-                    selectedNodeIndex = FindServerNodeMatch(((ConsoleTab)((ConsoleTabWindow)selectedNode).ConsoleTab.SelectedTab).Connection.ServerSetting);
+                    SelectNodeByIndex(FindServerNodeMatch(((ConsoleTab)((ConsoleTabWindow)selectedNode).ConsoleTab.SelectedTab).Connection.ServerSetting));
                 else
-                    selectedNodeIndex = 0;
+                    SelectNodeByIndex(0);
             }
             
             Invalidate();                
-
         }
         
         private int FindServerNodeMatch(object nodeMatch)
@@ -356,7 +351,8 @@ namespace IceChat2009
                             this.disconnectToolStripMenuItem,
                             this.editToolStripMenuItem,
                             this.autoJoinToolStripMenuItem,
-                            this.autoPerformToolStripMenuItem});
+                            this.autoPerformToolStripMenuItem,
+                            this.deleteToolStripMenuItem});
 
                         //add in the popup menu
                         AddPopupMenu("Console", contextMenuServer);
@@ -513,20 +509,18 @@ namespace IceChat2009
         {
             if (((ToolStripMenuItem)sender).Tag == null) return;
 
-            if (selectedNodeIndex == 0) return;
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c!=null)
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
+                if (c.IsConnected)
                 {
-                    if (c.IsConnected)
-                    {
-                        FormMain.Instance.ParseOutGoingCommand(c, command);
-                    }
-                    return;
+                    FormMain.Instance.ParseOutGoingCommand(c, command);
                 }
+                return;
             }
 
         }
@@ -563,7 +557,6 @@ namespace IceChat2009
             BuildServerNodes();
 
             int nodeCount = 0;
-            int serverCount = 0;
 
             foreach (KeyValuePair<string,object> de in serverNodes)
             {
@@ -586,10 +579,10 @@ namespace IceChat2009
                 
                 if (value.GetType() == typeof(ServerSetting))
                 {
-                    serverCount++;
-                    
                     if (nodeCount == selectedNodeIndex)
-                        selectedServerIndex = serverCount;
+                    {
+                        selectedServerID = ((ServerSetting)value).ID;
+                    }
                     
                     x = 0;
                 }
@@ -776,43 +769,39 @@ namespace IceChat2009
         {
             FormMain.Instance.FocusInputBox();
 
-            if (selectedNodeIndex == 0) return;
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c!=null)
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
+                if (!c.IsConnected)
                 {
-                    if (!c.IsConnected)
-                    {
-                        //switch to the Console
-                        FormMain.Instance.TabMain.SelectedIndex = 0;
-                        c.ConnectSocket();
-                    }
-                    return;
-                }                    
+                    //switch to the Console
+                    FormMain.Instance.TabMain.SelectedIndex = 0;
+                    c.ConnectSocket();
+                }
+                return;
             }
             
             if (NewServerConnection != null)
-                NewServerConnection(GetServerSetting(selectedServerIndex));
+                NewServerConnection(GetServerSetting(selectedServerID));
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
             FormMain.Instance.FocusInputBox();
 
-            if (selectedNodeIndex == 0) return;
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c != null)
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
+                if (c.IsConnected)
                 {
-                    if (c.IsConnected)
-                    {
-                        c.AttemptReconnect = false;
-                        c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
-                    }
-                    return;
+                    c.AttemptReconnect = false;
+                    c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
                 }
+                return;
             }
         }
 
@@ -820,9 +809,9 @@ namespace IceChat2009
         {
             //open up the Server Editor
             //check if a server is selected or not
-            if (selectedServerIndex > 0)
+            if (selectedServerID > 0)
             {
-                f = new FormServers(GetServerSetting(selectedServerIndex));
+                f = new FormServers(GetServerSetting(selectedServerID));
                 f.SaveServer += new FormServers.SaveServerDelegate(f_SaveServer);
             }
             else
@@ -841,11 +830,25 @@ namespace IceChat2009
 
         private void f_NewServer(ServerSetting s)
         {
-            s.ID = serversCollection.listServers.Count + 1;
+            s.ID = serversCollection.GetNextID();
             serversCollection.AddServer(s);
             SaveServerSettings();
             f = null;
         }
+
+        public void AddConnection(IRCConnection c)
+        {
+            if (ServerConnections.ContainsKey(c.ServerSetting.ID))
+            {
+                Random r = new Random();
+                do
+                {
+                    c.ServerSetting.ID = r.Next(10000, 99999);
+                    System.Diagnostics.Debug.WriteLine("New Server ID:" + c.ServerSetting.ID);
+                } while (ServerConnections.ContainsKey(c.ServerSetting.ID));
+            }
+            ServerConnections.Add(c.ServerSetting.ID, c);
+        } 
 
         private void SaveServerSettings()
         {
@@ -885,20 +888,31 @@ namespace IceChat2009
             buttonEdit.PerformClick();
         }
 
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            ServerSetting s = GetServerSetting(selectedServerID);
+            if (s != null && c == null)
+            {
+                serverConnections.Remove(selectedServerID);
+                serversCollection.RemoveServer(s);
+                SaveServerSettings();
+                return;
+            }
+        }
+
         private void autoJoinToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FormMain.Instance.FocusInputBox();
 
-            if (selectedNodeIndex == 0) return;
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c!=null)
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
-                {
-                    if (c.IsConnected)
-                        FormMain.Instance.ParseOutGoingCommand(c, "/autojoin");
-                    return;
-                }
+                if (c.IsConnected)
+                    FormMain.Instance.ParseOutGoingCommand(c, "/autojoin");
+                return;
             }
         }
 
@@ -906,16 +920,13 @@ namespace IceChat2009
         {
             FormMain.Instance.FocusInputBox();
 
-            if (selectedNodeIndex == 0) return;
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
-            foreach (IRCConnection c in serverConnections.Values)
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
             {
-                if (c.ServerSetting.ID == selectedServerIndex)
-                {
-                    if (c.IsConnected)
-                        FormMain.Instance.ParseOutGoingCommand(c, "/autoperform");
-                    return;
-                }
+                if (c.IsConnected)
+                    FormMain.Instance.ParseOutGoingCommand(c, "/autoperform");
+                return;
             }
 
         }
@@ -991,6 +1002,5 @@ namespace IceChat2009
 
         #endregion
 
-        
     }
 }

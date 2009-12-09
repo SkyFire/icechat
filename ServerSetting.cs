@@ -43,11 +43,22 @@ namespace IceChat2009
             listServers = new ArrayList();
         }
 
-        public void AddServer( ServerSetting server ) 
+        public void AddServer(ServerSetting server)
         {
-            listServers.Add( server );
+            listServers.Add(server);
         }
-        
+
+        public void RemoveServer(ServerSetting server)
+        {
+            listServers.Remove(server);
+        }
+
+        public int GetNextID()
+        {
+            if (listServers.Count ==0)
+                return 1;
+            return ((ServerSetting)listServers[listServers.Count-1]).ID+1;
+        }
     }
     
     public class ServerSetting
