@@ -291,7 +291,10 @@ namespace IceChat2009
         private void OnControlRemoved(object sender, ControlEventArgs e)
         {
             if (e.Control.GetType() != typeof(ConsoleTabWindow))
+            {
+                ((TabWindow)e.Control).TextWindow.CloseLogFile();
                 tabPages.Remove((TabWindow)e.Control);
+            }
         }
 
         private void OnControlAdded(object sender, ControlEventArgs e)

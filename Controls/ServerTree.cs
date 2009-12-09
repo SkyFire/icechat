@@ -260,7 +260,7 @@ namespace IceChat2009
         }
 
 
-        public void SelectTab(object selectedNode)
+        internal void SelectTab(object selectedNode)
         {
             if (selectedNode.GetType() == typeof(ServerSetting))
             {

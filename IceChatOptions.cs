@@ -180,6 +180,7 @@ namespace IceChat2009
         private string _timeStamp = "[hh:mm.ss] ";
         private bool _saveWindow = true;
         private bool _identServer = true;
+        
         private bool _logConsole = true;
         private bool _logChannel = true;
         private bool _logQuery = true;

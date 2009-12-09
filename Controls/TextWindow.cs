@@ -106,6 +106,9 @@ namespace IceChat2009
 
         private readonly int MaxTextLines = 500;
 
+        //private string logFile;
+        private System.IO.StreamWriter logFile;
+
         public TextWindow()
         {
             InitializeComponent();
@@ -131,7 +134,7 @@ namespace IceChat2009
 
 
             popupMenu = new ContextMenuStrip();
-
+            
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
@@ -549,12 +552,12 @@ namespace IceChat2009
                 noColorMode = value;
             }
         }
-        
+
         #endregion
 
         #region Public Methods
 
-        public void ClearTextWindow()
+        internal void ClearTextWindow()
         {
             //clear the text window of all its lines
             displayLines.Initialize();
@@ -566,13 +569,58 @@ namespace IceChat2009
             Invalidate();
         }
 
+        internal void SetLogFile(string logFolder)
+        {
+            //get the type
+            if (!System.IO.File.Exists(logFolder))
+                System.IO.Directory.CreateDirectory(logFolder);
+            
+            if (this.Parent.GetType() == typeof(TabWindow))
+            {
+                //get the name of the channel
+                TabWindow t = (TabWindow)this.Parent;
+                if (t.WindowStyle == TabWindow.WindowType.Channel)
+                {
+                    if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel"))
+                        System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel");
+                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);                    
+                }
+                if (t.WindowStyle == TabWindow.WindowType.Query)
+                {
+                    if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Query"))
+                        System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Query");
+                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);
+                }
+            }
+            else if (this.Parent.GetType() == typeof(ConsoleTab))
+            {
+                logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", true);
+            }
+        }
+
+        internal void CloseLogFile()
+        {
+            if (logFile != null)
+            {
+                try
+                {
+                    logFile.Flush();
+                    logFile.Close();
+                    logFile.Dispose();
+                }
+                catch
+                {
+                }
+            }
+        }
+
         public bool ShowTimeStamp
         {
             get { return showTimeStamp; }
             set { showTimeStamp = value; }
         }
         
-        public void AppendText(string newLine, int color)
+        internal void AppendText(string newLine, int color)
         {
             //adds a new line to the Text Window
             if (newLine.Length == 0)
@@ -610,6 +658,11 @@ namespace IceChat2009
 
             totalLines++;
 
+            if (logFile != null)
+            {
+                logFile.WriteLine(StripCodes(newLine));
+                logFile.Flush();
+            }
 
             //emoticons not being parsed as of yet
             //newLine = ParseEmoticons(newLine);
@@ -652,6 +705,8 @@ namespace IceChat2009
             //newLine = totalLines.ToString() + ":" + newLine; 
 
             textLines[totalLines].line = newLine;
+
+            //log it
 
             Graphics g = this.CreateGraphics();
             //properly measure for bold characters needed
@@ -853,7 +908,8 @@ namespace IceChat2009
                 {
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = newValue + vScrollBar.LargeChange-1;
-                    vScrollBar.Value = newValue;
+                    if (newValue <= vScrollBar.Value + (vScrollBar.LargeChange-1) )
+                        vScrollBar.Value = newValue;
                 }
             }
         }

@@ -43,7 +43,8 @@ namespace IceChat2009
             consoleTab.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
             consoleTab.MouseUp += new MouseEventHandler(OnMouseUp);
             consoleTab.MouseDown += new MouseEventHandler(OnMouseDown);
-            
+
+            consoleTab.ControlRemoved += new ControlEventHandler(OnControlRemoved);
         }
 
         /// <summary>
@@ -131,6 +132,7 @@ namespace IceChat2009
             w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
 
             t.Controls.Add(w);
+            w.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
             consoleTab.TabPages.Add(t);
             consoleTab.SelectedTab = t;
 
@@ -191,6 +193,12 @@ namespace IceChat2009
             }
         }
 
+        private void OnControlRemoved(object sender, ControlEventArgs e)
+        {
+            if (e.Control.GetType() == typeof(ConsoleTab))
+                ((TextWindow)((ConsoleTab)e.Control).Controls[0]).CloseLogFile(); ;
+        }
+
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
             FormMain.Instance.FocusInputBox();
@@ -229,7 +237,7 @@ namespace IceChat2009
                             //remove the server connection from the collection
                             ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
                             FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
-							consoleTab.TabPages.RemoveAt(i);
+							consoleTab.TabPages.RemoveAt(consoleTab.TabPages.IndexOf(consoleTab.TabPages[i]));
                             return;
                         }
                     }

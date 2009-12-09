@@ -66,7 +66,7 @@ namespace IceChat2009
         public TabWindow(string title) : base()
         {
             InitializeComponent();
-
+            
             nicks = new Hashtable();
             
             windowName = title;

@@ -374,8 +374,8 @@ namespace IceChat2009
 
                         case "372": //motd
                         case "375":
-                            msg = JoinString(ircData, 3, true);
-                            if (ServerMOTD != null && serverSetting.ShowMOTD)
+                            msg = JoinString(ircData, 3, true);                            
+                            if (ServerMOTD != null && (serverSetting.ShowMOTD || serverSetting.ForceMOTD))
                                 ServerMOTD(this, msg);
                             break;
 
@@ -393,6 +393,12 @@ namespace IceChat2009
 
                         case "376": //end of motd
                         case "422": //missing motd
+                            if (serverSetting.ForceMOTD)
+                            {
+                                serverSetting.ForceMOTD = false;
+                                return;
+                            }
+                            
                             if (ServerMessage != null)
                                 ServerMessage(this, "You have successfully connected to " + serverSetting.RealServerName);
 

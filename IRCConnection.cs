@@ -39,7 +39,7 @@ namespace IceChat2009
         private string dataBuffer;
 
         private bool disconnectError = false;
-        private bool attemptReconnect = false;
+        private bool attemptReconnect = true;
 
         private System.Timers.Timer reconnectTimer;
 
@@ -177,7 +177,8 @@ namespace IceChat2009
                 //reconnect
                 FormMain.Instance.WindowMessage(this, "Console", "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")", 1);
                 disconnectError = false;
-                reconnectTimer.Start();
+                if (reconnectTimer != null)
+                    reconnectTimer.Start();
             }
 
         }
@@ -386,22 +387,23 @@ namespace IceChat2009
                 else
                 {
                     //connection lost                    
+                    if (ServerError != null)
+                        ServerError(this, "Connection Lost");
+
+                    disconnectError = true;
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
                     
-                    if (ServerError != null)
-                        ServerError(this, "Connection Lost");
                 }
             }
             catch (Exception e)
             {
+                if (ServerError != null)
+                    ServerError(this, "OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-                
-                if (ServerError != null)
-                    ServerError(this, "OnReceiveData Error:" + e.Source + ":" + e.Message.ToString());
-
             }             
         }
         

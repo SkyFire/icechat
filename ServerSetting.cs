@@ -164,6 +164,11 @@ namespace IceChat2009
         [XmlIgnore()]
         public char[] ChannelTypes
         { get; set; }
+        
+        //allow the MOTD to show if /motd command is used, but ShowMOTD is disabled
+        [XmlIgnore()]
+        public bool ForceMOTD
+        { get; set; }
 
     }
 }
