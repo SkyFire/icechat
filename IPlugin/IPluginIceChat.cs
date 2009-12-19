@@ -14,8 +14,8 @@ namespace IceChatPlugin
     public delegate void ServerQuitHandler(object sender, PluginArgs e);
 
     public delegate void InputTextHandler(object sender, PluginArgs e);
-
-
+    public delegate void ServerRawHandler(object sender, PluginArgs e);
+    
     public interface IPluginIceChat
     {
         string Name { get; }
@@ -47,6 +47,7 @@ namespace IceChatPlugin
         bool ServerQuit(PluginArgs args);
         bool InputText(PluginArgs args);
 
+        void ServerRaw(PluginArgs args);
 
         event ChannelMessageHandler OnChannelMessage;
         event ChannelActionHandler OnChannelAction;
@@ -58,6 +59,8 @@ namespace IceChatPlugin
         event ServerQuitHandler OnServerQuit;
 
         event InputTextHandler OnInputText;
+
+        event ServerRawHandler OnServerRaw;
 
     }
 

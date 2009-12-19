@@ -161,6 +161,10 @@ namespace IceChat2009
         public string ChannelModeParams
         { get; set; }
 
+        [XmlIgnore()]
+        public string ChannelModeNoParams
+        { get; set; }
+
         //the STATUSMG 005 Reply
         [XmlIgnore()]
         public char[] StatusMSG
@@ -181,5 +185,34 @@ namespace IceChat2009
         public bool ForceMOTD
         { get; set; }
 
+        [XmlIgnore()]
+        public Hashtable IAL
+        { get; set; }
+
+    }
+    
+    public class InternalAddressList
+    {
+        private string _nick;
+        private string _host;
+        //TODO: keep a record of all the channels
+        
+        public InternalAddressList(string nick, string host, string channel)
+        {
+            _nick = nick;
+            _host = host;            
+        }
+        
+        public string Nick
+        {
+            get { return _nick; }
+            set { _nick = value; }
+        }
+        
+        public string Host
+        {
+            get { return _host; }
+            set { _host = value; }
+        }
     }
 }

@@ -38,8 +38,15 @@ namespace IceChat2009
 
         //channel settings
         private string channelTopic = "";
-        private string channelModes = "";
-        private string channelModeParams = "";
+        private string fullChannelMode = "";
+
+        public struct channelMode
+        {
+            public char mode;
+            public bool set;
+            public string param;
+        }
+        private Hashtable channelModes;
 
         private bool isFullyJoined = false;
 
@@ -68,7 +75,8 @@ namespace IceChat2009
             InitializeComponent();
             
             nicks = new Hashtable();
-            
+            channelModes = new Hashtable();
+    
             windowName = title;
 
             this.Text = title;
@@ -83,54 +91,85 @@ namespace IceChat2009
             return nicks.ContainsKey(nick);
         }
         
-        internal void UpdateChannelMode(string mode, bool addMode)
-        {
-            //update the channelModes value
-            if (channelModes.Contains(mode) && !addMode)
-            {
-                channelModes = channelModes.Replace(mode, "");
-            }
-            else if (!channelModes.Contains(mode) && addMode)
-            {
-                channelModes += mode;    
-            }
-        }
-
-        internal void UpdateChannelMode(string mode, string param, bool addMode)
+        internal void UpdateChannelMode(char mode, bool addMode)
         {
             try
             {
-                //update the channelModes value
-                if (channelModes.Contains(mode) && !addMode)
-                {
-                    channelModes = channelModes.Replace(mode, "");
-                }
-                else if (!channelModes.Contains(mode) && addMode)
-                {
-                    channelModes += mode;
-                }
-                //update channelMode Parameters
-                if (param.Length > 0)
-                {
-                    if (channelModeParams.Contains(param) && !addMode)
-                    {
-                        channelModeParams = channelModeParams.Replace(param, "");
-                    }
-                    else if (!channelModeParams.Contains(param) && addMode)
-                    {
-                        channelModeParams += " " + param;
-                    }
-                }
-                
-                if (channelModeParams == " ")
-                    channelModeParams = "";
+                channelMode c = new channelMode();
+                c.mode = mode;
+                c.set = addMode;
+                c.param = null;
 
-                System.Diagnostics.Debug.WriteLine(channelModes + "::" + channelModeParams);
+                if (channelModes.Contains(mode))
+                {
+                    if (addMode)
+                        channelModes[mode] = c;
+                    else
+                        channelModes.Remove(mode);
+                }
+                else
+                {
+                    channelModes.Add(mode, c);
+                }
 
+                string modes = "";
+                string prms = " ";
+                foreach (channelMode cm in channelModes.Values)
+                {
+                    modes += cm.mode.ToString();
+                    if (cm.param != null)
+                        prms += cm.param + " ";
+                }
+
+                if (modes.Trim().Length > 0)
+                    ChannelModes = "+" + modes.Trim() + prms.TrimEnd();
+                else
+                    ChannelModes = "";
             }
             catch (Exception e)
             {
-                FormMain.Instance.ReportError(e.Message, e.StackTrace, "TabWindow::UpdateMode:" + mode + ":" + param + ":" + addMode);
+                System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.Source);
+            }
+        }
+
+        internal void UpdateChannelMode(char mode, string param, bool addMode)
+        {
+            try
+            {
+                channelMode c = new channelMode();
+                c.mode = mode;
+                c.set = addMode;
+                c.param = param;
+
+                if (channelModes.Contains(mode))
+                {
+                    if (addMode)
+                        channelModes[mode] = c;
+                    else
+                        channelModes.Remove(mode);
+                }
+                else
+                {
+                    if (addMode)
+                        channelModes.Add(mode, c);
+                }
+
+                string modes = "";
+                string prms = " ";
+                foreach (channelMode cm in channelModes.Values)
+                {
+                    modes += cm.mode.ToString();
+                    if (cm.param != null)
+                        prms += cm.param + " ";
+                }
+                if (modes.Trim().Length > 0)
+                    ChannelModes = "+" + modes.Trim() + prms.TrimEnd();
+                else
+                    ChannelModes = "";
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.Source);
             }
         }
 
@@ -346,12 +385,19 @@ namespace IceChat2009
         {
             get
             {
-                return channelModes + channelModeParams;
+                return fullChannelMode;
             }
             set
             {
-                System.Diagnostics.Debug.WriteLine(value);
-                channelModes = value;
+                fullChannelMode = value;
+            }
+        }
+
+        internal Hashtable ChannelModesHash
+        {
+            get
+            {
+                return channelModes;
             }
         }
 

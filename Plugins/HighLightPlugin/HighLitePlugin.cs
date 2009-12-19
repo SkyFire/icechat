@@ -27,6 +27,7 @@ namespace IceChatPlugin
         public event ServerQuitHandler OnServerQuit;
 
         public event InputTextHandler OnInputText;
+        public event ServerRawHandler OnServerRaw;        
 
         private TabPage tabPageHighlight;
         private Button buttonAdd;
@@ -416,6 +417,11 @@ namespace IceChatPlugin
         public bool InputText(PluginArgs args)
         {
             return false;
+        }
+
+        public void ServerRaw(PluginArgs args)
+        {
+
         }
 
     }

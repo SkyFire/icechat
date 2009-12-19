@@ -65,9 +65,8 @@ namespace IceChat2009
                     serverSocket.Disconnect(false);
 
             }
-            catch (SocketException)
+            catch
             {
-
             }
 
             reconnectTimer.Enabled = false;
@@ -160,7 +159,9 @@ namespace IceChat2009
                     }
                 }
             }
-            FormMain.Instance.WindowMessage(this, "Console", msg, 1);
+            if (ServerMessage != null)
+                ServerMessage(this, msg);
+
             FormMain.Instance.ServerTree.Invalidate();
 
             if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Console)
@@ -175,10 +176,17 @@ namespace IceChat2009
             if (disconnectError && attemptReconnect)
             {
                 //reconnect
-                FormMain.Instance.WindowMessage(this, "Console", "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")", 1);
+                if (ServerMessage != null)
+                    ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");
                 disconnectError = false;
-                if (reconnectTimer != null)
-                    reconnectTimer.Start();
+                try
+                {
+                    if (reconnectTimer != null)
+                        reconnectTimer.Start();
+                }
+                catch
+                {
+                }
             }
 
         }
@@ -197,11 +205,11 @@ namespace IceChat2009
                     ServerError(this, "Null Socket - Can not Connect");
                 return;
             }
+            
             try
             {
                 serverSocket.EndConnect(ar);
-            }
-            
+            }            
             catch (Exception e)
             {
                 if (ServerError != null)
@@ -237,7 +245,7 @@ namespace IceChat2009
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error:" + se.Message.ToString() + ":" + se.ErrorCode);
+                    ServerError(this, "Socket Exception Error OnConnectionReady:" + se.Message.ToString() + ":" + se.ErrorCode);
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
@@ -248,12 +256,11 @@ namespace IceChat2009
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Exception Error:" + e.Message.ToString());
+                    ServerError(this, "Exception Error OnConnectionReady:" + e.Message.ToString());
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
             }
         }
 
@@ -279,7 +286,6 @@ namespace IceChat2009
                 {
                     try
                     {
-
                         serverSocket.BeginSend(bytData, 0, bytData.Length, 0, new AsyncCallback(OnSendData), serverSocket);
                         //raise an event for the debug window
                         if (RawServerOutgoingData != null)
@@ -289,7 +295,7 @@ namespace IceChat2009
                     {
                         //some kind of a socket error
                         if (ServerError != null)
-                            ServerError(this, "Error: You are not Connected - Can not send:" + se.Message);
+                            ServerError(this, "You are not Connected - Can not send:" + se.Message);
 
                         disconnectError = true;
                     }
@@ -297,12 +303,11 @@ namespace IceChat2009
                 else
                 {
                     if (ServerError != null)
-                        ServerError(this, "Error: You are not Connected - Can not send:" + data);
+                        ServerError(this, "You are not Connected - Can not send:" + data);
 
                     disconnectError = true;
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
                 }
             }
         }
@@ -344,14 +349,14 @@ namespace IceChat2009
 
                 if (size > 0)
                 {
-                    
+
                     Decoder d = Encoding.Default.GetDecoder();
-                    char[] chars = new char[size];                    
+                    char[] chars = new char[size];
                     int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
                     System.String strData = new System.String(chars);
-                    
+
                     strData = strData.Replace("\r", "");
-                    
+
                     if (!strData.EndsWith("\n"))
                     {
                         //create a buffer
@@ -365,7 +370,7 @@ namespace IceChat2009
                         strData = dataBuffer + strData;
                         dataBuffer = "";
                     }
-                    
+
                     //split into lines and stuff
                     if (strData.IndexOf('\n') > -1)
                     {
@@ -393,18 +398,39 @@ namespace IceChat2009
                     disconnectError = true;
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-                    
+
                 }
             }
-            catch (Exception e)
+            catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+                    ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
+                //ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString() + ":" + se.StackTrace);
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-            }             
+            }
+            catch (Exception e)
+            {
+                if (ServerError != null)
+                    ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+
+                disconnectError = true;
+                serverSocket.Shutdown(SocketShutdown.Both);
+                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+            }
+            /*
+            finally
+            {
+                if (disconnectError)
+                {
+                    serverSocket.Shutdown(SocketShutdown.Both);
+                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+
+                }
+            }
+             */
         }
         
         /// <summary>

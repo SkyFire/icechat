@@ -47,6 +47,7 @@ namespace IceChat2009
     public delegate void AddNickNameDelegate(IRCConnection connection, string channel, string nick);
     public delegate void RemoveNickNameDelegate(IRCConnection connection, string channel, string nick);
     public delegate void ClearNickListDelegate(IRCConnection connection, string channel);
+    public delegate void UserHostReplyDelegate(IRCConnection connection, string fullhost);
 
     public delegate void KickNickDelegate(IRCConnection connection, string channel, string nick, string reason, string kickUser);
     public delegate void KickMyselfDelegate(IRCConnection connection, string channel, string reason, string kickUser);
@@ -73,7 +74,9 @@ namespace IceChat2009
 
     //for the Server Tree
     public delegate void NewServerConnectionDelegate(ServerSetting serverSetting);
-    
+
+    public delegate void IALUserDataDelegate(IRCConnection connection, string nick, string host, string channel);
+
     //public delegate void ServerDisconnectDelegate(object sender);
     //public delegate void ServerAddDelegate(object sender, ServerSetting serverSetting);
     

@@ -29,7 +29,8 @@ using System.Text;
 namespace IceChat2009
 {
     public partial class IRCConnection
-    {
+    {        
+           
         internal event OutGoingCommandDelegate OutGoingCommand;
 
         internal event ChannelMessageDelegate ChannelMessage;
@@ -54,7 +55,7 @@ namespace IceChat2009
         internal event UserModeChangeDelegate UserMode;
 
         internal event ChannelInviteDelegate ChannelInvite;
-
+        internal event UserHostReplyDelegate UserHostReply;
         internal event JoinChannelMyselfDelegate JoinChannelMyself;
         internal event PartChannelMyselfDelegate PartChannelMyself;
         
@@ -64,13 +65,15 @@ namespace IceChat2009
         internal event WhoisDataDelegate WhoisData;
         internal event CtcpMessageDelegate CtcpMessage;
         internal event UserNoticeDelegate UserNotice;
-
+    
         internal event ServerNoticeDelegate ServerNotice;
 
         internal event ChannelListDelegate ChannelList;
 
         internal event RawServerIncomingDataDelegate RawServerIncomingData;
         internal event RawServerOutgoingDataDelegate RawServerOutgoingData;
+
+        internal event IALUserDataDelegate IALUserData;
 
         private bool triedAltNickName = false;
         private bool initialLogon = false;
@@ -85,7 +88,6 @@ namespace IceChat2009
                 string host;
                 string msg;
                 string tempValue;
-
 
                 if (RawServerIncomingData != null)
                     RawServerIncomingData(this, data);
@@ -177,11 +179,15 @@ namespace IceChat2009
                                     {
                                         //CHANMODES=b,k,l,imnpstrDducCNMT
                                         string[] modes = ircData[i].Substring(ircData[i].IndexOf("=") + 1).Split(',');
+                                        
                                         for (int j = 0; j < modes.Length; j++)
                                         {
                                             if (j != (modes.Length - 1))
                                                 serverSetting.ChannelModeParams += modes[j];
+                                            else
+                                                serverSetting.ChannelModeNoParams = modes[j];
                                         }
+
                                     }
                                 }
 
@@ -248,11 +254,43 @@ namespace IceChat2009
                             if (ServerMessage != null)
                                 ServerMessage(this, msg);
                             break;
+                        case "302": //parse out a userhost
+                            msg = JoinString(ircData, 3, true);
+                            if (msg.Length == 0) return;
+                            if (msg.IndexOf(' ') == -1)
+                            {
+                                //single host
+                                host = msg.Substring(msg.IndexOf('@')+1);
+                                if (msg.IndexOf('*') > -1)
+                                    nick = msg.Substring(0, msg.IndexOf('*'));
+                                else
+                                    nick = msg.Substring(0, msg.IndexOf('='));
 
+                                System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
+                                foreach (System.Net.IPAddress address in addresslist)
+                                {
+                                    FormMain.Instance.ParseOutGoingCommand(this, "/echo " + nick + " resolved to " + address.ToString());
+                                    if (UserHostReply != null)
+                                        UserHostReply(this, msg);
+                                }
+                            }
+                            else
+                            {
+                                //multiple hosts
+                                string[] hosts = msg.Split(' ');
+                                foreach (string h in hosts)
+                                {
+                                    if (UserHostReply != null)
+                                        UserHostReply(this, h);
+                                }
+                            }
+                            break;
                         case "311":     //whois information
                             msg = "->> " + ircData[3] + " is " + ircData[4] + "@" + ircData[5] + " (" + JoinString(ircData, 7, true) + ")";
                             if (WhoisData != null)
                                 WhoisData(this, ircData[3], msg);
+                            if (IALUserData != null)
+                                IALUserData(this, nick, host, "");
                             break;
                         case "312":     //whois information
                             msg = "->> " + ircData[3] + " using " + ircData[4] + " (" + JoinString(ircData, 5, true) + ")";
@@ -331,6 +369,12 @@ namespace IceChat2009
                         case "333":     //channel time
                             //mediatraffic2.fi.quakenet.org 333 Snerf #icechat IceBot 1234725840    
                             channel = ircData[3];
+                            nick = ircData[4];
+                            DateTime date2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                            date2 = date2.AddSeconds(Convert.ToDouble(ircData[5]));
+                            msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
+                            if (GenericChannelMessage != null)
+                                GenericChannelMessage(this, channel, msg);
                             break;
 
                         case "353": //channel user list
@@ -371,7 +415,11 @@ namespace IceChat2009
                                         FormMain.Instance.NickList.RefreshList(c);
                             }
                             break;
-
+                            //1::xs4all.nl.quakenet.org 367 Snerf2009 #icechat9 *!*@*.hotmail.com Snerf 1260602965
+                            //1::xs4all.nl.quakenet.org 368 Snerf2009 #icechat9 :End of Channel Ban List
+                        case "367": //channel ban list
+                        case "368": //end of channel ban list
+                            break;
                         case "372": //motd
                         case "375":
                             msg = JoinString(ircData, 3, true);                            
@@ -491,6 +539,8 @@ namespace IceChat2009
                                             msg = msg.Substring(6);
                                             if (QueryAction != null)
                                                 QueryAction(this, nick, host, msg);
+                                            if (IALUserData != null)
+                                                IALUserData(this, nick, host, "");
                                             break;
                                         case "VERSION":
                                         case "TIME":
@@ -512,6 +562,8 @@ namespace IceChat2009
                                 {
                                     if (QueryMessage != null)
                                         QueryMessage(this, nick, host, msg);
+                                    if (IALUserData != null)
+                                        IALUserData(this, nick, host, "");
                                 }
                             }
                             else
@@ -525,6 +577,8 @@ namespace IceChat2009
                                             msg = msg.Substring(7);
                                             if (ChannelAction != null)
                                                 ChannelAction(this, channel, nick, host, msg);
+                                            if (IALUserData != null)
+                                                IALUserData(this, nick, host, channel);
                                             break;
                                         case "VERSION":
                                         case "TIME":
@@ -542,12 +596,17 @@ namespace IceChat2009
                                                 msg = msg.Substring(7);
                                                 if (ChannelAction != null)
                                                     ChannelAction(this, channel, nick, host, msg);
+                                                if (IALUserData != null)
+                                                    IALUserData(this, nick, host, channel);
                                             }
                                             else
                                             //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
                                             {
                                                 if (ChannelNotice != null)
                                                     ChannelNotice(this, nick, host,(char)32,channel, msg);
+                                                if (IALUserData != null)
+                                                    IALUserData(this, nick, host, channel);
+
                                             }
                                             break;
                                     }
@@ -556,6 +615,9 @@ namespace IceChat2009
                                 {
                                     if (ChannelMessage != null)
                                         ChannelMessage(this, channel, nick, host, msg);
+                                    if (IALUserData != null)
+                                        IALUserData(this, nick, host, channel);
+
                                 }
                             }
                             break;
@@ -585,11 +647,15 @@ namespace IceChat2009
                                 {
                                     if (ChannelNotice != null)
                                         ChannelNotice(this, nick, host, '0', ircData[2], msg);
+                                    if (IALUserData != null)
+                                        IALUserData(this, nick, host, ircData[2]);
                                 }
                                 else if (initialLogon && Array.IndexOf(serverSetting.StatusMSG, ircData[2][0]) != -1 && Array.IndexOf(serverSetting.ChannelTypes, ircData[2][1]) != -1)
                                 {
                                     if (ChannelNotice != null)
                                         ChannelNotice(this, nick, host, ircData[2][0], ircData[2].Substring(1), msg);
+                                    if (IALUserData != null)
+                                        IALUserData(this, nick, host, ircData[2]);
                                 }
                                 else
                                 {
@@ -628,7 +694,11 @@ namespace IceChat2009
                                 SendData("MODE " + channel);
                             }
                             else
+                            {
                                 JoinChannel(this, channel, nick, host, true);
+                                if (IALUserData != null)
+                                    IALUserData(this, nick, host, channel);
+                            }
                             break;
 
                         case "PART":
@@ -738,6 +808,11 @@ namespace IceChat2009
                             }
 
                             break;
+                        case "513":
+                            if (ServerError != null)
+                                ServerError(this, JoinString(ircData, 3, true));                            
+                            break;
+                        
                         default:
                             if (ServerMessage != null)
                                 ServerMessage(this, data);

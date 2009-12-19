@@ -511,6 +511,9 @@ namespace IceChat2009
             AddMsgIdent("Server Message", "$server - the server name");
             AddMsgIdent("Server Message", "$message - the message");
 
+            AddMsgIdent("Server Error", "$server - the server name");
+            AddMsgIdent("Server Error", "$message - the error message");
+
             AddMsgIdent("CTCP Request", "$nick - the nick the Ctcp request is for");
             AddMsgIdent("CTCP Request", "$ctcp - the Ctcp you wish to request for");
 

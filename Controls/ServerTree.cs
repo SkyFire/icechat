@@ -87,6 +87,7 @@ namespace IceChat2009
             {
                 if (s.AltNickName == null)
                     s.AltNickName = s.NickName + "_";
+                s.IAL = new Hashtable();
             }
 
             toolTip = new ToolTip();
@@ -831,6 +832,7 @@ namespace IceChat2009
         private void f_NewServer(ServerSetting s)
         {
             s.ID = serversCollection.GetNextID();
+            s.IAL = new Hashtable();
             serversCollection.AddServer(s);
             SaveServerSettings();
             f = null;
@@ -844,7 +846,7 @@ namespace IceChat2009
                 do
                 {
                     c.ServerSetting.ID = r.Next(10000, 99999);
-                    System.Diagnostics.Debug.WriteLine("New Server ID:" + c.ServerSetting.ID);
+                    //System.Diagnostics.Debug.WriteLine("New Server ID:" + c.ServerSetting.ID);
                 } while (ServerConnections.ContainsKey(c.ServerSetting.ID));
             }
             ServerConnections.Add(c.ServerSetting.ID, c);

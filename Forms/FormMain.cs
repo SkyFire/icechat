@@ -163,7 +163,7 @@ namespace IceChat2009
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - December 8 2009";
+            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - December 18 2009";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -241,12 +241,12 @@ namespace IceChat2009
         private void LoadDefaultMessageSettings()
         {
             IceChatMessageFormat oldMessage = new IceChatMessageFormat();
-            oldMessage.MessageSettings = new ServerMessageFormatItem[41];
+            oldMessage.MessageSettings = new ServerMessageFormatItem[42];
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
             
-            iceChatMessages.MessageSettings = new ServerMessageFormatItem[41];
+            iceChatMessages.MessageSettings = new ServerMessageFormatItem[42];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
             {
@@ -405,11 +405,15 @@ namespace IceChat2009
             else
                 iceChatMessages.MessageSettings[39] = oldMessage.MessageSettings[39];
 
-
             if (oldMessage.MessageSettings[40] == null || oldMessage.MessageSettings[40].FormattedMessage.Length == 0)
                 iceChatMessages.MessageSettings[40] = NewMessageFormat("User Echo", "&#x3;7$message");
             else
                 iceChatMessages.MessageSettings[40] = oldMessage.MessageSettings[40];
+
+            if (oldMessage.MessageSettings[41] == null || oldMessage.MessageSettings[41].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[41] = NewMessageFormat("Server Error", "&#x3;4ERROR: $message");
+            else
+                iceChatMessages.MessageSettings[41] = oldMessage.MessageSettings[41];
 
             //still do customize these messages
             iceChatMessages.MessageSettings[4] = NewMessageFormat("Ctcp Reply", "&#x3;12[$nick $ctcp Reply] : $reply");
@@ -531,7 +535,7 @@ namespace IceChat2009
                 iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatMessages.MessageSettings.Length != 41)
+                if (iceChatMessages.MessageSettings.Length != 42)
                     LoadDefaultMessageSettings();
             }
             else
@@ -1070,6 +1074,9 @@ namespace IceChat2009
             c.ServerNotice += new ServerNoticeDelegate(OnServerNotice);
             c.ChannelList += new ChannelListDelegate(OnChannelList);
 
+            c.UserHostReply += new UserHostReplyDelegate(OnUserHostReply);
+            c.IALUserData += new IALUserDataDelegate(OnIALUserData);
+
             c.RawServerIncomingData += new RawServerIncomingDataDelegate(OnRawServerData);
             c.RawServerOutgoingData += new RawServerOutgoingDataDelegate(OnRawServerOutgoingData);
             OnAddConsoleTab(c);
@@ -1130,6 +1137,23 @@ namespace IceChat2009
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$message", message);
             CurrentWindowMessage(connection, msg, 1);
+        }
+        /// <summary>
+        /// Received the full host for a userreply
+        /// </summary>
+        /// <param name="connection">Which Connection it came from</param>
+        /// <param name="fullhost">The full user host Nick+=Ident@Host</param>
+        private void OnUserHostReply(IRCConnection connection, string fullhost)
+        {
+            string host = fullhost.Substring(fullhost.IndexOf('@') + 1);
+            string nick = "";
+            if (fullhost.IndexOf('*') > -1)
+                nick = fullhost.Substring(0, fullhost.IndexOf('*'));
+            else
+                nick = fullhost.Substring(0, fullhost.IndexOf('='));
+            
+            //update the internal addresslist and check for user in all channels
+
         }
 
         /// <summary>
@@ -1208,14 +1232,25 @@ namespace IceChat2009
         /// <param name="message">Error Message</param>
         private void OnServerError(IRCConnection connection, string message)
         {
-            //goes to the console
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, message, 4);
-            
-            //send it to the current window as well
-            if (CurrentWindowType != TabWindow.WindowType.Console)
-                CurrentWindowMessage(connection, message, 4);
+            string[] msgs = message.Split('\n');
+            foreach (string msg in msgs)
+            {
+                if (msg.Length > 0)
+                {
+                    //goes to the console                        
+                    string error = GetMessageFormat("Server Error");
+                    error = error.Replace("$server", connection.ServerSetting.ServerName);
+                    error = error.Replace("$message", msg);
 
-            ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
+                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, error, 4);
+
+                    //send it to the current window as well
+                    if (CurrentWindowType != TabWindow.WindowType.Console)
+                        CurrentWindowMessage(connection, error, 4);
+
+                    ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
+                }
+            }
 
         }
 
@@ -1844,6 +1879,7 @@ namespace IceChat2009
 
             //parse out the user modes
             //set the mode in Server Setting
+
         }
 
         /// <summary>
@@ -1892,8 +1928,7 @@ namespace IceChat2009
                     else
                     {
                         chan.ChannelModes = fullmode.Trim();
-                        //return;
-
+                        
                     }
 
 
@@ -1933,17 +1968,18 @@ namespace IceChat2009
                                 }
 
                                 //check if the mode has a parameter (CHANMODES= from 005)
-                                //System.Diagnostics.Debug.WriteLine(connection.ServerSetting.ChannelModeParams.Length + ":" + mode[i]);
-
+                                //System.Diagnostics.Debug.WriteLine(connection.ServerSetting.ChannelModeParams.ToString() + ":" + mode[i]);
                                 if (connection.ServerSetting.ChannelModeParams.Contains(mode[i].ToString()))
                                 {
                                     //mode has parameter
                                     temp = (string)parametersEnumerator.Current;
                                     parametersEnumerator.MoveNext();
-                                    chan.UpdateChannelMode(mode[i].ToString(), temp, addMode);
+                                    chan.UpdateChannelMode(mode[i], temp, addMode);
                                 }
                                 else
-                                    chan.UpdateChannelMode(mode[i].ToString(), addMode);
+                                    //check if it is an actual channel mode, and not a user mode
+                                    if (connection.ServerSetting.ChannelModeNoParams.Contains(mode[i].ToString()))
+                                        chan.UpdateChannelMode(mode[i], addMode);
                                 break;
 
                         }
@@ -2017,6 +2053,14 @@ namespace IceChat2009
             TabWindow t = GetWindow(null, "Debug", TabWindow.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText(connection.ServerSetting.ID + ":" + data, 1);
+
+            PluginArgs args = new PluginArgs(connection);
+            args.Message = data;
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ServerRaw(args);
+            }              
+
         }
 
         private void OnRawServerOutgoingData(IRCConnection connection, string data)
@@ -2025,6 +2069,26 @@ namespace IceChat2009
             TabWindow t = GetWindow(null, "Debug", TabWindow.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText("-" + connection.ServerSetting.ID + ":" + data, 1);
+        }
+
+
+        private void OnIALUserData(IRCConnection connection, string nick, string host, string channel)
+        {
+            //internal addresslist userdata            
+            InternalAddressList ial = new InternalAddressList(nick,host,channel);
+            
+            if (!connection.ServerSetting.IAL.ContainsKey(nick))
+            {
+                //System.Diagnostics.Debug.WriteLine("add " + nick + ":" + host);
+                connection.ServerSetting.IAL.Add(nick, ial);
+            }
+            /*
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("EXISTS " + nick + ":" + host);
+                ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
+            }
+            */
         }
 
         #endregion
@@ -2079,8 +2143,11 @@ namespace IceChat2009
                 }
                 
                 tabMain.TabPages.Add(t);
-                t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
-
+                if (t.WindowStyle != TabWindow.WindowType.Debug)
+                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+                else
+                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder);
+                
                 tabMain.SelectedTab = t;
 
                 nickList.CurrentWindow = t;
@@ -2328,6 +2395,7 @@ namespace IceChat2009
                                 if (t != null)
                                 {
                                     FormChannelInfo fci = new FormChannelInfo(t);
+                                    SendData(connection, "MODE " + t.WindowName + " +b");
                                     fci.ShowDialog(this);
                                 }
                             }
@@ -2337,6 +2405,7 @@ namespace IceChat2009
                                 if (CurrentWindowType == TabWindow.WindowType.Channel)
                                 {
                                     FormChannelInfo fci = new FormChannelInfo(CurrentWindow);
+                                    SendData(connection, "MODE " + CurrentWindow.WindowName + " +b");
                                     fci.ShowDialog(this);
                                 }
                             }
@@ -2404,6 +2473,24 @@ namespace IceChat2009
                             }
                         }
                         break;
+                    case "/dns":
+                        if (data.Length > 0)
+                        {
+                            if (data.IndexOf(".") > 0)
+                            {
+                                //dns a host
+                                System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(data);
+                                ParseOutGoingCommand(connection, "/echo " + data + " resolved to " + addresslist.Length + " addresses");
+                                foreach (System.Net.IPAddress address in addresslist)
+                                    ParseOutGoingCommand(connection, "/echo  " + address.ToString());
+                            }
+                            else
+                            {
+                                //dns a nickname (send a userhost)
+                                SendData(connection, "USERHOST " + data);
+                            }
+                        }
+                        break;                    
                     case "/echo":
                         //currently just echo to the current window
                         if (data.Length > 0)
@@ -3335,6 +3422,14 @@ namespace IceChat2009
         
         #endregion
 
+        internal ArrayList Plugins
+        {
+            get
+            {
+                return loadedPlugins;
+            }
+        }
+
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
@@ -3396,6 +3491,8 @@ namespace IceChat2009
 
                             ipi.OnInputText += new InputTextHandler(Plugin_OnInputText);
 
+                            //ipi.OnServerRaw += new ServerRawHandler(Plugin_OnServerRaw);
+
                             loadedPlugins.Add(ipi);
                         }
                         else
@@ -3410,7 +3507,12 @@ namespace IceChat2009
                 }
             }
         }
-
+        /*
+        private void Plugin_OnServerRaw(object sender, PluginArgs e)
+        {
+            //            
+        }
+        */
         private void Plugin_OnInputText(object sender, PluginArgs e)
         {
             ParseOutGoingCommand((IRCConnection)e.Connection, e.Extra);

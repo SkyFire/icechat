@@ -585,12 +585,18 @@ namespace IceChat2009
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel");
                     logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);                    
                 }
-                if (t.WindowStyle == TabWindow.WindowType.Query)
+                else if (t.WindowStyle == TabWindow.WindowType.Query)
                 {
                     if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Query"))
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Query");
                     logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);
                 }
+                else if (t.WindowStyle == TabWindow.WindowType.Debug)
+                {
+                    System.Diagnostics.Debug.WriteLine(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log");
+                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log", true);
+                }
+                
             }
             else if (this.Parent.GetType() == typeof(ConsoleTab))
             {
