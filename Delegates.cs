@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IceChat2009
+namespace IceChat
 {
     //public delegate void OutgoingMessageDelegate(IRCConnection connection, string window, string data, int color);
     public delegate void OutGoingCommandDelegate(IRCConnection connection, string data);

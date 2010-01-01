@@ -34,7 +34,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace IceChat2009
+namespace IceChat
 {
 
     public partial class ServerTree : UserControl
@@ -353,7 +353,7 @@ namespace IceChat2009
                             this.editToolStripMenuItem,
                             this.autoJoinToolStripMenuItem,
                             this.autoPerformToolStripMenuItem,
-                            this.deleteToolStripMenuItem});
+                            this.openLogFolderToolStripMenuItem});
 
                         //add in the popup menu
                         AddPopupMenu("Console", contextMenuServer);
@@ -744,7 +744,7 @@ namespace IceChat2009
                 Random partNick = new Random();
                 s.NickName = "Guest09_" + partNick.Next(100, 999).ToString();
                 s.AltNickName = s.NickName + "_";
-                s.AutoJoinChannels = new string[] { "#icechat2009" };
+                s.AutoJoinChannels = new string[] { "#IceChat2009" };
                 s.AutoJoinEnable = true;
                 servers.AddServer(s);
 
@@ -813,23 +813,29 @@ namespace IceChat2009
             if (selectedServerID > 0)
             {
                 f = new FormServers(GetServerSetting(selectedServerID));
-                f.SaveServer += new FormServers.SaveServerDelegate(f_SaveServer);
+                f.SaveServer += new FormServers.SaveServerDelegate(OnSaveServer);
             }
             else
             {
                 f = new FormServers();
-                f.NewServer += new FormServers.NewServerDelegate(f_NewServer);
+                f.NewServer += new FormServers.NewServerDelegate(OnNewServer);
             }
 
             f.ShowDialog(this.Parent);
         }
-        private void f_SaveServer()
+        
+        private void OnSaveServer(ServerSetting s, bool removeServer)
         {
+            //check if the server needs to be removed
+            if (removeServer)
+            {
+                serversCollection.RemoveServer(s);
+            }
             SaveServerSettings();
             f = null;
         }
 
-        private void f_NewServer(ServerSetting s)
+        private void OnNewServer(ServerSetting s)
         {
             s.ID = serversCollection.GetNextID();
             s.IAL = new Hashtable();
@@ -850,6 +856,13 @@ namespace IceChat2009
                 } while (ServerConnections.ContainsKey(c.ServerSetting.ID));
             }
             ServerConnections.Add(c.ServerSetting.ID, c);
+            //check if it exists in the servers collection
+            foreach (ServerSetting s in serversCollection.listServers)
+            {
+                if (s.ID == c.ServerSetting.ID)
+                    return;
+            }
+            serversCollection.AddServer(c.ServerSetting);
         } 
 
         private void SaveServerSettings()
@@ -866,7 +879,7 @@ namespace IceChat2009
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             FormServers f = new FormServers();
-            f.NewServer += new FormServers.NewServerDelegate(f_NewServer);
+            f.NewServer += new FormServers.NewServerDelegate(OnNewServer);
             f.ShowDialog(this.Parent);
         }
 
@@ -932,7 +945,21 @@ namespace IceChat2009
             }
 
         }
-        
+
+        private void openLogFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
+
+            ServerSetting s = GetServerSetting(selectedServerID);
+            if (s != null)
+            {
+                FormMain.Instance.ParseOutGoingCommand(null, "/run " + FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + s.ServerName);
+                return;
+            }
+        }
+
         private void clearWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //clear the channel window for the selected channel
@@ -1003,6 +1030,7 @@ namespace IceChat2009
         }
 
         #endregion
+
 
     }
 }

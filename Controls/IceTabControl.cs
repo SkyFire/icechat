@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class IceTabControl : TabControl
     {
@@ -299,7 +299,7 @@ namespace IceChat2009
 
         private void OnControlAdded(object sender, ControlEventArgs e)
         {
-            if (e.Control.GetType() != typeof(IceChat2009.ConsoleTabWindow))
+            if (e.Control.GetType() != typeof(IceChat.ConsoleTabWindow))
                 tabPages.Add((TabWindow)e.Control);
         }
 

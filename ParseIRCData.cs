@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class IRCConnection
     {        
@@ -80,7 +80,7 @@ namespace IceChat2009
 
         private void ParseData(string data)
         {
-            try
+            try 
             {
                 string[] ircData = data.Split(' ');
                 string channel;
@@ -99,7 +99,7 @@ namespace IceChat2009
                         SendData("PONG " + ircData[1]);
 
                         if (ServerMessage != null && serverSetting.ShowPingPong)
-                            ServerMessage(this, "Ping? Pong!");
+                          ServerMessage(this, "Ping? Pong!");
                         return;
                     }
                 }
@@ -297,6 +297,11 @@ namespace IceChat2009
                             if (WhoisData != null)
                                 WhoisData(this, ircData[3], msg);
                             break;
+                        case "313":     //whois information
+                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            if (WhoisData != null)
+                                WhoisData(this, ircData[3], msg);
+                            break;
                         case "317":     //whois information
                             DateTime date1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date1 = date1.AddSeconds(Convert.ToDouble(ircData[5]));
@@ -376,7 +381,28 @@ namespace IceChat2009
                             if (GenericChannelMessage != null)
                                 GenericChannelMessage(this, channel, msg);
                             break;
-
+                        case "348": //channel exception list
+                            channel = ircData[3];
+                            //3 is channel
+                            //4 is host
+                            //5 added by
+                            //6 added time
+                            TabWindow ch = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            if (ch != null)
+                            {
+                                if (ch.HasChannelInfo)
+                                {
+                                    DateTime date4 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
+                                    ch.ChannelInfoForm.AddChannelException(ircData[4], NickFromFullHost(ircData[5]) + " on " + date4.ToShortTimeString() + " " + date4.ToShortDateString());
+                                    break;
+                                }
+                            }
+                            msg = JoinString(ircData, 3, false);
+                            if (ServerMessage != null)
+                                ServerMessage(this, msg);                            
+                            break;
+                        case "349": //end of channel exception list
+                            break;
                         case "353": //channel user list
                             channel = ircData[4];
                             TabWindow t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
@@ -415,9 +441,26 @@ namespace IceChat2009
                                         FormMain.Instance.NickList.RefreshList(c);
                             }
                             break;
-                            //1::xs4all.nl.quakenet.org 367 Snerf2009 #icechat9 *!*@*.hotmail.com Snerf 1260602965
-                            //1::xs4all.nl.quakenet.org 368 Snerf2009 #icechat9 :End of Channel Ban List
                         case "367": //channel ban list
+                            channel = ircData[3];
+                            //3 is channel
+                            //4 is host
+                            //5 banned by
+                            //6 ban time
+                            TabWindow ci = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            if (ci != null)
+                            {
+                                if (ci.HasChannelInfo)
+                                {
+                                    DateTime date3 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
+                                    ci.ChannelInfoForm.AddChannelBan(ircData[4], ircData[5] + " on " + date3.ToShortTimeString() + " " + date3.ToShortDateString());
+                                    break;
+                                }
+                            }
+                            msg = JoinString(ircData, 3, false);
+                            if (ServerMessage != null)
+                                ServerMessage(this, msg);                            
+                            break;
                         case "368": //end of channel ban list
                             break;
                         case "372": //motd
@@ -787,7 +830,10 @@ namespace IceChat2009
                             break;
 
                         //errors
+                        case "401": //no such nick
+                        case "412": //no text to send
                         case "421": //unknown command
+                        case "472": //unknown char to me (channel mode)
                             if (ServerError != null)
                                 ServerError(this, JoinString(ircData, 3, false));
                             break;

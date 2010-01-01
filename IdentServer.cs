@@ -29,7 +29,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace IceChat2009
+namespace IceChat
 {
     public class IdentServer
     {

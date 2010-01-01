@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormChannelInfo : Form
     {
@@ -15,11 +15,14 @@ namespace IceChat2009
         public FormChannelInfo(TabWindow Channel)
         {
             InitializeComponent();
+            this.FormClosing += new FormClosingEventHandler(OnFormClosing);
 
             this.channel = Channel;
             this.textTopic.Text = StripAllCodes(channel.ChannelTopic);
-            this.Text = channel.WindowName + "[" + channel.ChannelModes + "]";        
-    
+            this.Text = channel.WindowName + "[" + channel.ChannelModes + "]";
+            this.channel.HasChannelInfo = true;
+            this.channel.ChannelInfoForm = this;
+
             //parse out the modes
             foreach (TabWindow.channelMode cm in channel.ChannelModesHash.Values)
             {
@@ -46,6 +49,26 @@ namespace IceChat2009
                         break;
                 }
             }
+        }
+        internal void AddChannelBan(string host, string bannedBy)
+        {
+            ListViewItem lvi = new ListViewItem(host);
+            lvi.SubItems.Add(bannedBy);
+            listViewBans.Items.Add(lvi);
+        }
+
+        internal void AddChannelException(string host, string bannedBy)
+        {
+            ListViewItem lvi = new ListViewItem(host);
+            lvi.SubItems.Add(bannedBy);
+            listViewExceptions.Items.Add(lvi);
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.channel.HasChannelInfo = false;
+            this.channel.ChannelInfoForm = null;
+
         }
 
         private void buttonClose_Click(object sender, EventArgs e)

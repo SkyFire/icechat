@@ -8,10 +8,10 @@
     <ProjectGuid>{C6F37CE4-B0A1-4048-A896-9A28B2A0127D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IceChat2009</RootNamespace>
+    <RootNamespace>IceChat</RootNamespace>
     <AssemblyName>IceChat2009</AssemblyName>
-    <StartupObject>IceChat2009.Program</StartupObject>
-    <ApplicationIcon>icechat9.ico</ApplicationIcon>
+    <StartupObject>IceChat.Program</StartupObject>
+    <ApplicationIcon>icechat2009.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -97,6 +97,18 @@
     <Compile Include="Forms\FormEditor.Designer.cs">
       <DependentUpon>FormEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEmoticons.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEmoticons.Designer.cs">
+      <DependentUpon>FormEmoticons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPluginInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPluginInfo.Designer.cs">
+      <DependentUpon>FormPluginInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormServerEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,7 +157,14 @@
       <DependentUpon>NickList.cs</DependentUpon>
     </Compile>
     <Compile Include="ParseIRCData.cs" />
-    <Compile Include="Properties\Settings1.Designer.cs">
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerSetting.cs" />
@@ -185,23 +204,23 @@
     </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\FormEmoticons.resx">
+      <DependentUpon>FormEmoticons.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPluginInfo.resx">
+      <DependentUpon>FormPluginInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormUserInfo.resx">
       <DependentUpon>FormUserInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Compile Include="Controls\TabWindow.cs">
       <SubType>Component</SubType>
@@ -253,25 +272,40 @@
       <DependentUpon>QuickConnect.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
       <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
       <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icechat2009.ico" />
     <Content Include="icechat9.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -279,9 +313,6 @@
       <Project>{EC8820CA-B2C2-416B-8A59-2416AA349C4C}</Project>
       <Name>IPluginIceChat</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 
-namespace IceChat2009
+namespace IceChat
 {
     public class TabWindow : System.Windows.Forms.TabPage
     {    
@@ -49,6 +49,8 @@ namespace IceChat2009
         private Hashtable channelModes;
 
         private bool isFullyJoined = false;
+        private bool hasChannelInfo = false;
+        private FormChannelInfo channelInfoForm = null;
 
         private delegate void ChangeTopicDelegate(string topic);
         private delegate void ChangeTextDelegate(string text);
@@ -426,6 +428,30 @@ namespace IceChat2009
             }
         }
 
+        internal bool HasChannelInfo
+        {
+            get
+            {
+                return hasChannelInfo;
+            }
+            set
+            {
+                hasChannelInfo = value;
+            }
+        }
+
+        internal FormChannelInfo ChannelInfoForm
+        {
+            get
+            {
+                return channelInfoForm;
+            }
+            set
+            {
+                channelInfoForm = value;
+            }
+        }
+
         internal FormMain.ServerMessageType LastMessageType
         {
             get
@@ -488,8 +514,8 @@ namespace IceChat2009
         private void InitializeComponent()
         {
             this.panelTopic = new System.Windows.Forms.Panel();
-            this.textTopic = new IceChat2009.TextWindow();
-            this.textWindow = new IceChat2009.TextWindow();
+            this.textTopic = new IceChat.TextWindow();
+            this.textWindow = new IceChat.TextWindow();
             this.panelTopic.SuspendLayout();
             this.SuspendLayout();
             // 

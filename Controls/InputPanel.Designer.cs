@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class InputPanel
     {
@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputPanel));
             this.buttonSend = new System.Windows.Forms.Button();
-            this.textInput = new IceChat2009.IceInputBox();
+            this.buttonEmoticonPicker = new System.Windows.Forms.Button();
+            this.textInput = new IceChat.IceInputBox();
             this.SuspendLayout();
             // 
             // buttonSend
@@ -45,15 +47,27 @@
             this.buttonSend.UseVisualStyleBackColor = true;
             this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
             // 
+            // buttonEmoticonPicker
+            // 
+            this.buttonEmoticonPicker.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonEmoticonPicker.Image = ((System.Drawing.Image)(resources.GetObject("buttonEmoticonPicker.Image")));
+            this.buttonEmoticonPicker.Location = new System.Drawing.Point(0, 0);
+            this.buttonEmoticonPicker.Name = "buttonEmoticonPicker";
+            this.buttonEmoticonPicker.Size = new System.Drawing.Size(28, 23);
+            this.buttonEmoticonPicker.TabIndex = 2;
+            this.buttonEmoticonPicker.UseVisualStyleBackColor = true;
+            this.buttonEmoticonPicker.Click += new System.EventHandler(this.buttonEmoticonPicker_Click);
+            // 
             // textInput
             // 
+            this.textInput.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textInput.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textInput.HideSelection = false;
-            this.textInput.Location = new System.Drawing.Point(0, 0);
+            this.textInput.Location = new System.Drawing.Point(28, 0);
             this.textInput.MaxLength = 512;
             this.textInput.Name = "textInput";
-            this.textInput.Size = new System.Drawing.Size(562, 23);
+            this.textInput.Size = new System.Drawing.Size(534, 16);
             this.textInput.TabIndex = 0;
             this.textInput.WordWrap = false;
             // 
@@ -62,6 +76,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.textInput);
+            this.Controls.Add(this.buttonEmoticonPicker);
             this.Controls.Add(this.buttonSend);
             this.Name = "InputPanel";
             this.Size = new System.Drawing.Size(631, 23);
@@ -74,5 +89,6 @@
 
         private IceInputBox textInput;
         private System.Windows.Forms.Button buttonSend;
+        private System.Windows.Forms.Button buttonEmoticonPicker;
     }
 }

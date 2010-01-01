@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using System.Collections;
 
 
-namespace IceChat2009
+namespace IceChat
 {
     public class ConsoleTabWindow : System.Windows.Forms.TabPage
     {
@@ -53,13 +53,15 @@ namespace IceChat2009
         /// <param name="connection"></param>
         /// <param name="data"></param>
         /// <param name="color"></param>
-        internal void AddText(IRCConnection connection, string data, int color)
+        internal void AddText(IRCConnection connection, string data, int color, bool scrollToBottom)
         {
             foreach (ConsoleTab t in consoleTab.TabPages)
             {
                 if (t.Connection == connection)
                 {
                     ((TextWindow)t.Controls[0]).AppendText(data, color);
+                    if (scrollToBottom)
+                        ((TextWindow)t.Controls[0]).ScrollToBottom();
                     return;
                 }
             }
@@ -132,7 +134,9 @@ namespace IceChat2009
             w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
 
             t.Controls.Add(w);
-            w.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+            if (FormMain.Instance.IceChatOptions.LogConsole)
+                w.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+            
             consoleTab.TabPages.Add(t);
             consoleTab.SelectedTab = t;
 

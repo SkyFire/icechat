@@ -29,7 +29,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace IceChat2009
+namespace IceChat
 {
     [XmlRoot("IceChatServers")]
     public class IceChatServers
@@ -70,6 +70,7 @@ namespace IceChat2009
         private string _identName = "Ice2009";
         private string _fullName = "The Chat Cool People Use";
         private string _realServerName = "";
+        private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
 
         [XmlAttribute("ServerID")]
@@ -141,6 +142,10 @@ namespace IceChat2009
         [XmlElement("RejoinChannels")]
         public bool RejoinChannels
         { get; set; }
+
+        [XmlElement("Encoding")]
+        public string Encoding
+        { get { return this._encoding; } set { this._encoding = value; } }
 
         [XmlIgnore()]
         public string RealServerName

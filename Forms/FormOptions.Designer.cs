@@ -1,4 +1,4 @@
-namespace IceChat2009
+namespace IceChat
 {
     partial class FormSettings
     {
@@ -28,6 +28,8 @@ namespace IceChat2009
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
@@ -72,16 +74,28 @@ namespace IceChat2009
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabSounds = new System.Windows.Forms.TabPage();
+            this.tabEmoticon = new System.Windows.Forms.TabPage();
+            this.buttonEditTrigger = new System.Windows.Forms.Button();
+            this.buttonRemoveEmoticon = new System.Windows.Forms.Button();
+            this.buttonAddEmoticon = new System.Windows.Forms.Button();
+            this.listViewEmot = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.imageListEmoticons = new System.Windows.Forms.ImageList(this.components);
             this.tabEvents = new System.Windows.Forms.TabPage();
             this.tabServer = new System.Windows.Forms.TabPage();
+            this.checkServerReconnect = new System.Windows.Forms.CheckBox();
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
+            this.checkSeperateLogs = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
             this.tabLogging.SuspendLayout();
             this.tabFonts.SuspendLayout();
+            this.tabEmoticon.SuspendLayout();
             this.tabServer.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -117,6 +131,7 @@ namespace IceChat2009
             this.tabControlOptions.Controls.Add(this.tabLogging);
             this.tabControlOptions.Controls.Add(this.tabFonts);
             this.tabControlOptions.Controls.Add(this.tabSounds);
+            this.tabControlOptions.Controls.Add(this.tabEmoticon);
             this.tabControlOptions.Controls.Add(this.tabEvents);
             this.tabControlOptions.Controls.Add(this.tabServer);
             this.tabControlOptions.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -182,6 +197,7 @@ namespace IceChat2009
             // 
             // tabLogging
             // 
+            this.tabLogging.Controls.Add(this.checkSeperateLogs);
             this.tabLogging.Controls.Add(this.checkLogQuery);
             this.tabLogging.Controls.Add(this.checkLogChannel);
             this.tabLogging.Controls.Add(this.checkLogConsole);
@@ -539,6 +555,88 @@ namespace IceChat2009
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
             // 
+            // tabEmoticon
+            // 
+            this.tabEmoticon.Controls.Add(this.buttonEditTrigger);
+            this.tabEmoticon.Controls.Add(this.buttonRemoveEmoticon);
+            this.tabEmoticon.Controls.Add(this.buttonAddEmoticon);
+            this.tabEmoticon.Controls.Add(this.listViewEmot);
+            this.tabEmoticon.Location = new System.Drawing.Point(4, 25);
+            this.tabEmoticon.Name = "tabEmoticon";
+            this.tabEmoticon.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEmoticon.Size = new System.Drawing.Size(629, 213);
+            this.tabEmoticon.TabIndex = 7;
+            this.tabEmoticon.Text = "Emoticons";
+            this.tabEmoticon.UseVisualStyleBackColor = true;
+            // 
+            // buttonEditTrigger
+            // 
+            this.buttonEditTrigger.Location = new System.Drawing.Point(487, 64);
+            this.buttonEditTrigger.Name = "buttonEditTrigger";
+            this.buttonEditTrigger.Size = new System.Drawing.Size(136, 23);
+            this.buttonEditTrigger.TabIndex = 3;
+            this.buttonEditTrigger.Text = "Edit Trigger";
+            this.buttonEditTrigger.UseVisualStyleBackColor = true;
+            this.buttonEditTrigger.Click += new System.EventHandler(this.buttonEditTrigger_Click);
+            // 
+            // buttonRemoveEmoticon
+            // 
+            this.buttonRemoveEmoticon.Location = new System.Drawing.Point(487, 35);
+            this.buttonRemoveEmoticon.Name = "buttonRemoveEmoticon";
+            this.buttonRemoveEmoticon.Size = new System.Drawing.Size(136, 23);
+            this.buttonRemoveEmoticon.TabIndex = 2;
+            this.buttonRemoveEmoticon.Text = "Remove Emoticon";
+            this.buttonRemoveEmoticon.UseVisualStyleBackColor = true;
+            this.buttonRemoveEmoticon.Click += new System.EventHandler(this.buttonRemoveEmoticon_Click);
+            // 
+            // buttonAddEmoticon
+            // 
+            this.buttonAddEmoticon.Location = new System.Drawing.Point(487, 6);
+            this.buttonAddEmoticon.Name = "buttonAddEmoticon";
+            this.buttonAddEmoticon.Size = new System.Drawing.Size(136, 23);
+            this.buttonAddEmoticon.TabIndex = 1;
+            this.buttonAddEmoticon.Text = "Add Emoticon";
+            this.buttonAddEmoticon.UseVisualStyleBackColor = true;
+            this.buttonAddEmoticon.Click += new System.EventHandler(this.buttonAddEmoticon_Click);
+            // 
+            // listViewEmot
+            // 
+            this.listViewEmot.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.listViewEmot.LabelEdit = true;
+            this.listViewEmot.LabelWrap = false;
+            this.listViewEmot.Location = new System.Drawing.Point(4, 6);
+            this.listViewEmot.MultiSelect = false;
+            this.listViewEmot.Name = "listViewEmot";
+            this.listViewEmot.ShowGroups = false;
+            this.listViewEmot.Size = new System.Drawing.Size(477, 201);
+            this.listViewEmot.SmallImageList = this.imageListEmoticons;
+            this.listViewEmot.TabIndex = 0;
+            this.listViewEmot.UseCompatibleStateImageBehavior = false;
+            this.listViewEmot.View = System.Windows.Forms.View.SmallIcon;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Image";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Trigger";
+            this.columnHeader2.Width = 30;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "ImageFileName";
+            this.columnHeader3.Width = 0;
+            // 
+            // imageListEmoticons
+            // 
+            this.imageListEmoticons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEmoticons.ImageStream")));
+            this.imageListEmoticons.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListEmoticons.Images.SetKeyName(0, "Smile.png");
+            // 
             // tabEvents
             // 
             this.tabEvents.Location = new System.Drawing.Point(4, 25);
@@ -551,6 +649,7 @@ namespace IceChat2009
             // 
             // tabServer
             // 
+            this.tabServer.Controls.Add(this.checkServerReconnect);
             this.tabServer.Controls.Add(this.checkIdentServer);
             this.tabServer.Controls.Add(this.textDefaultNick);
             this.tabServer.Controls.Add(this.label13);
@@ -561,6 +660,16 @@ namespace IceChat2009
             this.tabServer.TabIndex = 5;
             this.tabServer.Text = "Default Server";
             this.tabServer.UseVisualStyleBackColor = true;
+            // 
+            // checkServerReconnect
+            // 
+            this.checkServerReconnect.AutoSize = true;
+            this.checkServerReconnect.Location = new System.Drawing.Point(11, 68);
+            this.checkServerReconnect.Name = "checkServerReconnect";
+            this.checkServerReconnect.Size = new System.Drawing.Size(209, 20);
+            this.checkServerReconnect.TabIndex = 44;
+            this.checkServerReconnect.Text = "Reconnect Servers on Error";
+            this.checkServerReconnect.UseVisualStyleBackColor = true;
             // 
             // checkIdentServer
             // 
@@ -590,6 +699,16 @@ namespace IceChat2009
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
+            // checkSeperateLogs
+            // 
+            this.checkSeperateLogs.AutoSize = true;
+            this.checkSeperateLogs.Location = new System.Drawing.Point(12, 125);
+            this.checkSeperateLogs.Name = "checkSeperateLogs";
+            this.checkSeperateLogs.Size = new System.Drawing.Size(178, 20);
+            this.checkSeperateLogs.TabIndex = 4;
+            this.checkSeperateLogs.Text = "Seperate Logs per Day";
+            this.checkSeperateLogs.UseVisualStyleBackColor = true;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -616,6 +735,7 @@ namespace IceChat2009
             this.tabLogging.PerformLayout();
             this.tabFonts.ResumeLayout(false);
             this.tabFonts.PerformLayout();
+            this.tabEmoticon.ResumeLayout(false);
             this.tabServer.ResumeLayout(false);
             this.tabServer.PerformLayout();
             this.ResumeLayout(false);
@@ -673,5 +793,16 @@ namespace IceChat2009
         private System.Windows.Forms.CheckBox checkLogConsole;
         private System.Windows.Forms.CheckBox checkLogChannel;
         private System.Windows.Forms.CheckBox checkLogQuery;
+        private System.Windows.Forms.ImageList imageListEmoticons;
+        private System.Windows.Forms.TabPage tabEmoticon;
+        private System.Windows.Forms.ListView listViewEmot;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Button buttonAddEmoticon;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.Button buttonRemoveEmoticon;
+        private System.Windows.Forms.Button buttonEditTrigger;
+        private System.Windows.Forms.CheckBox checkServerReconnect;
+        private System.Windows.Forms.CheckBox checkSeperateLogs;
     }
 }

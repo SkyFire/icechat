@@ -33,7 +33,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class ChannelList : UserControl
     {

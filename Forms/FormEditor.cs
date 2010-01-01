@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormEditor : Form
     {
@@ -205,20 +205,21 @@ namespace IceChat2009
         private void button1_Click(object sender, EventArgs e)
         {
 
-            System.CodeDom.Compiler.CodeDomProvider cp = System.CodeDom.Compiler.CodeDomProvider.CreateProvider("CSharp");
-            String[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
+            System.CodeDom.Compiler.CodeDomProvider cp = System.CodeDom.Compiler.CodeDomProvider.CreateProvider("CSharp");            
+            string[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
+            
             System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);
+            par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IPluginIceChat.dll");
             par.GenerateExecutable = false;
             par.GenerateInMemory = true;
-            par.OutputAssembly = Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "tempscript.dll";
-            
+            par.OutputAssembly = Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "test_script.dll";
             
             System.CodeDom.Compiler.CompilerResults err = cp.CompileAssemblyFromSource(par, textScripts.Text);
             if (err.Errors.Count > 0)
             {
                 foreach (System.CodeDom.Compiler.CompilerError ce in err.Errors)
                 {
-                    System.Diagnostics.Debug.WriteLine(ce.ToString());
+                    System.Diagnostics.Debug.WriteLine("Error:" + ce.ToString());
                 }
                 return;
             }
@@ -267,7 +268,27 @@ namespace IceChat2009
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //save what is in the current
+            if (tabControlEditor.SelectedTab.Text == "Scripts")
+            {
+                StreamWriter stream = new StreamWriter("script.txt");
+                stream.WriteLine(textScripts.Text);
+                stream.Flush();
+                stream.Close();
+
+                MessageBox.Show("script.txt Saved");
+            }
         }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("script.txt"))
+            {
+                StreamReader stream = new StreamReader("script.txt");
+                textScripts.Text = stream.ReadToEnd();
+                stream.Close();
+            }
+        }
+
 
         private void testSubToolStripMenuItem_Click(object sender, EventArgs e)
         {

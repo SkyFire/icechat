@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IceChat2009
+namespace IceChat
 {
     public class User : IComparable
     {

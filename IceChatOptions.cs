@@ -29,7 +29,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace IceChat2009
+namespace IceChat
 {
     [XmlRoot("IceChatColors")]
     public class IceChatColors
@@ -180,10 +180,12 @@ namespace IceChat2009
         private string _timeStamp = "[hh:mm.ss] ";
         private bool _saveWindow = true;
         private bool _identServer = true;
-        
+        private bool _reconnectServer = true;
+
         private bool _logConsole = true;
         private bool _logChannel = true;
         private bool _logQuery = true;
+        private bool _seperateLogs = true;
 
         [XmlElement("TimeStamp")]
         public string TimeStamp
@@ -218,6 +220,13 @@ namespace IceChat2009
             set { this._identServer = value; }
         }
 
+        [XmlElement("ReconnectServer")]
+        public bool ReconnectServer
+        {
+            get { return this._reconnectServer; }
+            set { this._reconnectServer = value; }
+        }
+
         [XmlElement("LogConsole")]
         public bool LogConsole
         {
@@ -237,6 +246,13 @@ namespace IceChat2009
         {
             get { return this._logQuery; }
             set { this._logQuery = value; }
+        }
+
+        [XmlElement("SeperateLogs")]
+        public bool SeperateLogs
+        {
+            get { return this._seperateLogs; }
+            set { this._seperateLogs = value; }
         }
     }
     
@@ -302,6 +318,36 @@ namespace IceChat2009
         { get; set; }        
     }
 
+    public class IceChatEmoticon
+    {
+        [XmlArray("Emoticons")]
+        [XmlArrayItem("Item", typeof(EmoticonItem))]
+        public ArrayList listEmoticons;
+        public IceChatEmoticon()
+        {
+            listEmoticons = new ArrayList();
+        }
+        public void AddEmoticon(EmoticonItem item)
+        {
+            listEmoticons.Add(item);
+        }
+    }
+
+    public class EmoticonItem
+    {
+        [XmlAttribute("ID")]
+        public int ID
+        { get; set; }
+        
+        [XmlElement("EmoticonImage")]
+        public string EmoticonImage
+        { get; set; }
+
+        [XmlElement("Trigger")]
+        public string Trigger
+        { get; set; }        
+
+    }
     public class IceChatPopupMenus
     {
         [XmlArray("Popups")]

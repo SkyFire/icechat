@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class QuickConnect
     {
@@ -113,6 +113,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "QuickConnect";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Quick Connect";
             this.ResumeLayout(false);

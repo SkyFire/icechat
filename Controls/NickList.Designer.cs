@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class NickList
     {

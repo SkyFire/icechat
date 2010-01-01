@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class FormChannelInfo
     {
@@ -30,28 +30,36 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textMaxUsers = new System.Windows.Forms.TextBox();
+            this.checkModel = new System.Windows.Forms.CheckBox();
+            this.checkModes = new System.Windows.Forms.CheckBox();
+            this.checkModem = new System.Windows.Forms.CheckBox();
+            this.checkModei = new System.Windows.Forms.CheckBox();
+            this.checkModet = new System.Windows.Forms.CheckBox();
+            this.checkModen = new System.Windows.Forms.CheckBox();
+            this.labelChannelCreate = new System.Windows.Forms.Label();
+            this.labelTopicSetBy = new System.Windows.Forms.Label();
             this.textTopic = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.listViewBans = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.buttonClose = new System.Windows.Forms.Button();
-            this.labelTopicSetBy = new System.Windows.Forms.Label();
-            this.labelChannelCreate = new System.Windows.Forms.Label();
-            this.checkModen = new System.Windows.Forms.CheckBox();
-            this.checkModet = new System.Windows.Forms.CheckBox();
-            this.checkModei = new System.Windows.Forms.CheckBox();
-            this.checkModem = new System.Windows.Forms.CheckBox();
-            this.checkModes = new System.Windows.Forms.CheckBox();
-            this.checkModel = new System.Windows.Forms.CheckBox();
-            this.textMaxUsers = new System.Windows.Forms.TextBox();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewExceptions = new System.Windows.Forms.ListView();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -78,101 +86,12 @@
             this.tabPage1.Text = "Channel Info";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // textTopic
+            // textMaxUsers
             // 
-            this.textTopic.Location = new System.Drawing.Point(6, 6);
-            this.textTopic.Name = "textTopic";
-            this.textTopic.Size = new System.Drawing.Size(425, 23);
-            this.textTopic.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.listView1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(437, 267);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Ban List";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // buttonClose
-            // 
-            this.buttonClose.Location = new System.Drawing.Point(348, 302);
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(93, 27);
-            this.buttonClose.TabIndex = 1;
-            this.buttonClose.Text = "Close";
-            this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
-            // 
-            // labelTopicSetBy
-            // 
-            this.labelTopicSetBy.AutoSize = true;
-            this.labelTopicSetBy.Location = new System.Drawing.Point(6, 32);
-            this.labelTopicSetBy.Name = "labelTopicSetBy";
-            this.labelTopicSetBy.Size = new System.Drawing.Size(99, 16);
-            this.labelTopicSetBy.TabIndex = 1;
-            this.labelTopicSetBy.Text = "Topic Set By:";
-            // 
-            // labelChannelCreate
-            // 
-            this.labelChannelCreate.AutoSize = true;
-            this.labelChannelCreate.Location = new System.Drawing.Point(8, 62);
-            this.labelChannelCreate.Name = "labelChannelCreate";
-            this.labelChannelCreate.Size = new System.Drawing.Size(123, 16);
-            this.labelChannelCreate.TabIndex = 2;
-            this.labelChannelCreate.Text = "Channel Created:";
-            // 
-            // checkModen
-            // 
-            this.checkModen.AutoSize = true;
-            this.checkModen.Location = new System.Drawing.Point(6, 89);
-            this.checkModen.Name = "checkModen";
-            this.checkModen.Size = new System.Drawing.Size(204, 20);
-            this.checkModen.TabIndex = 3;
-            this.checkModen.Text = "Only ops can change topic";
-            this.checkModen.UseVisualStyleBackColor = true;
-            // 
-            // checkModet
-            // 
-            this.checkModet.AutoSize = true;
-            this.checkModet.Location = new System.Drawing.Point(6, 115);
-            this.checkModet.Name = "checkModet";
-            this.checkModet.Size = new System.Drawing.Size(171, 20);
-            this.checkModet.TabIndex = 4;
-            this.checkModet.Text = "No external messages";
-            this.checkModet.UseVisualStyleBackColor = true;
-            // 
-            // checkModei
-            // 
-            this.checkModei.AutoSize = true;
-            this.checkModei.Location = new System.Drawing.Point(6, 141);
-            this.checkModei.Name = "checkModei";
-            this.checkModei.Size = new System.Drawing.Size(99, 20);
-            this.checkModei.TabIndex = 5;
-            this.checkModei.Text = "Invite Only";
-            this.checkModei.UseVisualStyleBackColor = true;
-            // 
-            // checkModem
-            // 
-            this.checkModem.AutoSize = true;
-            this.checkModem.Location = new System.Drawing.Point(6, 167);
-            this.checkModem.Name = "checkModem";
-            this.checkModem.Size = new System.Drawing.Size(97, 20);
-            this.checkModem.TabIndex = 6;
-            this.checkModem.Text = "Moderated";
-            this.checkModem.UseVisualStyleBackColor = true;
-            // 
-            // checkModes
-            // 
-            this.checkModes.AutoSize = true;
-            this.checkModes.Location = new System.Drawing.Point(6, 193);
-            this.checkModes.Name = "checkModes";
-            this.checkModes.Size = new System.Drawing.Size(71, 20);
-            this.checkModes.TabIndex = 7;
-            this.checkModes.Text = "Secret";
-            this.checkModes.UseVisualStyleBackColor = true;
+            this.textMaxUsers.Location = new System.Drawing.Point(129, 216);
+            this.textMaxUsers.Name = "textMaxUsers";
+            this.textMaxUsers.Size = new System.Drawing.Size(32, 23);
+            this.textMaxUsers.TabIndex = 9;
             // 
             // checkModel
             // 
@@ -184,20 +103,158 @@
             this.checkModel.Text = "Maximum Users";
             this.checkModel.UseVisualStyleBackColor = true;
             // 
-            // textMaxUsers
+            // checkModes
             // 
-            this.textMaxUsers.Location = new System.Drawing.Point(129, 216);
-            this.textMaxUsers.Name = "textMaxUsers";
-            this.textMaxUsers.Size = new System.Drawing.Size(32, 23);
-            this.textMaxUsers.TabIndex = 9;
+            this.checkModes.AutoSize = true;
+            this.checkModes.Location = new System.Drawing.Point(6, 193);
+            this.checkModes.Name = "checkModes";
+            this.checkModes.Size = new System.Drawing.Size(71, 20);
+            this.checkModes.TabIndex = 7;
+            this.checkModes.Text = "Secret";
+            this.checkModes.UseVisualStyleBackColor = true;
             // 
-            // listView1
+            // checkModem
             // 
-            this.listView1.Location = new System.Drawing.Point(8, 6);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(419, 244);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.checkModem.AutoSize = true;
+            this.checkModem.Location = new System.Drawing.Point(6, 167);
+            this.checkModem.Name = "checkModem";
+            this.checkModem.Size = new System.Drawing.Size(97, 20);
+            this.checkModem.TabIndex = 6;
+            this.checkModem.Text = "Moderated";
+            this.checkModem.UseVisualStyleBackColor = true;
+            // 
+            // checkModei
+            // 
+            this.checkModei.AutoSize = true;
+            this.checkModei.Location = new System.Drawing.Point(6, 141);
+            this.checkModei.Name = "checkModei";
+            this.checkModei.Size = new System.Drawing.Size(99, 20);
+            this.checkModei.TabIndex = 5;
+            this.checkModei.Text = "Invite Only";
+            this.checkModei.UseVisualStyleBackColor = true;
+            // 
+            // checkModet
+            // 
+            this.checkModet.AutoSize = true;
+            this.checkModet.Location = new System.Drawing.Point(6, 115);
+            this.checkModet.Name = "checkModet";
+            this.checkModet.Size = new System.Drawing.Size(171, 20);
+            this.checkModet.TabIndex = 4;
+            this.checkModet.Text = "No external messages";
+            this.checkModet.UseVisualStyleBackColor = true;
+            // 
+            // checkModen
+            // 
+            this.checkModen.AutoSize = true;
+            this.checkModen.Location = new System.Drawing.Point(6, 89);
+            this.checkModen.Name = "checkModen";
+            this.checkModen.Size = new System.Drawing.Size(204, 20);
+            this.checkModen.TabIndex = 3;
+            this.checkModen.Text = "Only ops can change topic";
+            this.checkModen.UseVisualStyleBackColor = true;
+            // 
+            // labelChannelCreate
+            // 
+            this.labelChannelCreate.AutoSize = true;
+            this.labelChannelCreate.Location = new System.Drawing.Point(8, 62);
+            this.labelChannelCreate.Name = "labelChannelCreate";
+            this.labelChannelCreate.Size = new System.Drawing.Size(123, 16);
+            this.labelChannelCreate.TabIndex = 2;
+            this.labelChannelCreate.Text = "Channel Created:";
+            // 
+            // labelTopicSetBy
+            // 
+            this.labelTopicSetBy.AutoSize = true;
+            this.labelTopicSetBy.Location = new System.Drawing.Point(6, 32);
+            this.labelTopicSetBy.Name = "labelTopicSetBy";
+            this.labelTopicSetBy.Size = new System.Drawing.Size(99, 16);
+            this.labelTopicSetBy.TabIndex = 1;
+            this.labelTopicSetBy.Text = "Topic Set By:";
+            // 
+            // textTopic
+            // 
+            this.textTopic.Location = new System.Drawing.Point(6, 6);
+            this.textTopic.Name = "textTopic";
+            this.textTopic.Size = new System.Drawing.Size(425, 23);
+            this.textTopic.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.listViewBans);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(437, 267);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Ban List";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // listViewBans
+            // 
+            this.listViewBans.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewBans.Location = new System.Drawing.Point(8, 6);
+            this.listViewBans.MultiSelect = false;
+            this.listViewBans.Name = "listViewBans";
+            this.listViewBans.Size = new System.Drawing.Size(419, 244);
+            this.listViewBans.TabIndex = 0;
+            this.listViewBans.UseCompatibleStateImageBehavior = false;
+            this.listViewBans.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Banned Host";
+            this.columnHeader1.Width = 159;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Added By";
+            this.columnHeader2.Width = 308;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.listViewExceptions);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(437, 267);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Exception List";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // buttonClose
+            // 
+            this.buttonClose.Location = new System.Drawing.Point(348, 302);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(93, 27);
+            this.buttonClose.TabIndex = 1;
+            this.buttonClose.Text = "Close";
+            this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // listViewExceptions
+            // 
+            this.listViewExceptions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4});
+            this.listViewExceptions.Location = new System.Drawing.Point(9, 11);
+            this.listViewExceptions.MultiSelect = false;
+            this.listViewExceptions.Name = "listViewExceptions";
+            this.listViewExceptions.Size = new System.Drawing.Size(419, 244);
+            this.listViewExceptions.TabIndex = 1;
+            this.listViewExceptions.UseCompatibleStateImageBehavior = false;
+            this.listViewExceptions.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Exception Host";
+            this.columnHeader3.Width = 159;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Added By";
+            this.columnHeader4.Width = 308;
             // 
             // FormChannelInfo
             // 
@@ -219,6 +276,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -239,6 +297,12 @@
         private System.Windows.Forms.TextBox textMaxUsers;
         private System.Windows.Forms.CheckBox checkModel;
         private System.Windows.Forms.CheckBox checkModes;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewBans;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.ListView listViewExceptions;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }

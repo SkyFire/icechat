@@ -31,12 +31,16 @@ using System.Text;
 using System.Windows.Forms;
 using IceChatPlugin;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormSettings : Form
     {
         private IceChatOptions iceChatOptions;
         private IceChatFontSetting icechatFonts;
+        private IceChatEmoticon iceChatEmoticons;
+
+        private ListViewItem listMoveItem = null;
+
 
         public delegate void SaveOptionsDelegate();
         public event SaveOptionsDelegate SaveOptions;
@@ -53,13 +57,17 @@ namespace IceChat2009
         }
 
 
-        public FormSettings(IceChatOptions Options, IceChatFontSetting Fonts)
+        public FormSettings(IceChatOptions Options, IceChatFontSetting Fonts, IceChatEmoticon Emoticons)
         {
             InitializeComponent();
 
             this.iceChatOptions = Options;
             this.icechatFonts = Fonts;
-            
+            this.iceChatEmoticons = Emoticons;
+
+            this.listViewEmot.MouseDown += new MouseEventHandler(listViewEmot_MouseDown);
+            this.listViewEmot.MouseUp += new MouseEventHandler(listViewEmot_MouseUp);
+
             //populate the font settings
             textConsoleFont.Font = new Font(icechatFonts.FontSettings[0].FontName, 10);
             textConsoleFont.Text = icechatFonts.FontSettings[0].FontName;
@@ -96,9 +104,21 @@ namespace IceChat2009
             checkLogConsole.Checked = iceChatOptions.LogConsole;
             checkLogChannel.Checked = iceChatOptions.LogChannel;
             checkLogQuery.Checked = iceChatOptions.LogQuery;
+            checkSeperateLogs.Checked = iceChatOptions.SeperateLogs;
 
             textDefaultNick.Text = iceChatOptions.DefaultNick;
             checkIdentServer.Checked = iceChatOptions.IdentServer;
+            checkServerReconnect.Checked = iceChatOptions.ReconnectServer;
+
+            //load in the emoticons
+            foreach (EmoticonItem emot in iceChatEmoticons.listEmoticons)
+            {
+                Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + emot.EmoticonImage);
+                int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
+                ListViewItem lvi = new ListViewItem(emot.Trigger, i);
+                lvi.SubItems.Add(emot.EmoticonImage);
+                listViewEmot.Items.Add(lvi);                
+            }
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -106,6 +126,36 @@ namespace IceChat2009
                 ipc.LoadSettingsForm(this.tabControlOptions);
             }
 
+        }
+
+        private void listViewEmot_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (listMoveItem == null)
+                return;
+
+            ListViewItem itemOver = listViewEmot.GetItemAt(e.X, e.Y);
+            if (itemOver == null)
+                return;
+   
+            listViewEmot.Items.Remove(listMoveItem);
+            listViewEmot.Items.Insert(itemOver.Index + 1, listMoveItem);
+
+            listViewEmot.Invalidate();
+
+            listMoveItem = null;
+            listViewEmot.Cursor = Cursors.Default;
+        }
+
+        private void listViewEmot_MouseDown(object sender, MouseEventArgs e)
+        {
+            foreach (ListViewItem eachItem in listViewEmot.SelectedItems)
+            {
+                listMoveItem = eachItem;
+                listViewEmot.Cursor = Cursors.Hand;
+                return;
+            }
+            listMoveItem = null;
+            listViewEmot.Cursor = Cursors.Default;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -121,9 +171,11 @@ namespace IceChat2009
             iceChatOptions.TimeStamp = textTimeStamp.Text;
             iceChatOptions.DefaultNick = textDefaultNick.Text;
             iceChatOptions.IdentServer = checkIdentServer.Checked;
+            iceChatOptions.ReconnectServer = checkServerReconnect.Checked;
             iceChatOptions.LogConsole = checkLogConsole.Checked;
             iceChatOptions.LogChannel = checkLogChannel.Checked;
             iceChatOptions.LogQuery = checkLogQuery.Checked;
+            iceChatOptions.SeperateLogs = checkSeperateLogs.Checked;
 
             //set all the fonts
             icechatFonts.FontSettings[0].FontName = textConsoleFont.Text;
@@ -146,6 +198,21 @@ namespace IceChat2009
             
             //icechatFonts.FontSettings[6].FontName = textChannelBarFont.Text;
             //icechatFonts.FontSettings[6].FontSize = float.Parse(textChannelBarFontSize.Text);
+            
+            //save the emoticons
+            iceChatEmoticons.listEmoticons.Clear();
+            //re-add them all back in
+            int i = 0;
+            foreach (ListViewItem lvi in listViewEmot.Items)
+            {
+                EmoticonItem ei = new EmoticonItem();
+                ei.EmoticonImage = lvi.SubItems[1].Text;
+                ei.Trigger = lvi.Text;
+                ei.ID = i++;
+                iceChatEmoticons.AddEmoticon(ei);
+            }
+
+            FormMain.Instance.IceChatEmoticons = iceChatEmoticons;
             
             if (SaveOptions != null)
                 SaveOptions();
@@ -249,5 +316,38 @@ namespace IceChat2009
                 textInputFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
             }
         }
-   }
+
+        private void buttonAddEmoticon_Click(object sender, EventArgs e)
+        {
+            //add a new emoticon
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons";            
+            //ofd.Filter = "Images (*.PNG)|*.PNG)";
+            //ofd.Multiselect = true;
+            ofd.RestoreDirectory = true;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                //check if emoticon exists                
+                Bitmap bm = new Bitmap(ofd.FileName);
+                int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
+                ListViewItem lvi = new ListViewItem("<edit>", i);
+                lvi.SubItems.Add(ofd.SafeFileName);
+                listViewEmot.Items.Add(lvi);
+            }
+        }
+
+        private void buttonRemoveEmoticon_Click(object sender, EventArgs e)
+        {
+            //check if one is selected and remove it
+            foreach(ListViewItem eachItem in listViewEmot.SelectedItems)
+                listViewEmot.Items.Remove(eachItem);
+        }
+
+        private void buttonEditTrigger_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listViewEmot.SelectedItems)
+                eachItem.BeginEdit();
+        }
+
+    }
 }

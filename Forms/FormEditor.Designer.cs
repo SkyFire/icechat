@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class FormEditor
     {
@@ -90,7 +90,7 @@
             // 
             // textAliases
             // 
-            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textAliases.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textAliases.Location = new System.Drawing.Point(3, 3);
             this.textAliases.Multiline = true;
@@ -113,7 +113,7 @@
             // 
             // textPopups
             // 
-            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textPopups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textPopups.Location = new System.Drawing.Point(3, 3);
             this.textPopups.Multiline = true;
@@ -136,7 +136,7 @@
             // 
             // textScripts
             // 
-            this.textScripts.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textScripts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textScripts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textScripts.Location = new System.Drawing.Point(3, 3);
             this.textScripts.Multiline = true;
@@ -245,6 +245,7 @@
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
             this.loadToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // unloadToolStripMenuItem
             // 

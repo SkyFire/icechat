@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class FormColors
     {
@@ -115,8 +115,8 @@
             this.labelCurrent = new System.Windows.Forms.Label();
             this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textFormattedBasic = new IceChat2009.TextWindow();
-            this.textFormattedText = new IceChat2009.TextWindow();
+            this.textFormattedBasic = new IceChat.TextWindow();
+            this.textFormattedText = new IceChat.TextWindow();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();

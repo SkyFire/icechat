@@ -1,4 +1,4 @@
-﻿namespace IceChat2009
+﻿namespace IceChat
 {
     partial class FormServers
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormServers));
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
@@ -50,11 +49,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageExtra = new System.Windows.Forms.TabPage();
+            this.label10 = new System.Windows.Forms.Label();
+            this.comboEncoding = new System.Windows.Forms.ComboBox();
             this.checkRejoinChannel = new System.Windows.Forms.CheckBox();
             this.checkPingPong = new System.Windows.Forms.CheckBox();
             this.checkMOTD = new System.Windows.Forms.CheckBox();
             this.checkModeI = new System.Windows.Forms.CheckBox();
             this.tabPageAutoJoin = new System.Windows.Forms.TabPage();
+            this.buttonEdit = new System.Windows.Forms.Button();
             this.listChannel = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -66,6 +68,7 @@
             this.tabPageAutoPerform = new System.Windows.Forms.TabPage();
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
+            this.buttonRemoveServer = new System.Windows.Forms.Button();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -282,6 +285,8 @@
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageExtra.Controls.Add(this.label10);
+            this.tabPageExtra.Controls.Add(this.comboEncoding);
             this.tabPageExtra.Controls.Add(this.checkRejoinChannel);
             this.tabPageExtra.Controls.Add(this.checkPingPong);
             this.tabPageExtra.Controls.Add(this.checkMOTD);
@@ -292,6 +297,24 @@
             this.tabPageExtra.Size = new System.Drawing.Size(617, 208);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 118);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(67, 16);
+            this.label10.TabIndex = 5;
+            this.label10.Text = "Encoding";
+            // 
+            // comboEncoding
+            // 
+            this.comboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboEncoding.FormattingEnabled = true;
+            this.comboEncoding.Location = new System.Drawing.Point(81, 115);
+            this.comboEncoding.Name = "comboEncoding";
+            this.comboEncoding.Size = new System.Drawing.Size(147, 24);
+            this.comboEncoding.TabIndex = 4;
             // 
             // checkRejoinChannel
             // 
@@ -336,6 +359,7 @@
             // tabPageAutoJoin
             // 
             this.tabPageAutoJoin.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageAutoJoin.Controls.Add(this.buttonEdit);
             this.tabPageAutoJoin.Controls.Add(this.listChannel);
             this.tabPageAutoJoin.Controls.Add(this.checkAutoJoin);
             this.tabPageAutoJoin.Controls.Add(this.buttonRemove);
@@ -349,6 +373,18 @@
             this.tabPageAutoJoin.Size = new System.Drawing.Size(617, 208);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
+            // 
+            // buttonEdit
+            // 
+            this.buttonEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEdit.Location = new System.Drawing.Point(373, 76);
+            this.buttonEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonEdit.Name = "buttonEdit";
+            this.buttonEdit.Size = new System.Drawing.Size(87, 27);
+            this.buttonEdit.TabIndex = 33;
+            this.buttonEdit.Text = "Edit";
+            this.buttonEdit.UseVisualStyleBackColor = true;
+            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
             // listChannel
             // 
@@ -461,20 +497,35 @@
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
             // 
+            // buttonRemoveServer
+            // 
+            this.buttonRemoveServer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonRemoveServer.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonRemoveServer.Location = new System.Drawing.Point(4, 245);
+            this.buttonRemoveServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonRemoveServer.Name = "buttonRemoveServer";
+            this.buttonRemoveServer.Size = new System.Drawing.Size(117, 31);
+            this.buttonRemoveServer.TabIndex = 37;
+            this.buttonRemoveServer.Text = "Remove Server";
+            this.buttonRemoveServer.UseVisualStyleBackColor = true;
+            this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
+            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(625, 279);
+            this.Controls.Add(this.buttonRemoveServer);
             this.Controls.Add(this.tabControlSettings);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormServers";
+            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Server Editor";
@@ -530,5 +581,9 @@
         private System.Windows.Forms.TextBox textAltNickName;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox checkRejoinChannel;
+        private System.Windows.Forms.ComboBox comboEncoding;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button buttonEdit;
+        private System.Windows.Forms.Button buttonRemoveServer;
     }
 }

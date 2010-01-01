@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class QuickConnect : Form
     {

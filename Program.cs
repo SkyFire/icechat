@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     static class Program
     {

@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class InputPanel : UserControl
     {
@@ -38,7 +38,11 @@ namespace IceChat2009
         {
             get { return textInput.Font; }
             set { textInput.Font = value; }
+        }
 
+        internal void AppendText(string data)
+        {
+            textInput.AppendText(data);
         }
 
         internal void SendCommand(string data)
@@ -63,6 +67,14 @@ namespace IceChat2009
         {
             textInput.OnEnterKey();
             FocusTextBox();
+        }
+
+        private void buttonEmoticonPicker_Click(object sender, EventArgs e)
+        {
+            //show the emoticon picker form
+            FormEmoticons fe = new FormEmoticons();
+            fe.ShowDialog(this);
+            FormMain.Instance.FocusInputBox();
         }
     }
 }

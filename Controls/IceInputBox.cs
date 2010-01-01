@@ -29,7 +29,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
 	public partial class IceInputBox : System.Windows.Forms.TextBox
 	{

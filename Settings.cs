@@ -22,7 +22,7 @@
  *
 \******************************************************************************/
 
-namespace IceChat2009.Properties
+namespace IceChat.Properties
 {
     
     

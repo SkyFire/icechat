@@ -34,7 +34,7 @@ using System.Windows.Forms;
 using IceChatPlugin;
 
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormColors : Form
     {
@@ -458,7 +458,7 @@ namespace IceChat2009
 
             AddMsgIdent("Self Channel Message", "$nick - yourself");
             //AddMsgIdent("Self Channel Message", "$host - your hostname ");
-            //AddMsgIdent("Self Channel Message", "$status - your op/voice status");
+            AddMsgIdent("Self Channel Message", "$status - your op/voice status");
             AddMsgIdent("Self Channel Message", "$channel - channel name");
             AddMsgIdent("Self Channel Message", "$message - channel message");
             AddMsgIdent("Self Channel Message", "$color - nickname nicklist color");

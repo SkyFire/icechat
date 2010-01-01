@@ -33,7 +33,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace IceChat2009
+namespace IceChat
 {    
     public partial class TextWindow : UserControl
     {
@@ -74,7 +74,7 @@ namespace IceChat2009
 
         //works but no www.
         private string wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
-        
+        private string emotMatch = "";
         private int startHighLine = -1;
         private int startHighChar;
         private int curHighLine;
@@ -107,7 +107,7 @@ namespace IceChat2009
         private readonly int MaxTextLines = 500;
 
         //private string logFile;
-        private System.IO.StreamWriter logFile;
+        private System.IO.FileStream logFile;
 
         public TextWindow()
         {
@@ -131,8 +131,14 @@ namespace IceChat2009
             this.UpdateStyles();
 
             LoadTextSizes();
-
-
+            if (FormMain.Instance.IceChatEmoticons.listEmoticons.Count > 0)
+            {
+                foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
+                {
+                    emotMatch += emot.Trigger + ((char)0);
+                }
+                emotMatch = emotMatch.Substring(0, emotMatch.Length - 1);
+            }
             popupMenu = new ContextMenuStrip();
             
         }
@@ -283,7 +289,6 @@ namespace IceChat2009
             return 0;
         }
 
-        
         private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             //get the current character the mouse is over. 
@@ -574,7 +579,9 @@ namespace IceChat2009
             //get the type
             if (!System.IO.File.Exists(logFolder))
                 System.IO.Directory.CreateDirectory(logFolder);
-            
+
+            string date = "-" + System.DateTime.Today.ToString("yyyy-MM-dd");
+
             if (this.Parent.GetType() == typeof(TabWindow))
             {
                 //get the name of the channel
@@ -583,24 +590,33 @@ namespace IceChat2009
                 {
                     if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel"))
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel");
-                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);                    
+
+                    if (FormMain.Instance.IceChatOptions.SeperateLogs)
+                    {
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    }
+                    else
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+
                 }
                 else if (t.WindowStyle == TabWindow.WindowType.Query)
                 {
                     if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Query"))
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Query");
-                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", true);
+                    if (FormMain.Instance.IceChatOptions.SeperateLogs)
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    else
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 }
                 else if (t.WindowStyle == TabWindow.WindowType.Debug)
                 {
-                    System.Diagnostics.Debug.WriteLine(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log");
-                    logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log", true);
+                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 }
                 
             }
             else if (this.Parent.GetType() == typeof(ConsoleTab))
             {
-                logFile = new System.IO.StreamWriter(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", true);
+                logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
         }
 
@@ -662,16 +678,17 @@ namespace IceChat2009
             else
                 newLine = RedefineColorCodes(newLine);
 
-            totalLines++;
-
             if (logFile != null)
             {
-                logFile.WriteLine(StripCodes(newLine));
+                //logFile.WriteLine(StripCodes(newLine));
+                logFile.Write(System.Text.Encoding.Default.GetBytes(StripCodes(newLine) + "\r\n"), 0, StripCodes(newLine).Length + 2);
                 logFile.Flush();
             }
 
+            totalLines++;
+
             //emoticons not being parsed as of yet
-            //newLine = ParseEmoticons(newLine);
+            newLine = ParseEmoticons(newLine);
 
             if (singleLine) totalLines = 1;
 
@@ -711,8 +728,6 @@ namespace IceChat2009
             //newLine = totalLines.ToString() + ":" + newLine; 
 
             textLines[totalLines].line = newLine;
-
-            //log it
 
             Graphics g = this.CreateGraphics();
             //properly measure for bold characters needed
@@ -927,6 +942,10 @@ namespace IceChat2009
             UpdateScrollBarValue(totalDisplayLines);
         }
 
+        internal void ScrollToBottom()
+        {
+            vScrollBar.Value = totalDisplayLines;
+        }
 
         private void OnScroll(object sender, EventArgs e)
         {
@@ -942,20 +961,21 @@ namespace IceChat2009
 
         #region Emoticon and Color Parsing
 		
-		/*
+		
         private string ParseEmoticons(string line)
         {
-            string allEmoticons = ":)|:P|:D";
-            string[] eachEmot = allEmoticons.Split('|');
-            for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
+            if (emotMatch.Length > 0)
             {
-                line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
+                string[] eachEmot = emotMatch.Split((char)0);
+                for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
+                {
+                    line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
+                }
             }
-            
             return line;
-            
+
         }
-		*/
+		
         private string RedefineColorCodes(string line)
         {
             //redefine the irc server colors to own standard
@@ -1029,8 +1049,6 @@ namespace IceChat2009
             //this formats each line and breaks it up, to fit onto the current display
             int displayWidth = this.ClientRectangle.Width - vScrollBar.Width - 10;
             
-            //System.Diagnostics.Debug.WriteLine("Formatting:" + totalLines + ":" + endLine + "-" + startLine + "::" + line);
-
             if (displayWidth <= 0)
                 return 0;
             
@@ -1087,6 +1105,9 @@ namespace IceChat2009
                                 
                                 i = i + 4;
                                 break;
+                            case emotChar:
+                                i = i + 3;
+                                break;
                             default:
                                 //check if there needs to be a linewrap
                                 if ((int)g.MeasureString(StripAllCodes(buildString.ToString()),this.Font, 0, sf).Width > displayWidth)
@@ -1120,7 +1141,7 @@ namespace IceChat2009
                     if (lineSplit)                    
                         displayLines[line].line = lastColor + buildString.ToString();
                     else
-                        displayLines[line].line = buildString.ToString(); ;
+                        displayLines[line].line = buildString.ToString();
 
                     buildString = null;
 
@@ -1197,195 +1218,74 @@ namespace IceChat2009
             bool underline = false;
             bool isInUrl = false;
             Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
-
-            while (lineCounter < LinesToDraw)
+            
+            try
             {
-                int i = 0, j = 0;
-                bool highlight = false;
-                bool oldHighlight = false;
-                lineCounter++;
-                
-                curForeColor = displayLines[curLine].textColor;
-                StringBuilder line = new StringBuilder();
-                
-                line.Append(displayLines[curLine].line);
-                curBackColor = backColor;
-                
-                //check if in a url
-                if (!isInUrl)
+
+                while (lineCounter < LinesToDraw)
                 {
-                    underline = false;
-                    font = null;
-                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
-                }
-                if (line.Length > 0)
-                {
-                    do
+                    int i = 0, j = 0;
+                    bool highlight = false;
+                    bool oldHighlight = false;
+                    lineCounter++;
+
+                    curForeColor = displayLines[curLine].textColor;
+                    StringBuilder line = new StringBuilder();
+
+                    line.Append(displayLines[curLine].line);
+                    curBackColor = backColor;
+
+                    //check if in a url
+                    if (!isInUrl)
                     {
-                        ch = line.ToString().Substring(i, 1).ToCharArray();
-                        switch (ch[0])
+                        underline = false;
+                        font = null;
+                        font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
+                    }
+                    if (line.Length > 0)
+                    {
+                        do
                         {
-                            case emotChar:
-                                //draws an emoticon
-                                //[]001
-                                int emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
+                            ch = line.ToString().Substring(i, 1).ToCharArray();
+                            switch (ch[0])
+                            {
+                                case emotChar:
+                                    //draws an emoticon
+                                    //[]001
+                                    int emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
 
-                                line.Remove(0, 3);
+                                    line.Remove(0, 3);
+                                    if (!isInUrl)
+                                    {
+                                        //select the emoticon here                                
+                                        Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + ((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).EmoticonImage);
 
-                                //select the emoticon here
-                                
-                                Bitmap bm = new Bitmap(@"Emoticons\\sweet.bmp");
-                                bm.MakeTransparent(Color.Fuchsia);
+                                        if (curBackColor != backColor)
+                                        {
+                                            textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
+                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                            g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                        }
 
-                                if (curBackColor != backColor)
-                                {
-                                    textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
-                                    Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                                    g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
-                                }
+                                        g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width, startY, lineSize, lineSize);
 
-                                g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width, startY, lineSize, lineSize);
-                                
-                                g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+                                        g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
 
-                                startX += bm.Width + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width;
-                                
-                                buildString = null;
-                                buildString = new StringBuilder();
-                                break;
-                            case urlStart:
-                                if (curBackColor != backColor)
-                                {
-                                    textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
-                                    Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                                    g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
-                                }
-                                g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+                                        startX += bm.Width + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width;
 
-                                startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
-
-                                buildString = null;
-                                buildString = new StringBuilder();
-
-                                //remove whats drawn from string
-                                line.Remove(0, i);
-                                line.Remove(0, 1);
-                                i = -1;
-                                font = null;                                
-                                font = new Font(this.Font.Name, this.Font.Size, FontStyle.Underline);
-                                isInUrl = true;
-                                break;
-
-                            case urlEnd:
-                                if (curBackColor != backColor)
-                                {
-                                    textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                    Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                                    g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
-                                }
-                                g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
-
-                                startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
-
-                                buildString = null;
-                                buildString = new StringBuilder();
-
-                                //remove whats drawn from string
-                                line.Remove(0, i);
-                                line.Remove(0, 1);
-                                i = -1;
-                                font = null;
-                                font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
-                                isInUrl = false;
-                                break;
-                            case underlineChar:
-                                if (curBackColor != backColor)
-                                {
-                                    textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                    Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                                    g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
-                                }
-                                g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
-
-                                startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
-
-                                buildString = null;
-                                buildString = new StringBuilder();
-
-                                //remove whats drawn from string
-                                line.Remove(0, i);
-                                line.Remove(0, 1);
-                                i = -1;
-                                font = null;
-                                underline = !underline;
-                                font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline );
-                                break;
-                            case newColorChar:
-                                //draw whats previously in the string                                
-                                if (curBackColor != backColor)
-                                {
-                                    textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                    Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                                    g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
-                                }
-                                g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
-
-                                startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
-                                
-                                buildString = null;
-                                buildString = new StringBuilder();
-
-                                //remove whats drawn from string
-                                line.Remove(0, i);
-
-                                //get the new fore and back colors
-                                if (!highlight)
-                                {
-                                    curForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
-                                    curBackColor = Convert.ToInt32(line.ToString().Substring(3, 2));
-
-                                    //check to make sure that FC and BC are in range 0-31
-                                    if (curForeColor > 31)
-                                        curForeColor = displayLines[curLine].textColor;
-                                    if (curBackColor > 31)
-                                        curBackColor = backColor;
-                                }
-
-                                //remove the color codes from the string
-                                line.Remove(0, 5);
-                                i = -1;
-                                break;
-
-                            default:
-                                if (startHighLine>=0 &&
-                                    ((curLine >= startHighLine && curLine <= curHighLine) ||
-                                    (curLine <= startHighLine && curLine >= curHighLine)))
-                                {
-                                    if ((curLine > startHighLine && curLine < curHighLine) ||
-                                        (curLine == startHighLine && j >= startHighChar && (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
-                                        (curLine == curHighLine && j < curHighChar && (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
-                                        highlight = true;
-                                    else if ((curLine < startHighLine && curLine > curHighLine) ||
-                                        (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
-                                        (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
-                                        highlight = true;
+                                        buildString = null;
+                                        buildString = new StringBuilder();
+                                    }
                                     else
-                                        highlight = false;
-                                }
-                                else
-                                    highlight = false;
-                                ++j;
-
-
-                                if (highlight != oldHighlight)
-                                {
-                                    oldHighlight = highlight;
-
-                                    //draw whats previously in the string                                
+                                    {
+                                        buildString.Append(((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).Trigger);
+                                    }
+                                    break;
+                                case urlStart:
                                     if (curBackColor != backColor)
                                     {
-                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                        Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
+                                        textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
                                         g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                     }
                                     g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1397,52 +1297,184 @@ namespace IceChat2009
 
                                     //remove whats drawn from string
                                     line.Remove(0, i);
-                                    i = 0;
-                                    if (highlight)
+                                    line.Remove(0, 1);
+                                    i = -1;
+                                    font = null;
+                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Underline);
+                                    isInUrl = true;
+                                    break;
+
+                                case urlEnd:
+                                    if (curBackColor != backColor)
                                     {
-                                        curForeColor = 0;
-                                        curBackColor = 2;
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+                                    i = -1;
+                                    font = null;
+                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
+                                    isInUrl = false;
+                                    break;
+                                case underlineChar:
+                                    if (curBackColor != backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+                                    i = -1;
+                                    font = null;
+                                    underline = !underline;
+                                    font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline);
+                                    break;
+                                case newColorChar:
+                                    //draw whats previously in the string                                
+                                    if (curBackColor != backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+
+                                    //get the new fore and back colors
+                                    if (!highlight)
+                                    {
+                                        curForeColor = Convert.ToInt32(line.ToString().Substring(1, 2));
+                                        curBackColor = Convert.ToInt32(line.ToString().Substring(3, 2));
+
+                                        //check to make sure that FC and BC are in range 0-31
+                                        if (curForeColor > 31)
+                                            curForeColor = displayLines[curLine].textColor;
+                                        if (curBackColor > 31)
+                                            curBackColor = backColor;
+                                    }
+
+                                    //remove the color codes from the string
+                                    line.Remove(0, 5);
+                                    i = -1;
+                                    break;
+
+                                default:
+                                    if (startHighLine >= 0 &&
+                                        ((curLine >= startHighLine && curLine <= curHighLine) ||
+                                        (curLine <= startHighLine && curLine >= curHighLine)))
+                                    {
+                                        if ((curLine > startHighLine && curLine < curHighLine) ||
+                                            (curLine == startHighLine && j >= startHighChar && (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
+                                            (curLine == curHighLine && j < curHighChar && (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
+                                            highlight = true;
+                                        else if ((curLine < startHighLine && curLine > curHighLine) ||
+                                            (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
+                                            (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
+                                            highlight = true;
+                                        else
+                                            highlight = false;
                                     }
                                     else
+                                        highlight = false;
+                                    ++j;
+
+
+                                    if (highlight != oldHighlight)
                                     {
-                                        curForeColor = displayLines[curLine].textColor;
-                                        curBackColor = backColor;
+                                        oldHighlight = highlight;
+
+                                        //draw whats previously in the string                                
+                                        if (curBackColor != backColor)
+                                        {
+                                            textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                            g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                        }
+                                        g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
+
+                                        startX += g.MeasureString(buildString.ToString(), font, 0, sf).Width;   //textSizes[32]
+
+                                        buildString = null;
+                                        buildString = new StringBuilder();
+
+                                        //remove whats drawn from string
+                                        line.Remove(0, i);
+                                        i = 0;
+                                        if (highlight)
+                                        {
+                                            curForeColor = 0;
+                                            curBackColor = 2;
+                                        }
+                                        else
+                                        {
+                                            curForeColor = displayLines[curLine].textColor;
+                                            curBackColor = backColor;
+                                        }
+
                                     }
+                                    buildString.Append(ch[0]);
+                                    break;
 
-                                }
-                                buildString.Append(ch[0]);
-                                break;
+                            }
 
+                            i++;
+
+                        } while (line.Length > 0 && i != line.Length);
+                    }
+
+                    //draw anything that is left over                
+                    if (i == line.Length && line.Length > 0)
+                    {
+
+                        if (curBackColor != backColor)
+                        {
+                            textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
+                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                            g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                         }
 
-                        i++;
+                        g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
 
-                    } while (line.Length > 0 && i != line.Length);
-                }
-                
-                //draw anything that is left over                
-                if (i == line.Length && line.Length > 0)
-                {
-                    
-                    if (curBackColor != backColor)
-                    {
-                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                        Rectangle r = new Rectangle((int)startX, startY, textSize, lineSize + 1);
-                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                     }
-                    
-                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
-                    
-                }
 
-                startY += lineSize;
-                startX = 0;
-                curLine++;
-                buildString = null;
-                buildString = new StringBuilder();
-                
+                    startY += lineSize;
+                    startX = 0;
+                    curLine++;
+                    buildString = null;
+                    buildString = new StringBuilder();
+
+                }
             }
-            
+            catch(Exception ee)
+            {
+                System.Diagnostics.Debug.WriteLine(ee.Message + "\r\n" + ee.StackTrace);
+            }
 
             buildString = null;
 
@@ -1493,7 +1525,6 @@ namespace IceChat2009
             MatchCollection matches = re.Matches(data);
             foreach (Match m in matches)
             {
-                //System.Diagnostics.Debug.WriteLine(m.Value);
                 data = data.Replace(StripCodes(m.Value), urlStart + StripCodes(m.Value) + urlEnd);
             }
 

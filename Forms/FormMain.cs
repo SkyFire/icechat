@@ -36,10 +36,10 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
 
-using IceChat2009.Properties;
+using IceChat.Properties;
 using IceChatPlugin;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormMain : Form
     {
@@ -56,6 +56,7 @@ namespace IceChat2009
         private string highlitesFile;
         private string currentFolder;
         private string logsFolder;
+        private string emoticonsFile;
 
         private IceChatOptions iceChatOptions;
         private IceChatColors iceChatColors;
@@ -63,6 +64,7 @@ namespace IceChat2009
         private IceChatFontSetting iceChatFonts;
         private IceChatAliases iceChatAliases;
         private IceChatPopupMenus iceChatPopups;
+        private IceChatEmoticon iceChatEmoticons;
 
         private ArrayList loadedPlugins;
 
@@ -74,8 +76,8 @@ namespace IceChat2009
 
         private delegate void StatusTextDelegate(string data);
         private delegate void CurrentWindowDelegate(string data, int color);
-        private delegate void WindowMessageDelegate(IRCConnection connection, string name, string data, int color);
-        private delegate void CurrentWindowMessageDelegate(IRCConnection connection, string data, int color);
+        private delegate void WindowMessageDelegate(IRCConnection connection, string name, string data, int color, bool scrollToBottom);
+        private delegate void CurrentWindowMessageDelegate(IRCConnection connection, string data, int color, bool scrollToBottom);
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -152,18 +154,23 @@ namespace IceChat2009
             else
                 highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
 
+            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml"))
+                emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
+            else
+                emoticonsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
+
             #endregion
 
             InitializeComponent();
             
             LoadOptions();
             LoadColors();
-            
+                        
             serverTree = new ServerTree();
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat2009.Properties.Settings.Default.ProgramID + " " + IceChat2009.Properties.Settings.Default.Version + " - December 18 2009";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 1 2010";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -181,7 +188,7 @@ namespace IceChat2009
 
             LoadAliases();
             LoadPopups();
-
+            LoadEmoticons();
             LoadMessageFormat();
             LoadFonts();
 
@@ -228,7 +235,7 @@ namespace IceChat2009
 
             //load any plugin addons
             LoadPlugins();
-            
+
             //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
@@ -498,7 +505,6 @@ namespace IceChat2009
             return f;
         }
 
-
         private void LoadOptions()
         {
             if (File.Exists(optionsFile))
@@ -565,7 +571,10 @@ namespace IceChat2009
                 textReader.Dispose();
             }
             else
+            {
                 iceChatAliases = new IceChatAliases();
+                SaveEmoticons();
+            }
         }
 
         private void SaveAliases()
@@ -573,6 +582,30 @@ namespace IceChat2009
             XmlSerializer serializer = new XmlSerializer(typeof(IceChatAliases));
             TextWriter textWriter = new StreamWriter(aliasesFile);
             serializer.Serialize(textWriter, iceChatAliases);
+            textWriter.Close();
+            textWriter.Dispose();
+        }
+
+        private void LoadEmoticons()
+        {
+            if (File.Exists(emoticonsFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatEmoticon));
+                TextReader textReader = new StreamReader(emoticonsFile);
+                iceChatEmoticons = (IceChatEmoticon)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+            }
+            else
+                iceChatEmoticons = new IceChatEmoticon();
+        }
+
+        private void SaveEmoticons()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(IceChatEmoticon));
+            //check if emoticons Folder Exists
+            TextWriter textWriter = new StreamWriter(emoticonsFile);
+            serializer.Serialize(textWriter, iceChatEmoticons);
             textWriter.Close();
             textWriter.Dispose();
         }
@@ -695,13 +728,14 @@ namespace IceChat2009
             
             tabMain.TabPages.Add(t);
             tabMain.SelectedTab = t;
-            
-            WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1);
-            WindowMessage(null, "Console", "\x00034** This is an Alpha version, not fully functional **", 1);
-            WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.63", 1);
-            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org\x0003 if you wish to help with this project", 1);
+
+            WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1, false);
+            WindowMessage(null, "Console", "\x00034** This is an Alpha version, not fully functional **", 1, false);
+            WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.63", 1, false);
+            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org\x0003 if you wish to help with this project", 1, true);
 
             StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
+
         }
 
         internal void ReportError(string Message, string Source, string FunctionName)
@@ -808,6 +842,20 @@ namespace IceChat2009
 
         }
 
+        internal IceChatEmoticon IceChatEmoticons
+        {
+            get
+            {
+                return iceChatEmoticons;
+            }
+            set
+            {
+                iceChatEmoticons = value;
+                //save the Emoticons
+                SaveEmoticons();
+            }
+        }
+
         internal string FavoriteChannelsFile
         {
             get
@@ -848,6 +896,22 @@ namespace IceChat2009
             }
         }
 
+        internal string CurrentFolder
+        {
+            get
+            {
+                return currentFolder;
+            }
+        }
+
+        internal string EmoticonsFolder
+        {
+            get
+            {
+                return System.IO.Path.GetDirectoryName(emoticonsFile);
+            }
+        }
+
         internal void StatusText(string data)
         {
             if (this.InvokeRequired)
@@ -860,9 +924,8 @@ namespace IceChat2009
                 if (inputPanel.CurrentConnection != null)
                     toolStripStatus.Text = inputPanel.CurrentConnection.ServerSetting.ID + ":Status: " + data;
                 else
-                    toolStripStatus.Text = "0:Status: " + data;
+                    toolStripStatus.Text = "Status: " + data;
             }
-
         }
 
         #endregion
@@ -883,18 +946,18 @@ namespace IceChat2009
         /// <param name="name">Name of the Window</param>
         /// <param name="data">Message to send</param>
         /// <param name="color">Color number of the message</param>
-        internal void WindowMessage(IRCConnection connection, string name, string data, int color)
+        internal void WindowMessage(IRCConnection connection, string name, string data, int color, bool scrollToBottom)
         {
             if (this.InvokeRequired)
             {
                 WindowMessageDelegate w = new WindowMessageDelegate(WindowMessage);
-                this.Invoke(w, new object[] { connection, name, data, color} );
+                this.Invoke(w, new object[] { connection, name, data, color, scrollToBottom} );
             }
             else
             {
                 if (name == "Console")
                 {
-                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, data, color);
+                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, data, color, scrollToBottom);
                 }
                 else
                 {
@@ -904,13 +967,15 @@ namespace IceChat2009
                         {
                             if (t.Connection == connection)
                             {
-                                t.TextWindow.AppendText(data, color);                                
+                                t.TextWindow.AppendText(data, color);
+                                if (scrollToBottom)
+                                    t.TextWindow.ScrollToBottom();
                                 return;
                             }
                         }
                     }
                     
-                    WindowMessage(connection, "Console", data, color);
+                    WindowMessage(connection, "Console", data, color, scrollToBottom);
                 }
             }
         }
@@ -920,12 +985,12 @@ namespace IceChat2009
         /// <param name="connection">Which Connection to use</param>
         /// <param name="data">Message to send</param>
         /// <param name="color">Color number of the message</param>
-        internal void CurrentWindowMessage(IRCConnection connection, string data, int color)
+        internal void CurrentWindowMessage(IRCConnection connection, string data, int color, bool scrollToBottom)
         {
             if (this.InvokeRequired)
             {
                 CurrentWindowMessageDelegate w = new CurrentWindowMessageDelegate(CurrentWindowMessage);
-                this.Invoke(w, new object[] { connection, data, color });
+                this.Invoke(w, new object[] { connection, data, color, scrollToBottom });
             }
             else
             {
@@ -941,14 +1006,14 @@ namespace IceChat2009
                         }
                         else
                         {
-                            WindowMessage(connection, "Console", data, color);
+                            WindowMessage(connection, "Console", data, color, scrollToBottom);
                         }
                     }
                 }
                 else
                 {
                     //console window is current window
-                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, data, color);
+                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, data, color, scrollToBottom);
                 }
             }
         }
@@ -1022,9 +1087,12 @@ namespace IceChat2009
                 else
                 {
                     if (CurrentWindowType == TabWindow.WindowType.Console)
-                        WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4);
+                        WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4, true);
                     else
+                    {
                         CurrentWindow.TextWindow.AppendText("Error: Not Connected (" + data + ")", 4);
+                        CurrentWindow.TextWindow.ScrollToBottom();
+                    }
                 }
             }
         }
@@ -1100,13 +1168,13 @@ namespace IceChat2009
         /// <param name="ctcp">The CTCP Message</param>
         private void OnCtcpMessage(IRCConnection connection, string nick, string ctcp)
         {
-            CurrentWindowMessage(connection, nick + " sent a CTCP " + ctcp + " request:", 7);
+            CurrentWindowMessage(connection, nick + " sent a CTCP " + ctcp + " request:", 7, false);
             
             switch (ctcp)
             {
                 case "VERSION":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
-                    CurrentWindowMessage(connection, "->> Sent CTCP Reply: " + Settings.Default.ProgramID + " " + Settings.Default.Version, 7);                    
+                    CurrentWindowMessage(connection, "->> Sent CTCP Reply: " + Settings.Default.ProgramID + " " + Settings.Default.Version, 7, false);                    
                     break;
                 case "PING":
                     break;
@@ -1136,7 +1204,7 @@ namespace IceChat2009
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$message", message);
-            CurrentWindowMessage(connection, msg, 1);
+            CurrentWindowMessage(connection, msg, 1, false);
         }
         /// <summary>
         /// Received the full host for a userreply
@@ -1166,7 +1234,7 @@ namespace IceChat2009
             string msg = GetMessageFormat("Server Notice");
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
         }
 
         /// <summary>
@@ -1190,8 +1258,7 @@ namespace IceChat2009
             string msg = GetMessageFormat("Server Message");
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1);
-            
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1, false);            
             ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
 
         }
@@ -1206,7 +1273,7 @@ namespace IceChat2009
             string msg = GetMessageFormat("Server MOTD");
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1, false);
             ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
 
         }
@@ -1221,7 +1288,7 @@ namespace IceChat2009
         private void OnChannelList(IRCConnection connection, string channel, string users, string topic)
         {
             //will make a seperate window for this eventually
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,channel + " : " + users + " : " + topic, 7);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,channel + " : " + users + " : " + topic, 7, false);
         }
 
 
@@ -1242,11 +1309,11 @@ namespace IceChat2009
                     error = error.Replace("$server", connection.ServerSetting.ServerName);
                     error = error.Replace("$message", msg);
 
-                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, error, 4);
+                    ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, error, 4, false);
 
                     //send it to the current window as well
                     if (CurrentWindowType != TabWindow.WindowType.Console)
-                        CurrentWindowMessage(connection, error, 4);
+                        CurrentWindowMessage(connection, error, 4, false);
 
                     ((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
                 }
@@ -1263,7 +1330,7 @@ namespace IceChat2009
         private void OnWhoisData(IRCConnection connection, string nick, string data)
         {
             //send whois data to the current window for now
-            CurrentWindowMessage(connection, data, 12);
+            CurrentWindowMessage(connection, data, 12, false);
             
             //check if there is a query window open
             TabWindow t = GetWindow(connection, nick, TabWindow.WindowType.Query);
@@ -1502,7 +1569,9 @@ namespace IceChat2009
                 if (t.Connection == connection)
                 {
                     string msg = GetMessageFormat("Server Quit");
-                    msg = msg.Replace("$nick", nick).Replace("$host", host).Replace("$reason", reason);
+                    msg = msg.Replace("$nick", nick);
+                    msg = msg.Replace("$host", host);
+                    msg = msg.Replace("$reason", reason);
 
                     bool ishandled = false;
                     PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
@@ -1681,7 +1750,7 @@ namespace IceChat2009
                 t.ClearNicks();
             }
             
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
         }
 
         /// <summary>
@@ -1707,7 +1776,7 @@ namespace IceChat2009
                 msg = msg.Replace("$channel", channel);
                 msg = msg.Replace("$reason", reason);
 
-                ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+                ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
             }
             catch (Exception e)
             {
@@ -1736,7 +1805,7 @@ namespace IceChat2009
                             string msg = GetMessageFormat("Self Nick Change");
                             msg = msg.Replace("$nick", oldnick).Replace("$newnick", newnick).Replace("$host", host); ;
 
-                            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+                            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
                         }
                     }
                 }
@@ -1875,7 +1944,7 @@ namespace IceChat2009
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$mode", mode);
             msg = msg.Replace("$nick", nick);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
 
             //parse out the user modes
             //set the mode in Server Setting
@@ -1921,7 +1990,7 @@ namespace IceChat2009
                     if (modeSetter != channel)
                     {
                         //System.Diagnostics.Debug.WriteLine(msg);
-                        WindowMessage(connection, channel, msg, 1);
+                        WindowMessage(connection, channel, msg, 1, false);
                         //now update the modes accordingly
 
                     }
@@ -2009,7 +2078,7 @@ namespace IceChat2009
         {
             string msg = GetMessageFormat("Channel Invite");
             msg = msg.Replace("$channel", channel).Replace("$nick", nick).Replace("$host", host);
-            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1);
+            ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
         }
 
         /// <summary>
@@ -2059,7 +2128,12 @@ namespace IceChat2009
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
                 ipc.ServerRaw(args);
-            }              
+                if (args.Command != null)
+                {
+                    if (args.Command.Length > 0)
+                        ParseOutGoingCommand(connection, args.Command);
+                }
+            }
 
         }
 
@@ -2131,22 +2205,40 @@ namespace IceChat2009
                     //send the message
                     string msg = GetMessageFormat("Self Channel Join");
                     msg = msg.Replace("$nick", connection.ServerSetting.NickName).Replace("$channel", windowName);
-                    
+
+                    if (FormMain.Instance.IceChatOptions.LogChannel)
+                        t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+
                     t.TextWindow.AppendText(msg, 1);
                 }
                 else if (t.WindowStyle == TabWindow.WindowType.Query)
+                {
                     t.TextWindow.Font = new Font(iceChatFonts.FontSettings[2].FontName, iceChatFonts.FontSettings[2].FontSize);
+                    if (FormMain.Instance.IceChatOptions.LogQuery)
+                        t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+                }
                 else if (t.WindowStyle == TabWindow.WindowType.Debug)
                 {
                     t.TextWindow.NoColorMode = true;
                     t.TextWindow.Font = new Font("Verdana", 10);
+                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder);
                 }
                 
-                tabMain.TabPages.Add(t);
-                if (t.WindowStyle != TabWindow.WindowType.Debug)
-                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
+                //find the last window index for this connection
+                int index = 0;
+                if (t.WindowStyle == TabWindow.WindowType.Channel || t.WindowStyle == TabWindow.WindowType.Query)
+                {
+                    for (int i = 1; i < tabMain.TabPages.Count; i++)
+                    {
+                        if (((TabWindow)tabMain.TabPages[i]).Connection == connection)
+                            index = i + 1;
+                    }
+                }
+                
+                if (index == 0)
+                    tabMain.TabPages.Add(t);
                 else
-                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder);
+                    tabMain.TabPages.Insert(index, t);
                 
                 tabMain.SelectedTab = t;
 
@@ -2396,6 +2488,9 @@ namespace IceChat2009
                                 {
                                     FormChannelInfo fci = new FormChannelInfo(t);
                                     SendData(connection, "MODE " + t.WindowName + " +b");
+                                    //check if mode (e) exists for Exception List
+                                    if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                        SendData(connection, "MODE " + t.WindowName + " +e");
                                     fci.ShowDialog(this);
                                 }
                             }
@@ -2406,6 +2501,9 @@ namespace IceChat2009
                                 {
                                     FormChannelInfo fci = new FormChannelInfo(CurrentWindow);
                                     SendData(connection, "MODE " + CurrentWindow.WindowName + " +b");
+                                    //check if mode (e) exists for Exception List
+                                    if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                        SendData(connection, "MODE " + CurrentWindow.WindowName + " +e");
                                     fci.ShowDialog(this);
                                 }
                             }
@@ -2479,10 +2577,17 @@ namespace IceChat2009
                             if (data.IndexOf(".") > 0)
                             {
                                 //dns a host
-                                System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(data);
-                                ParseOutGoingCommand(connection, "/echo " + data + " resolved to " + addresslist.Length + " addresses");
-                                foreach (System.Net.IPAddress address in addresslist)
-                                    ParseOutGoingCommand(connection, "/echo  " + address.ToString());
+                                try
+                                {
+                                    System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(data);
+                                    ParseOutGoingCommand(connection, "/echo " + data + " resolved to " + addresslist.Length + " addresses");
+                                    foreach (System.Net.IPAddress address in addresslist)
+                                        ParseOutGoingCommand(connection, "/echo  " + address.ToString());
+                                }
+                                catch(Exception)
+                                {
+                                    ParseOutGoingCommand(connection, "/echo " + data + " does not resolve (unknown address)");
+                                }
                             }
                             else
                             {
@@ -2587,6 +2692,7 @@ namespace IceChat2009
                                 msg = msg.Replace("$message", data);
 
                                 CurrentWindow.TextWindow.AppendText(msg, 1);
+                                CurrentWindow.TextWindow.ScrollToBottom();
                                 CurrentWindow.LastMessageType = ServerMessageType.Action;
                             }
                         }
@@ -2612,6 +2718,26 @@ namespace IceChat2009
                             string nick = data.Substring(0, data.IndexOf(' '));
                             string msg = data.Substring(data.IndexOf(' ') + 1);
                             SendData(connection, "PRIVMSG " + nick + " :" + msg);
+
+                            //get the color for the private message
+                            msg = GetMessageFormat("Self Private Message");
+                            
+                            if (msg.StartsWith("&#x3;"))
+                            {
+                                //get the color
+                                string color = msg.Substring(0,6);
+                                int result;
+                                if (Int32.TryParse(msg.Substring(6, 1), out result))
+                                    color += msg.Substring(6,1);
+                                
+                                msg = color + "*" + nick + "* " + data.Substring(data.IndexOf(' ') + 1); ;
+                            }
+                            
+                            if (CurrentWindowType == TabWindow.WindowType.Channel || CurrentWindowType == TabWindow.WindowType.Query)
+                                CurrentWindow.TextWindow.AppendText(msg, 1);
+                            else if (CurrentWindowType == TabWindow.WindowType.Console)
+                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.AppendText(msg, 1);
+
                         }
                         break;
                     case "/nick":
@@ -2693,6 +2819,10 @@ namespace IceChat2009
                             }
                         }
                         break;
+                    case "/run":
+                        if (data.Length > 0)
+                            System.Diagnostics.Process.Start(data);
+                        break;                    
                     case "/quit":
                         if (connection != null)
                         {
@@ -2783,7 +2913,7 @@ namespace IceChat2009
                             //check if default nick name has been set
                             if (iceChatOptions.DefaultNick.Length == 0)
                             {
-                                CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1);
+                                CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1, false);
                             }
                             else
                             {
@@ -2864,7 +2994,7 @@ namespace IceChat2009
                             string msg = GetMessageFormat("Ctcp Send");
                             msg = msg.Replace("$nick", data); ;
                             msg = msg.Replace("$ctcp", "VERSION");
-                            CurrentWindowMessage(connection, msg, 1);
+                            CurrentWindowMessage(connection, msg, 1, true);
                             SendData(connection, "PRIVMSG " + data + " VERSION");
                         }
                         else
@@ -2949,18 +3079,18 @@ namespace IceChat2009
                         }
                         else if (CurrentWindowType == TabWindow.WindowType.Console)
                         {
-                            WindowMessage(connection, "Console", data, 4);
+                            WindowMessage(connection, "Console", data, 4, true);
                         }
                     }
                     else
                     {
-                        WindowMessage(connection, "Console", "Error: Not Connected", 4);
-                        WindowMessage(connection, "Console", data, 4);
+                        WindowMessage(connection, "Console", "Error: Not Connected", 4, true);
+                        WindowMessage(connection, "Console", data, 4, true);
                     }
                 }
                 else
                 {
-                    WindowMessage(null, "Console", data, 4);
+                    WindowMessage(null, "Console", data, 4, true);
                 }
             }
 
@@ -3254,9 +3384,8 @@ namespace IceChat2009
         private void iceChatSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //bring up a very basic settings form
-            FormSettings fs = new FormSettings(iceChatOptions, iceChatFonts);
+            FormSettings fs = new FormSettings(iceChatOptions, iceChatFonts, iceChatEmoticons);
             fs.SaveOptions += new FormSettings.SaveOptionsDelegate(fs_SaveOptions);
-            
             
             fs.ShowDialog(this);
         }
@@ -3298,6 +3427,16 @@ namespace IceChat2009
 
         }
 
+        private void serverListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            panelLeft.Visible = serverListToolStripMenuItem.Checked;
+        }
+
+        private void nickListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            panelRight.Visible = nickListToolStripMenuItem.Checked;
+        }
+
         private void codePlexPageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("http://icechat.codeplex.com/");
@@ -3333,7 +3472,6 @@ namespace IceChat2009
         {
             SaveMessageFormat();            
             SaveColors();
-            //SaveHighLites();
 
             this.nickList.Invalidate();
             this.serverTree.Invalidate();
@@ -3419,17 +3557,15 @@ namespace IceChat2009
             this.exitToolStripMenuItem.PerformClick();
         }
 
+        private void OnPluginMenuItemClick(object sender, EventArgs e)
+        {
+            //show plugin information
+            FormPluginInfo pi = new FormPluginInfo((IPluginIceChat)((ToolStripMenuItem)sender).Tag, (ToolStripMenuItem)sender);
+            pi.ShowDialog(this);
+        }
         
         #endregion
-
-        internal ArrayList Plugins
-        {
-            get
-            {
-                return loadedPlugins;
-            }
-        }
-
+        
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
@@ -3457,7 +3593,7 @@ namespace IceChat2009
                         }
                         else
                         {
-                            System.Diagnostics.Debug.WriteLine("ass is null");
+                            System.Diagnostics.Debug.WriteLine("assembly is null");
                         }
                     }
                     catch (Exception ex)
@@ -3476,10 +3612,15 @@ namespace IceChat2009
                             ipi.MainForm = this;
                             ipi.MainMenuStrip = this.MainMenuStrip;
 
-                            WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4);
+                            WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
                             
-                            //declare all the events
-                            
+                            //add the menu items
+                            ToolStripMenuItem t = new ToolStripMenuItem(ipi.Name);
+                            t.Tag = ipi;
+                            t.Click += new EventHandler(OnPluginMenuItemClick);
+                            pluginsToolStripMenuItem.DropDownItems.Add(t);
+
+                            //declare all the events                            
                             ipi.OnChannelMessage += new ChannelMessageHandler(Plugin_OnChangedMessage);
                             ipi.OnChannelAction += new ChannelActionHandler(Plugin_OnChangedMessage);
                             ipi.OnQueryMessage += new QueryMessageHandler(Plugin_OnChangedMessage);
@@ -3490,8 +3631,6 @@ namespace IceChat2009
                             ipi.OnServerQuit += new ServerQuitHandler(Plugin_OnChangedMessage);
 
                             ipi.OnInputText += new InputTextHandler(Plugin_OnInputText);
-
-                            //ipi.OnServerRaw += new ServerRawHandler(Plugin_OnServerRaw);
 
                             loadedPlugins.Add(ipi);
                         }
@@ -3507,12 +3646,16 @@ namespace IceChat2009
                 }
             }
         }
-        /*
-        private void Plugin_OnServerRaw(object sender, PluginArgs e)
+
+        internal void UnloadPlugin(IPluginIceChat plugin, ToolStripMenuItem menuItem)
         {
-            //            
+            //unload specified plugin
+            loadedPlugins.Remove(plugin);
+            pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
+            WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
+
         }
-        */
+
         private void Plugin_OnInputText(object sender, PluginArgs e)
         {
             ParseOutGoingCommand((IRCConnection)e.Connection, e.Extra);
@@ -3529,7 +3672,6 @@ namespace IceChat2009
                     ParseOutGoingCommand((IRCConnection)e.Connection, e.Command);
             }
         }
-
 
     }
 }

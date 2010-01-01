@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class FormServers : Form
     {
@@ -41,7 +41,7 @@ namespace IceChat2009
         public delegate void NewServerDelegate(ServerSetting s);
         public event NewServerDelegate NewServer;
 
-        public delegate void SaveServerDelegate();
+        public delegate void SaveServerDelegate(ServerSetting s, bool removeServer);
         public event SaveServerDelegate SaveServer;
 
         public FormServers()
@@ -51,18 +51,28 @@ namespace IceChat2009
 
             this.Text = "Server Editor: New Server";
 
+            foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
+            {
+                comboEncoding.Items.Add(ei.Name);
+            }
+            comboEncoding.Text = System.Text.Encoding.Default.WebName.ToString();
+            buttonRemoveServer.Enabled = false;
         }
 
         public FormServers(ServerSetting s)
         {
             InitializeComponent();
             serverSetting = s;
-            
+
+            foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
+            {
+                comboEncoding.Items.Add(ei.Name);
+            }
+
             newServer = false;
             LoadSettings();
 
             this.Text = "Server Editor: " + s.ServerName;
-
         }
         
         /// <summary>
@@ -86,7 +96,8 @@ namespace IceChat2009
             this.checkModeI.Checked = serverSetting.SetModeI;
             this.checkMOTD.Checked = serverSetting.ShowMOTD;
             this.checkPingPong.Checked = serverSetting.ShowPingPong;
-            this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;
+            this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;            
+            this.comboEncoding.Text = serverSetting.Encoding;
 
             if (serverSetting.AutoJoinChannels != null)
             {
@@ -168,6 +179,7 @@ namespace IceChat2009
             serverSetting.ShowMOTD = checkMOTD.Checked;
             serverSetting.ShowPingPong = checkPingPong.Checked;
             serverSetting.RejoinChannels = checkRejoinChannel.Checked;
+            serverSetting.Encoding = comboEncoding.Text;
 
             if (newServer == true)
             {
@@ -177,7 +189,7 @@ namespace IceChat2009
             }
             else
                 if (SaveServer != null)
-                    SaveServer();
+                    SaveServer(serverSetting, false);
 
         }
 
@@ -222,6 +234,27 @@ namespace IceChat2009
                     listChannel.Items.Add(lvi);
                     textChannel.Text = "";
                     textChannel.Focus();
+                }
+            }
+        }
+
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listChannel.SelectedItems)
+            {
+                textChannel.Text = eachItem.Text;
+                listChannel.Items.Remove(eachItem);
+            }
+        }
+
+        private void buttonRemoveServer_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to Remove this Server from the Server Tree?","Remove Server", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+            {
+                if (SaveServer != null)
+                {
+                    SaveServer(serverSetting, true);
+                    this.Close();
                 }
             }
         }

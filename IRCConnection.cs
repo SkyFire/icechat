@@ -30,7 +30,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace IceChat2009
+namespace IceChat
 {
     public partial class IRCConnection
     {
@@ -119,7 +119,7 @@ namespace IceChat2009
                 return fullyConnected;
             }
         }
-
+        
         public bool AttemptReconnect
         {
             get { return attemptReconnect; }
@@ -172,8 +172,9 @@ namespace IceChat2009
             
             commandQueue.Clear();
             initialLogon = false;
+            triedAltNickName = false;
 
-            if (disconnectError && attemptReconnect)
+            if (disconnectError && attemptReconnect && FormMain.Instance.IceChatOptions.ReconnectServer)
             {
                 //reconnect
                 if (ServerMessage != null)
@@ -279,7 +280,7 @@ namespace IceChat2009
             }   
             
             //get the proper encoding            
-            byte[] bytData = Encoding.ASCII.GetBytes(data + "\n");
+            byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\n"); ; 
             if (bytData.Length > 0)
             {                
                 if (serverSocket.Connected)
@@ -349,15 +350,13 @@ namespace IceChat2009
 
                 if (size > 0)
                 {
-
-                    Decoder d = Encoding.Default.GetDecoder();
+                    Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
                     char[] chars = new char[size];
                     int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
                     System.String strData = new System.String(chars);
-
                     strData = strData.Replace("\r", "");
 
-                    if (!strData.EndsWith("\n"))
+                    if (!strData.EndsWith("\n") && strData[strData.Length - 1] != (char)0)
                     {
                         //create a buffer
                         dataBuffer += strData;
@@ -400,12 +399,11 @@ namespace IceChat2009
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
 
                 }
-            }
+            }            
             catch (SocketException se)
             {
                 if (ServerError != null)
                     ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
-                //ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString() + ":" + se.StackTrace);
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
@@ -419,18 +417,7 @@ namespace IceChat2009
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-            }
-            /*
-            finally
-            {
-                if (disconnectError)
-                {
-                    serverSocket.Shutdown(SocketShutdown.Both);
-                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
-                }
-            }
-             */
+            }            
         }
         
         /// <summary>

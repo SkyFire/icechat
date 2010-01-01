@@ -28,7 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IceChat2009
+namespace IceChat
 {
     public class InputBoxDialog : System.Windows.Forms.Form
     {
