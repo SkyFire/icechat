@@ -53,7 +53,11 @@ namespace IceChat
 
             foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
             {
-                comboEncoding.Items.Add(ei.Name);
+                try
+                {
+                    comboEncoding.Items.Add(ei.Name);
+                }
+                catch { }
             }
             comboEncoding.Text = System.Text.Encoding.Default.WebName.ToString();
             buttonRemoveServer.Enabled = false;
@@ -66,7 +70,11 @@ namespace IceChat
 
             foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
             {
-                comboEncoding.Items.Add(ei.Name);
+                try
+                {
+                    comboEncoding.Items.Add(ei.Name);
+                }
+                catch { }
             }
 
             newServer = false;
@@ -98,7 +106,7 @@ namespace IceChat
             this.checkPingPong.Checked = serverSetting.ShowPingPong;
             this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;            
             this.comboEncoding.Text = serverSetting.Encoding;
-
+            
             if (serverSetting.AutoJoinChannels != null)
             {
                 foreach (string chan in serverSetting.AutoJoinChannels)

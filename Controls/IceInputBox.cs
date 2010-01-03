@@ -90,7 +90,7 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow.ScrollWindow(scrollUp);
+                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow().ScrollWindow(scrollUp);
 
         }
 
@@ -113,7 +113,7 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow.ScrollWindowPage(scrollUp);
+                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow().ScrollWindowPage(scrollUp);
 
         }
 

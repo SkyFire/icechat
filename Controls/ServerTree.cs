@@ -587,15 +587,21 @@ namespace IceChat
                     
                     x = 0;
                 }
-                
+
                 if (value.GetType() == typeof(TabWindow))
+                {
                     x = 16;
-                
+                    if (((TabWindow)value).WindowStyle == TabWindow.WindowType.Channel || ((TabWindow)value).WindowStyle == TabWindow.WindowType.Query)
+                    {
+                        selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
+                    }
+                }
                 g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
                 
                 g.DrawString(nodes[3], this.Font, b, x+ 16, currentY);
                 currentY += lineSize;
                 b.Dispose();
+
             }
 
 
@@ -676,7 +682,7 @@ namespace IceChat
                                 colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
                             else
                                 colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
-
+                            
                             nodeCount++;
                             serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":3:" + colorQ.ToString() +  ":" + t.WindowName, t));
                         }
@@ -808,6 +814,7 @@ namespace IceChat
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine(selectedServerID);
             //open up the Server Editor
             //check if a server is selected or not
             if (selectedServerID > 0)

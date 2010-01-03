@@ -161,16 +161,16 @@ namespace IceChat
 
             #endregion
 
-            InitializeComponent();
-            
             LoadOptions();
             LoadColors();
-                        
+
+            InitializeComponent();
+
             serverTree = new ServerTree();
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 1 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 3 2010";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -185,6 +185,8 @@ namespace IceChat
                 if (iceChatOptions.WindowLocation != null)
                     this.Location = iceChatOptions.WindowLocation;
             }
+
+            statusStripMain.Visible = iceChatOptions.ShowStatusBar;                        
 
             LoadAliases();
             LoadPopups();
@@ -604,6 +606,9 @@ namespace IceChat
         {
             XmlSerializer serializer = new XmlSerializer(typeof(IceChatEmoticon));
             //check if emoticons Folder Exists
+            if (!System.IO.File.Exists(EmoticonsFolder))
+                System.IO.Directory.CreateDirectory(EmoticonsFolder);
+
             TextWriter textWriter = new StreamWriter(emoticonsFile);
             serializer.Serialize(textWriter, iceChatEmoticons);
             textWriter.Close();
@@ -823,7 +828,6 @@ namespace IceChat
                 iceChatAliases = value;
                 //save the aliases
                 SaveAliases();
-
             }
         }
 
@@ -1328,15 +1332,18 @@ namespace IceChat
         /// <param name="nick">The nick whois data is from</param>
         /// <param name="data">The Whois data</param>
         private void OnWhoisData(IRCConnection connection, string nick, string data)
-        {
-            //send whois data to the current window for now
-            CurrentWindowMessage(connection, data, 12, false);
-            
+        {            
             //check if there is a query window open
             TabWindow t = GetWindow(connection, nick, TabWindow.WindowType.Query);
             if (t != null)
             {
                 t.TextWindow.AppendText(data, 12);
+                t.LastMessageType = ServerMessageType.Message;
+            }
+            else
+            {
+                //send whois data to the current window instead
+                CurrentWindowMessage(connection, data, 12, false);
             }
         }
 
@@ -1348,7 +1355,10 @@ namespace IceChat
         /// <param name="message">Query Action Message</param>
         private void OnQueryAction(IRCConnection connection, string nick, string host, string message)
         {
-            if (!tabMain.WindowExists(connection,nick, TabWindow.WindowType.Query))
+            if (!tabMain.WindowExists(connection, nick, TabWindow.WindowType.Query) && iceChatOptions.DisableQueries)
+                return;
+
+            if (!tabMain.WindowExists(connection, nick, TabWindow.WindowType.Query))
                 AddWindow(connection, nick, TabWindow.WindowType.Query);
 
             TabWindow t = GetWindow(connection, nick, TabWindow.WindowType.Query);
@@ -1382,6 +1392,9 @@ namespace IceChat
         /// <param name="message">Query Message</param>
         private void OnQueryMessage(IRCConnection connection, string nick, string host, string message)
         {
+            if (!tabMain.WindowExists(connection, nick, TabWindow.WindowType.Query) && iceChatOptions.DisableQueries)
+                return;
+            
             if (!tabMain.WindowExists(connection,nick, TabWindow.WindowType.Query))
                 AddWindow(connection, nick, TabWindow.WindowType.Query);
 
@@ -2239,11 +2252,19 @@ namespace IceChat
                     tabMain.TabPages.Add(t);
                 else
                     tabMain.TabPages.Insert(index, t);
-                
-                tabMain.SelectedTab = t;
 
-                nickList.CurrentWindow = t;
+                if (t.WindowStyle == TabWindow.WindowType.Query && !iceChatOptions.NewQueryForegound)
+                    tabMain.SelectedTab = tabMain.SelectedTab;
+                else
+                {
+                    tabMain.SelectedTab = t;
+                    nickList.CurrentWindow = t;
+                }
                 serverTree.Invalidate();
+
+                if (t.WindowStyle == TabWindow.WindowType.Query && iceChatOptions.WhoisNewQuery)
+                    ParseOutGoingCommand(t.Connection, "/whois " + t.WindowName);
+                        
             }
         }
         /// <summary>
@@ -2542,7 +2563,7 @@ namespace IceChat
                             else
                             {
                                 //find the current console tab window
-                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.ClearTextWindow();
+                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow().ClearTextWindow();
                             }
                         }
                         else
@@ -2550,7 +2571,7 @@ namespace IceChat
                             //find a match
                             if (data == "Console")
                             {
-                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.ClearTextWindow();
+                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow().ClearTextWindow();
                                 return;
                             }
                             else if (data.ToLower() == "all console")
@@ -2613,7 +2634,7 @@ namespace IceChat
                                 string msg = GetMessageFormat("User Echo");
                                 msg = msg.Replace("$message", data);
 
-                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.AppendText(msg, 1);
+                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow().AppendText(msg, 1);
                             }
                         }
                         break;
@@ -2736,7 +2757,7 @@ namespace IceChat
                             if (CurrentWindowType == TabWindow.WindowType.Channel || CurrentWindowType == TabWindow.WindowType.Query)
                                 CurrentWindow.TextWindow.AppendText(msg, 1);
                             else if (CurrentWindowType == TabWindow.WindowType.Console)
-                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow.AppendText(msg, 1);
+                                ((ConsoleTabWindow)TabMain.TabPages[0]).CurrentWindow().AppendText(msg, 1);
 
                         }
                         break;
@@ -3210,6 +3231,15 @@ namespace IceChat
                         data = data.Replace(m.Value, logsFolder);
                         break;
                     case "$uptime":
+                        //System.Environment.TickCount
+						int systemUpTime = System.Environment.TickCount / 1000;
+                        TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
+                        string d = ts.Hours + " hours " + ts.Minutes + " minutes " + ts.Seconds + " seconds";
+                        if (ts.Days > 0)
+                            d = ts.Days + " days " + d;
+                        data = data.Replace(m.Value, d);
+
+                        /*
                         System.Diagnostics.PerformanceCounter upTime = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
                         upTime.NextValue();
                         TimeSpan ts = TimeSpan.FromSeconds(upTime.NextValue());
@@ -3217,6 +3247,7 @@ namespace IceChat
                         if (ts.Days > 0)
                             d = ts.Days + " days " + d;
                         data = data.Replace(m.Value, d);
+                        */
                         break;
                 }
             }
@@ -3421,9 +3452,12 @@ namespace IceChat
             //change the inputbox font
             inputPanel.InputBoxFont = new Font(iceChatFonts.FontSettings[5].FontName, iceChatFonts.FontSettings[5].FontSize);
 
-            //change the channel bar (not going to be implemented)
-            //tabMain.Font = new Font(iceChatFonts.FontSettings[6].FontName, iceChatFonts.FontSettings[6].FontSize);
+            //set if Emoticon Picker/Color Picker is Visible
+            inputPanel.ShowEmoticonPicker = iceChatOptions.ShowEmoticonPicker;
+            inputPanel.ShowColorPicker = iceChatOptions.ShowColorPicker;
 
+            //set if Status Bar is Visible
+            statusStripMain.Visible = iceChatOptions.ShowStatusBar;
 
         }
 

@@ -187,6 +187,14 @@ namespace IceChat
         private bool _logQuery = true;
         private bool _seperateLogs = true;
 
+        private bool _showEmoticons = false;
+        private bool _showEmoticonPicker = true;
+        private bool _showColorPicker = true;
+        private bool _showStatusBar = true;
+        private bool _disableQueries = false;
+        private bool _showQueryForegound = true;
+        private bool _whoisNewQuery = true;
+
         [XmlElement("TimeStamp")]
         public string TimeStamp
         { 
@@ -253,6 +261,56 @@ namespace IceChat
         {
             get { return this._seperateLogs; }
             set { this._seperateLogs = value; }
+        }
+
+        [XmlElement("ShowEmoticons")]
+        public bool ShowEmoticons
+        {
+            get { return this._showEmoticons; }
+            set { this._showEmoticons = value; }
+        }
+
+
+        [XmlElement("ShowEmoticonPicker")]
+        public bool ShowEmoticonPicker
+        {
+            get { return this._showEmoticonPicker; }
+            set { this._showEmoticonPicker = value; }
+        }
+
+        [XmlElement("ShowColorPicker")]
+        public bool ShowColorPicker
+        {
+            get { return this._showColorPicker; }
+            set { this._showColorPicker = value; }
+        }
+        
+        [XmlElement("ShowStatusBar")]
+        public bool ShowStatusBar
+        {
+            get { return this._showStatusBar; }
+            set { this._showStatusBar = value; }
+        }
+
+        [XmlElement("DisableQueries")]
+        public bool DisableQueries
+        {
+            get { return this._disableQueries; }
+            set { this._disableQueries = value; }
+        }
+
+        [XmlElement("NewQueryForegound")]
+        public bool NewQueryForegound
+        {
+            get { return this._showQueryForegound; }
+            set { this._showQueryForegound = value; }
+        }
+
+        [XmlElement("WhoisNewQuery")]
+        public bool WhoisNewQuery
+        {
+            get { return this._whoisNewQuery; }
+            set { this._whoisNewQuery = value; }
         }
     }
     

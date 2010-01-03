@@ -36,7 +36,7 @@ namespace IceChat
     public partial class FormSettings : Form
     {
         private IceChatOptions iceChatOptions;
-        private IceChatFontSetting icechatFonts;
+        private IceChatFontSetting iceChatFonts;
         private IceChatEmoticon iceChatEmoticons;
 
         private ListViewItem listMoveItem = null;
@@ -61,42 +61,47 @@ namespace IceChat
         {
             InitializeComponent();
 
+            listBoxSounds.Items.Add("New Message in Console");
+            listBoxSounds.Items.Add("New Channel Message");
+            listBoxSounds.Items.Add("New Private Message");
+            listBoxSounds.Items.Add("New User Notice");
+            listBoxSounds.Items.Add("Your Nickname is said in a Channel");
+            listBoxSounds.Items.Add("Your Nickname is said in a Private Message");
+            listBoxSounds.Items.Add("A Buddy has come Online");
+            listBoxSounds.Items.Add("Server Disconnection");
+
+            
             this.iceChatOptions = Options;
-            this.icechatFonts = Fonts;
+            this.iceChatFonts = Fonts;
             this.iceChatEmoticons = Emoticons;
 
             this.listViewEmot.MouseDown += new MouseEventHandler(listViewEmot_MouseDown);
             this.listViewEmot.MouseUp += new MouseEventHandler(listViewEmot_MouseUp);
 
             //populate the font settings
-            textConsoleFont.Font = new Font(icechatFonts.FontSettings[0].FontName, 10);
-            textConsoleFont.Text = icechatFonts.FontSettings[0].FontName;
-            textConsoleFontSize.Text = icechatFonts.FontSettings[0].FontSize.ToString();
+            textConsoleFont.Font = new Font(iceChatFonts.FontSettings[0].FontName, 10);
+            textConsoleFont.Text = iceChatFonts.FontSettings[0].FontName;
+            textConsoleFontSize.Text = iceChatFonts.FontSettings[0].FontSize.ToString();
 
-            textChannelFont.Font = new Font(icechatFonts.FontSettings[1].FontName, 10);
-            textChannelFont.Text = icechatFonts.FontSettings[1].FontName;
-            textChannelFontSize.Text = icechatFonts.FontSettings[1].FontSize.ToString();
+            textChannelFont.Font = new Font(iceChatFonts.FontSettings[1].FontName, 10);
+            textChannelFont.Text = iceChatFonts.FontSettings[1].FontName;
+            textChannelFontSize.Text = iceChatFonts.FontSettings[1].FontSize.ToString();
 
-            textQueryFont.Font = new Font(icechatFonts.FontSettings[2].FontName, 10);
-            textQueryFont.Text = icechatFonts.FontSettings[2].FontName;
-            textQueryFontSize.Text = icechatFonts.FontSettings[2].FontSize.ToString();
+            textQueryFont.Font = new Font(iceChatFonts.FontSettings[2].FontName, 10);
+            textQueryFont.Text = iceChatFonts.FontSettings[2].FontName;
+            textQueryFontSize.Text = iceChatFonts.FontSettings[2].FontSize.ToString();
 
-            textNickListFont.Font = new Font(icechatFonts.FontSettings[3].FontName, 10);
-            textNickListFont.Text = icechatFonts.FontSettings[3].FontName;
-            textNickListFontSize.Text= icechatFonts.FontSettings[3].FontSize.ToString();
+            textNickListFont.Font = new Font(iceChatFonts.FontSettings[3].FontName, 10);
+            textNickListFont.Text = iceChatFonts.FontSettings[3].FontName;
+            textNickListFontSize.Text= iceChatFonts.FontSettings[3].FontSize.ToString();
 
-            textServerListFont.Font = new Font(icechatFonts.FontSettings[4].FontName, 10);
-            textServerListFont.Text = icechatFonts.FontSettings[4].FontName;
-            textServerListFontSize.Text = icechatFonts.FontSettings[4].FontSize.ToString();
+            textServerListFont.Font = new Font(iceChatFonts.FontSettings[4].FontName, 10);
+            textServerListFont.Text = iceChatFonts.FontSettings[4].FontName;
+            textServerListFontSize.Text = iceChatFonts.FontSettings[4].FontSize.ToString();
 
-            textInputFont.Font = new Font(icechatFonts.FontSettings[5].FontName, 10);
-            textInputFont.Text = icechatFonts.FontSettings[5].FontName;
-            textInputFontSize.Text = icechatFonts.FontSettings[5].FontSize.ToString();
-
-
-            //textChannelBarFont.Font = new Font(icechatFonts.FontSettings[6].FontName, 10);
-            //textChannelBarFont.Text = icechatFonts.FontSettings[6].FontName;
-            //textChannelBarFontSize.Text = icechatFonts.FontSettings[6].FontSize.ToString();
+            textInputFont.Font = new Font(iceChatFonts.FontSettings[5].FontName, 10);
+            textInputFont.Text = iceChatFonts.FontSettings[5].FontName;
+            textInputFontSize.Text = iceChatFonts.FontSettings[5].FontSize.ToString();
 
             //populate the settings
             textTimeStamp.Text = iceChatOptions.TimeStamp;
@@ -119,6 +124,14 @@ namespace IceChat
                 lvi.SubItems.Add(emot.EmoticonImage);
                 listViewEmot.Items.Add(lvi);                
             }
+
+            checkEmoticons.Checked = iceChatOptions.ShowEmoticons;
+            checkEmoticonPicker.Checked = iceChatOptions.ShowEmoticonPicker;
+            checkColorPicker.Checked = iceChatOptions.ShowColorPicker;
+            checkStatusBar.Checked = iceChatOptions.ShowStatusBar;
+            checkDisableQueries.Checked = iceChatOptions.DisableQueries;
+            checkNewQueryForegound.Checked = iceChatOptions.NewQueryForegound;
+            checkWhoisNewQuery.Checked = iceChatOptions.WhoisNewQuery;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -176,25 +189,32 @@ namespace IceChat
             iceChatOptions.LogChannel = checkLogChannel.Checked;
             iceChatOptions.LogQuery = checkLogQuery.Checked;
             iceChatOptions.SeperateLogs = checkSeperateLogs.Checked;
+            iceChatOptions.ShowEmoticons = checkEmoticons.Checked;
+            iceChatOptions.ShowEmoticonPicker = checkEmoticonPicker.Checked;
+            iceChatOptions.ShowColorPicker = checkColorPicker.Checked;
+            iceChatOptions.ShowStatusBar = checkStatusBar.Checked;
+            iceChatOptions.DisableQueries = checkDisableQueries.Checked;
+            iceChatOptions.NewQueryForegound = checkNewQueryForegound.Checked;
+            iceChatOptions.WhoisNewQuery = checkWhoisNewQuery.Checked;
 
             //set all the fonts
-            icechatFonts.FontSettings[0].FontName = textConsoleFont.Text;
-            icechatFonts.FontSettings[0].FontSize = float.Parse(textConsoleFontSize.Text);
+            iceChatFonts.FontSettings[0].FontName = textConsoleFont.Text;
+            iceChatFonts.FontSettings[0].FontSize = float.Parse(textConsoleFontSize.Text);
 
-            icechatFonts.FontSettings[1].FontName = textChannelFont.Text;
-            icechatFonts.FontSettings[1].FontSize = float.Parse(textChannelFontSize.Text);
+            iceChatFonts.FontSettings[1].FontName = textChannelFont.Text;
+            iceChatFonts.FontSettings[1].FontSize = float.Parse(textChannelFontSize.Text);
 
-            icechatFonts.FontSettings[2].FontName = textQueryFont.Text;
-            icechatFonts.FontSettings[2].FontSize = float.Parse(textQueryFontSize.Text);
+            iceChatFonts.FontSettings[2].FontName = textQueryFont.Text;
+            iceChatFonts.FontSettings[2].FontSize = float.Parse(textQueryFontSize.Text);
 
-            icechatFonts.FontSettings[3].FontName = textNickListFont.Text;
-            icechatFonts.FontSettings[3].FontSize = float.Parse(textNickListFontSize.Text);
+            iceChatFonts.FontSettings[3].FontName = textNickListFont.Text;
+            iceChatFonts.FontSettings[3].FontSize = float.Parse(textNickListFontSize.Text);
 
-            icechatFonts.FontSettings[4].FontName = textServerListFont.Text;
-            icechatFonts.FontSettings[4].FontSize = float.Parse(textServerListFontSize.Text);
+            iceChatFonts.FontSettings[4].FontName = textServerListFont.Text;
+            iceChatFonts.FontSettings[4].FontSize = float.Parse(textServerListFontSize.Text);
 
-            icechatFonts.FontSettings[5].FontName = textInputFont.Text;
-            icechatFonts.FontSettings[5].FontSize = float.Parse(textInputFontSize.Text);
+            iceChatFonts.FontSettings[5].FontName = textInputFont.Text;
+            iceChatFonts.FontSettings[5].FontSize = float.Parse(textInputFontSize.Text);
             
             //icechatFonts.FontSettings[6].FontName = textChannelBarFont.Text;
             //icechatFonts.FontSettings[6].FontSize = float.Parse(textChannelBarFontSize.Text);
@@ -322,7 +342,7 @@ namespace IceChat
             //add a new emoticon
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons";            
-            //ofd.Filter = "Images (*.PNG)|*.PNG)";
+            ofd.Filter = "Images (*.png)|*.png";
             //ofd.Multiselect = true;
             ofd.RestoreDirectory = true;
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -349,5 +369,33 @@ namespace IceChat
                 eachItem.BeginEdit();
         }
 
+        private void listBoxSounds_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //
+        }
+
+        private void buttonChooseSound_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = FormMain.Instance.CurrentFolder;
+            ofd.RestoreDirectory = true;
+            ofd.Filter = "Sounds (*.wav)|*.wav";
+            
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                textSound.Text = ofd.FileName;
+                System.Diagnostics.Debug.WriteLine(ofd.FileName);
+            }
+        }
+
+        private void buttonTest_Click(object sender, EventArgs e)
+        {
+            if (textSound.Text != "<none>" || textSound.Text != "")
+            {
+                System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+                player.SoundLocation = @textSound.Text;
+                player.Play();
+            }
+        }
     }
 }

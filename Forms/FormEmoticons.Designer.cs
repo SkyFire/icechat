@@ -58,7 +58,7 @@
             this.Controls.Add(this.pictureEmoticons);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "FormEmoticons";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Emoticon Picker";
             ((System.ComponentModel.ISupportInitialize)(this.pictureEmoticons)).EndInit();
             this.ResumeLayout(false);

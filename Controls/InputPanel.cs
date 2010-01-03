@@ -20,6 +20,12 @@ namespace IceChat
         {
             InitializeComponent();
             textInput.OnCommand += new IceInputBox.SendCommand(textInput_OnCommand);
+
+            if (!FormMain.Instance.IceChatOptions.ShowEmoticonPicker)
+                buttonEmoticonPicker.Visible = false;
+
+            if (!FormMain.Instance.IceChatOptions.ShowColorPicker)
+                buttonColorPicker.Visible = false;
         }
 
         internal IRCConnection CurrentConnection
@@ -32,6 +38,18 @@ namespace IceChat
             {
                 currentConnection = value;
             }
+        }
+
+        internal bool ShowEmoticonPicker
+        {
+            get { return this.buttonEmoticonPicker.Visible; }
+            set { this.buttonEmoticonPicker.Visible = value; }
+        }
+
+        internal bool ShowColorPicker
+        {
+            get { return this.buttonColorPicker.Visible; }
+            set { this.buttonColorPicker.Visible = value; }
         }
 
         internal Font InputBoxFont
@@ -73,7 +91,18 @@ namespace IceChat
         {
             //show the emoticon picker form
             FormEmoticons fe = new FormEmoticons();
+            fe.Top = (FormMain.Instance.Top + FormMain.Instance.Height) - 220;
+            fe.Left = FormMain.Instance.Left + 10;
             fe.ShowDialog(this);
+            FormMain.Instance.FocusInputBox();
+        }
+
+        private void buttonColorPicker_Click(object sender, EventArgs e)
+        {
+            FormColorPicker fc = new FormColorPicker();
+            fc.Top = (FormMain.Instance.Top + FormMain.Instance.Height) - 105;
+            fc.Left = FormMain.Instance.Left + 10;
+            fc.ShowDialog(this);
             FormMain.Instance.FocusInputBox();
         }
     }

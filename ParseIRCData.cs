@@ -80,7 +80,7 @@ namespace IceChat
 
         private void ParseData(string data)
         {
-            try 
+            //try 
             {
                 string[] ircData = data.Split(' ');
                 string channel;
@@ -297,6 +297,7 @@ namespace IceChat
                             if (WhoisData != null)
                                 WhoisData(this, ircData[3], msg);
                             break;
+                        case "307":     //whois information
                         case "313":     //whois information
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             if (WhoisData != null)
@@ -561,6 +562,11 @@ namespace IceChat
                             msg = JoinString(ircData, 3, true);
                             if (ServerMessage != null)
                                 ServerMessage(this, msg);
+                            break;
+                        case "901":
+                            msg = JoinString(ircData, 6, true);
+                            if (ServerMessage != null)
+                                ServerMessage(this, msg);                            
                             break;
 
                         case "PRIVMSG":
@@ -837,7 +843,13 @@ namespace IceChat
                             if (ServerError != null)
                                 ServerError(this, JoinString(ircData, 3, false));
                             break;
-                        
+
+                        case "474": //Cannot join channel (+b)
+                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            if (ServerError != null)
+                                ServerError(this, msg);                            
+                            break;
+
                         case "433": //nickname in use
                             nick = NickFromFullHost(RemoveColon(ircData[0]));
 
@@ -867,9 +879,9 @@ namespace IceChat
                     }
                 }
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                FormMain.Instance.ReportError(e.Message, e.StackTrace, "ParseIRCData::ParseData");
+              //  FormMain.Instance.ReportError(e.Message, e.StackTrace, "ParseIRCData::ParseData");
             }
         }
         

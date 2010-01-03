@@ -131,13 +131,16 @@ namespace IceChat
             this.UpdateStyles();
 
             LoadTextSizes();
-            if (FormMain.Instance.IceChatEmoticons.listEmoticons.Count > 0)
+            if (FormMain.Instance.IceChatEmoticons.listEmoticons != null)
             {
-                foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
+                if (FormMain.Instance.IceChatEmoticons.listEmoticons.Count > 0)
                 {
-                    emotMatch += emot.Trigger + ((char)0);
+                    foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
+                    {
+                        emotMatch += emot.Trigger + ((char)0);
+                    }
+                    emotMatch = emotMatch.Substring(0, emotMatch.Length - 1);
                 }
-                emotMatch = emotMatch.Substring(0, emotMatch.Length - 1);
             }
             popupMenu = new ContextMenuStrip();
             
@@ -616,7 +619,10 @@ namespace IceChat
             }
             else if (this.Parent.GetType() == typeof(ConsoleTab))
             {
-                logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                if (FormMain.Instance.IceChatOptions.SeperateLogs)                                
+                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console" + date +  ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                else
+                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
         }
 
@@ -964,12 +970,15 @@ namespace IceChat
 		
         private string ParseEmoticons(string line)
         {
-            if (emotMatch.Length > 0)
+            if (FormMain.Instance.IceChatOptions.ShowEmoticons)
             {
-                string[] eachEmot = emotMatch.Split((char)0);
-                for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
+                if (emotMatch.Length > 0)
                 {
-                    line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
+                    string[] eachEmot = emotMatch.Split((char)0);
+                    for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
+                    {
+                        line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
+                    }
                 }
             }
             return line;

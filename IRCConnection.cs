@@ -344,7 +344,7 @@ namespace IceChat
         {
             SocketPacket handler = (SocketPacket)ar.AsyncState;
 
-            try
+            //try
             {
                 int size = handler.workSocket.EndReceive(ar);
 
@@ -400,6 +400,7 @@ namespace IceChat
 
                 }
             }            
+            /*
             catch (SocketException se)
             {
                 if (ServerError != null)
@@ -417,7 +418,8 @@ namespace IceChat
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-            }            
+            }     
+            */
         }
         
         /// <summary>

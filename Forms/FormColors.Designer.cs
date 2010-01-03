@@ -22,12 +22,90 @@
 
         #region Windows Form Designer generated code
 
+        private System.Windows.Forms.TabControl tabControlColors;
+        private System.Windows.Forms.TabPage tabPageMessages;
+        private System.Windows.Forms.TabPage tabPageNickNames;
+        private System.Windows.Forms.Panel panelColorPicker;
+        private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.TabPage tabPageTabBar;
+        private System.Windows.Forms.TabPage tabPageBackGround;
+        private System.Windows.Forms.Label labelTabCurrent;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelTabMessage;
+        private System.Windows.Forms.Label labelTabJoin;
+        private System.Windows.Forms.Label labelTabPart;
+        private System.Windows.Forms.Label labelTabServer;
+        private System.Windows.Forms.Label labelTabQuit;
+        private System.Windows.Forms.Label labelTabOther;
+        private System.Windows.Forms.PictureBox pictureTabServer;
+        private System.Windows.Forms.PictureBox pictureTabQuit;
+        private System.Windows.Forms.PictureBox pictureTabPart;
+        private System.Windows.Forms.PictureBox pictureTabJoin;
+        private System.Windows.Forms.PictureBox pictureTabMessage;
+        private System.Windows.Forms.PictureBox pictureTabCurrent;
+        private System.Windows.Forms.PictureBox pictureTabOther;
+        private System.Windows.Forms.PictureBox pictureDefault;
+        private System.Windows.Forms.PictureBox pictureVoice;
+        private System.Windows.Forms.PictureBox pictureHalfOperator;
+        private System.Windows.Forms.PictureBox pictureOperator;
+        private System.Windows.Forms.PictureBox pictureAdmin;
+        private System.Windows.Forms.PictureBox pictureOwner;
+        private System.Windows.Forms.Label labelDefault;
+        private System.Windows.Forms.Label labelVoice;
+        private System.Windows.Forms.Label labelHalfOperator;
+        private System.Windows.Forms.Label labelOperator;
+        private System.Windows.Forms.Label labelAdmin;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label labelOwner;
+        private System.Windows.Forms.PictureBox pictureServerList;
+        private System.Windows.Forms.Label labelServerList;
+        private System.Windows.Forms.PictureBox pictureNickList;
+        private System.Windows.Forms.Label labelNickList;
+        private System.Windows.Forms.PictureBox pictureQuery;
+        private System.Windows.Forms.Label labelQuery;
+        private System.Windows.Forms.PictureBox pictureChannel;
+        private System.Windows.Forms.Label labelChannel;
+        private System.Windows.Forms.PictureBox pictureConsole;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelConsole;
+        private System.Windows.Forms.PictureBox pictureTabDefault;
+        private System.Windows.Forms.Label labelTabDefault;
+        private System.Windows.Forms.PictureBox pictureTabBarOther2;
+        private System.Windows.Forms.PictureBox pictureTabBarOther1;
+        private System.Windows.Forms.PictureBox pictureTabBarCurrent2;
+        private System.Windows.Forms.PictureBox pictureTabBarCurrent1;
+        private System.Windows.Forms.Label labelTabBarOther2;
+        private System.Windows.Forms.Label labelTabBarOther1;
+        private System.Windows.Forms.Label labelTabBarCurrent2;
+        private System.Windows.Forms.Label labelTabBarCurrent1;
+        private System.Windows.Forms.Label labelCurrent;
+        private System.Windows.Forms.TabControl tabMessages;
+        private System.Windows.Forms.TabPage tabAdvanced;
+        private System.Windows.Forms.TextBox textRawMessage;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox checkBGColor;
+        private System.Windows.Forms.TreeView treeMessages;
+        private System.Windows.Forms.ListBox listIdentifiers;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelEdit;
+        private System.Windows.Forms.TabPage tabBasic;
+        private IceChat.TextWindow textFormattedBasic;
+        private IceChat.TextWindow textFormattedText;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TreeView treeBasicMessages;
+        private System.Windows.Forms.CheckBox checkChangeBGBasic;
+        private System.Windows.Forms.Label label6;
+
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
+
+            
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Channel Messages");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Server Messages");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Private Messages");
@@ -1042,80 +1120,5 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControlColors;
-        private System.Windows.Forms.TabPage tabPageMessages;
-        private System.Windows.Forms.TabPage tabPageNickNames;
-        private System.Windows.Forms.Panel panelColorPicker;
-        private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.TabPage tabPageTabBar;
-        private System.Windows.Forms.TabPage tabPageBackGround;
-        private System.Windows.Forms.Label labelTabCurrent;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label labelTabMessage;
-        private System.Windows.Forms.Label labelTabJoin;
-        private System.Windows.Forms.Label labelTabPart;
-        private System.Windows.Forms.Label labelTabServer;
-        private System.Windows.Forms.Label labelTabQuit;
-        private System.Windows.Forms.Label labelTabOther;
-        private System.Windows.Forms.PictureBox pictureTabServer;
-        private System.Windows.Forms.PictureBox pictureTabQuit;
-        private System.Windows.Forms.PictureBox pictureTabPart;
-        private System.Windows.Forms.PictureBox pictureTabJoin;
-        private System.Windows.Forms.PictureBox pictureTabMessage;
-        private System.Windows.Forms.PictureBox pictureTabCurrent;
-        private System.Windows.Forms.PictureBox pictureTabOther;
-        private System.Windows.Forms.PictureBox pictureDefault;
-        private System.Windows.Forms.PictureBox pictureVoice;
-        private System.Windows.Forms.PictureBox pictureHalfOperator;
-        private System.Windows.Forms.PictureBox pictureOperator;
-        private System.Windows.Forms.PictureBox pictureAdmin;
-        private System.Windows.Forms.PictureBox pictureOwner;
-        private System.Windows.Forms.Label labelDefault;
-        private System.Windows.Forms.Label labelVoice;
-        private System.Windows.Forms.Label labelHalfOperator;
-        private System.Windows.Forms.Label labelOperator;
-        private System.Windows.Forms.Label labelAdmin;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label labelOwner;
-        private System.Windows.Forms.PictureBox pictureServerList;
-        private System.Windows.Forms.Label labelServerList;
-        private System.Windows.Forms.PictureBox pictureNickList;
-        private System.Windows.Forms.Label labelNickList;
-        private System.Windows.Forms.PictureBox pictureQuery;
-        private System.Windows.Forms.Label labelQuery;
-        private System.Windows.Forms.PictureBox pictureChannel;
-        private System.Windows.Forms.Label labelChannel;
-        private System.Windows.Forms.PictureBox pictureConsole;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label labelConsole;
-        private System.Windows.Forms.PictureBox pictureTabDefault;
-        private System.Windows.Forms.Label labelTabDefault;
-        private System.Windows.Forms.PictureBox pictureTabBarOther2;
-        private System.Windows.Forms.PictureBox pictureTabBarOther1;
-        private System.Windows.Forms.PictureBox pictureTabBarCurrent2;
-        private System.Windows.Forms.PictureBox pictureTabBarCurrent1;
-        private System.Windows.Forms.Label labelTabBarOther2;
-        private System.Windows.Forms.Label labelTabBarOther1;
-        private System.Windows.Forms.Label labelTabBarCurrent2;
-        private System.Windows.Forms.Label labelTabBarCurrent1;
-        private System.Windows.Forms.Label labelCurrent;
-        private System.Windows.Forms.TabControl tabMessages;
-        private System.Windows.Forms.TabPage tabAdvanced;
-        private TextWindow textFormattedText;
-        private System.Windows.Forms.TextBox textRawMessage;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckBox checkBGColor;
-        private System.Windows.Forms.TreeView treeMessages;
-        private System.Windows.Forms.ListBox listIdentifiers;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelEdit;
-        private System.Windows.Forms.TabPage tabBasic;
-        private TextWindow textFormattedBasic;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TreeView treeBasicMessages;
-        private System.Windows.Forms.CheckBox checkChangeBGBasic;
-        private System.Windows.Forms.Label label6;
     }
 }

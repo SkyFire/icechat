@@ -85,6 +85,12 @@
     <Compile Include="Forms\FormChannelInfo.Designer.cs">
       <DependentUpon>FormChannelInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormColorPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormColorPicker.Designer.cs">
+      <DependentUpon>FormColorPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormColors.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,6 +210,9 @@
     </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\FormColorPicker.resx">
+      <DependentUpon>FormColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEmoticons.resx">
       <DependentUpon>FormEmoticons.cs</DependentUpon>
     </EmbeddedResource>
@@ -306,7 +315,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat2009.ico" />
-    <Content Include="icechat9.ico" />
+    <Content Include="Smile.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="IPlugin\IPluginIceChat.csproj">

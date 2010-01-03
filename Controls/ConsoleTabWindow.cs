@@ -36,6 +36,9 @@ namespace IceChat
         private TabControl consoleTab;
         private FormMain.ServerMessageType lastMessageType;
 
+        private delegate TextWindow CurrentWindowDelegate();
+
+
         public ConsoleTabWindow() : base()
         {
             InitializeComponent();
@@ -78,9 +81,14 @@ namespace IceChat
         /// <summary>
         /// Return the Text Window for the Current Selected Tab in the Console Tab Control
         /// </summary>
-        internal TextWindow CurrentWindow
+        internal TextWindow CurrentWindow()
         {
-            get
+            if (this.InvokeRequired)
+            {
+                CurrentWindowDelegate cwd = new CurrentWindowDelegate(CurrentWindow);
+                return (TextWindow)this.Invoke(cwd, new object[] { });
+            }
+            else
             {
                 return (TextWindow)consoleTab.SelectedTab.Controls[0];
             }

@@ -34,11 +34,18 @@ namespace IceChat
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
             this.tabMain = new System.Windows.Forms.TabPage();
+            this.checkStatusBar = new System.Windows.Forms.CheckBox();
+            this.checkColorPicker = new System.Windows.Forms.CheckBox();
+            this.checkEmoticonPicker = new System.Windows.Forms.CheckBox();
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.checkWhoisNewQuery = new System.Windows.Forms.CheckBox();
+            this.checkNewQueryForegound = new System.Windows.Forms.CheckBox();
+            this.checkDisableQueries = new System.Windows.Forms.CheckBox();
             this.checkSaveWindowPosition = new System.Windows.Forms.CheckBox();
             this.tabLogging = new System.Windows.Forms.TabPage();
+            this.checkSeperateLogs = new System.Windows.Forms.CheckBox();
             this.checkLogQuery = new System.Windows.Forms.CheckBox();
             this.checkLogChannel = new System.Windows.Forms.CheckBox();
             this.checkLogConsole = new System.Windows.Forms.CheckBox();
@@ -74,7 +81,10 @@ namespace IceChat
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabSounds = new System.Windows.Forms.TabPage();
+            this.label11 = new System.Windows.Forms.Label();
+            this.listBoxSounds = new System.Windows.Forms.ListBox();
             this.tabEmoticon = new System.Windows.Forms.TabPage();
+            this.checkEmoticons = new System.Windows.Forms.CheckBox();
             this.buttonEditTrigger = new System.Windows.Forms.Button();
             this.buttonRemoveEmoticon = new System.Windows.Forms.Button();
             this.buttonAddEmoticon = new System.Windows.Forms.Button();
@@ -89,12 +99,16 @@ namespace IceChat
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.checkSeperateLogs = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.textSound = new System.Windows.Forms.TextBox();
+            this.buttonChooseSound = new System.Windows.Forms.Button();
+            this.buttonTest = new System.Windows.Forms.Button();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
             this.tabLogging.SuspendLayout();
             this.tabFonts.SuspendLayout();
+            this.tabSounds.SuspendLayout();
             this.tabEmoticon.SuspendLayout();
             this.tabServer.SuspendLayout();
             this.SuspendLayout();
@@ -144,6 +158,9 @@ namespace IceChat
             // 
             // tabMain
             // 
+            this.tabMain.Controls.Add(this.checkStatusBar);
+            this.tabMain.Controls.Add(this.checkColorPicker);
+            this.tabMain.Controls.Add(this.checkEmoticonPicker);
             this.tabMain.Controls.Add(this.textTimeStamp);
             this.tabMain.Controls.Add(this.label2);
             this.tabMain.Location = new System.Drawing.Point(4, 25);
@@ -154,6 +171,36 @@ namespace IceChat
             this.tabMain.TabIndex = 0;
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
+            // 
+            // checkStatusBar
+            // 
+            this.checkStatusBar.AutoSize = true;
+            this.checkStatusBar.Location = new System.Drawing.Point(15, 90);
+            this.checkStatusBar.Name = "checkStatusBar";
+            this.checkStatusBar.Size = new System.Drawing.Size(174, 20);
+            this.checkStatusBar.TabIndex = 44;
+            this.checkStatusBar.Text = "Show Status Message";
+            this.checkStatusBar.UseVisualStyleBackColor = true;
+            // 
+            // checkColorPicker
+            // 
+            this.checkColorPicker.AutoSize = true;
+            this.checkColorPicker.Location = new System.Drawing.Point(15, 64);
+            this.checkColorPicker.Name = "checkColorPicker";
+            this.checkColorPicker.Size = new System.Drawing.Size(145, 20);
+            this.checkColorPicker.TabIndex = 43;
+            this.checkColorPicker.Text = "Show Color Picker";
+            this.checkColorPicker.UseVisualStyleBackColor = true;
+            // 
+            // checkEmoticonPicker
+            // 
+            this.checkEmoticonPicker.AutoSize = true;
+            this.checkEmoticonPicker.Location = new System.Drawing.Point(15, 38);
+            this.checkEmoticonPicker.Name = "checkEmoticonPicker";
+            this.checkEmoticonPicker.Size = new System.Drawing.Size(172, 20);
+            this.checkEmoticonPicker.TabIndex = 42;
+            this.checkEmoticonPicker.Text = "Show Emoticon Picker";
+            this.checkEmoticonPicker.UseVisualStyleBackColor = true;
             // 
             // textTimeStamp
             // 
@@ -175,6 +222,9 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.checkWhoisNewQuery);
+            this.tabDisplay.Controls.Add(this.checkNewQueryForegound);
+            this.tabDisplay.Controls.Add(this.checkDisableQueries);
             this.tabDisplay.Controls.Add(this.checkSaveWindowPosition);
             this.tabDisplay.Location = new System.Drawing.Point(4, 25);
             this.tabDisplay.Margin = new System.Windows.Forms.Padding(4);
@@ -184,6 +234,36 @@ namespace IceChat
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
+            // 
+            // checkWhoisNewQuery
+            // 
+            this.checkWhoisNewQuery.AutoSize = true;
+            this.checkWhoisNewQuery.Location = new System.Drawing.Point(12, 89);
+            this.checkWhoisNewQuery.Name = "checkWhoisNewQuery";
+            this.checkWhoisNewQuery.Size = new System.Drawing.Size(218, 20);
+            this.checkWhoisNewQuery.TabIndex = 44;
+            this.checkWhoisNewQuery.Text = "Perform Whois on new Query";
+            this.checkWhoisNewQuery.UseVisualStyleBackColor = true;
+            // 
+            // checkNewQueryForegound
+            // 
+            this.checkNewQueryForegound.AutoSize = true;
+            this.checkNewQueryForegound.Location = new System.Drawing.Point(12, 63);
+            this.checkNewQueryForegound.Name = "checkNewQueryForegound";
+            this.checkNewQueryForegound.Size = new System.Drawing.Size(241, 20);
+            this.checkNewQueryForegound.TabIndex = 43;
+            this.checkNewQueryForegound.Text = "New Queries open in Foreground";
+            this.checkNewQueryForegound.UseVisualStyleBackColor = true;
+            // 
+            // checkDisableQueries
+            // 
+            this.checkDisableQueries.AutoSize = true;
+            this.checkDisableQueries.Location = new System.Drawing.Point(12, 37);
+            this.checkDisableQueries.Name = "checkDisableQueries";
+            this.checkDisableQueries.Size = new System.Drawing.Size(147, 20);
+            this.checkDisableQueries.TabIndex = 42;
+            this.checkDisableQueries.Text = "Disable All Queries";
+            this.checkDisableQueries.UseVisualStyleBackColor = true;
             // 
             // checkSaveWindowPosition
             // 
@@ -208,6 +288,16 @@ namespace IceChat
             this.tabLogging.TabIndex = 6;
             this.tabLogging.Text = "Logging";
             this.tabLogging.UseVisualStyleBackColor = true;
+            // 
+            // checkSeperateLogs
+            // 
+            this.checkSeperateLogs.AutoSize = true;
+            this.checkSeperateLogs.Location = new System.Drawing.Point(12, 125);
+            this.checkSeperateLogs.Name = "checkSeperateLogs";
+            this.checkSeperateLogs.Size = new System.Drawing.Size(178, 20);
+            this.checkSeperateLogs.TabIndex = 4;
+            this.checkSeperateLogs.Text = "Seperate Logs per Day";
+            this.checkSeperateLogs.UseVisualStyleBackColor = true;
             // 
             // checkLogQuery
             // 
@@ -546,6 +636,12 @@ namespace IceChat
             // 
             // tabSounds
             // 
+            this.tabSounds.Controls.Add(this.buttonTest);
+            this.tabSounds.Controls.Add(this.buttonChooseSound);
+            this.tabSounds.Controls.Add(this.textSound);
+            this.tabSounds.Controls.Add(this.label12);
+            this.tabSounds.Controls.Add(this.label11);
+            this.tabSounds.Controls.Add(this.listBoxSounds);
             this.tabSounds.Location = new System.Drawing.Point(4, 25);
             this.tabSounds.Margin = new System.Windows.Forms.Padding(4);
             this.tabSounds.Name = "tabSounds";
@@ -555,8 +651,28 @@ namespace IceChat
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 4);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(145, 16);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "Choose Sound Event";
+            // 
+            // listBoxSounds
+            // 
+            this.listBoxSounds.FormattingEnabled = true;
+            this.listBoxSounds.ItemHeight = 16;
+            this.listBoxSounds.Location = new System.Drawing.Point(8, 23);
+            this.listBoxSounds.Name = "listBoxSounds";
+            this.listBoxSounds.Size = new System.Drawing.Size(336, 148);
+            this.listBoxSounds.TabIndex = 0;
+            this.listBoxSounds.SelectedIndexChanged += new System.EventHandler(this.listBoxSounds_SelectedIndexChanged);
+            // 
             // tabEmoticon
             // 
+            this.tabEmoticon.Controls.Add(this.checkEmoticons);
             this.tabEmoticon.Controls.Add(this.buttonEditTrigger);
             this.tabEmoticon.Controls.Add(this.buttonRemoveEmoticon);
             this.tabEmoticon.Controls.Add(this.buttonAddEmoticon);
@@ -568,6 +684,16 @@ namespace IceChat
             this.tabEmoticon.TabIndex = 7;
             this.tabEmoticon.Text = "Emoticons";
             this.tabEmoticon.UseVisualStyleBackColor = true;
+            // 
+            // checkEmoticons
+            // 
+            this.checkEmoticons.AutoSize = true;
+            this.checkEmoticons.Location = new System.Drawing.Point(487, 93);
+            this.checkEmoticons.Name = "checkEmoticons";
+            this.checkEmoticons.Size = new System.Drawing.Size(123, 20);
+            this.checkEmoticons.TabIndex = 4;
+            this.checkEmoticons.Text = "Use Emoticons";
+            this.checkEmoticons.UseVisualStyleBackColor = true;
             // 
             // buttonEditTrigger
             // 
@@ -699,15 +825,41 @@ namespace IceChat
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
-            // checkSeperateLogs
+            // label12
             // 
-            this.checkSeperateLogs.AutoSize = true;
-            this.checkSeperateLogs.Location = new System.Drawing.Point(12, 125);
-            this.checkSeperateLogs.Name = "checkSeperateLogs";
-            this.checkSeperateLogs.Size = new System.Drawing.Size(178, 20);
-            this.checkSeperateLogs.TabIndex = 4;
-            this.checkSeperateLogs.Text = "Seperate Logs per Day";
-            this.checkSeperateLogs.UseVisualStyleBackColor = true;
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(8, 174);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(119, 16);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Sound Event File";
+            // 
+            // textSound
+            // 
+            this.textSound.Location = new System.Drawing.Point(7, 190);
+            this.textSound.Name = "textSound";
+            this.textSound.Size = new System.Drawing.Size(299, 23);
+            this.textSound.TabIndex = 4;
+            // 
+            // buttonChooseSound
+            // 
+            this.buttonChooseSound.Location = new System.Drawing.Point(312, 190);
+            this.buttonChooseSound.Name = "buttonChooseSound";
+            this.buttonChooseSound.Size = new System.Drawing.Size(32, 23);
+            this.buttonChooseSound.TabIndex = 5;
+            this.buttonChooseSound.Text = "...";
+            this.buttonChooseSound.UseVisualStyleBackColor = true;
+            this.buttonChooseSound.Click += new System.EventHandler(this.buttonChooseSound_Click);
+            // 
+            // buttonTest
+            // 
+            this.buttonTest.Location = new System.Drawing.Point(350, 190);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(55, 23);
+            this.buttonTest.TabIndex = 6;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // FormSettings
             // 
@@ -735,7 +887,10 @@ namespace IceChat
             this.tabLogging.PerformLayout();
             this.tabFonts.ResumeLayout(false);
             this.tabFonts.PerformLayout();
+            this.tabSounds.ResumeLayout(false);
+            this.tabSounds.PerformLayout();
             this.tabEmoticon.ResumeLayout(false);
+            this.tabEmoticon.PerformLayout();
             this.tabServer.ResumeLayout(false);
             this.tabServer.PerformLayout();
             this.ResumeLayout(false);
@@ -804,5 +959,18 @@ namespace IceChat
         private System.Windows.Forms.Button buttonEditTrigger;
         private System.Windows.Forms.CheckBox checkServerReconnect;
         private System.Windows.Forms.CheckBox checkSeperateLogs;
+        private System.Windows.Forms.CheckBox checkEmoticons;
+        private System.Windows.Forms.CheckBox checkStatusBar;
+        private System.Windows.Forms.CheckBox checkColorPicker;
+        private System.Windows.Forms.CheckBox checkEmoticonPicker;
+        private System.Windows.Forms.CheckBox checkDisableQueries;
+        private System.Windows.Forms.CheckBox checkNewQueryForegound;
+        private System.Windows.Forms.CheckBox checkWhoisNewQuery;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ListBox listBoxSounds;
+        private System.Windows.Forms.Button buttonChooseSound;
+        private System.Windows.Forms.TextBox textSound;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button buttonTest;
     }
 }
