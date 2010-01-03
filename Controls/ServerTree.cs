@@ -591,10 +591,13 @@ namespace IceChat
                 if (value.GetType() == typeof(TabWindow))
                 {
                     x = 16;
+                    
                     if (((TabWindow)value).WindowStyle == TabWindow.WindowType.Channel || ((TabWindow)value).WindowStyle == TabWindow.WindowType.Query)
                     {
-                        selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
+                        if (nodeCount == selectedNodeIndex)
+                            selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
                     }
+                    
                 }
                 g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
                 
