@@ -170,7 +170,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 3 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 9 2010";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -575,7 +575,7 @@ namespace IceChat
             else
             {
                 iceChatAliases = new IceChatAliases();
-                SaveEmoticons();
+                SaveAliases();
             }
         }
 
@@ -599,7 +599,10 @@ namespace IceChat
                 textReader.Dispose();
             }
             else
+            {
                 iceChatEmoticons = new IceChatEmoticon();
+                SaveEmoticons();
+            }
         }
 
         private void SaveEmoticons()
@@ -2870,7 +2873,7 @@ namespace IceChat
                         }
                         break;
                     case "/say":
-                        if (connection != null)
+                        if (connection != null && data.Length > 0)
                         {
                             if (CurrentWindowType == TabWindow.WindowType.Channel)
                             {

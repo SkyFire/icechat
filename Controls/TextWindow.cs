@@ -131,7 +131,7 @@ namespace IceChat
             this.UpdateStyles();
 
             LoadTextSizes();
-            if (FormMain.Instance.IceChatEmoticons.listEmoticons != null)
+            if (FormMain.Instance.IceChatEmoticons != null)
             {
                 if (FormMain.Instance.IceChatEmoticons.listEmoticons.Count > 0)
                 {
@@ -579,12 +579,12 @@ namespace IceChat
 
         internal void SetLogFile(string logFolder)
         {
-            //get the type
             if (!System.IO.File.Exists(logFolder))
                 System.IO.Directory.CreateDirectory(logFolder);
 
             string date = "-" + System.DateTime.Today.ToString("yyyy-MM-dd");
 
+            //get the type
             if (this.Parent.GetType() == typeof(TabWindow))
             {
                 //get the name of the channel

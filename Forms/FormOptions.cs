@@ -115,14 +115,17 @@ namespace IceChat
             checkIdentServer.Checked = iceChatOptions.IdentServer;
             checkServerReconnect.Checked = iceChatOptions.ReconnectServer;
 
-            //load in the emoticons
-            foreach (EmoticonItem emot in iceChatEmoticons.listEmoticons)
+            if (iceChatEmoticons != null)
             {
-                Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + emot.EmoticonImage);
-                int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
-                ListViewItem lvi = new ListViewItem(emot.Trigger, i);
-                lvi.SubItems.Add(emot.EmoticonImage);
-                listViewEmot.Items.Add(lvi);                
+                //load in the emoticons
+                foreach (EmoticonItem emot in iceChatEmoticons.listEmoticons)
+                {
+                    Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + emot.EmoticonImage);
+                    int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
+                    ListViewItem lvi = new ListViewItem(emot.Trigger, i);
+                    lvi.SubItems.Add(emot.EmoticonImage);
+                    listViewEmot.Items.Add(lvi);
+                }
             }
 
             checkEmoticons.Checked = iceChatOptions.ShowEmoticons;

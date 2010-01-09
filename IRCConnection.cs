@@ -236,7 +236,7 @@ namespace IceChat
                 //send the USER / NICK stuff
                 SendData("NICK " + serverSetting.NickName);
 
-                string ServerName = IPAddress.Parse(((IPEndPoint)serverSocket.RemoteEndPoint).Address.ToString()).ToString();
+                //string ServerName = IPAddress.Parse(((IPEndPoint)serverSocket.RemoteEndPoint).Address.ToString()).ToString();
                 SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
 
                 if (ServerMessage != null)

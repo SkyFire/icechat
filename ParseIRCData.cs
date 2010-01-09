@@ -299,7 +299,7 @@ namespace IceChat
                             break;
                         case "307":     //whois information
                         case "313":     //whois information
-                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            msg = "->> " + ircData[3] + " " + JoinString(ircData, 4, true);
                             if (WhoisData != null)
                                 WhoisData(this, ircData[3], msg);
                             break;

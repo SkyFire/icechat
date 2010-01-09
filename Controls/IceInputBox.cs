@@ -172,41 +172,7 @@ namespace IceChat
 
             return false;			
 		}
-
-        protected override void WndProc(ref Message m)
-        {
-            switch (m.Msg)
-            {
-                case 770:
-                    if (Clipboard.ContainsText())
-                    {
-                        string[] lines = Clipboard.GetText(TextDataFormat.Text).Split('\n');
-                        if (lines.Length == 1)
-                        {
-                            //just 1 line, add to end of text box
-                            this.Text += lines[0];
-                            this.SelectionStart = this.Text.Length;
-                        }
-                        else
-                        {
-                            foreach (string line in lines)
-                            {
-                                if (line.Length > 0)
-                                {
-                                    addToBuffer(line);
-                                    OnCommand(this, line);
-                                    base.Text = "";
-                                }
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    base.WndProc(ref m);
-                    break;
-            }
-        }
-
+        
         private void NickComplete()
         {
             if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Console)
@@ -398,7 +364,7 @@ namespace IceChat
 		
 		}
         
-        public void OnEnterKey()
+        internal void OnEnterKey()
         {
             OnKeyPress(new KeyPressEventArgs((char)13));
         }
@@ -449,7 +415,7 @@ namespace IceChat
 			}
 		}
 		
-		public void addToBuffer(string data)
+		internal void addToBuffer(string data)
 		{
 			//add text to back buffer
 			if (data.Length == 0) return;

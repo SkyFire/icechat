@@ -146,7 +146,7 @@ namespace IceChat
             
             aliasList.listAliases.Clear();
             
-            string[] aliases = textAliases.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);
+            string[] aliases = textAliases.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
             bool isMultiLine = false;
             AliasItem multiLineAlias = null;
             string aliasCommands = "";

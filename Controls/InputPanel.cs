@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -63,16 +63,28 @@ namespace IceChat
             textInput.AppendText(data);
         }
 
-        internal void SendCommand(string data)
-        {
-            if (OnCommand != null)
-                OnCommand(this, data);
-        }
-
         private void textInput_OnCommand(object sender, string data)
         {
             if (OnCommand != null)
-                OnCommand(this, data);
+            {
+                string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); 
+                if (lines.Length == 1)
+                {
+                    //just 1 line, add to end of text box
+                    OnCommand(this, data);
+                }
+                else
+                {
+                    foreach (string line in lines)
+                    {
+                        if (line.Length > 0)
+                        {
+                            textInput.addToBuffer(line);
+                            OnCommand(this, line);
+                        }
+                    }
+                }
+            }
         }
 
         internal void FocusTextBox()

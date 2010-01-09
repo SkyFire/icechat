@@ -314,8 +314,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="color.png" />
     <Content Include="icechat2009.ico" />
-    <Content Include="Smile.png" />
+    <None Include="Smile.png" />
+    <None Include="Resources\Image1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="IPlugin\IPluginIceChat.csproj">

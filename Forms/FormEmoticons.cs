@@ -21,28 +21,30 @@ namespace IceChat
             int x = 0;
             int y = 0;
 
-            
-            foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
+            if (FormMain.Instance.IceChatEmoticons != null)
             {
-                try
+                foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
                 {
-                    Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + emot.EmoticonImage);
-                    int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
-                    
-                    //System.Diagnostics.Debug.WriteLine(x + ":" + y + ":" + this.Width + ":" + emot.Trigger);
-                    
-                    g.DrawImage(imageListEmoticons.Images[i], x, y);
-                    
-                    x = x + 21;
-                    if (x >= (this.Width - 30))
+                    try
                     {
-                        x = 0;
-                        y = y + 25;
+                        Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + emot.EmoticonImage);
+                        int i = imageListEmoticons.Images.Add(bm, Color.Fuchsia);
+
+                        //System.Diagnostics.Debug.WriteLine(x + ":" + y + ":" + this.Width + ":" + emot.Trigger);
+
+                        g.DrawImage(imageListEmoticons.Images[i], x, y);
+
+                        x = x + 21;
+                        if (x >= (this.Width - 30))
+                        {
+                            x = 0;
+                            y = y + 25;
+                        }
                     }
+                    catch { }
                 }
-                catch { }
             }
-            
+
             pictureEmoticons.Image = emots;
             
             g.Dispose();

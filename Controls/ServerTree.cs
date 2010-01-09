@@ -192,7 +192,7 @@ namespace IceChat
                             if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Channel)
                             {
                                 toolTip.ToolTipTitle = "Channel Information";
-                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName + " [" + ((TabWindow)findNode).Nicks.Count + "]");
+                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName + " {" + ((TabWindow)findNode).Nicks.Count + "} " + "[" + ((TabWindow)findNode).ChannelModes + "]");
                             }
                             else
                             {
@@ -591,13 +591,13 @@ namespace IceChat
                 if (value.GetType() == typeof(TabWindow))
                 {
                     x = 16;
-                    
+                    /*                    
                     if (((TabWindow)value).WindowStyle == TabWindow.WindowType.Channel || ((TabWindow)value).WindowStyle == TabWindow.WindowType.Query)
                     {
                         if (nodeCount == selectedNodeIndex)
                             selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
                     }
-                    
+                    */
                 }
                 g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
                 
@@ -911,19 +911,6 @@ namespace IceChat
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
             buttonEdit.PerformClick();
-        }
-
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
-            ServerSetting s = GetServerSetting(selectedServerID);
-            if (s != null && c == null)
-            {
-                serverConnections.Remove(selectedServerID);
-                serversCollection.RemoveServer(s);
-                SaveServerSettings();
-                return;
-            }
         }
 
         private void autoJoinToolStripMenuItem_Click(object sender, EventArgs e)
