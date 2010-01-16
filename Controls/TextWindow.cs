@@ -544,7 +544,8 @@ namespace IceChat
             {
                 singleLine = value;
                 vScrollBar.Visible = !value;
-                
+                if (singleLine)
+                    emotMatch = "";
                 Invalidate();
             }
         }

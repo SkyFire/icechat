@@ -195,6 +195,9 @@ namespace IceChat
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
 
+        private int _panelRightWidth = 200;
+        private int _panelLeftWidth = 175;
+
         [XmlElement("TimeStamp")]
         public string TimeStamp
         { 
@@ -216,6 +219,20 @@ namespace IceChat
         [XmlElement("WindowLocation")]
         public System.Drawing.Point WindowLocation
         { get; set; }
+
+        [XmlElement("RightPanelWidth")]
+        public int RightPanelWidth
+        {
+            get { return this._panelRightWidth; }
+            set { this._panelRightWidth = value; }
+        }
+
+        [XmlElement("LeftPanelWidth")]
+        public int LeftPanelWidth
+        {
+            get { return this._panelLeftWidth; }
+            set { this._panelLeftWidth = value; }
+        }
 
         [XmlElement("DefaultNick")]
         public string DefaultNick

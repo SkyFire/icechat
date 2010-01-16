@@ -42,6 +42,7 @@ namespace IceChat
         public ConsoleTabWindow() : base()
         {
             InitializeComponent();
+            //consoleTab.DrawMode = TabDrawMode.OwnerDrawFixed;
 
             consoleTab.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
             consoleTab.MouseUp += new MouseEventHandler(OnMouseUp);

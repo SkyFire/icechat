@@ -70,6 +70,7 @@ namespace IceChat
         private string _identName = "Ice2009";
         private string _fullName = "The Chat Cool People Use";
         private string _realServerName = "";
+        private string _quitMessage = "$randquit";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
 
@@ -99,7 +100,7 @@ namespace IceChat
 
         [XmlElement("QuitMessage")]
         public string QuitMessage
-        { get; set; }
+        { get { return this._quitMessage; } set { this._quitMessage = value; } }
 
         [XmlElement("FullName")]
         public string FullName
@@ -201,11 +202,14 @@ namespace IceChat
         private string _nick;
         private string _host;
         //TODO: keep a record of all the channels
+        private ArrayList _channels;
         
         public InternalAddressList(string nick, string host, string channel)
         {
             _nick = nick;
-            _host = host;            
+            _host = host;
+            _channels = new ArrayList();
+            _channels.Add(channel);
         }
         
         public string Nick
@@ -218,6 +222,23 @@ namespace IceChat
         {
             get { return _host; }
             set { _host = value; }
+        }
+
+        public ArrayList Channels
+        {
+            get { return this._channels; }
+        }
+
+        public void AddChannel(string channel)
+        {
+            if (_channels.IndexOf(channel) == -1)
+                _channels.Add(channel);
+        }
+        
+        public void RemoveChannel(string channel)
+        {
+            if (_channels.IndexOf(channel) != -1)
+                _channels.Remove(channel);
         }
     }
 }

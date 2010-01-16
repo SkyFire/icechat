@@ -159,8 +159,7 @@ namespace IceChat
                     }
                 }
             }
-            if (ServerMessage != null)
-                ServerMessage(this, msg);
+            ServerMessage(this, msg);
 
             FormMain.Instance.ServerTree.Invalidate();
 
@@ -173,6 +172,7 @@ namespace IceChat
             commandQueue.Clear();
             initialLogon = false;
             triedAltNickName = false;
+            serverSetting.IAL.Clear();
 
             if (disconnectError && attemptReconnect && FormMain.Instance.IceChatOptions.ReconnectServer)
             {
@@ -344,7 +344,7 @@ namespace IceChat
         {
             SocketPacket handler = (SocketPacket)ar.AsyncState;
 
-            //try
+            try
             {
                 int size = handler.workSocket.EndReceive(ar);
 
@@ -400,11 +400,10 @@ namespace IceChat
 
                 }
             }            
-            /*
+            
             catch (SocketException se)
             {
-                if (ServerError != null)
-                    ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
+                ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
@@ -412,14 +411,13 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                if (ServerError != null)
-                    ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+                ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
 
                 disconnectError = true;
                 serverSocket.Shutdown(SocketShutdown.Both);
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
             }     
-            */
+            
         }
         
         /// <summary>

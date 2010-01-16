@@ -115,7 +115,7 @@ namespace IceChat
             if (c != null) 
             {
                 if (c.IsConnected)
-                    c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
+                    FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
                 else
                 {
                     //switch to Console
@@ -591,13 +591,11 @@ namespace IceChat
                 if (value.GetType() == typeof(TabWindow))
                 {
                     x = 16;
-                    /*                    
                     if (((TabWindow)value).WindowStyle == TabWindow.WindowType.Channel || ((TabWindow)value).WindowStyle == TabWindow.WindowType.Query)
                     {
                         if (nodeCount == selectedNodeIndex)
                             selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
                     }
-                    */
                 }
                 g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
                 
@@ -809,7 +807,7 @@ namespace IceChat
                 if (c.IsConnected)
                 {
                     c.AttemptReconnect = false;
-                    c.SendData("QUIT :" + c.ServerSetting.QuitMessage);
+                    FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);                    
                 }
                 return;
             }
@@ -862,7 +860,6 @@ namespace IceChat
                 do
                 {
                     c.ServerSetting.ID = r.Next(10000, 99999);
-                    //System.Diagnostics.Debug.WriteLine("New Server ID:" + c.ServerSetting.ID);
                 } while (ServerConnections.ContainsKey(c.ServerSetting.ID));
             }
             ServerConnections.Add(c.ServerSetting.ID, c);

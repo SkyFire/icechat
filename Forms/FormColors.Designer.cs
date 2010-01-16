@@ -91,8 +91,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelEdit;
         private System.Windows.Forms.TabPage tabBasic;
-        private IceChat.TextWindow textFormattedBasic;
-        private IceChat.TextWindow textFormattedText;
+        private TextWindow textFormattedBasic;
+        private TextWindow textFormattedText;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TreeView treeBasicMessages;
         private System.Windows.Forms.CheckBox checkChangeBGBasic;
@@ -193,8 +193,8 @@
             this.labelCurrent = new System.Windows.Forms.Label();
             this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textFormattedBasic = new IceChat.TextWindow();
-            this.textFormattedText = new IceChat.TextWindow();
+            this.textFormattedBasic = new TextWindow();
+            this.textFormattedText = new TextWindow();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();

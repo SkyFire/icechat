@@ -49,8 +49,8 @@ namespace IceChat
         private int selectedIndex = -1;
         private string headerCaption = "";
 
-        private ToolTip toolTip;
-        private int toolTipNode = -1;
+        //private ToolTip toolTip;
+        //private int toolTipNode = -1;
 
         private ArrayList sortedNicks = null;
         
@@ -62,7 +62,7 @@ namespace IceChat
 
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
-            this.MouseMove += new MouseEventHandler(OnMouseMove);
+            //this.MouseMove += new MouseEventHandler(OnMouseMove);
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
@@ -75,8 +75,7 @@ namespace IceChat
 
             this.UpdateStyles();
 
-            toolTip = new ToolTip();
-            //toolTip.IsBalloon = true;
+            //toolTip = new ToolTip();
 
             popupMenu = new ContextMenuStrip();
         }
@@ -95,13 +94,13 @@ namespace IceChat
                 string nick = sortedNicks[selectedIndex].ToString();
 
                 //replace any of the modes
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query))
-                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+                if (!FormMain.Instance.TabMain.WindowExists(currentWindow.Connection, nick, TabWindow.WindowType.Query))
+                    FormMain.Instance.AddWindow(currentWindow.Connection, nick, TabWindow.WindowType.Query);
                 else
-                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(currentWindow.Connection, nick, TabWindow.WindowType.Query);
 
             }
         }
@@ -220,6 +219,7 @@ namespace IceChat
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
+            /*
             if (e.Y <= headerHeight)
                 return;
 
@@ -232,12 +232,12 @@ namespace IceChat
                 int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + topIndex;
 
                 if (nickNumber < currentWindow.Nicks.Count)
-                {                    
-                    
+                {                                      
                     if (toolTipNode != nickNumber)
                     {
                         User u = currentWindow.GetNick(sortedNicks[nickNumber].ToString());
                         toolTip.ToolTipTitle = "User Information";
+                        
                         if (u.Host.Length > 0)
                             toolTip.SetToolTip(this,u.ToString() + "\r\n" + u.Host);
                         else
@@ -249,7 +249,7 @@ namespace IceChat
                 else
                     toolTip.RemoveAll();
             }
-
+            */
         }
 
         private void OnPopupMenuClick(object sender, EventArgs e)
@@ -262,106 +262,120 @@ namespace IceChat
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            //make the buffer we draw this all to
-            Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
-            Graphics g = Graphics.FromImage(buffer);
-
-            //draw the header
-            g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.NickListBackColor]);           
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            
-            Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);                
-            Brush l = new LinearGradientBrush(headerR, Color.Silver, Color.White, 300);
-            g.FillRectangle(l, headerR);
-            
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            Font headerFont = new Font("Verdana", 10);
-            Rectangle centered = headerR;
-            centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
-            
-            g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
-
-            //draw the nicks            
-            Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
-            
-            if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            try
             {
-                if (sortedNicks != null)
-                    sortedNicks = null;
+                //make the buffer we draw this all to
+                Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+                Graphics g = Graphics.FromImage(buffer);
 
-                sortedNicks = new ArrayList(currentWindow.Nicks.Values);
-                sortedNicks.Sort();
+                //draw the header
+                g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.NickListBackColor]);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-                int currentY = listR.Y;
-                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+                Brush l = new LinearGradientBrush(headerR, Color.Silver, Color.White, 300);
+                g.FillRectangle(l, headerR);
 
-                for (int i = topIndex; i < sortedNicks.Count; i++)
+                StringFormat sf = new StringFormat();
+                sf.Alignment = StringAlignment.Center;
+                Font headerFont = new Font("Verdana", 10);
+                Rectangle centered = headerR;
+                centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
+
+                g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
+
+                //draw the nicks            
+                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
+
+                if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
                 {
-                    Brush b = null;
-                    //get the correct nickname color for channel status
-                    User u = currentWindow.GetNick(sortedNicks[i].ToString());
-                    for (int y = 0; y < u.Level.Length; y++)
-                    {
-                        if (u.Level[y])
-                        {
-                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'q')
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
-                            else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'a')
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelAdminColor]);
-                            else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOpColor]);
-                            else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelHalfOpColor]);
-                            else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelVoiceColor]);
-                            else
-                                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
+                    if (sortedNicks != null)
+                        sortedNicks = null;
 
+                    sortedNicks = new ArrayList(currentWindow.Nicks.Values);
+                    sortedNicks.Sort();
+
+                    int currentY = listR.Y;
+                    int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                    string host = "";
+
+                    for (int i = topIndex; i < sortedNicks.Count; i++)
+                    {
+                        Brush b = null;
+                        //get the correct nickname color for channel status
+                        User u = currentWindow.GetNick(sortedNicks[i].ToString());
+                        for (int y = 0; y < u.Level.Length; y++)
+                        {
+                            if (u.Level[y])
+                            {
+                                if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'q')
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
+                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'a')
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelAdminColor]);
+                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOpColor]);
+                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelHalfOpColor]);
+                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelVoiceColor]);
+                                else
+                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
+
+                                break;
+                            }
+                        }
+
+                        if (b == null)
+                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
+
+                        //check if selected, if so, draw the selector bar
+                        if (i == selectedIndex)
+                        {
+                            g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
+                            b = null;
+                            b = new SolidBrush(SystemColors.HighlightText);
+                        }
+                        //draw the nickname
+                        g.DrawString(sortedNicks[i].ToString(), this.Font, b, 2, currentY);
+                        
+                        //draw the host
+                        if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
+                        {
+                            host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
+                            if (host.Length > 0)
+                                g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
+                        }
+                        currentY += lineSize;
+                        if (currentY >= listR.Height)
+                        {
+                            vScrollBar.Maximum = sortedNicks.Count - ((currentY - lineSize) / lineSize) + 1;
                             break;
                         }
                     }
 
-                    if (b == null)
-                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
-                    
-                    //check if selected, if so, draw the selector bar
-                    if (i == selectedIndex)
+                    if (currentY > listR.Height)
+                        vScrollBar.Visible = true;
+                    else
                     {
-                        g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
-                        b = null;
-                        b = new SolidBrush(SystemColors.HighlightText);
+                        if (vScrollBar.Value == 1)
+                            vScrollBar.Visible = false;
                     }
-                    //draw the nickname
-                    g.DrawString(sortedNicks[i].ToString(), this.Font, b, 2, currentY);
-                    
-                    currentY += lineSize;
-                    if (currentY >= listR.Height)
-                    {
-                        vScrollBar.Maximum = sortedNicks.Count - ((currentY-lineSize) / lineSize) + 1;                        
-                        break;
-                    }
+
                 }
 
-                if (currentY > listR.Height)
-                    vScrollBar.Visible = true;
-                else
-                {
-                    if (vScrollBar.Value == 1)
-                        vScrollBar.Visible = false;
-                }
-                
+                //paint the buffer onto the usercontrol
+                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+                headerFont.Dispose();
+                buffer.Dispose();
+                l.Dispose();
+                sf.Dispose();
+                g.Dispose();
             }
-            
-            //paint the buffer onto the usercontrol
-            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
-            headerFont.Dispose();
-            buffer.Dispose();
-            l.Dispose();
-            sf.Dispose();
-            g.Dispose();
-
+            catch (Exception ee)
+            {
+                FormMain.Instance.ParseOutGoingCommand(CurrentWindow.Connection, "/echo NickList Error:" + ee.Message + ":" + ee.StackTrace);
+            }
         }
 
         /// <summary>
@@ -469,6 +483,133 @@ namespace IceChat
                 this.currentWindow = value;
             }
         }
+
+        private void buttonOp_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                User u = currentWindow.GetNick(nick);
+                if (u != null)
+                {
+                    //check if opped or not
+                    for (int y = 0; y < u.Level.Length; y++)
+                    {
+                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                        {
+                            if (u.Level[y])
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -o " + u.NickName);
+                            else
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +o " + u.NickName);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonVoice_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                User u = currentWindow.GetNick(nick);
+                if (u != null)
+                {
+                    //check if voiced or not
+                    for (int y = 0; y < u.Level.Length; y++)
+                    {
+                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                        {
+                            if (u.Level[y])
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -v " + u.NickName);
+                            else
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +v " + u.NickName);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonQuery_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query))
+                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+                else
+                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+            }
+        }
+
+        private void buttonHop_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                User u = currentWindow.GetNick(nick);
+                if (u != null)
+                {
+                    //check if voiced or not
+                    for (int y = 0; y < u.Level.Length; y++)
+                    {
+                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                        {
+                            if (u.Level[y])
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -h " + u.NickName);
+                            else
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +h " + u.NickName);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonInfo_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nick); ;                
+            }
+        }
+
+        private void buttonBan_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +b " + nick); ;            
+            }
+        }
+
+        private void buttonKick_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.WindowName + " " + nick); ;
+            }
+        }
+
+        private void buttonWhois_Click(object sender, EventArgs e)
+        {
+            if (selectedIndex >= 0)
+            {
+                string nick = sortedNicks[selectedIndex].ToString();
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nick); ;
+            }
+        }
+
 
     }
 }

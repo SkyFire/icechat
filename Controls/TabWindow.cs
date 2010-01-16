@@ -174,8 +174,8 @@ namespace IceChat
                 System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.Source);
             }
         }
-
-        internal void UpdateNick(string nick, string host)
+        /*
+        internal void UpdateNick(string nick)
         {            
             if (host.Length > 0)
             {
@@ -196,8 +196,8 @@ namespace IceChat
 
             }
         }
-        
-        internal void UpdateNick(string nick, string host, string mode, bool addMode)
+        */
+        internal void UpdateNick(string nick, string mode, bool addMode)
         {
             string justNick = nick;
             
@@ -208,8 +208,8 @@ namespace IceChat
             {
                 User u = (User)nicks[justNick];
 
-                if (host.Length > 0)
-                    u.Host = host;
+                //if (host.Length > 0)
+                //    u.Host = host;
 
                 for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
                     if (mode == connection.ServerSetting.StatusModes[1][i].ToString())
@@ -234,6 +234,22 @@ namespace IceChat
             return null;
         }
 
+        internal User GetNick(int nickNumber)
+        {
+            if (nickNumber <= nicks.Count)
+            {
+                int i = 1;
+                System.Diagnostics.Debug.WriteLine(i + ":" + nickNumber + ":" + nicks.Count);
+                foreach (User u in nicks.Values)
+                {
+                    if (nickNumber == i)
+                        return u;
+                    i++;
+                }
+            }
+            return null;
+        }
+
         internal void AddNick(string nick, bool refresh)
         {
             //replace any user modes from the nick
@@ -243,7 +259,6 @@ namespace IceChat
 
             if (nicks.ContainsKey(justNick))
                 return;
-
 
             User u = new User(nick, this.connection);
 
@@ -257,7 +272,7 @@ namespace IceChat
                             FormMain.Instance.NickList.RefreshList(this);
             }
         }
-
+        /*            
         internal void AddNick(string nick, string host, bool refresh)
         {
             //replace any user modes from the nick
@@ -284,13 +299,13 @@ namespace IceChat
                 }
             }
         }
-
+        */
         internal void RemoveNick(string nick)
         {
             nicks.Remove(nick);
 
-            if (FormMain.Instance.CurrentWindowType != WindowType.Console)
-            {
+            if (FormMain.Instance.CurrentWindow != null && FormMain.Instance.CurrentWindowType != WindowType.Console)
+            {                
                 if (FormMain.Instance.CurrentWindow.WindowName == this.windowName)
                 {
                     if (FormMain.Instance.CurrentWindow.Connection == this.connection)

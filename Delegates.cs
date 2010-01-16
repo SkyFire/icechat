@@ -75,7 +75,12 @@ namespace IceChat
     //for the Server Tree
     public delegate void NewServerConnectionDelegate(ServerSetting serverSetting);
 
+    //for the IAL (internal address list)
     public delegate void IALUserDataDelegate(IRCConnection connection, string nick, string host, string channel);
+    public delegate void IALUserChangeDelegate(IRCConnection connection, string oldnick, string newnick);
+    public delegate void IALUserPartDelegate(IRCConnection connection, string nick, string channel);
+    public delegate void IALUserQuitDelegate(IRCConnection connection, string nick);
+
 
     //public delegate void ServerDisconnectDelegate(object sender);
     //public delegate void ServerAddDelegate(object sender, ServerSetting serverSetting);

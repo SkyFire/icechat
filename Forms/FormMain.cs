@@ -170,7 +170,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 9 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 13 2010";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -211,6 +211,9 @@ namespace IceChat
             serverTree.Dock = DockStyle.Fill;
             serverTree.Font = new Font(iceChatFonts.FontSettings[4].FontName, iceChatFonts.FontSettings[4].FontSize);
 
+            panelLeft.Width = iceChatOptions.LeftPanelWidth;
+            panelRight.Width = iceChatOptions.RightPanelWidth;
+
             inputPanel.OnCommand +=new InputPanel.OnCommandDelegate(inputPanel_OnCommand);
             inputPanel.InputBoxFont = new Font(iceChatFonts.FontSettings[5].FontName, iceChatFonts.FontSettings[5].FontSize);
 
@@ -250,12 +253,12 @@ namespace IceChat
         private void LoadDefaultMessageSettings()
         {
             IceChatMessageFormat oldMessage = new IceChatMessageFormat();
-            oldMessage.MessageSettings = new ServerMessageFormatItem[42];
+            oldMessage.MessageSettings = new ServerMessageFormatItem[43];
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
             
-            iceChatMessages.MessageSettings = new ServerMessageFormatItem[42];
+            iceChatMessages.MessageSettings = new ServerMessageFormatItem[43];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
             {
@@ -424,6 +427,11 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[41] = oldMessage.MessageSettings[41];
 
+            if (oldMessage.MessageSettings[42] == null || oldMessage.MessageSettings[42].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[42] = NewMessageFormat("User Whois", "&#x3;12->> $nick $data");
+            else
+                iceChatMessages.MessageSettings[42] = oldMessage.MessageSettings[42];
+
             //still do customize these messages
             iceChatMessages.MessageSettings[4] = NewMessageFormat("Ctcp Reply", "&#x3;12[$nick $ctcp Reply] : $reply");
             iceChatMessages.MessageSettings[5] = NewMessageFormat("Ctcp Send", "&#x3;10--> [$nick] $ctcp");
@@ -543,7 +551,7 @@ namespace IceChat
                 iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatMessages.MessageSettings.Length != 42)
+                if (iceChatMessages.MessageSettings.Length != 43)
                     LoadDefaultMessageSettings();
             }
             else
@@ -708,7 +716,7 @@ namespace IceChat
                 if (c.IsConnected)
                 {
                     c.AttemptReconnect = false;
-                    SendData(c, "QUIT :" + c.ServerSetting.QuitMessage);
+                    ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
                 }
             }
 
@@ -719,6 +727,8 @@ namespace IceChat
                 {
                     iceChatOptions.WindowLocation = this.Location;
                     iceChatOptions.WindowSize = this.Size;
+                    iceChatOptions.RightPanelWidth = panelRight.Width;
+                    iceChatOptions.LeftPanelWidth = panelLeft.Width;
                 }
 
                 SaveOptions();
@@ -1151,6 +1161,9 @@ namespace IceChat
 
             c.UserHostReply += new UserHostReplyDelegate(OnUserHostReply);
             c.IALUserData += new IALUserDataDelegate(OnIALUserData);
+            c.IALUserChange += new IALUserChangeDelegate(OnIALUserChange);
+            c.IALUserPart += new IALUserPartDelegate(OnIALUserPart);
+            c.IALUserQuit += new IALUserQuitDelegate(OnIALUserQuit);
 
             c.RawServerIncomingData += new RawServerIncomingDataDelegate(OnRawServerData);
             c.RawServerOutgoingData += new RawServerOutgoingDataDelegate(OnRawServerOutgoingData);
@@ -1164,8 +1177,6 @@ namespace IceChat
             c.ConnectSocket();
 
         }
-
-
 
         /// <summary>
         /// Received a CTCP Message
@@ -1335,18 +1346,22 @@ namespace IceChat
         /// <param name="nick">The nick whois data is from</param>
         /// <param name="data">The Whois data</param>
         private void OnWhoisData(IRCConnection connection, string nick, string data)
-        {            
+        {
+            string msg = GetMessageFormat("User Whois");
+            msg = msg.Replace("$nick", nick);
+            msg = msg.Replace("$data", data);
+            
             //check if there is a query window open
             TabWindow t = GetWindow(connection, nick, TabWindow.WindowType.Query);
             if (t != null)
-            {
-                t.TextWindow.AppendText(data, 12);
+            {                
+                t.TextWindow.AppendText(msg, 1);
                 t.LastMessageType = ServerMessageType.Message;
             }
             else
             {
                 //send whois data to the current window instead
-                CurrentWindowMessage(connection, data, 12, false);
+                CurrentWindowMessage(connection, msg, 1, false);
             }
         }
 
@@ -1452,7 +1467,7 @@ namespace IceChat
                         ishandled = true;
                 }
 
-                t.UpdateNick(nick, host);
+                //t.UpdateNick(nick, host);
 
                 if (!ishandled)
                     t.TextWindow.AppendText(msg, 1);
@@ -1481,8 +1496,8 @@ namespace IceChat
                 if (msg.Contains("$color") && t.NickExists(nick))
                 {
                     User u = t.GetNick(nick);
-                    if (u.Host.Length > 0)
-                        t.UpdateNick(nick, host);
+                    //if (u.Host.Length > 0)
+                    //    t.UpdateNick(nick, host);
                     
                     for (int i = 0; i < u.Level.Length; i++)
                     {
@@ -1663,7 +1678,7 @@ namespace IceChat
                         t.TextWindow.AppendText(msg, 1);
                 }
                 
-                t.AddNick(nick, host, refresh);                
+                t.AddNick(nick, refresh);                
                 t.LastMessageType = ServerMessageType.JoinChannel;
             }
         }
@@ -1696,9 +1711,6 @@ namespace IceChat
                 if (!ishandled)
                     t.TextWindow.AppendText(msg, 1);
 
-                
-                //t.TextWindow.AppendText(msg, 1);
-
                 t.RemoveNick(nick);
                 t.LastMessageType = ServerMessageType.PartChannel;
             }
@@ -1728,7 +1740,7 @@ namespace IceChat
                 msg = msg.Replace("$reason", reason);
                 
                 t.TextWindow.AppendText(msg, 1);
-                t.UpdateNick(kickNick, kickHost);
+                //t.UpdateNick(kickNick, kickHost);
                 t.RemoveNick(nick);
                 t.LastMessageType = ServerMessageType.Other;
             }
@@ -1873,6 +1885,9 @@ namespace IceChat
                                     t.AddNick(nick, true);
                                     t.LastMessageType = ServerMessageType.Other;
                                 }
+                                if ((nickList.CurrentWindow.WindowName == t.WindowName) && (nickList.CurrentWindow.Connection == t.Connection))
+                                    nickList.RefreshList(t);
+
                             }
                         }
                         else if (t.WindowStyle == TabWindow.WindowType.Query)
@@ -1902,6 +1917,7 @@ namespace IceChat
 
                             }
                         }
+
                     }
                 }
             }
@@ -2001,7 +2017,7 @@ namespace IceChat
                 TabWindow chan = GetWindow(connection, channel, TabWindow.WindowType.Channel);
                 if (chan != null)
                 {
-                    chan.UpdateNick(modeSetter, modeSetterHost);
+                    //chan.UpdateNick(modeSetter, modeSetterHost);
 
                     if (modeSetter != channel)
                     {
@@ -2047,7 +2063,7 @@ namespace IceChat
                                 {
                                     if (mode[i] == connection.ServerSetting.StatusModes[0][j])
                                     {
-                                        chan.UpdateNick(temp, "", connection.ServerSetting.StatusModes[1][j].ToString(), addMode);
+                                        chan.UpdateNick(temp, connection.ServerSetting.StatusModes[1][j].ToString(), addMode);
                                         break;
                                     }
                                 }
@@ -2165,21 +2181,54 @@ namespace IceChat
         private void OnIALUserData(IRCConnection connection, string nick, string host, string channel)
         {
             //internal addresslist userdata            
-            InternalAddressList ial = new InternalAddressList(nick,host,channel);
+            for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
+                nick = nick.Replace(connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+            InternalAddressList ial = new InternalAddressList(nick, host, channel);
             
             if (!connection.ServerSetting.IAL.ContainsKey(nick))
-            {
-                //System.Diagnostics.Debug.WriteLine("add " + nick + ":" + host);
                 connection.ServerSetting.IAL.Add(nick, ial);
-            }
-            /*
             else
             {
-                System.Diagnostics.Debug.WriteLine("EXISTS " + nick + ":" + host);
+                ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
                 ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
             }
-            */
+            
         }
+
+        private void OnIALUserChange(IRCConnection connection, string oldnick, string newnick)
+        {
+            //change a nickname in the IAL list
+            if (connection.ServerSetting.IAL.ContainsKey(oldnick))
+            {
+                InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[oldnick];
+                connection.ServerSetting.IAL.Remove(oldnick);
+                ial.Nick = newnick;
+                connection.ServerSetting.IAL.Add(newnick, ial);
+            }
+        }
+
+        private void OnIALUserQuit(IRCConnection connection, string nick)
+        {
+            //user has quit, remove from IAL
+            if (connection.ServerSetting.IAL.ContainsKey(nick))
+                connection.ServerSetting.IAL.Remove(nick);
+
+        }
+        private void OnIALUserPart(IRCConnection connection, string nick, string channel)
+        {
+            //user left a channel, remove from channel list
+            InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[nick];
+            if (ial != null)
+            {
+                ial.RemoveChannel(channel);
+                //if channels count is 0, remove the nick from the ial
+                if (ial.Channels.Count == 0)
+                    connection.ServerSetting.IAL.Remove(nick);
+            }
+        }
+
+
 
         #endregion
 
@@ -2495,9 +2544,9 @@ namespace IceChat
                     case "/userinfo":
                         if (connection != null && data.Length > 0)
                         {
-                            FormUserInfo fui = new FormUserInfo();
+                            FormUserInfo fui = new FormUserInfo(connection);
                             //find the user
-                            
+                            fui.NickName(data);
                             fui.ShowDialog(this);
                         }
                         break;
@@ -2604,9 +2653,9 @@ namespace IceChat
                                 try
                                 {
                                     System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(data);
-                                    ParseOutGoingCommand(connection, "/echo " + data + " resolved to " + addresslist.Length + " addresses");
+                                    ParseOutGoingCommand(connection, "/echo " + data + " resolved to " + addresslist.Length + " address(es)");
                                     foreach (System.Net.IPAddress address in addresslist)
-                                        ParseOutGoingCommand(connection, "/echo  " + address.ToString());
+                                        ParseOutGoingCommand(connection, "/echo -> " + address.ToString());
                                 }
                                 catch(Exception)
                                 {
@@ -2813,7 +2862,7 @@ namespace IceChat
                             }
                             else
                             {
-                                //see if data is a valid channe;
+                                //see if data is a valid channel;
                                 if (Array.IndexOf(connection.ServerSetting.ChannelTypes, data[0]) != -1)
                                 {
                                     SendData(connection, "PART " + data);
@@ -2855,7 +2904,7 @@ namespace IceChat
                             if (data.Length > 0)
                                 SendData(connection, "QUIT :" + data);
                             else
-                                SendData(connection, "QUIT :" + connection.ServerSetting.QuitMessage);                            
+                                SendData(connection, "QUIT :" + ParseIdentifiers(connection, connection.ServerSetting.QuitMessage, ""));                            
                         }
                         break;
                     case "/quitall":
@@ -2868,7 +2917,7 @@ namespace IceChat
                                 if (data.Length > 0)
                                     SendData(c, "QUIT :" + data);
                                 else
-                                    SendData(c, "QUIT :" + c.ServerSetting.QuitMessage);
+                                    SendData(c, "QUIT :" + ParseIdentifiers(connection, c.ServerSetting.QuitMessage, ""));
                             }
                         }
                         break;
@@ -3187,6 +3236,18 @@ namespace IceChat
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
+                    case "$ident":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.IdentName);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
+                    case "$fullname":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.FullName);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
                     case "$network":
                         if (connection != null)
                             data = data.Replace(m.Value, connection.ServerSetting.NetworkName);
@@ -3198,6 +3259,8 @@ namespace IceChat
                             data = data.Replace(m.Value,connection.ServerSetting.ServerPort);
                         else
                             data = data.Replace(m.Value, "$null");
+                        break;
+                    case "$servermode":
                         break;
                     case "$server":
                         if (connection != null)
@@ -3224,33 +3287,31 @@ namespace IceChat
                     case "$os":
                         data = data.Replace(m.Value, Environment.OSVersion.ToString());
                         break;
+                    case "$icepath":
+                    case "$icechatdir":
+                        data = data.Replace(m.Value, Directory.GetCurrentDirectory());
+                        break;
+                    case "$icechatver":
+                        data = data.Replace(m.Value, Settings.Default.Version);
+                        break;
                     case "$icechat":
                         data = data.Replace(m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version);
-                        break;
-                    case "$icepath":
-                        data = data.Replace(m.Value, Directory.GetCurrentDirectory());
                         break;
                     case "$logpath":
                         data = data.Replace(m.Value, logsFolder);
                         break;
+                    case "$randquit":
+                        Random rand = new Random();
+                        int rq = rand.Next(0, QuitMessages.RandomQuitMessages.Length);
+                        data = data.Replace(m.Value, QuitMessages.RandomQuitMessages[rq]);
+                        break;
                     case "$uptime":
-                        //System.Environment.TickCount
 						int systemUpTime = System.Environment.TickCount / 1000;
                         TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
                         string d = ts.Hours + " hours " + ts.Minutes + " minutes " + ts.Seconds + " seconds";
                         if (ts.Days > 0)
                             d = ts.Days + " days " + d;
                         data = data.Replace(m.Value, d);
-
-                        /*
-                        System.Diagnostics.PerformanceCounter upTime = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
-                        upTime.NextValue();
-                        TimeSpan ts = TimeSpan.FromSeconds(upTime.NextValue());
-                        string d = ts.Hours + " hours " + ts.Minutes + " minutes " +  ts.Seconds + " seconds";
-                        if (ts.Days > 0)
-                            d = ts.Days + " days " + d;
-                        data = data.Replace(m.Value, d);
-                        */
                         break;
                 }
             }
@@ -3325,41 +3386,150 @@ namespace IceChat
                                     changedData[count] = "";
                             }
                             //no numbered identifier, continue on
-                            if (word.StartsWith("$chan(") && word.IndexOf(')') > word.IndexOf('('))
+                            if (connection != null)
                             {
-                                //System.Diagnostics.Debug.WriteLine("chan " + word + ":" + ReturnBrackValue(word));
-                                
-                                //get the value between and after the brackets
-                                string channel = ReturnBrackValue(word);
-                                string prop = ReturnPropertyValue(word);
-                              
-                                //find then channel
-                                TabWindow t = GetWindow(connection, channel, TabWindow.WindowType.Channel);
-                                if (t != null)
+                                if (word.StartsWith("$ial(") && word.IndexOf(')') > word.IndexOf('('))
                                 {
-                                    if (prop.Length == 0)
+                                    string nick = ReturnBrackValue(word);
+                                    string prop = ReturnPropertyValue(word);
+
+                                    InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[nick];
+                                    if (ial != null)
                                     {
-                                        //replace with channel name
-                                        changedData[count] = t.WindowName;
+                                        if (prop.Length == 0)
+                                            changedData[count] = ial.Nick;
+                                        else
+                                        {
+                                            switch (prop)
+                                            {
+                                                case "nick":
+                                                    changedData[count] = ial.Nick;
+                                                    break;
+                                                case "host":
+                                                    changedData[count] = ial.Host;
+                                                    break;
+                                            }
+                                        }
                                     }
                                     else
+                                        changedData[count] = "$null";
+                                }
+                                
+                                if (word.StartsWith("$nick(") && word.IndexOf(')') > word.IndexOf('('))
+                                {
+                                    //get the value between and after the brackets
+                                    string values = ReturnBrackValue(word);
+                                    if (values.Split(',').Length == 2)
                                     {
-                                        switch (prop)
+                                        string channel = values.Split(',')[0];
+                                        string nickvalue = values.Split(',')[1];
+
+                                        string prop = ReturnPropertyValue(word);
+
+                                        // $nick(#,N)     
+                                        //find then channel
+                                        TabWindow t = GetWindow(connection, channel, TabWindow.WindowType.Channel);
+                                        if (t != null)
                                         {
-                                            case "mode":
-                                            case "modes":
-                                                changedData[count] = t.ChannelModes;
-                                                break;
-                                            case "count":
-                                                 changedData[count] = t.Nicks.Count.ToString();
-                                                break;
-                                            default:
-                                                break;
+                                            User u = null;
+                                            if (Int32.TryParse(nickvalue, out result))
+                                            {
+                                                if (Convert.ToInt32(nickvalue) == 0)
+                                                    changedData[count] = t.Nicks.Count.ToString();
+                                                else
+                                                    u = t.GetNick(Convert.ToInt32(nickvalue));
+                                            }
+                                            else
+                                            {
+                                                u = t.GetNick(nickvalue);
+                                            }
+
+                                            if (prop.Length == 0 && u != null)
+                                            {
+                                                changedData[count] = u.NickName;
+                                            }
+                                            else if (u != null)
+                                            {
+                                                //$nick(#channel,1).op , .voice, .halfop, .admin,.owner. 
+                                                //.mode, .host, .nick,.ident
+                                                switch (prop)
+                                                {
+                                                    case "host":
+                                                        //if (u.Host.IndexOf('@') > -1)
+                                                        //    changedData[count] = u.Host.Substring(u.Host.IndexOf('@'));
+                                                        break;
+                                                    case "ident":
+                                                        //if (u.Host.IndexOf('@') > -1)
+                                                        //    changedData[count] = u.Host.Substring(0,u.Host.IndexOf('@'));
+                                                        break;
+                                                    case "nick":
+                                                        changedData[count] = u.NickName;
+                                                        break;
+                                                    case "mode":
+                                                        changedData[count] = u.ToString().Replace(u.NickName, "");
+                                                        break;
+                                                    case "op":
+                                                        for (int i = 0; i < u.Level.Length; i++)
+                                                        {
+                                                            if (connection.ServerSetting.StatusModes[0][i] == 'o')
+                                                            {
+                                                                if (u.Level[i] == true)
+                                                                    changedData[count] = "$true";
+                                                                else
+                                                                    changedData[count] = "$false";
+                                                            }
+                                                        }
+                                                        break;
+                                                    case "voice":
+                                                        for (int i = 0; i < u.Level.Length; i++)
+                                                        {
+                                                            if (connection.ServerSetting.StatusModes[0][i] == 'v')
+                                                            {
+                                                                if (u.Level[i] == true)
+                                                                    changedData[count] = "$true";
+                                                                else
+                                                                    changedData[count] = "$false";
+                                                            }
+                                                        }
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (word.StartsWith("$chan(") && word.IndexOf(')') > word.IndexOf('('))
+                                {
+                                    //get the value between and after the brackets
+                                    string channel = ReturnBrackValue(word);
+                                    string prop = ReturnPropertyValue(word);
+
+                                    //find then channel
+                                    TabWindow t = GetWindow(connection, channel, TabWindow.WindowType.Channel);
+                                    if (t != null)
+                                    {
+                                        if (prop.Length == 0)
+                                        {
+                                            //replace with channel name
+                                            changedData[count] = t.WindowName;
+                                        }
+                                        else
+                                        {
+                                            switch (prop)
+                                            {
+                                                case "mode":
+                                                    changedData[count] = t.ChannelModes;
+                                                    break;
+                                                case "count":
+                                                    changedData[count] = t.Nicks.Count.ToString();
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
                                         }
                                     }
                                 }
                             }
-
                             break;
                     }
 
