@@ -83,7 +83,7 @@ namespace IceChat
         private void OnSelecting(object sender, TabControlCancelEventArgs e)
         {
             if (this.GetTabRect(e.TabPageIndex).Contains(this.PointToClient(Cursor.Position)) && e.TabPageIndex != 0)
-            {
+            {                
                 if (this.PointToClient(Cursor.Position).X > this.GetTabRect(e.TabPageIndex).Right - 14)
                     e.Cancel = true;
             }
@@ -609,7 +609,7 @@ namespace IceChat
             //draw the icon
             Image img = this.ImageList.Images[tabPage.ImageIndex];
             Rectangle rimage = new Rectangle(r.X, r.Y, img.Width, img.Height);            
-            Rectangle closeButton = new Rectangle(r.Right - 12, 5, 12, 12);
+            Rectangle closeButton = new Rectangle(r.Right - 12, r.Top + 5, 12, 12);
 
             if (bSelected)
             {

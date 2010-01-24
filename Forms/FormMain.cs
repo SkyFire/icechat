@@ -2465,12 +2465,9 @@ namespace IceChat
         /// <summary>
         /// Closes the Tab selected
         /// </summary>
-        /// <param name="tab">Which tab to Close</param>
-        
+        /// <param name="tab">Which tab to Close</param>        
         private void TabMainCloseTab(int tab)
         {
-            //throw new NotImplementedException();
-            System.Diagnostics.Debug.WriteLine("Closing Tab:" + tab);
             if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == TabWindow.WindowType.Channel)
             {
                 foreach (IRCConnection c in serverTree.ServerConnections.Values)
@@ -2514,8 +2511,7 @@ namespace IceChat
                 for (int i = 1; i < tabMain.TabPages.Count; i++)
                 {
                     if (tabMain.GetTabRect(i).Contains(e.Location))
-                    {
-                        
+                    {                        
                         if (((TabWindow)tabMain.TabPages[i]).WindowStyle == TabWindow.WindowType.Channel)
                         {
                             foreach (IRCConnection c in serverTree.ServerConnections.Values)
