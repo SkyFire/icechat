@@ -90,6 +90,7 @@ namespace IceChat
         {
             this.textNickName.Text = serverSetting.NickName;
             this.textAltNickName.Text = serverSetting.AltNickName;
+            this.textAwayNick.Text = serverSetting.AwayNickName;
             this.textServername.Text = serverSetting.ServerName;
             this.textServerPort.Text = serverSetting.ServerPort;
             this.textDisplayName.Text = serverSetting.DisplayName;
@@ -104,7 +105,8 @@ namespace IceChat
             this.checkModeI.Checked = serverSetting.SetModeI;
             this.checkMOTD.Checked = serverSetting.ShowMOTD;
             this.checkPingPong.Checked = serverSetting.ShowPingPong;
-            this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;            
+            this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;
+            this.checkDisableCTCP.Checked = serverSetting.DisableCTCP;
             this.comboEncoding.Text = serverSetting.Encoding;
             
             if (serverSetting.AutoJoinChannels != null)
@@ -148,7 +150,12 @@ namespace IceChat
                 serverSetting.AltNickName = textAltNickName.Text;
             else
                 serverSetting.AltNickName = textNickName.Text + "_";
-            
+
+            if (textAwayNick.Text.Length > 0)
+                serverSetting.AwayNickName = textAwayNick.Text;
+            else
+                serverSetting.AwayNickName = textNickName.Text + "[A]";
+
             serverSetting.ServerName = textServername.Text;
             serverSetting.DisplayName = textDisplayName.Text;            
 
@@ -161,11 +168,11 @@ namespace IceChat
             serverSetting.IdentName = textIdentName.Text;
 
             if (textFullName.Text.Length == 0)
-                textFullName.Text = "IceChat 2009 Developer Edition";
+                textFullName.Text = "The Chat Cool People Use";
             serverSetting.FullName = textFullName.Text;
 
             if (textQuitMessage.Text.Length == 0)
-                textQuitMessage.Text = "IceChat 2009 Developer Edition";
+                textQuitMessage.Text = "$randquit";
 
             serverSetting.QuitMessage = textQuitMessage.Text;
 
@@ -187,6 +194,7 @@ namespace IceChat
             serverSetting.ShowMOTD = checkMOTD.Checked;
             serverSetting.ShowPingPong = checkPingPong.Checked;
             serverSetting.RejoinChannels = checkRejoinChannel.Checked;
+            serverSetting.DisableCTCP = checkDisableCTCP.Checked;
             serverSetting.Encoding = comboEncoding.Text;
 
             if (newServer == true)

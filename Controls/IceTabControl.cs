@@ -44,6 +44,9 @@ namespace IceChat
         private delegate int SelectedTabIndexDelegate();
         private delegate void RefreshTabsDelegate();
 
+        public delegate void CloseTabDelegate(int tab);
+        public event CloseTabDelegate CloseTab;
+
         private ContextMenuStrip popupMenu;
 
         public IceTabControl()
@@ -56,7 +59,7 @@ namespace IceChat
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
             this.FontChanged += new EventHandler(OnFontChanged);
-
+            this.Selecting += new TabControlCancelEventHandler(OnSelecting);
             this.ControlAdded += new ControlEventHandler(OnControlAdded);
             this.ControlRemoved += new ControlEventHandler(OnControlRemoved);
 
@@ -67,7 +70,7 @@ namespace IceChat
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             
             this.UpdateStyles();
-
+            
             tabPages = new List<TabPage>();
 
             popupMenu = ConsolePopupMenu();
@@ -75,6 +78,15 @@ namespace IceChat
             
             
             // http://www.koders.com/csharp/fid169847566777A4F89EE9CAE80755155A457B13E0.aspx
+        }
+
+        private void OnSelecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (this.GetTabRect(e.TabPageIndex).Contains(this.PointToClient(Cursor.Position)) && e.TabPageIndex != 0)
+            {
+                if (this.PointToClient(Cursor.Position).X > this.GetTabRect(e.TabPageIndex).Right - 14)
+                    e.Cancel = true;
+            }
         }
 
         private void OnPopupMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -257,8 +269,6 @@ namespace IceChat
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            //System.Diagnostics.Debug.WriteLine(selectedTabIndex +  ":command:" + command);
-
             if (selectedTabIndex == 0)
             {
                 //a console command, find out which is the current tab
@@ -354,7 +364,15 @@ namespace IceChat
             for (int index = 0; index <= this.TabCount - 1; index++)
             {
                 if (this.GetTabRect(index).Contains(this.PointToClient(Cursor.Position)))
+                {
+                    //check if close button was pressed on current tab
+                    if (this.GetTabRect(index).Right - 16 < this.PointToClient(Cursor.Position).X)
+                    {
+                        if (CloseTab != null && index != 0)
+                            CloseTab(index);
+                    }
                     return index;
+                }
             }
             return -1;
         }
@@ -470,7 +488,7 @@ namespace IceChat
             DragStartPosition = Point.Empty;
             
         }
-
+        
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
             DragStartPosition = new Point(e.X, e.Y);
@@ -478,7 +496,6 @@ namespace IceChat
 
             //which tab was selected
             selectedTabIndex = SelectedMenuTab();
-            //FormMain.Instance.WindowMessage(null, "Console", "Selected:" + selectedTabIndex, 1);
 
         }
 
@@ -496,10 +513,9 @@ namespace IceChat
         }
 
         protected override void OnPaint(PaintEventArgs e)
-        {            
+        {
             for (int i = 0; i < this.TabCount; i++)
                 DrawTab(e.Graphics, this.TabPages[i], i);
-
         }
 
         private void DrawTab(Graphics g, TabPage tabPage, int nIndex)
@@ -592,9 +608,8 @@ namespace IceChat
 
             //draw the icon
             Image img = this.ImageList.Images[tabPage.ImageIndex];
-            Rectangle rimage = new Rectangle(r.X, r.Y, img.Width, img.Height);
-            
-            Rectangle closeButton = new Rectangle(r.Right - 12, 8, 10, 12);
+            Rectangle rimage = new Rectangle(r.X, r.Y, img.Width, img.Height);            
+            Rectangle closeButton = new Rectangle(r.Right - 12, 5, 12, 12);
 
             if (bSelected)
             {
@@ -609,17 +624,18 @@ namespace IceChat
                 g.DrawImage(img, rimage);
                 tabTextArea.Offset(17, 4);
             }
+            img.Dispose();
 
             g.DrawString(title, this.Font, b, tabTextArea);
-            /*
+            
             //draw the close button
             if (nIndex != 0)
             {
-                g.FillRectangle(new SolidBrush(Color.Gray), closeButton);
-                g.DrawRectangle(new Pen(Color.LightGray), closeButton);
-                g.DrawString("x", new Font("Verdana", 8), b, closeButton);
+                Image icon = new Bitmap(Properties.Resources.CloseButton);
+                g.DrawImage(icon, closeButton);
+                icon.Dispose();
             }
-            */
+            
             l.Dispose();
             b.Dispose();
         }

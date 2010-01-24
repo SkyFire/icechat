@@ -20,12 +20,6 @@ namespace IceChat
         {
             InitializeComponent();
             textInput.OnCommand += new IceInputBox.SendCommand(textInput_OnCommand);
-
-            if (!FormMain.Instance.IceChatOptions.ShowEmoticonPicker)
-                buttonEmoticonPicker.Visible = false;
-
-            if (!FormMain.Instance.IceChatOptions.ShowColorPicker)
-                buttonColorPicker.Visible = false;
         }
 
         internal IRCConnection CurrentConnection
@@ -117,5 +111,11 @@ namespace IceChat
             fc.ShowDialog(this);
             FormMain.Instance.FocusInputBox();
         }
+
+        private void textInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

@@ -66,6 +66,7 @@ namespace IceChat
         private bool showTimeStamp = true;
         private bool singleLine = false;
         private bool noColorMode = false;
+        private bool noEmoticons = false;
 
         private ContextMenuStrip popupMenu;
         private string linkedWord = "";
@@ -508,7 +509,7 @@ namespace IceChat
 
         #region Public Properties
 
-        public int IRCBackColor
+        internal int IRCBackColor
         {
             get
             {
@@ -521,7 +522,7 @@ namespace IceChat
             }
         }
         
-        public int IRCForeColor
+        internal int IRCForeColor
         {
             get
             {
@@ -534,7 +535,7 @@ namespace IceChat
             }
         }
 
-        public bool SingleLine
+        internal bool SingleLine
         {
             get
             {
@@ -544,13 +545,11 @@ namespace IceChat
             {
                 singleLine = value;
                 vScrollBar.Visible = !value;
-                if (singleLine)
-                    emotMatch = "";
                 Invalidate();
             }
         }
 
-        public bool NoColorMode
+        internal bool NoColorMode
         {
             get
             {
@@ -560,6 +559,12 @@ namespace IceChat
             {
                 noColorMode = value;
             }
+        }
+
+        internal bool NoEmoticons
+        {
+            get { return noEmoticons; }
+            set { noEmoticons = value; }
         }
 
         #endregion
@@ -643,7 +648,7 @@ namespace IceChat
             }
         }
 
-        public bool ShowTimeStamp
+        internal bool ShowTimeStamp
         {
             get { return showTimeStamp; }
             set { showTimeStamp = value; }
@@ -700,8 +705,9 @@ namespace IceChat
             if (singleLine) totalLines = 1;
 
             //check if 500 lines, and trim if so
-            if (totalLines == MaxTextLines)
+            if (totalLines >= (MaxTextLines - 5))
             {
+                System.Diagnostics.Debug.WriteLine("Reset Lines back to " + MaxTextLines + ":" + totalLines);
                 int x = 1;
                 for (int i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
                 {
@@ -721,14 +727,17 @@ namespace IceChat
 
                 totalLines = MaxTextLines - 50;
 
+                System.Diagnostics.Debug.WriteLine("Reset1:" + totalLines + ":" + totalDisplayLines);
+
                 if (this.Height != 0)
                 {
-                    UpdateScrollBar();
+                    totalDisplayLines = FormatLines(totalLines, 1, 0);
+                    UpdateScrollBar(totalDisplayLines);
                     Invalidate();
                 }
 
                 totalLines++;
-
+                System.Diagnostics.Debug.WriteLine("Reset2:" + totalLines + ":" + totalDisplayLines);
             }
 
             //add line numbers for temp measure
@@ -764,7 +773,7 @@ namespace IceChat
                 textLines[1].totalLines = 1;
             }
                         
-            UpdateScrollBar();
+            UpdateScrollBar(totalDisplayLines);
 
             Invalidate();
         }
@@ -882,7 +891,8 @@ namespace IceChat
 
             displayLines.Initialize();
 
-            UpdateScrollBar();
+            totalDisplayLines = FormatLines(totalLines, 1, 0);
+            UpdateScrollBar(totalDisplayLines);
 
             Invalidate();
 
@@ -895,7 +905,8 @@ namespace IceChat
 
             displayLines.Initialize();
             
-            UpdateScrollBar();
+            totalDisplayLines = FormatLines(totalLines, 1, 0);
+            UpdateScrollBar(totalDisplayLines);
             
             Invalidate();
 
@@ -908,15 +919,13 @@ namespace IceChat
         /// <param name="endLine"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        private void UpdateScrollBarValue(int newValue)
+        private void UpdateScrollBar(int newValue)
         {
             showMaxLines = (this.Height / lineSize) + 1;
-            totalDisplayLines = FormatLines(totalLines, 1, 0);
-
-
+            //totalDisplayLines = FormatLines(totalLines, 1, 0);
             if (this.InvokeRequired)
             {
-                ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBarValue);
+                ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBar);
                 this.Invoke(s, new object[] { newValue });
             }
             else
@@ -942,13 +951,6 @@ namespace IceChat
             }
         }
 
-        private void UpdateScrollBar()
-        {
-            showMaxLines = (this.Height / lineSize) + 1;
-            totalDisplayLines = FormatLines(totalLines, 1, 0);
-            UpdateScrollBarValue(totalDisplayLines);
-        }
-
         internal void ScrollToBottom()
         {
             vScrollBar.Value = totalDisplayLines;
@@ -971,7 +973,7 @@ namespace IceChat
 		
         private string ParseEmoticons(string line)
         {
-            if (FormMain.Instance.IceChatOptions.ShowEmoticons)
+            if (FormMain.Instance.IceChatOptions.ShowEmoticons && !noEmoticons)
             {
                 if (emotMatch.Length > 0)
                 {
@@ -1069,7 +1071,7 @@ namespace IceChat
             string nextColor="";
 
             bool lineSplit;
-
+            int ii = line;
             Graphics g = this.CreateGraphics();
 
             StringFormat sf = StringFormat.GenericTypographic;
@@ -1084,11 +1086,18 @@ namespace IceChat
                 //check of the line width is the same or less then the display width            
                 if (textLines[currentLine].width <= displayWidth)
                 {
+                try
+                {
                     //System.Diagnostics.Debug.WriteLine("fits 1 line");
                     displayLines[line].line = textLines[currentLine].line;
                     displayLines[line].textLine = currentLine;
                     displayLines[line].textColor = textLines[currentLine].textColor;
                     line++;
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length + ":" + e.StackTrace);
+                }
                 }
                 else
                 {
@@ -1098,55 +1107,63 @@ namespace IceChat
                     StringBuilder buildString = new StringBuilder();
                     
                     char[] ch;
-
-                    for (int i = 0; i < curLine.Length; i++)
+                    try
                     {
-                        ch = curLine.Substring(i, 1).ToCharArray();
-                        switch (ch[0])
+                        for (int i = 0; i < curLine.Length; i++)
                         {
-                            //case boldChar:
-                            //    break;
-                            case newColorChar:
-                                buildString.Append(curLine.Substring(i, 5));
-                                if (lastColor.Length == 0)
-                                    lastColor = curLine.Substring(i, 5);
-                                else
-                                    nextColor = curLine.Substring(i, 5);     
-                                
-                                i = i + 4;
-                                break;
-                            case emotChar:
-                                i = i + 3;
-                                break;
-                            default:
-                                //check if there needs to be a linewrap
-                                if ((int)g.MeasureString(StripAllCodes(buildString.ToString()),this.Font, 0, sf).Width > displayWidth)
-                                {
-                                    if (lineSplit)
-                                        displayLines[line].line = lastColor + buildString;
+                            ch = curLine.Substring(i, 1).ToCharArray();
+                            switch (ch[0])
+                            {
+                                //case boldChar:
+                                //    break;
+                                case newColorChar:
+                                    buildString.Append(curLine.Substring(i, 5));
+                                    if (lastColor.Length == 0)
+                                        lastColor = curLine.Substring(i, 5);
                                     else
-                                        displayLines[line].line = buildString.ToString();
+                                        nextColor = curLine.Substring(i, 5);
 
-                                    displayLines[line].textLine = currentLine;
-                                    displayLines[line].wrapped = true;
-                                    displayLines[line].textColor = textLines[currentLine].textColor;
-
-                                    lineSplit = true;
-                                    if (nextColor.Length != 0)
+                                    i = i + 4;
+                                    break;
+                                case emotChar:
+                                    i = i + 3;
+                                    break;
+                                default:
+                                    //check if there needs to be a linewrap
+                                    if ((int)g.MeasureString(StripAllCodes(buildString.ToString()), this.Font, 0, sf).Width > displayWidth)
                                     {
-                                        lastColor = nextColor;
-                                        nextColor = "";
+                                        if (lineSplit)
+                                            displayLines[line].line = lastColor + buildString;
+                                        else
+                                            displayLines[line].line = buildString.ToString();
+
+                                        displayLines[line].textLine = currentLine;
+                                        displayLines[line].wrapped = true;
+                                        displayLines[line].textColor = textLines[currentLine].textColor;
+
+                                        lineSplit = true;
+                                        if (nextColor.Length != 0)
+                                        {
+                                            lastColor = nextColor;
+                                            nextColor = "";
+                                        }
+                                        line++;
+                                        buildString = null;
+                                        buildString = new StringBuilder();
+                                        buildString.Append(ch[0]);
                                     }
-                                    line++;
-                                    buildString = null;
-                                    buildString = new StringBuilder();
-                                    buildString.Append(ch[0]);
-                                }
-                                else
-                                    buildString.Append(ch[0]);
-                                break;
+                                    else
+                                        buildString.Append(ch[0]);
+                                    break;
+                            }
                         }
                     }
+                    catch(Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error:" + startLine + ":" + endLine +  ":" + ii + ":" + currentLine + ":" + textLines.Length + ":" +e.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("Line:" + curLine.Length + ":" + curLine);
+                    }
+                    
                     //get the remainder
                     if (lineSplit)                    
                         displayLines[line].line = lastColor + buildString.ToString();

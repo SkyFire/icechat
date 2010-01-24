@@ -162,16 +162,26 @@ namespace IceChat
 		
 		protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, System.Windows.Forms.Keys keyData)
 		{
-			if (keyData == Keys.Tab)
-			{
+            if ((keyData == (Keys.Control | Keys.V)) || keyData == (Keys.Shift | Keys.Insert))
+            {
+                string data = Clipboard.GetText(TextDataFormat.Text);
+                if (data.Contains(Environment.NewLine))
+                {
+                    OnCommand(this, data);
+                    return true;
+                }
+            }
+
+            if (keyData == Keys.Tab)
+            {
                 NickComplete();
                 return true;
-			}
+            }
             else
                 nickNumber = -1;
 
-            return false;			
-		}
+            return false;
+        }
         
         private void NickComplete()
         {

@@ -60,6 +60,13 @@ namespace IceChat.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap CloseButton {
+            get {
+                object obj = ResourceManager.GetObject("CloseButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap color {
             get {
                 object obj = ResourceManager.GetObject("color", resourceCulture);

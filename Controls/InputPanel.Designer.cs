@@ -77,9 +77,8 @@
             this.textInput.HideSelection = false;
             this.textInput.Location = new System.Drawing.Point(56, 0);
             this.textInput.MaxLength = 512;
-            this.textInput.Multiline = true;
             this.textInput.Name = "textInput";
-            this.textInput.Size = new System.Drawing.Size(506, 23);
+            this.textInput.Size = new System.Drawing.Size(506, 16);
             this.textInput.TabIndex = 0;
             // 
             // InputPanel

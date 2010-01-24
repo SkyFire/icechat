@@ -46,6 +46,7 @@ namespace IceChat
         private ServerSetting serverSetting;
         private bool fullyConnected = false;
         private ArrayList commandQueue;
+        private ArrayList ircTimers;
 
         public IRCConnection(ServerSetting ss)
         {
@@ -54,7 +55,8 @@ namespace IceChat
             serverSetting = ss;
             reconnectTimer = new System.Timers.Timer(30000);
             reconnectTimer.Enabled = true;
-            reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
+            reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnReconnectTimerElapsed);
+            ircTimers = new ArrayList();
         }
 
         public void Dispose()
@@ -73,7 +75,7 @@ namespace IceChat
             reconnectTimer.Dispose();
         }
 
-        private void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void OnReconnectTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             ConnectSocket();
         }
@@ -173,6 +175,14 @@ namespace IceChat
             initialLogon = false;
             triedAltNickName = false;
             serverSetting.IAL.Clear();
+            serverSetting.Away = false;
+
+            //disable and remove all timers
+            foreach (object key in ircTimers)
+            {
+                ((IrcTimer)key).DisableTimer();
+            }
+            ircTimers.Clear();
 
             if (disconnectError && attemptReconnect && FormMain.Instance.IceChatOptions.ReconnectServer)
             {
@@ -503,6 +513,39 @@ namespace IceChat
             return null;
         }
 
+        #region Timer Events
+
+        internal void CreateTimer(string id, double interval, int reps, string command)
+        {
+            IrcTimer timer = new IrcTimer(id, interval * 1000, reps, command);
+            timer.OnTimerElapsed += new IrcTimer.TimerElapsed(OnTimerElapsed);
+            ircTimers.Add(timer);
+            timer.Start();
+        }
+
+        internal void DestroyTimer(string id)
+        {
+            object remove = null;
+            foreach (object key in ircTimers)
+            {
+                if (((IrcTimer)key).TimerID == id)
+                {
+                    ((IrcTimer)key).DisableTimer();
+                    remove = key;
+                }
+            }
+            if (remove != null)
+                ircTimers.Remove(((IrcTimer)remove));
+
+        }
+
+        private void OnTimerElapsed(string command)
+        {
+            //System.Diagnostics.Debug.WriteLine("Timer Elapsed:" + command);
+            FormMain.Instance.ParseOutGoingCommand(this, command);
+        }
+        
+        #endregion
     }
 
 

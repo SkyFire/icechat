@@ -163,6 +163,9 @@
     <Compile Include="Controls\NickList.Designer.cs">
       <DependentUpon>NickList.cs</DependentUpon>
     </Compile>
+    <Compile Include="IrcTimer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ParseIRCData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -189,6 +192,9 @@
     <Compile Include="Controls\TextWindow.designer.cs">
       <DependentUpon>TextWindow.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\ConsoleTabWindow.resx">
+      <DependentUpon>ConsoleTabWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -317,6 +323,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="color.png" />
+    <None Include="CloseButton.png" />
     <Content Include="icechat2009.ico" />
     <None Include="Smile.png" />
     <None Include="Resources\Image1.bmp" />

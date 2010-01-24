@@ -176,7 +176,8 @@ namespace IceChat
             iceChatMessages = MessageFormat;
 
             textFormattedText.SingleLine = true;
-            
+            textFormattedText.NoEmoticons = true;
+
             //populate Message Settings            
             if (iceChatMessages.MessageSettings != null)
             {
@@ -497,7 +498,12 @@ namespace IceChat
             AddMsgIdent("User Notice", "$message - the notice");
 
             AddMsgIdent("User Echo", "$message - the message to echo");
-            
+
+            AddMsgIdent("User Whois", "$nick - the nick for the whois");
+            AddMsgIdent("User Whois", "$data - the whois information");
+
+            AddMsgIdent("User Error", "$message - the error message");
+
             AddMsgIdent("Server Notice", "$server - the server name");
             AddMsgIdent("Server Notice", "$message - the notice");
             AddMsgIdent("Server Notice", "$nick - your nickname");

@@ -69,6 +69,9 @@
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
             this.buttonRemoveServer = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.textAwayNick = new System.Windows.Forms.TextBox();
+            this.checkDisableCTCP = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -121,6 +124,8 @@
             // tabPageMain
             // 
             this.tabPageMain.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageMain.Controls.Add(this.textAwayNick);
+            this.tabPageMain.Controls.Add(this.label11);
             this.tabPageMain.Controls.Add(this.textAltNickName);
             this.tabPageMain.Controls.Add(this.label9);
             this.tabPageMain.Controls.Add(this.textDisplayName);
@@ -146,7 +151,7 @@
             // 
             // textAltNickName
             // 
-            this.textAltNickName.Location = new System.Drawing.Point(459, 73);
+            this.textAltNickName.Location = new System.Drawing.Point(459, 68);
             this.textAltNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAltNickName.Name = "textAltNickName";
             this.textAltNickName.Size = new System.Drawing.Size(150, 23);
@@ -231,7 +236,7 @@
             // 
             // textServerPort
             // 
-            this.textServerPort.Location = new System.Drawing.Point(459, 12);
+            this.textServerPort.Location = new System.Drawing.Point(459, 7);
             this.textServerPort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServerPort.Name = "textServerPort";
             this.textServerPort.Size = new System.Drawing.Size(53, 23);
@@ -256,7 +261,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(351, 11);
+            this.label3.Location = new System.Drawing.Point(367, 11);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(83, 16);
             this.label3.TabIndex = 39;
@@ -285,6 +290,7 @@
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageExtra.Controls.Add(this.checkDisableCTCP);
             this.tabPageExtra.Controls.Add(this.label10);
             this.tabPageExtra.Controls.Add(this.comboEncoding);
             this.tabPageExtra.Controls.Add(this.checkRejoinChannel);
@@ -301,7 +307,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 118);
+            this.label10.Location = new System.Drawing.Point(8, 170);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(67, 16);
             this.label10.TabIndex = 5;
@@ -311,7 +317,7 @@
             // 
             this.comboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboEncoding.FormattingEnabled = true;
-            this.comboEncoding.Location = new System.Drawing.Point(81, 115);
+            this.comboEncoding.Location = new System.Drawing.Point(81, 167);
             this.comboEncoding.Name = "comboEncoding";
             this.comboEncoding.Size = new System.Drawing.Size(147, 24);
             this.comboEncoding.TabIndex = 4;
@@ -510,6 +516,33 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(333, 103);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(117, 16);
+            this.label11.TabIndex = 49;
+            this.label11.Text = "Away Nick Name";
+            // 
+            // textAwayNick
+            // 
+            this.textAwayNick.Location = new System.Drawing.Point(459, 99);
+            this.textAwayNick.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textAwayNick.Name = "textAwayNick";
+            this.textAwayNick.Size = new System.Drawing.Size(150, 23);
+            this.textAwayNick.TabIndex = 50;
+            // 
+            // checkDisableCTCP
+            // 
+            this.checkDisableCTCP.AutoSize = true;
+            this.checkDisableCTCP.Location = new System.Drawing.Point(8, 115);
+            this.checkDisableCTCP.Name = "checkDisableCTCP";
+            this.checkDisableCTCP.Size = new System.Drawing.Size(163, 20);
+            this.checkDisableCTCP.TabIndex = 6;
+            this.checkDisableCTCP.Text = "Disable CTCP Replies";
+            this.checkDisableCTCP.UseVisualStyleBackColor = true;
+            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -585,5 +618,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button buttonEdit;
         private System.Windows.Forms.Button buttonRemoveServer;
+        private System.Windows.Forms.TextBox textAwayNick;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox checkDisableCTCP;
     }
 }

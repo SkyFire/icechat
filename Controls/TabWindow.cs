@@ -40,7 +40,7 @@ namespace IceChat
         private string channelTopic = "";
         private string fullChannelMode = "";
 
-        public struct channelMode
+        internal struct channelMode
         {
             public char mode;
             public bool set;
@@ -80,12 +80,12 @@ namespace IceChat
             channelModes = new Hashtable();
     
             windowName = title;
-
+            
+            textTopic.NoEmoticons = true;
+            textTopic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Text = title;
 
             lastMessageType = FormMain.ServerMessageType.Default;
-
-
         }
 
         internal bool NickExists(string nick)

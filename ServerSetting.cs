@@ -98,6 +98,10 @@ namespace IceChat
         public string AltNickName
         { get; set; }
 
+        [XmlElement("AwayNickName")]
+        public string AwayNickName
+        { get; set; }
+
         [XmlElement("QuitMessage")]
         public string QuitMessage
         { get { return this._quitMessage; } set { this._quitMessage = value; } }
@@ -148,6 +152,12 @@ namespace IceChat
         public string Encoding
         { get { return this._encoding; } set { this._encoding = value; } }
 
+        [XmlElement("DisableCTCP")]
+        public bool DisableCTCP
+        { get; set; }
+
+        //these are all temporary server settings, not saved to the XML file
+
         [XmlIgnore()]
         public string RealServerName
         { get {return this._realServerName; } set { this._realServerName = value; }  }
@@ -195,13 +205,26 @@ namespace IceChat
         public Hashtable IAL
         { get; set; }
 
+        //whether you are away or not
+        [XmlIgnore()]
+        public bool Away
+        { get; set; }
+
+        //remember your nickname before you set yourself away
+        [XmlIgnore()]
+        public string DefaultNick
+        { get; set; }
+
+        [XmlIgnore()]
+        public DateTime AwayStart
+        { get; set; }
+    
     }
     
     public class InternalAddressList
     {
         private string _nick;
         private string _host;
-        //TODO: keep a record of all the channels
         private ArrayList _channels;
         
         public InternalAddressList(string nick, string host, string channel)

@@ -3,15 +3,18 @@
   <MonoDevelop.Ide.DebuggingService>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService>
-  <MonoDevelop.Ide.Workbench ActiveDocument="IceChatOptions.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Forms\FormMain.cs" ctype="Workbench">
     <Files>
-      <File FileName="IceChatOptions.cs" Line="1" Column="1" />
+      <File FileName="IceChatOptions.cs" Line="36" Column="6" />
+      <File FileName="Forms\FormMain.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="IceChat2009" expanded="True">
-            <Node name="IceChatOptions.cs" selected="True" />
+            <Node name="Forms" expanded="True">
+              <Node name="FormMain.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

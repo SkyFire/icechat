@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections;
-
+using System.Drawing;
 
 namespace IceChat
 {
@@ -42,14 +42,16 @@ namespace IceChat
         public ConsoleTabWindow() : base()
         {
             InitializeComponent();
-            //consoleTab.DrawMode = TabDrawMode.OwnerDrawFixed;
-
+            consoleTab.DrawMode = TabDrawMode.OwnerDrawFixed;
+            consoleTab.SizeMode = TabSizeMode.Normal;
             consoleTab.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
             consoleTab.MouseUp += new MouseEventHandler(OnMouseUp);
             consoleTab.MouseDown += new MouseEventHandler(OnMouseDown);
-
+            consoleTab.DrawItem += new DrawItemEventHandler(OnDrawItem);
             consoleTab.ControlRemoved += new ControlEventHandler(OnControlRemoved);
+            consoleTab.Selecting += new TabControlCancelEventHandler(OnSelectingTab);
         }
+
 
         /// <summary>
         /// Add a message to the Text Window for Selected Console Tab Connection
@@ -141,6 +143,7 @@ namespace IceChat
             w.Dock = DockStyle.Fill;
             w.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[0].FontName, FormMain.Instance.IceChatFonts.FontSettings[0].FontSize);
             w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
+            w.NoEmoticons = true;
 
             t.Controls.Add(w);
             if (FormMain.Instance.IceChatOptions.LogConsole)
@@ -179,7 +182,7 @@ namespace IceChat
         /// <param name="e"></param>
         private void OnSelectedIndexChanged(object sender, EventArgs e)
         {
-			if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0)
+            if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0)
             {
                 FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
 
@@ -212,6 +215,43 @@ namespace IceChat
                 ((TextWindow)((ConsoleTab)e.Control).Controls[0]).CloseLogFile(); ;
         }
 
+
+        private void OnDrawItem(object sender, DrawItemEventArgs e)
+        {
+            string name = consoleTab.TabPages[e.Index].Text;
+            Rectangle bounds = e.Bounds;
+            e.Graphics.FillRectangle(new SolidBrush(Color.White), bounds);
+
+            if (e.Index == consoleTab.SelectedIndex)
+            {
+                bounds.Offset(4, 2);
+                e.Graphics.DrawString(name, this.Font, new SolidBrush(Color.Red), bounds);
+                bounds.Offset(0, -1);
+            }
+            else
+            {
+                bounds.Offset(2, 3);
+                e.Graphics.DrawString(name, this.Font, new SolidBrush(Color.Black), bounds);
+                bounds.Offset(4, -2);
+            }
+            if (e.Index != 0)
+            {
+                System.Drawing.Image icon = new Bitmap(Properties.Resources.CloseButton);
+                e.Graphics.DrawImage(icon, bounds.Right - 20, bounds.Top + 4, 12, 12);
+                icon.Dispose();
+            }
+
+        }
+
+        private void OnSelectingTab(object sender, TabControlCancelEventArgs e)
+        {            
+            if (consoleTab.GetTabRect(e.TabPageIndex).Contains(consoleTab.PointToClient(Cursor.Position)) && e.TabPageIndex != 0)
+            {
+                if (this.PointToClient(Cursor.Position).X > consoleTab.GetTabRect(e.TabPageIndex).Right - 14)
+                    e.Cancel = true;
+            }
+        }
+
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
             FormMain.Instance.FocusInputBox();
@@ -226,32 +266,34 @@ namespace IceChat
         /// <param name="e"></param>
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            //get the current tab
-            if (e.Button == MouseButtons.Middle)
-            {                
-                for (int i = consoleTab.TabPages.Count - 1; i >=0; i--)
-                {                    
-					if (consoleTab.GetTabRect(i).Contains(e.Location))
+            if (e.Button == MouseButtons.Left)
+            {
+                for (int i = consoleTab.TabPages.Count - 1; i >= 0; i--)
+                {
+                    if (consoleTab.GetTabRect(i).Contains(e.Location))
                     {
                         if (((ConsoleTab)consoleTab.TabPages[i]).Connection != null)
                         {
-                            //check if connected or not                        
-                            if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsConnected)
+                            if (e.Location.X > consoleTab.GetTabRect(i).Right - 14)
                             {
-                                if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsFullyConnected)
+                                if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsConnected)
                                 {
-                                    ((ConsoleTab)consoleTab.TabPages[i]).Connection.SendData("QUIT :" + ((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.QuitMessage);
-                                    return;
+                                    if (((ConsoleTab)consoleTab.TabPages[i]).Connection.IsFullyConnected)
+                                    {
+                                        ((ConsoleTab)consoleTab.TabPages[i]).Connection.AttemptReconnect = false;
+                                        ((ConsoleTab)consoleTab.TabPages[i]).Connection.SendData("QUIT :" + ((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.QuitMessage);
+                                        return;
+                                    }
                                 }
-                            }
 
-                            //close all the windows related to this tab
-                            FormMain.Instance.CloseAllWindows(((ConsoleTab)consoleTab.TabPages[i]).Connection);
-                            //remove the server connection from the collection
-                            ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
-                            FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
-							consoleTab.TabPages.RemoveAt(consoleTab.TabPages.IndexOf(consoleTab.TabPages[i]));
-                            return;
+                                //close all the windows related to this tab
+                                FormMain.Instance.CloseAllWindows(((ConsoleTab)consoleTab.TabPages[i]).Connection);
+                                //remove the server connection from the collection
+                                ((ConsoleTab)consoleTab.TabPages[i]).Connection.Dispose();
+                                FormMain.Instance.ServerTree.ServerConnections.Remove(((ConsoleTab)consoleTab.TabPages[i]).Connection.ServerSetting.ID);
+                                consoleTab.TabPages.RemoveAt(consoleTab.TabPages.IndexOf(consoleTab.TabPages[i]));
+                                return;
+                            }
                         }
                     }
                 }
@@ -260,13 +302,27 @@ namespace IceChat
 		
         private void InitializeComponent()
         {
-            this.consoleTab = new TabControl();
-            this.consoleTab.Font = new System.Drawing.Font("Verdana", 10);
-            this.consoleTab.Dock = DockStyle.Fill;
+            this.consoleTab = new System.Windows.Forms.TabControl();
+            this.SuspendLayout();
+            // 
+            // consoleTab
+            // 
+            this.consoleTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.consoleTab.Font = new System.Drawing.Font("Verdana", 10F);
+            this.consoleTab.Location = new System.Drawing.Point(0, 0);
+            this.consoleTab.Name = "consoleTab";
+            this.consoleTab.SelectedIndex = 0;
+            this.consoleTab.Size = new System.Drawing.Size(200, 100);
+            this.consoleTab.TabIndex = 0;
+            // 
+            // ConsoleTabWindow
+            // 
+            this.Controls.Add(this.consoleTab);
+            this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ImageIndex = 0;
             this.Text = "Console";
+            this.ResumeLayout(false);
 
-            this.Controls.Add(consoleTab);
         }
     
     }

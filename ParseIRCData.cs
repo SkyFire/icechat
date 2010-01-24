@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 namespace IceChat
@@ -744,8 +745,8 @@ namespace IceChat
                             }
                             else
                             {
-                                JoinChannel(this, channel, nick, host, true);
                                 IALUserData(this, nick, host, channel);
+                                JoinChannel(this, channel, nick, host, true);
                             }
                             break;
 
@@ -762,8 +763,8 @@ namespace IceChat
                             else
                             {
                                 tempValue = JoinString(ircData, 3, true);
-                                PartChannel(this, channel, nick, host, tempValue);
                                 IALUserPart(this, nick, channel);
+                                PartChannel(this, channel, nick, host, tempValue);
                             }
                             break;
 
@@ -772,8 +773,8 @@ namespace IceChat
                             host = HostFromFullHost(RemoveColon(ircData[0]));
                             tempValue = JoinString(ircData, 2, true);
 
-                            QuitServer(this, nick, host, tempValue);
                             IALUserQuit(this, nick);
+                            QuitServer(this, nick, host, tempValue);
                             break;
 
                         case "NICK":
@@ -788,11 +789,10 @@ namespace IceChat
                             {
                                 //if it is your own nickname, update it
                                 serverSetting.NickName = tempValue;
-
                             }
 
-                            ChangeNick(this, nick, tempValue, HostFromFullHost(ircData[0]));
                             IALUserChange(this, nick, tempValue);
+                            ChangeNick(this, nick, tempValue, HostFromFullHost(ircData[0]));
 
                             break;
 
@@ -809,8 +809,8 @@ namespace IceChat
                             }
                             else
                             {
-                                KickNick(this, channel, nick, msg, ircData[0]);
                                 IALUserPart(this, nick, channel);
+                                KickNick(this, channel, nick, msg, ircData[0]);
                             }
                             break;
 
@@ -869,14 +869,14 @@ namespace IceChat
                 ServerError(this, "Exception ParseData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
             }
         }
-        
+
         #region Parsing Methods
 
         private string GetDuration(int seconds)
         {
             TimeSpan t = new TimeSpan(0, 0, seconds);
             
-            string s = t.Seconds.ToString();
+            string s = t.Seconds.ToString() + " secs";
             if (t.Minutes > 0)
                 s = t.Minutes.ToString() + " mins " + s;
             if (t.Hours > 0)

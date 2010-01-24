@@ -170,7 +170,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 13 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 23 2010";
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -186,7 +186,9 @@ namespace IceChat
                     this.Location = iceChatOptions.WindowLocation;
             }
 
-            statusStripMain.Visible = iceChatOptions.ShowStatusBar;                        
+            statusStripMain.Visible = iceChatOptions.ShowStatusBar;
+            inputPanel.ShowColorPicker = iceChatOptions.ShowColorPicker;
+            inputPanel.ShowEmoticonPicker = iceChatOptions.ShowEmoticonPicker;
 
             LoadAliases();
             LoadPopups();
@@ -222,9 +224,9 @@ namespace IceChat
             this.tabMain.Multiline = true;
 
             tabMain.SelectedIndexChanged += new EventHandler(TabMainSelectedIndexChanged);
-            tabMain.MouseClick += new MouseEventHandler(TabMainMouseClick);            
-            tabMain.Font = new Font("Verdana",10);
-
+            //tabMain.MouseClick += new MouseEventHandler(TabMainMouseClick);
+            tabMain.CloseTab += new IceTabControl.CloseTabDelegate(TabMainCloseTab);
+            tabMain.Font = new Font("Verdana", 10);
             serverTree.NewServerConnection += new NewServerConnectionDelegate(NewServerConnection);
             
             CreateDefaultConsoleWindow();
@@ -253,12 +255,12 @@ namespace IceChat
         private void LoadDefaultMessageSettings()
         {
             IceChatMessageFormat oldMessage = new IceChatMessageFormat();
-            oldMessage.MessageSettings = new ServerMessageFormatItem[43];
+            oldMessage.MessageSettings = new ServerMessageFormatItem[44];
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
             
-            iceChatMessages.MessageSettings = new ServerMessageFormatItem[43];
+            iceChatMessages.MessageSettings = new ServerMessageFormatItem[44];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
             {
@@ -293,27 +295,27 @@ namespace IceChat
                 iceChatMessages.MessageSettings[8] = oldMessage.MessageSettings[8];
 
             if (oldMessage.MessageSettings[9] == null || oldMessage.MessageSettings[9].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[9] = NewMessageFormat("Server Notice", "*** $server $message");
+                iceChatMessages.MessageSettings[9] = NewMessageFormat("Server Notice", "&#x3;4*** $server $message");
             else
                 iceChatMessages.MessageSettings[9] = oldMessage.MessageSettings[9];
 
-            if (oldMessage.MessageSettings[10] == null || oldMessage.MessageSettings[10].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[10] = NewMessageFormat("Server Message", "-$server- $message");
+            if (oldMessage.MessageSettings[10] == null || oldMessage.MessageSettings[10].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[10] = NewMessageFormat("Server Message", "&#x3;4-$server- $message");
             else
                 iceChatMessages.MessageSettings[10] = oldMessage.MessageSettings[10];
 
-            if (oldMessage.MessageSettings[11] == null || oldMessage.MessageSettings[11].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[11] = NewMessageFormat("User Notice", "--$nick-- $message");
+            if (oldMessage.MessageSettings[11] == null || oldMessage.MessageSettings[11].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[11] = NewMessageFormat("User Notice", "&#x3;4--$nick-- $message");
             else
                 iceChatMessages.MessageSettings[11] = oldMessage.MessageSettings[11];
 
             if (oldMessage.MessageSettings[12] == null || oldMessage.MessageSettings[12].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[12] = NewMessageFormat("Channel Message", "<$color$nick&#x3;> $message");
+                iceChatMessages.MessageSettings[12] = NewMessageFormat("Channel Message", "&#x3;1<$color$nick&#x3;> $message");
             else
                 iceChatMessages.MessageSettings[12] = oldMessage.MessageSettings[12];
 
-            if (oldMessage.MessageSettings[13] == null || oldMessage.MessageSettings[13].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[13] = NewMessageFormat("Self Channel Message", "<$nick> $message");
+            if (oldMessage.MessageSettings[13] == null || oldMessage.MessageSettings[13].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[13] = NewMessageFormat("Self Channel Message", "&#x3;1<$nick> $message");
             else
                 iceChatMessages.MessageSettings[13] = oldMessage.MessageSettings[13];
 
@@ -362,8 +364,8 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[22] = oldMessage.MessageSettings[22];
 
-            if (oldMessage.MessageSettings[23] == null || oldMessage.MessageSettings[23].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[23] = NewMessageFormat("Channel Kick", "* $kickee was kicked by $nick($host) &#x3;3 - Reason ($reason)");
+            if (oldMessage.MessageSettings[23] == null || oldMessage.MessageSettings[23].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[23] = NewMessageFormat("Channel Kick", "&#x3;4* $kickee was kicked by $nick($host) &#x3;3 - Reason ($reason)");
             else
                 iceChatMessages.MessageSettings[23] = oldMessage.MessageSettings[23];
 
@@ -372,8 +374,8 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[24] = oldMessage.MessageSettings[24];
 
-            if (oldMessage.MessageSettings[25] == null || oldMessage.MessageSettings[25].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[25] = NewMessageFormat("Private Message", "<$nick> $message");
+            if (oldMessage.MessageSettings[25] == null || oldMessage.MessageSettings[25].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[25] = NewMessageFormat("Private Message", "&#x3;1<$nick> $message");
             else
                 iceChatMessages.MessageSettings[25] = oldMessage.MessageSettings[25];
 
@@ -393,17 +395,17 @@ namespace IceChat
                 iceChatMessages.MessageSettings[28] = oldMessage.MessageSettings[28];
 
             if (oldMessage.MessageSettings[35] == null || oldMessage.MessageSettings[35].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[35] = NewMessageFormat("Channel Topic Change", "* Topic is: $topic");
+                iceChatMessages.MessageSettings[35] = NewMessageFormat("Channel Topic Change", "&#x3;3* Topic is: $topic");
             else
                 iceChatMessages.MessageSettings[35] = oldMessage.MessageSettings[35];
 
-            if (oldMessage.MessageSettings[36] == null || oldMessage.MessageSettings[36].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[36] = NewMessageFormat("Channel Topic Text", "Topic: $topic");
+            if (oldMessage.MessageSettings[36] == null || oldMessage.MessageSettings[36].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[36] = NewMessageFormat("Channel Topic Text", "&#x3;3Topic: $topic");
             else
                 iceChatMessages.MessageSettings[36] = oldMessage.MessageSettings[36];
 
-            if (oldMessage.MessageSettings[37] == null || oldMessage.MessageSettings[37].FormattedMessage.Length == 0)            
-                iceChatMessages.MessageSettings[37] = NewMessageFormat("Server MOTD", "$message");
+            if (oldMessage.MessageSettings[37] == null || oldMessage.MessageSettings[37].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[37] = NewMessageFormat("Server MOTD", "&#x3;3$message");
             else
                 iceChatMessages.MessageSettings[37] = oldMessage.MessageSettings[37];
 
@@ -432,16 +434,21 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[42] = oldMessage.MessageSettings[42];
 
+            if (oldMessage.MessageSettings[43] == null || oldMessage.MessageSettings[43].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[43] = NewMessageFormat("User Error", "&#x3;4ERROR: $message");
+            else
+                iceChatMessages.MessageSettings[43] = oldMessage.MessageSettings[43];
+
             //still do customize these messages
             iceChatMessages.MessageSettings[4] = NewMessageFormat("Ctcp Reply", "&#x3;12[$nick $ctcp Reply] : $reply");
             iceChatMessages.MessageSettings[5] = NewMessageFormat("Ctcp Send", "&#x3;10--> [$nick] $ctcp");
             iceChatMessages.MessageSettings[6] = NewMessageFormat("Ctcp Request", "&#x3;7[$nick] $ctcp");
-            iceChatMessages.MessageSettings[29] = NewMessageFormat("DCC Chat Action", "* $nick $message");
-            iceChatMessages.MessageSettings[30] = NewMessageFormat("Self DCC Chat Action", "&#x3;6* $nick $message");
-            iceChatMessages.MessageSettings[31] = NewMessageFormat("DCC Chat Message", "<$nick> $message");
+            iceChatMessages.MessageSettings[29] = NewMessageFormat("DCC Chat Action", "&#x3;5* $nick $message");
+            iceChatMessages.MessageSettings[30] = NewMessageFormat("Self DCC Chat Action", "&#x3;5* $nick $message");
+            iceChatMessages.MessageSettings[31] = NewMessageFormat("DCC Chat Message", "&#x3;1<$nick> $message");
             iceChatMessages.MessageSettings[32] = NewMessageFormat("Self DCC Chat Message", "&#x3;4<$nick> $message");
-            iceChatMessages.MessageSettings[33] = NewMessageFormat("DCC Chat Request", "* $nick ($host) is requesting a DCC Chat");
-            iceChatMessages.MessageSettings[34] = NewMessageFormat("DCC File Send", "* $nick ($host) is trying to send you a file ($file) [$filesize bytes]");
+            iceChatMessages.MessageSettings[33] = NewMessageFormat("DCC Chat Request", "&#x3;4* $nick ($host) is requesting a DCC Chat");
+            iceChatMessages.MessageSettings[34] = NewMessageFormat("DCC File Send", "&#x3;4* $nick ($host) is trying to send you a file ($file) [$filesize bytes]");
 
             SaveMessageFormat();
 
@@ -551,7 +558,7 @@ namespace IceChat
                 iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatMessages.MessageSettings.Length != 43)
+                if (iceChatMessages.MessageSettings.Length != 44)
                     LoadDefaultMessageSettings();
             }
             else
@@ -1186,25 +1193,55 @@ namespace IceChat
         /// <param name="ctcp">The CTCP Message</param>
         private void OnCtcpMessage(IRCConnection connection, string nick, string ctcp)
         {
-            CurrentWindowMessage(connection, nick + " sent a CTCP " + ctcp + " request:", 7, false);
+            //check if CTCP's are enabled
+            if (connection.ServerSetting.DisableCTCP)
+                return;
+
+            string msg = GetMessageFormat("Ctcp Request");
+            msg = msg.Replace("$nick", nick);
+            msg = msg.Replace("$ctcp", ctcp);
+            CurrentWindowMessage(connection, msg, 7, false);
+            
+            msg = GetMessageFormat("Ctcp Reply");
+            msg = msg.Replace("$nick", nick);
+            msg = msg.Replace("$ctcp", ctcp);
             
             switch (ctcp)
             {
                 case "VERSION":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
-                    CurrentWindowMessage(connection, "->> Sent CTCP Reply: " + Settings.Default.ProgramID + " " + Settings.Default.Version, 7, false);                    
+                    msg = msg.Replace("$reply", Settings.Default.ProgramID + " " + Settings.Default.Version);
+                    CurrentWindowMessage(connection, msg, 7, false);                    
                     break;
                 case "PING":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "PING " + System.Environment.TickCount.ToString() + ((char)1).ToString());
+                    msg = msg.Replace("$reply", System.Environment.TickCount.ToString());
+                    CurrentWindowMessage(connection, msg, 7, false);                                        
                     break;
                 case "TIME":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "TIME " + System.DateTime.Now.ToString() + ((char)1).ToString());
+                    msg = msg.Replace("$reply", System.DateTime.Now.ToString());
+                    CurrentWindowMessage(connection, msg, 7, false);
                     break;
                 case "USERINFO":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
+                    msg = msg.Replace("$reply", "IceChat IRC Client : Download at http://www.icechat.net");
+                    CurrentWindowMessage(connection, msg, 7, false);
                     break;
                 case "CLIENTINFO":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
+                    msg = msg.Replace("$reply", "This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo");
+                    CurrentWindowMessage(connection, msg, 7, false);                    
                     break;
                 case "SOURCE":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
+                    msg = msg.Replace("$reply", Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net");
+                    CurrentWindowMessage(connection, msg, 7, false);
                     break;
                 case "FINGER":
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
+                    msg = msg.Replace("$reply","Stop fingering me");
+                    CurrentWindowMessage(connection, msg, 7, false);
                     break;
                 
             }
@@ -1239,6 +1276,12 @@ namespace IceChat
                 nick = fullhost.Substring(0, fullhost.IndexOf('='));
             
             //update the internal addresslist and check for user in all channels
+            InternalAddressList ial = new InternalAddressList(nick, host, "");
+
+            if (!connection.ServerSetting.IAL.ContainsKey(nick))
+                connection.ServerSetting.IAL.Add(nick, ial);
+            else
+                ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
 
         }
 
@@ -1467,8 +1510,6 @@ namespace IceChat
                         ishandled = true;
                 }
 
-                //t.UpdateNick(nick, host);
-
                 if (!ishandled)
                     t.TextWindow.AppendText(msg, 1);
                 
@@ -1496,8 +1537,6 @@ namespace IceChat
                 if (msg.Contains("$color") && t.NickExists(nick))
                 {
                     User u = t.GetNick(nick);
-                    //if (u.Host.Length > 0)
-                    //    t.UpdateNick(nick, host);
                     
                     for (int i = 0; i < u.Level.Length; i++)
                     {
@@ -1740,7 +1779,6 @@ namespace IceChat
                 msg = msg.Replace("$reason", reason);
                 
                 t.TextWindow.AppendText(msg, 1);
-                //t.UpdateNick(kickNick, kickHost);
                 t.RemoveNick(nick);
                 t.LastMessageType = ServerMessageType.Other;
             }
@@ -1885,6 +1923,7 @@ namespace IceChat
                                     t.AddNick(nick, true);
                                     t.LastMessageType = ServerMessageType.Other;
                                 }
+                                
                                 if ((nickList.CurrentWindow.WindowName == t.WindowName) && (nickList.CurrentWindow.Connection == t.Connection))
                                     nickList.RefreshList(t);
 
@@ -2423,7 +2462,45 @@ namespace IceChat
             inputPanel.FocusTextBox();
 
         }
+        /// <summary>
+        /// Closes the Tab selected
+        /// </summary>
+        /// <param name="tab">Which tab to Close</param>
         
+        private void TabMainCloseTab(int tab)
+        {
+            //throw new NotImplementedException();
+            System.Diagnostics.Debug.WriteLine("Closing Tab:" + tab);
+            if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == TabWindow.WindowType.Channel)
+            {
+                foreach (IRCConnection c in serverTree.ServerConnections.Values)
+                {
+                    if (c == ((TabWindow)tabMain.TabPages[tab]).Connection)
+                    {
+                        //check if connected
+                        if (c.IsConnected)
+                            ParseOutGoingCommand(c, "/part " + ((TabWindow)tabMain.TabPages[tab]).WindowName);
+                        else
+                            RemoveWindow(c, ((TabWindow)tabMain.TabPages[tab]).WindowName);
+
+                        return;
+                    }
+                }
+            }
+            else if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == TabWindow.WindowType.Query)
+            {
+                tabMain.TabPages.Remove(tabMain.TabPages[tab]);
+                return;
+            }
+            else if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == TabWindow.WindowType.Debug)
+            {
+                tabMain.TabPages.RemoveAt(tabMain.TabPages.IndexOf(tabMain.TabPages[tab]));
+                return;
+            }
+
+        }
+
+
         /// <summary>
         /// Checks for a Middle Mouse Click to Close a Tab Window
         /// </summary>
@@ -2526,13 +2603,13 @@ namespace IceChat
                     if (a.AliasName == command)
                     {
                         if (a.Command.Length == 1)
-                            ParseOutGoingCommand(connection, ParseIdentifiers(connection, a.Command[0], data));
+                            ParseOutGoingCommand(connection, ParseIdentifierValue(a.Command[0], data));
                         else
                         {
                             //it is a multulined alias, run multiple commands
                             foreach (string c in a.Command)
                             {
-                                ParseOutGoingCommand(connection, ParseIdentifiers(connection, c, data));
+                                ParseOutGoingCommand(connection, ParseIdentifierValue(c, data));
                             }
                         }
                         return;
@@ -2582,6 +2659,28 @@ namespace IceChat
                             }
                         }
                         break;                    
+                    case "/ame":    //me command for all channels
+                        if (connection != null && data.Length > 0)
+                        {
+                            foreach (TabWindow t in FormMain.Instance.TabMain.WindowTabs)
+                            {
+                                if (t.WindowStyle == TabWindow.WindowType.Channel)
+                                {
+                                    if (t.Connection == connection)
+                                    {
+                                        SendData(connection, "PRIVMSG " + t.WindowName + " :ACTION " + data + "");
+                                        string msg = GetMessageFormat("Self Channel Action");
+                                        msg = msg.Replace("$nick", t.Connection.ServerSetting.NickName).Replace("$channel", t.WindowName);
+                                        msg = msg.Replace("$message", data);
+
+                                        t.TextWindow.AppendText(msg, 1);
+                                        t.TextWindow.ScrollToBottom();
+                                        t.LastMessageType = ServerMessageType.Action;
+                                    }
+                                }
+                            }
+                        }
+                        break;                    
                     case "/autojoin":
                         foreach (string chan in connection.ServerSetting.AutoJoinChannels)
                         {
@@ -2599,6 +2698,38 @@ namespace IceChat
                         }
 
                         break;
+                    case "/away":
+                        if (connection != null)
+                        {
+                            if (connection.ServerSetting.Away)
+                            {
+                                connection.ServerSetting.Away = false;
+                                ParseOutGoingCommand(connection, "/nick " + connection.ServerSetting.DefaultNick);
+                                TimeSpan t = DateTime.Now.Subtract(connection.ServerSetting.AwayStart);
+
+                                string s = t.Seconds.ToString() + " secs";
+                                if (t.Minutes > 0)
+                                    s = t.Minutes.ToString() + " mins " + s;
+                                if (t.Hours > 0)
+                                    s = t.Hours.ToString() + " hrs " + s;
+                                if (t.Days > 0)
+                                    s = t.Days.ToString() + " days " + s;
+
+                                ParseOutGoingCommand(connection, "/ame is no longer away : Gone for " + s);
+                            }
+                            else
+                            {
+                                connection.ServerSetting.Away = true;
+                                connection.ServerSetting.DefaultNick = connection.ServerSetting.NickName;
+                                connection.ServerSetting.AwayStart = System.DateTime.Now;
+                                ParseOutGoingCommand(connection, "/nick " + connection.ServerSetting.AwayNickName);
+                                if (data.Length == 0)
+                                    ParseOutGoingCommand(connection, "/ame is set as away");
+                                else
+                                    ParseOutGoingCommand(connection, "/ame is set as away : Reason(" + data + ")");
+                            }
+                        }
+                        break;                    
                     case "/ban":  // /ban #channel nick|address   /mode #channel +b host
                         if (connection != null && data.IndexOf(' ') > 0)
                         {
@@ -2641,6 +2772,42 @@ namespace IceChat
                                 TabWindow q = GetWindow(connection, data, TabWindow.WindowType.Query);
                                 if (q != null)
                                     q.TextWindow.ClearTextWindow();
+                            }
+                        }
+                        break;
+                    case "/ctcp":
+                        if (connection != null && data.IndexOf(' ') > 0)
+                        {
+                            //ctcp nick ctcptype
+                            string nick = data.Substring(0, data.IndexOf(' '));
+                            //get the message
+                            string ctcp = data.Substring(data.IndexOf(' ') + 1);
+                            
+                            string msg = GetMessageFormat("Ctcp Send");
+                            msg = msg.Replace("$nick", nick); ;
+                            msg = msg.Replace("$ctcp", ctcp.ToUpper());
+                            CurrentWindowMessage(connection, msg, 7, true);
+                            SendData(connection, "PRIVMSG " + nick + " " + ctcp.ToUpper() + "");
+                        }
+                        break;
+                    case "/describe":   //me command for a specific channel
+                        if (connection != null && data.IndexOf(' ') > 0)
+                        {
+                            //get the channel name
+                            string channel = data.Substring(0, data.IndexOf(' '));
+                            //get the message
+                            string message = data.Substring(data.IndexOf(' ') + 1);
+                            //check for the channel
+                            TabWindow t = GetWindow(connection, channel, TabWindow.WindowType.Channel);
+                            if (t != null)
+                            {
+                                SendData(connection, "PRIVMSG " + t.WindowName + " :ACTION " + message + "");
+                                string msg = GetMessageFormat("Self Channel Action");
+                                msg = msg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName).Replace("$channel", t.WindowName);
+                                msg = msg.Replace("$message", message);
+                                t.TextWindow.AppendText(msg, 1);
+                                t.TextWindow.ScrollToBottom();
+                                t.LastMessageType = ServerMessageType.Action;
                             }
                         }
                         break;
@@ -3018,12 +3185,57 @@ namespace IceChat
                                 }
                                 
                                 s.NickName = iceChatOptions.DefaultNick;
+                                s.AltNickName = iceChatOptions.DefaultNick + "_";
+                                s.AwayNickName = iceChatOptions.DefaultNick + "[A]";
+                                s.IAL = new Hashtable();
+                                
                                 Random r = new Random();
                                 s.ID = r.Next(10000,99999);
                                 NewServerConnection(s);
                             }
                         }
                         break;
+                    case "/timer":
+                        if (connection != null)
+                        {
+                            if (data.Length != 0)
+                            {
+                                string[] param = data.Split(' ');
+                                if (param.Length == 2)
+                                {
+                                    //check for /timer ID off
+                                    if (param[1].ToLower() == "off")
+                                    {
+                                        connection.DestroyTimer(param[0]);
+                                        break;
+                                    }                                                                                            
+                                }
+                                else if (param.Length > 3)
+                                {
+                                    // param[0] = TimerID
+                                    // param[1] = Repetitions
+                                    // param[2] = Interval
+                                    // param[3+] = Command
+
+                                    string timerCommand = String.Join(" ", param, 3, param.GetUpperBound(0) - 2);
+                                    connection.CreateTimer(param[0], Convert.ToDouble(param[1]), Convert.ToInt32(param[2]), timerCommand);
+                                }
+                                else
+                                {
+                                    string msg = GetMessageFormat("User Error");
+                                    msg = msg.Replace("$message", "/timer [ID] [INTERVAL] [REPS] [COMMAND]");
+                                    CurrentWindowMessage(connection, msg, 4, true);
+                                }
+                            }
+                            else
+                            {
+                                string msg = GetMessageFormat("User Error");
+                                msg = msg.Replace("$message", "/timer [ID] [INTERVAL] [REPS] [COMMAND]");
+                                CurrentWindowMessage(connection, msg, 4, true);
+                            }
+                        }
+                        break;
+                    
                     case "/topic":
                         if (connection != null)
                         {
@@ -3067,7 +3279,7 @@ namespace IceChat
                             string msg = GetMessageFormat("Ctcp Send");
                             msg = msg.Replace("$nick", data); ;
                             msg = msg.Replace("$ctcp", "VERSION");
-                            CurrentWindowMessage(connection, msg, 1, true);
+                            CurrentWindowMessage(connection, msg, 7, true);
                             SendData(connection, "PRIVMSG " + data + " VERSION");
                         }
                         else
@@ -3225,8 +3437,8 @@ namespace IceChat
             //match all words starting with a $
             string identMatch = "\\$\\b[a-zA-Z_0-9.]+\\b";
             Regex ParseIdent = new Regex(identMatch);
-            MatchCollection matches = ParseIdent.Matches(data);
-            foreach(Match m in matches)
+            Match m = ParseIdent.Match(data);
+            while (m.Success)
             {
                 switch (m.Value)
                 {
@@ -3256,7 +3468,7 @@ namespace IceChat
                         break;
                     case "$port":
                         if (connection != null)
-                            data = data.Replace(m.Value,connection.ServerSetting.ServerPort);
+                            data = data.Replace(m.Value, connection.ServerSetting.ServerPort);
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
@@ -3271,13 +3483,13 @@ namespace IceChat
                                 data = data.Replace(m.Value, connection.ServerSetting.ServerName);
                         }
                         else
-                             data = data.Replace(m.Value, "$null");
+                            data = data.Replace(m.Value, "$null");
                         break;
                     case "$serverip":
                         if (connection != null)
                             data = data.Replace(m.Value, connection.ServerSetting.ServerIP);
                         else
-                             data = data.Replace(m.Value, "$null");
+                            data = data.Replace(m.Value, "$null");
                         break;
 
                     //identifiers that do not require a connection                                
@@ -3305,8 +3517,13 @@ namespace IceChat
                         int rq = rand.Next(0, QuitMessages.RandomQuitMessages.Length);
                         data = data.Replace(m.Value, QuitMessages.RandomQuitMessages[rq]);
                         break;
+                    case "$randcolor":
+                        Random randcolor = new Random();
+                        int rc = randcolor.Next(0, 31);
+                        data = data.Replace(m.Value, rc.ToString());
+                        break;
                     case "$uptime":
-						int systemUpTime = System.Environment.TickCount / 1000;
+                        int systemUpTime = System.Environment.TickCount / 1000;
                         TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
                         string d = ts.Hours + " hours " + ts.Minutes + " minutes " + ts.Seconds + " seconds";
                         if (ts.Days > 0)
@@ -3314,12 +3531,76 @@ namespace IceChat
                         data = data.Replace(m.Value, d);
                         break;
                 }
+                m = m.NextMatch();
             }
             
             return data;
         }
+
+        private string ParseIdentifierValue(string data, string dataPassed)
+        {
+            //split up the data into words
+            string[] parsedData = data.Split(' ');
+
+            //the data that was passed for parsing identifiers
+            string[] passedData = dataPassed.Split(' ');
+
+            //will hold the updates message/data after identifiers are parsed
+            string[] changedData = data.Split(' ');
         
- 
+            int count = -1;
+
+            //search for identifiers that are numbers
+            //used for replacing values passed to the function
+            foreach (string word in parsedData)
+            {
+                count++;
+
+                if (word.StartsWith("//") && count == 0)
+                    changedData[count] = word.Substring(1);
+
+                //parse out identifiers (start with a $)
+                if (word.StartsWith("$"))
+                {
+                     switch (word)
+                     {
+
+                         default:
+                             //search for identifiers that are numbers
+                             //used for replacing values passed to the function
+                             int result;
+                             int z = 1;
+
+                             while (z < word.Length)
+                             {
+                                 if (Int32.TryParse(word.Substring(z, 1), out result))
+                                     z++;
+                                 else
+                                     break;
+                             }
+
+                             //check for - after numbered identifier
+                             if (z > 1)
+                             {
+                                 //get the numbered identifier value
+                                 int identVal = Int32.Parse(word.Substring(1, z - 1));
+
+                                 if (identVal <= passedData.Length)
+                                 {
+                                     //if (word.Substring(z, 1) == "-")
+                                     //    changedData[count] = String.Join(" ", passedData, identVal-1, passedData.GetUpperBound(0));
+                                     //else    
+                                     changedData[count] = passedData[identVal - 1];
+                                 }
+                                 else
+                                     changedData[count] = "";
+                             }
+                             break;
+                     }
+                 }
+             }
+            return String.Join(" ",changedData);
+        } 
         /// <summary>
         /// Parse out $identifiers for outgoing commands
         /// </summary>
@@ -3331,6 +3612,9 @@ namespace IceChat
             //parse the initial identifiers
             data = ParseIdentifier(connection, data);
             
+            //parse out the $1,$2.. identifiers
+            data = ParseIdentifierValue(data, dataPassed);
+
             //split up the data into words
             string[] parsedData = data.Split(' ');
             
@@ -3356,36 +3640,7 @@ namespace IceChat
                     {
                         
                         default:
-                            //search for identifiers that are numbers
-                            //used for replacing values passed to the function
                             int result;
-                            int z = 1;
-
-                            while (z < word.Length)
-                            {
-                                if (Int32.TryParse(word.Substring(z, 1), out result))
-                                    z++;
-                                else
-                                    break;
-                            }
-                            
-                            //check for - after numbered identifier
-                            if (z > 1)
-                            {
-                                //get the numbered identifier value
-                                int identVal = Int32.Parse(word.Substring(1, z - 1));
-
-                                if (identVal <= passedData.Length)
-                                {
-                                    //if (word.Substring(z, 1) == "-")
-                                    //    changedData[count] = String.Join(" ", passedData, identVal-1, passedData.GetUpperBound(0));
-                                    //else    
-                                    changedData[count] = passedData[identVal - 1];
-                                }
-                                else
-                                    changedData[count] = "";
-                            }
-                            //no numbered identifier, continue on
                             if (connection != null)
                             {
                                 if (word.StartsWith("$ial(") && word.IndexOf(')') > word.IndexOf('('))
@@ -3720,6 +3975,13 @@ namespace IceChat
             qc.ShowDialog(this);
         }
 
+        private void toolStripAway_Click(object sender, EventArgs e)
+        {
+            //check if away or not
+            if (FormMain.Instance.InputPanel.CurrentConnection != null)
+                ParseOutGoingCommand(FormMain.Instance.InputPanel.CurrentConnection, "/away");
+        }
+
         private void OnQuickConnectServer(ServerSetting s)
         {
             NewServerConnection(s);
@@ -3879,6 +4141,7 @@ namespace IceChat
                     ParseOutGoingCommand((IRCConnection)e.Connection, e.Command);
             }
         }
+
 
     }
 }
