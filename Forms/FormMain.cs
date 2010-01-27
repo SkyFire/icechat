@@ -2576,8 +2576,6 @@ namespace IceChat
             
             if (data.StartsWith("/"))
             {
-                //System.Diagnostics.Debug.WriteLine(data);
-                
                 int indexOfSpace = data.IndexOf(" ");
                 string command = "";
                 string temp = "";
@@ -2599,13 +2597,17 @@ namespace IceChat
                     if (a.AliasName == command)
                     {
                         if (a.Command.Length == 1)
-                            ParseOutGoingCommand(connection, ParseIdentifierValue(a.Command[0], data));
+                        {
+                            data = ParseIdentifierValue(a.Command[0], data);
+                            ParseOutGoingCommand(connection, ParseIdentifiers(connection, data, data));
+                        }
                         else
                         {
                             //it is a multulined alias, run multiple commands
                             foreach (string c in a.Command)
                             {
-                                ParseOutGoingCommand(connection, ParseIdentifierValue(c, data));
+                                data = ParseIdentifierValue(c, data);
+                                ParseOutGoingCommand(connection, ParseIdentifiers(connection, data, data));
                             }
                         }
                         return;

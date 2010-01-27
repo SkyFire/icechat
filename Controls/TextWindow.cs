@@ -98,6 +98,7 @@ namespace IceChat
             public string line;
             public int textLine;
             public bool wrapped;
+            public bool previous;
             public int textColor;
         }
 
@@ -207,6 +208,14 @@ namespace IceChat
                     if (lookWidth >= x && foundSpace)
                     {
                         //System.Diagnostics.Debug.WriteLine(line.Substring(space, i - space));
+                        if (displayLines[lineNumber].previous && lineNumber > 0 && space == 0)
+                        {
+                            // this line wraps from the previous one. 
+                            string prevline = StripAllCodes(displayLines[lineNumber-1].line);
+                            int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
+                            return ReturnWord(lineNumber - 1, prevwidth);
+                        }                         
+                        
                         return line.Substring(space, i - space);
                     }
 
@@ -223,10 +232,16 @@ namespace IceChat
                     }
 
                     lookWidth += g.MeasureString(line[i].ToString(), this.Font, 0, sf).Width;
-
-
                 }
-                if (!foundSpace)
+                if (displayLines[lineNumber].previous && lineNumber>0 && space==0)
+                {
+                    // this line wraps from the previous one. 
+                    string prevline = StripAllCodes(displayLines[lineNumber-1].line);
+                    int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
+                    return ReturnWord(lineNumber - 1, prevwidth);
+                }
+                
+                if (!foundSpace && space<line.Length)                
                 {
                     //wrap to the next line
                     if (lineNumber < totalDisplayLines)
@@ -660,6 +675,7 @@ namespace IceChat
             if (newLine.Length == 0)
                 return;
 
+            newLine = newLine.Replace("\n", " ");
             newLine = newLine.Replace("&#x3;", colorChar.ToString());
             newLine = ParseUrl(newLine);
 
@@ -1148,6 +1164,7 @@ namespace IceChat
                                             nextColor = "";
                                         }
                                         line++;
+                                        displayLines[line].previous = true;
                                         buildString = null;
                                         buildString = new StringBuilder();
                                         buildString.Append(ch[0]);

@@ -234,7 +234,7 @@ namespace IceChat
                 e.Graphics.DrawString(name, this.Font, new SolidBrush(Color.Black), bounds);
                 bounds.Offset(4, -2);
             }
-            if (e.Index != 0)
+            if (e.Index != 0 && e.Index == consoleTab.SelectedIndex)
             {
                 System.Drawing.Image icon = new Bitmap(Properties.Resources.CloseButton);
                 e.Graphics.DrawImage(icon, bounds.Right - 20, bounds.Top + 4, 12, 12);
@@ -270,7 +270,7 @@ namespace IceChat
             {
                 for (int i = consoleTab.TabPages.Count - 1; i >= 0; i--)
                 {
-                    if (consoleTab.GetTabRect(i).Contains(e.Location))
+                    if (consoleTab.GetTabRect(i).Contains(e.Location) && i == consoleTab.SelectedIndex)
                     {
                         if (((ConsoleTab)consoleTab.TabPages[i]).Connection != null)
                         {

@@ -83,7 +83,7 @@ namespace IceChat
         private void OnSelecting(object sender, TabControlCancelEventArgs e)
         {
             if (this.GetTabRect(e.TabPageIndex).Contains(this.PointToClient(Cursor.Position)) && e.TabPageIndex != 0)
-            {                
+            {
                 if (this.PointToClient(Cursor.Position).X > this.GetTabRect(e.TabPageIndex).Right - 14)
                     e.Cancel = true;
             }
@@ -366,7 +366,7 @@ namespace IceChat
                 if (this.GetTabRect(index).Contains(this.PointToClient(Cursor.Position)))
                 {
                     //check if close button was pressed on current tab
-                    if (this.GetTabRect(index).Right - 16 < this.PointToClient(Cursor.Position).X)
+                    if (this.GetTabRect(index).Right - 14 < this.PointToClient(Cursor.Position).X && index == this.selectedTabIndex)
                     {
                         if (CloseTab != null && index != 0)
                             CloseTab(index);
@@ -629,7 +629,7 @@ namespace IceChat
             g.DrawString(title, this.Font, b, tabTextArea);
             
             //draw the close button
-            if (nIndex != 0)
+            if (nIndex != 0 && bSelected)
             {
                 Image icon = new Bitmap(Properties.Resources.CloseButton);
                 g.DrawImage(icon, closeButton);
