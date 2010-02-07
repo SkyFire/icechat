@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ namespace IceChat
         private delegate void ClearListDelegate();
         private delegate void UpdateHeaderDelegate(string data);
 
-        private TabWindow currentWindow;
+        private IceTabPage currentWindow;
         
         //the index of the top item in the nick list
         private int topIndex = 0;
@@ -97,10 +97,10 @@ namespace IceChat
                 for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                     nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                if (!FormMain.Instance.TabMain.WindowExists(currentWindow.Connection, nick, TabWindow.WindowType.Query))
-                    FormMain.Instance.AddWindow(currentWindow.Connection, nick, TabWindow.WindowType.Query);
+                if (!FormMain.Instance.TabMain.WindowExists(currentWindow.Connection, nick, IceTabPage.WindowType.Query))
+                    FormMain.Instance.AddWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query);
                 else
-                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(currentWindow.Connection, nick, TabWindow.WindowType.Query);
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
 
             }
         }
@@ -116,7 +116,7 @@ namespace IceChat
             if (e.Y <= headerHeight)
                 return;
             
-            if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //do the math
                 Graphics g = this.CreateGraphics();
@@ -182,10 +182,10 @@ namespace IceChat
                             
                             if (caption.Length > 0)
                             {
-                                if (currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+                                if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                                 {
-                                    caption = caption.Replace("$chan", currentWindow.WindowName);
-                                    command = command.Replace("$chan", currentWindow.WindowName);
+                                    caption = caption.Replace("$chan", currentWindow.TabCaption);
+                                    command = command.Replace("$chan", currentWindow.TabCaption);
                                 }
                                 caption = caption.Replace("$nick", nick);
                                 command = command.Replace("$nick", nick);
@@ -223,7 +223,7 @@ namespace IceChat
             if (e.Y <= headerHeight)
                 return;
 
-            if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 Graphics g = this.CreateGraphics();
 
@@ -274,7 +274,8 @@ namespace IceChat
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                 Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
-                Brush l = new LinearGradientBrush(headerR, Color.Silver, Color.White, 300);
+                //get the header colors here
+                Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
                 g.FillRectangle(l, headerR);
 
                 StringFormat sf = new StringFormat();
@@ -283,12 +284,12 @@ namespace IceChat
                 Rectangle centered = headerR;
                 centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
-                g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
+                g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
 
                 //draw the nicks            
                 Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
 
-                if (currentWindow != null && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+                if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                 {
                     if (sortedNicks != null)
                         sortedNicks = null;
@@ -374,7 +375,7 @@ namespace IceChat
             }
             catch (Exception ee)
             {
-                FormMain.Instance.ParseOutGoingCommand(CurrentWindow.Connection, "/echo NickList Error:" + ee.Message + ":" + ee.StackTrace);
+                FormMain.Instance.WriteErrorFile("NickList OnPaint Error:" + ee.Message, ee.StackTrace);
             }
         }
 
@@ -402,28 +403,29 @@ namespace IceChat
         /// Refresh the Nicklist with the Current Channel/Query Selected
         /// </summary>
         /// <param name="window"></param>
-        internal void RefreshList(TabWindow window)
+        internal void RefreshList(IceTabPage page)
         {
-            if (window.WindowStyle == TabWindow.WindowType.Channel)
+            if (page.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (this.currentWindow != window)
+                if (this.currentWindow != page)
                 {
                     selectedIndex = -1;
                     topIndex = 0;
+
                     vScrollBar.Value = 0;
                     vScrollBar.Visible = false;
                 }
-                
-                this.currentWindow = window;
-                UpdateHeader(window.WindowName + ":" + window.Nicks.Count);
-            }
-            else if (window.WindowStyle == TabWindow.WindowType.Query)
-            {
-                this.currentWindow = window;
-                UpdateHeader("Query:" + window.WindowName);
-            }
-        }
 
+                this.currentWindow = page;
+                UpdateHeader(page.TabCaption + ":" + page.Nicks.Count);
+            }
+            else if (page.WindowStyle == IceTabPage.WindowType.Query)
+            {
+                this.currentWindow = page;
+                UpdateHeader("Query:" + page.TabCaption);
+            }
+
+        }
 
         /// <summary>
         /// Update the Header of the Nick List
@@ -449,7 +451,7 @@ namespace IceChat
         {
             get
             {
-                if (currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+                if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                     return currentWindow.Nicks.Count;
                 else
                     return 0;
@@ -472,7 +474,7 @@ namespace IceChat
         /// <summary>
         /// Returns the TabWindow which is currently being shown in the Nicklist
         /// </summary>
-        internal TabWindow CurrentWindow
+        internal IceTabPage CurrentWindow
         {
             get
             {
@@ -486,7 +488,7 @@ namespace IceChat
 
         private void buttonOp_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 User u = currentWindow.GetNick(nick);
@@ -498,9 +500,9 @@ namespace IceChat
                         if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
                         {
                             if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -o " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -o " + u.NickName);
                             else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +o " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +o " + u.NickName);
                         }
                     }
                 }
@@ -509,7 +511,7 @@ namespace IceChat
 
         private void buttonVoice_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 User u = currentWindow.GetNick(nick);
@@ -521,9 +523,9 @@ namespace IceChat
                         if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
                         {
                             if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -v " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -v " + u.NickName);
                             else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +v " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +v " + u.NickName);
                         }
                     }
                 }
@@ -532,22 +534,22 @@ namespace IceChat
 
         private void buttonQuery_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                     nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query))
-                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query))
+                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query);
                 else
-                    FormMain.Instance.TabMain.SelectedTab = FormMain.Instance.GetWindow(FormMain.Instance.CurrentWindow.Connection, nick, TabWindow.WindowType.Query);
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
             }
         }
 
         private void buttonHop_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 User u = currentWindow.GetNick(nick);
@@ -559,9 +561,9 @@ namespace IceChat
                         if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
                         {
                             if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " -h " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -h " + u.NickName);
                             else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +h " + u.NickName);
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +h " + u.NickName);
                         }
                     }
                 }
@@ -573,31 +575,34 @@ namespace IceChat
             if (selectedIndex >= 0)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
+                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                
                 FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nick); ;                
             }
         }
 
         private void buttonBan_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                     nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.WindowName + " +b " + nick); ;            
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nick); ;            
             }
         }
 
         private void buttonKick_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == TabWindow.WindowType.Channel)
+            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
                 for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                     nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.WindowName + " " + nick); ;
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nick); ;
             }
         }
 
@@ -606,6 +611,9 @@ namespace IceChat
             if (selectedIndex >= 0)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
+                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                
                 FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nick); ;
             }
         }

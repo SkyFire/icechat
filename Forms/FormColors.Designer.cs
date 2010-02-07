@@ -91,12 +91,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelEdit;
         private System.Windows.Forms.TabPage tabBasic;
-        private TextWindow textFormattedBasic;
-        private TextWindow textFormattedText;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TreeView treeBasicMessages;
         private System.Windows.Forms.CheckBox checkChangeBGBasic;
         private System.Windows.Forms.Label label6;
+        private TextWindow textFormattedBasic;
+        private TextWindow textFormattedText;
 
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -104,8 +104,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-
-            
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Channel Messages");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Server Messages");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Private Messages");
@@ -124,6 +122,8 @@
             this.tabPageMessages = new System.Windows.Forms.TabPage();
             this.tabMessages = new System.Windows.Forms.TabControl();
             this.tabBasic = new System.Windows.Forms.TabPage();
+            this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.treeBasicMessages = new System.Windows.Forms.TreeView();
             this.tabAdvanced = new System.Windows.Forms.TabPage();
@@ -154,6 +154,16 @@
             this.label5 = new System.Windows.Forms.Label();
             this.labelTabCurrent = new System.Windows.Forms.Label();
             this.tabPageBackGround = new System.Windows.Forms.TabPage();
+            this.picturePanelHeaderForeColor = new System.Windows.Forms.PictureBox();
+            this.labelPanelHeaderForeColor = new System.Windows.Forms.Label();
+            this.picturePanelHeaderBG2 = new System.Windows.Forms.PictureBox();
+            this.picturePanelHeaderBG1 = new System.Windows.Forms.PictureBox();
+            this.labelPanelHeaderBG2 = new System.Windows.Forms.Label();
+            this.labelPanelHeaderBG1 = new System.Windows.Forms.Label();
+            this.pictureTabBarHover2 = new System.Windows.Forms.PictureBox();
+            this.pictureTabBarHover1 = new System.Windows.Forms.PictureBox();
+            this.labelTabBarHover2 = new System.Windows.Forms.Label();
+            this.labelTabBarHover1 = new System.Windows.Forms.Label();
             this.pictureTabBarOther2 = new System.Windows.Forms.PictureBox();
             this.pictureTabBarOther1 = new System.Windows.Forms.PictureBox();
             this.pictureTabBarCurrent2 = new System.Windows.Forms.PictureBox();
@@ -191,10 +201,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.textFormattedBasic = new TextWindow();
-            this.textFormattedText = new TextWindow();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -210,6 +216,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabMessage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabCurrent)).BeginInit();
             this.tabPageBackGround.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderForeColor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderBG2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderBG1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarHover2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarHover1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarOther2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarOther1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarCurrent2)).BeginInit();
@@ -271,7 +282,6 @@
             this.tabBasic.BackColor = System.Drawing.SystemColors.Control;
             this.tabBasic.Controls.Add(this.checkChangeBGBasic);
             this.tabBasic.Controls.Add(this.label6);
-            this.tabBasic.Controls.Add(this.textFormattedBasic);
             this.tabBasic.Controls.Add(this.label2);
             this.tabBasic.Controls.Add(this.treeBasicMessages);
             this.tabBasic.Location = new System.Drawing.Point(4, 25);
@@ -280,6 +290,23 @@
             this.tabBasic.Size = new System.Drawing.Size(714, 348);
             this.tabBasic.TabIndex = 2;
             this.tabBasic.Text = "Basic";
+            // 
+            // checkChangeBGBasic
+            // 
+            this.checkChangeBGBasic.Location = new System.Drawing.Point(332, 291);
+            this.checkChangeBGBasic.Name = "checkChangeBGBasic";
+            this.checkChangeBGBasic.Size = new System.Drawing.Size(236, 24);
+            this.checkChangeBGBasic.TabIndex = 50;
+            this.checkChangeBGBasic.Text = "Change Background Color";
+            // 
+            // label6
+            // 
+            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label6.Location = new System.Drawing.Point(20, 293);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(264, 16);
+            this.label6.TabIndex = 49;
+            this.label6.Text = "Formatted message:";
             // 
             // label2
             // 
@@ -323,7 +350,6 @@
             // tabAdvanced
             // 
             this.tabAdvanced.BackColor = System.Drawing.SystemColors.Control;
-            this.tabAdvanced.Controls.Add(this.textFormattedText);
             this.tabAdvanced.Controls.Add(this.textRawMessage);
             this.tabAdvanced.Controls.Add(this.label4);
             this.tabAdvanced.Controls.Add(this.checkBGColor);
@@ -623,6 +649,16 @@
             // tabPageBackGround
             // 
             this.tabPageBackGround.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageBackGround.Controls.Add(this.picturePanelHeaderForeColor);
+            this.tabPageBackGround.Controls.Add(this.labelPanelHeaderForeColor);
+            this.tabPageBackGround.Controls.Add(this.picturePanelHeaderBG2);
+            this.tabPageBackGround.Controls.Add(this.picturePanelHeaderBG1);
+            this.tabPageBackGround.Controls.Add(this.labelPanelHeaderBG2);
+            this.tabPageBackGround.Controls.Add(this.labelPanelHeaderBG1);
+            this.tabPageBackGround.Controls.Add(this.pictureTabBarHover2);
+            this.tabPageBackGround.Controls.Add(this.pictureTabBarHover1);
+            this.tabPageBackGround.Controls.Add(this.labelTabBarHover2);
+            this.tabPageBackGround.Controls.Add(this.labelTabBarHover1);
             this.tabPageBackGround.Controls.Add(this.pictureTabBarOther2);
             this.tabPageBackGround.Controls.Add(this.pictureTabBarOther1);
             this.tabPageBackGround.Controls.Add(this.pictureTabBarCurrent2);
@@ -649,10 +685,105 @@
             this.tabPageBackGround.TabIndex = 4;
             this.tabPageBackGround.Text = "Background";
             // 
+            // picturePanelHeaderForeColor
+            // 
+            this.picturePanelHeaderForeColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picturePanelHeaderForeColor.Location = new System.Drawing.Point(537, 100);
+            this.picturePanelHeaderForeColor.Name = "picturePanelHeaderForeColor";
+            this.picturePanelHeaderForeColor.Size = new System.Drawing.Size(20, 20);
+            this.picturePanelHeaderForeColor.TabIndex = 92;
+            this.picturePanelHeaderForeColor.TabStop = false;
+            this.picturePanelHeaderForeColor.Tag = "Channel Owner";
+            // 
+            // labelPanelHeaderForeColor
+            // 
+            this.labelPanelHeaderForeColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelPanelHeaderForeColor.Location = new System.Drawing.Point(321, 104);
+            this.labelPanelHeaderForeColor.Name = "labelPanelHeaderForeColor";
+            this.labelPanelHeaderForeColor.Size = new System.Drawing.Size(210, 16);
+            this.labelPanelHeaderForeColor.TabIndex = 91;
+            this.labelPanelHeaderForeColor.Text = "Panel Header - Fore Color";
+            // 
+            // picturePanelHeaderBG2
+            // 
+            this.picturePanelHeaderBG2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picturePanelHeaderBG2.Location = new System.Drawing.Point(537, 75);
+            this.picturePanelHeaderBG2.Name = "picturePanelHeaderBG2";
+            this.picturePanelHeaderBG2.Size = new System.Drawing.Size(20, 20);
+            this.picturePanelHeaderBG2.TabIndex = 90;
+            this.picturePanelHeaderBG2.TabStop = false;
+            this.picturePanelHeaderBG2.Tag = "Channel Owner";
+            // 
+            // picturePanelHeaderBG1
+            // 
+            this.picturePanelHeaderBG1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picturePanelHeaderBG1.Location = new System.Drawing.Point(537, 48);
+            this.picturePanelHeaderBG1.Name = "picturePanelHeaderBG1";
+            this.picturePanelHeaderBG1.Size = new System.Drawing.Size(20, 20);
+            this.picturePanelHeaderBG1.TabIndex = 89;
+            this.picturePanelHeaderBG1.TabStop = false;
+            this.picturePanelHeaderBG1.Tag = "Channel Owner";
+            // 
+            // labelPanelHeaderBG2
+            // 
+            this.labelPanelHeaderBG2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelPanelHeaderBG2.Location = new System.Drawing.Point(321, 79);
+            this.labelPanelHeaderBG2.Name = "labelPanelHeaderBG2";
+            this.labelPanelHeaderBG2.Size = new System.Drawing.Size(210, 16);
+            this.labelPanelHeaderBG2.TabIndex = 88;
+            this.labelPanelHeaderBG2.Text = "Panel Header - Color 2";
+            // 
+            // labelPanelHeaderBG1
+            // 
+            this.labelPanelHeaderBG1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelPanelHeaderBG1.Location = new System.Drawing.Point(321, 52);
+            this.labelPanelHeaderBG1.Name = "labelPanelHeaderBG1";
+            this.labelPanelHeaderBG1.Size = new System.Drawing.Size(210, 16);
+            this.labelPanelHeaderBG1.TabIndex = 87;
+            this.labelPanelHeaderBG1.Text = "Panel Header - Color 1";
+            // 
+            // pictureTabBarHover2
+            // 
+            this.pictureTabBarHover2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureTabBarHover2.Location = new System.Drawing.Point(235, 325);
+            this.pictureTabBarHover2.Name = "pictureTabBarHover2";
+            this.pictureTabBarHover2.Size = new System.Drawing.Size(20, 20);
+            this.pictureTabBarHover2.TabIndex = 86;
+            this.pictureTabBarHover2.TabStop = false;
+            this.pictureTabBarHover2.Tag = "Channel Owner";
+            // 
+            // pictureTabBarHover1
+            // 
+            this.pictureTabBarHover1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureTabBarHover1.Location = new System.Drawing.Point(235, 298);
+            this.pictureTabBarHover1.Name = "pictureTabBarHover1";
+            this.pictureTabBarHover1.Size = new System.Drawing.Size(20, 20);
+            this.pictureTabBarHover1.TabIndex = 85;
+            this.pictureTabBarHover1.TabStop = false;
+            this.pictureTabBarHover1.Tag = "Channel Owner";
+            // 
+            // labelTabBarHover2
+            // 
+            this.labelTabBarHover2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelTabBarHover2.Location = new System.Drawing.Point(19, 329);
+            this.labelTabBarHover2.Name = "labelTabBarHover2";
+            this.labelTabBarHover2.Size = new System.Drawing.Size(184, 16);
+            this.labelTabBarHover2.TabIndex = 84;
+            this.labelTabBarHover2.Text = "Tab Bar Hover - Color 2";
+            // 
+            // labelTabBarHover1
+            // 
+            this.labelTabBarHover1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelTabBarHover1.Location = new System.Drawing.Point(19, 302);
+            this.labelTabBarHover1.Name = "labelTabBarHover1";
+            this.labelTabBarHover1.Size = new System.Drawing.Size(184, 16);
+            this.labelTabBarHover1.TabIndex = 83;
+            this.labelTabBarHover1.Text = "Tab Bar Hover - Color 1";
+            // 
             // pictureTabBarOther2
             // 
             this.pictureTabBarOther2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureTabBarOther2.Location = new System.Drawing.Point(235, 272);
+            this.pictureTabBarOther2.Location = new System.Drawing.Point(235, 271);
             this.pictureTabBarOther2.Name = "pictureTabBarOther2";
             this.pictureTabBarOther2.Size = new System.Drawing.Size(20, 20);
             this.pictureTabBarOther2.TabIndex = 82;
@@ -662,7 +793,7 @@
             // pictureTabBarOther1
             // 
             this.pictureTabBarOther1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureTabBarOther1.Location = new System.Drawing.Point(235, 246);
+            this.pictureTabBarOther1.Location = new System.Drawing.Point(235, 244);
             this.pictureTabBarOther1.Name = "pictureTabBarOther1";
             this.pictureTabBarOther1.Size = new System.Drawing.Size(20, 20);
             this.pictureTabBarOther1.TabIndex = 81;
@@ -672,7 +803,7 @@
             // pictureTabBarCurrent2
             // 
             this.pictureTabBarCurrent2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureTabBarCurrent2.Location = new System.Drawing.Point(235, 216);
+            this.pictureTabBarCurrent2.Location = new System.Drawing.Point(235, 217);
             this.pictureTabBarCurrent2.Name = "pictureTabBarCurrent2";
             this.pictureTabBarCurrent2.Size = new System.Drawing.Size(20, 20);
             this.pictureTabBarCurrent2.TabIndex = 80;
@@ -692,25 +823,25 @@
             // labelTabBarOther2
             // 
             this.labelTabBarOther2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabBarOther2.Location = new System.Drawing.Point(19, 276);
+            this.labelTabBarOther2.Location = new System.Drawing.Point(19, 275);
             this.labelTabBarOther2.Name = "labelTabBarOther2";
             this.labelTabBarOther2.Size = new System.Drawing.Size(184, 16);
             this.labelTabBarOther2.TabIndex = 78;
-            this.labelTabBarOther2.Text = "Tab Bar Other - Color 2";
+            this.labelTabBarOther2.Text = "Tab Bar Default - Color 2";
             // 
             // labelTabBarOther1
             // 
             this.labelTabBarOther1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabBarOther1.Location = new System.Drawing.Point(19, 250);
+            this.labelTabBarOther1.Location = new System.Drawing.Point(19, 248);
             this.labelTabBarOther1.Name = "labelTabBarOther1";
             this.labelTabBarOther1.Size = new System.Drawing.Size(184, 16);
             this.labelTabBarOther1.TabIndex = 77;
-            this.labelTabBarOther1.Text = "Tab Bar Other - Color 1";
+            this.labelTabBarOther1.Text = "Tab Bar Default - Color 1";
             // 
             // labelTabBarCurrent2
             // 
             this.labelTabBarCurrent2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabBarCurrent2.Location = new System.Drawing.Point(19, 220);
+            this.labelTabBarCurrent2.Location = new System.Drawing.Point(19, 221);
             this.labelTabBarCurrent2.Name = "labelTabBarCurrent2";
             this.labelTabBarCurrent2.Size = new System.Drawing.Size(184, 16);
             this.labelTabBarCurrent2.TabIndex = 76;
@@ -1018,51 +1149,6 @@
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current:";
             // 
-            // checkChangeBGBasic
-            // 
-            this.checkChangeBGBasic.Location = new System.Drawing.Point(332, 291);
-            this.checkChangeBGBasic.Name = "checkChangeBGBasic";
-            this.checkChangeBGBasic.Size = new System.Drawing.Size(236, 24);
-            this.checkChangeBGBasic.TabIndex = 50;
-            this.checkChangeBGBasic.Text = "Change Background Color";
-            // 
-            // label6
-            // 
-            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label6.Location = new System.Drawing.Point(20, 293);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(264, 16);
-            this.label6.TabIndex = 49;
-            this.label6.Text = "Formatted message:";
-            // 
-            // textFormattedBasic
-            // 
-            this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedBasic.IRCBackColor = 0;
-            this.textFormattedBasic.IRCForeColor = 0;
-            this.textFormattedBasic.Location = new System.Drawing.Point(16, 316);
-            this.textFormattedBasic.Name = "textFormattedBasic";
-            this.textFormattedBasic.NoColorMode = false;
-            this.textFormattedBasic.ShowTimeStamp = true;
-            this.textFormattedBasic.SingleLine = true;
-            this.textFormattedBasic.Size = new System.Drawing.Size(607, 26);
-            this.textFormattedBasic.TabIndex = 48;
-            // 
-            // textFormattedText
-            // 
-            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedText.IRCBackColor = 0;
-            this.textFormattedText.IRCForeColor = 0;
-            this.textFormattedText.Location = new System.Drawing.Point(13, 314);
-            this.textFormattedText.Name = "textFormattedText";
-            this.textFormattedText.NoColorMode = false;
-            this.textFormattedText.ShowTimeStamp = true;
-            this.textFormattedText.SingleLine = true;
-            this.textFormattedText.Size = new System.Drawing.Size(607, 26);
-            this.textFormattedText.TabIndex = 46;
-            // 
             // FormColors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1098,6 +1184,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabMessage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabCurrent)).EndInit();
             this.tabPageBackGround.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderForeColor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderBG2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picturePanelHeaderBG1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarHover2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarHover1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarOther2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarOther1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabBarCurrent2)).EndInit();
@@ -1119,6 +1210,17 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Label labelTabBarHover2;
+        private System.Windows.Forms.Label labelTabBarHover1;
+        private System.Windows.Forms.PictureBox pictureTabBarHover2;
+        private System.Windows.Forms.PictureBox pictureTabBarHover1;
+        private System.Windows.Forms.PictureBox picturePanelHeaderBG2;
+        private System.Windows.Forms.PictureBox picturePanelHeaderBG1;
+        private System.Windows.Forms.Label labelPanelHeaderBG2;
+        private System.Windows.Forms.Label labelPanelHeaderBG1;
+        private System.Windows.Forms.PictureBox picturePanelHeaderForeColor;
+        private System.Windows.Forms.Label labelPanelHeaderForeColor;
 
     }
 }

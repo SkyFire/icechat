@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,11 +65,11 @@ namespace IceChat
             }
             catch (ThreadAbortException ex)
             {
-                FormMain.Instance.ReportError(ex.Message, ex.StackTrace, "IdentServer::Listen Thread");
+                FormMain.Instance.WriteErrorFile("IdentServer ThreadAbort Error:" + ex.Message, ex.StackTrace);
             }
             catch (Exception e)
             {
-                FormMain.Instance.ReportError(e.Message, e.StackTrace, "IdentServer::Listen");
+                FormMain.Instance.WriteErrorFile("IdentServer Exception Error:" + e.Message, e.StackTrace);
             }
         }
 
@@ -144,7 +144,7 @@ namespace IceChat
             {
 
             }
-            System.Diagnostics.Debug.WriteLine("Ident Server Stopped");
+            //System.Diagnostics.Debug.WriteLine("Ident Server Stopped");
         }
 
     }

@@ -17,6 +17,8 @@ namespace IceChat
             {
                 components.Dispose();
             }
+            if (logClass != null)
+                logClass.Dispose();
             base.Dispose(disposing);
         }
 

@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ namespace IceChat
                 string msg;
                 string tempValue;
 
-                TabWindow t = null;
+                IceTabPage t = null;
 
                 if (RawServerIncomingData != null)
                     RawServerIncomingData(this, data);
@@ -132,7 +132,7 @@ namespace IceChat
                             serverSetting.RealServerName = RemoveColon(ircData[0]);
                             
                             //update the status bar
-                            if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Console)
+                            if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
                             {
                                 if (FormMain.Instance.InputPanel.CurrentConnection == this)
                                 {
@@ -348,6 +348,12 @@ namespace IceChat
                             msg = JoinString(ircData, 5, true) + " " + ircData[4];
                             WhoisData(this, ircData[3], msg);
                             break;
+                        case "338":     //whois information
+                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
+                                return;
+                            msg = JoinString(ircData, 4, false);
+                            WhoisData(this, ircData[3], msg);
+                            break;                        
                         case "378":     //whois information
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                                 return;
@@ -411,7 +417,7 @@ namespace IceChat
                             //4 is host
                             //5 added by
                             //6 added time
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 if (t.HasChannelInfo)
@@ -428,12 +434,12 @@ namespace IceChat
                             break;
                         case "315": //end of who reply
                             channel = ircData[3];                           
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 //end of who reply, do a channel refresh
-                                if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Channel)
-                                    if ((FormMain.Instance.NickList.CurrentWindow.WindowName == t.WindowName) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
+                                if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
+                                    if ((FormMain.Instance.NickList.CurrentWindow.TabCaption == t.TabCaption) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
                                         FormMain.Instance.NickList.RefreshList(t);
 
                             }
@@ -441,7 +447,7 @@ namespace IceChat
                         case "352": //who reply
                             //:stockholm.se.quakenet.org 352 Snerf2009 #icechat2009 Ice2009 IceChat.users.quakenet.org *.quakenet.org Snerf2009 H@x :0 The Chat Cool People Use
                             channel = ircData[3];                           
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 //t.UpdateNick(ircData[7], ircData[4] + "@" + ircData[5]);
@@ -450,7 +456,7 @@ namespace IceChat
                             break;
                         case "353": //channel user list
                             channel = ircData[4];
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 if (t.IsFullyJoined)
@@ -478,16 +484,16 @@ namespace IceChat
                         case "366":     //end of names
                             channel = ircData[3];
                             //channel is fully joined                            
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 //send a WHO command to get all the hosts
                                 if (t.Nicks.Count < 200)
-                                    SendData("WHO " + t.WindowName);
+                                    SendData("WHO " + t.TabCaption);
                                 
                                 t.IsFullyJoined = true;
-                                if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Channel)
-                                    if ((FormMain.Instance.NickList.CurrentWindow.WindowName == t.WindowName) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
+                                if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
+                                    if ((FormMain.Instance.NickList.CurrentWindow.TabCaption == t.TabCaption) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
                                         FormMain.Instance.NickList.RefreshList(t);
                             }
                             break;
@@ -497,7 +503,7 @@ namespace IceChat
                             //4 is host
                             //5 banned by
                             //6 ban time
-                            t = FormMain.Instance.GetWindow(this, channel, TabWindow.WindowType.Channel);
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
                                 if (t.HasChannelInfo)
@@ -549,12 +555,12 @@ namespace IceChat
                             if (serverSetting.RejoinChannels)
                             {
                                 //rejoin any channels that are open
-                                foreach (TabWindow tw in FormMain.Instance.TabMain.WindowTabs)
+                                foreach (IceTabPage tw in FormMain.Instance.TabMain.TabPages)
                                 {
-                                    if (tw.WindowStyle == TabWindow.WindowType.Channel)
+                                    if (tw.WindowStyle == IceTabPage.WindowType.Channel)
                                     {
                                         if (tw.Connection == this)
-                                            SendData("JOIN " + tw.WindowName);
+                                            SendData("JOIN " + tw.TabCaption);
                                     }
                                 }
                             }
@@ -745,8 +751,8 @@ namespace IceChat
                             }
                             else
                             {
-                                IALUserData(this, nick, host, channel);
                                 JoinChannel(this, channel, nick, host, true);
+                                IALUserData(this, nick, host, channel);
                             }
                             break;
 
@@ -773,8 +779,8 @@ namespace IceChat
                             host = HostFromFullHost(RemoveColon(ircData[0]));
                             tempValue = JoinString(ircData, 2, true);
 
-                            IALUserQuit(this, nick);
                             QuitServer(this, nick, host, tempValue);
+                            IALUserQuit(this, nick);
                             break;
 
                         case "NICK":
@@ -791,8 +797,8 @@ namespace IceChat
                                 serverSetting.NickName = tempValue;
                             }
 
-                            IALUserChange(this, nick, tempValue);
                             ChangeNick(this, nick, tempValue, HostFromFullHost(ircData[0]));
+                            IALUserChange(this, nick, tempValue);
 
                             break;
 
@@ -809,8 +815,8 @@ namespace IceChat
                             }
                             else
                             {
-                                IALUserPart(this, nick, channel);
                                 KickNick(this, channel, nick, msg, ircData[0]);
+                                IALUserPart(this, nick, channel);
                             }
                             break;
 
@@ -866,7 +872,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                ServerError(this, "Exception ParseData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+                FormMain.Instance.WriteErrorFile("ParseData Error:" + e.Message + "::" + data, e.StackTrace);
             }
         }
 

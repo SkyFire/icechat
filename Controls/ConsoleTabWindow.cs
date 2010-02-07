@@ -42,6 +42,7 @@ namespace IceChat
         public ConsoleTabWindow() : base()
         {
             InitializeComponent();
+            /*
             consoleTab.DrawMode = TabDrawMode.OwnerDrawFixed;
             consoleTab.SizeMode = TabSizeMode.Normal;
             consoleTab.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
@@ -50,6 +51,7 @@ namespace IceChat
             consoleTab.DrawItem += new DrawItemEventHandler(OnDrawItem);
             consoleTab.ControlRemoved += new ControlEventHandler(OnControlRemoved);
             consoleTab.Selecting += new TabControlCancelEventHandler(OnSelectingTab);
+            */
         }
 
 
@@ -123,8 +125,7 @@ namespace IceChat
                 {
                     lastMessageType = value;
                     //repaint the tab
-                    ((IceTabControl)this.Parent).RefreshTabs();
-
+                    ((IceTabControl)this.Parent).Invalidate(); 
                     FormMain.Instance.ServerTree.Invalidate();
                 }
             }

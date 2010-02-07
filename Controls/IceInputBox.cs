@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ namespace IceChat
         {
             //120 -- scroll up
             //see which control has focus in the main program
-            if (FormMain.Instance.CurrentWindowType != TabWindow.WindowType.Console)
+            if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.Console)
             {
                 if (FormMain.Instance.CurrentWindow != null)
                     ScrollWindow(e.Delta > 0);
@@ -90,7 +90,7 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow().ScrollWindow(scrollUp);
+                FormMain.Instance.TabMain.GetTabPage("Console").CurrentConsoleWindow().ScrollWindow(scrollUp);
 
         }
 
@@ -113,7 +113,7 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentWindow().ScrollWindowPage(scrollUp);
+                FormMain.Instance.TabMain.GetTabPage("Console").CurrentConsoleWindow().ScrollWindowPage(scrollUp);
 
         }
 
@@ -185,7 +185,7 @@ namespace IceChat
         
         private void NickComplete()
         {
-            if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Console)
+            if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
             {
                 //tab complete in Console, just send current nick
                 if (FormMain.Instance.InputPanel.CurrentConnection != null)
@@ -194,7 +194,7 @@ namespace IceChat
                     this.SelectionStart = this.Text.Length;
                 }
             }
-            else if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Channel)
+            else if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
             {
                 if (this.Text.Length == 0)
                     return;
@@ -211,7 +211,7 @@ namespace IceChat
                 if (Array.IndexOf(FormMain.Instance.InputPanel.CurrentConnection.ServerSetting.ChannelTypes, partialNick[0]) != -1)
                 {
                     //channel name complete
-                    this.Text = this.Text.Substring(0, this.Text.Length - partialNick.Length) + FormMain.Instance.CurrentWindow.WindowName;
+                    this.Text = this.Text.Substring(0, this.Text.Length - partialNick.Length) + FormMain.Instance.CurrentWindow.TabCaption;
                     this.SelectionStart = this.Text.Length;
                     this.nickNumber = -1;
                     return;
@@ -263,16 +263,43 @@ namespace IceChat
 					base.SelectedText = ((char)3).ToString();
 					e.Handled=true;
 				}
-				if (e.KeyCode == Keys.B)
+				else if (e.KeyCode == Keys.B)
 				{
 					base.SelectedText = ((char)2).ToString();
 					e.Handled=true;
 				}
-				if (e.KeyCode == Keys.U)
+				else if (e.KeyCode == Keys.U)
 				{
 					base.SelectedText = ((char)31).ToString();
 					e.Handled=true;
 				}
+                else if (e.KeyCode == Keys.S)
+                {
+                    FormMain.Instance.iceChatEditorToolStripMenuItem.PerformClick();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.P)
+                {
+                    FormMain.Instance.iceChatSettingsToolStripMenuItem.PerformClick();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.G)
+                {
+                    FormMain.Instance.iceChatColorsToolStripMenuItem.PerformClick();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.Tab)
+                {
+                    System.Diagnostics.Debug.WriteLine("ctrl tab not yet handled");
+                }
+                else if (e.KeyCode == Keys.PageUp)
+                {
+                    System.Diagnostics.Debug.WriteLine("ctrl pageup not yet handled");
+                }
+                else if (e.KeyCode == Keys.PageDown)
+                {
+                    System.Diagnostics.Debug.WriteLine("ctrl pagedown not yet handled");
+                }
 
 			}
 
@@ -334,7 +361,7 @@ namespace IceChat
             if (e.KeyCode == Keys.PageDown)
             {
                 //scroll window down one page
-                if (FormMain.Instance.CurrentWindowType != TabWindow.WindowType.Console)
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.Console)
                 {
                     if (FormMain.Instance.CurrentWindow != null)
                         ScrollWindowPage(false);
@@ -350,7 +377,7 @@ namespace IceChat
             if (e.KeyCode == Keys.PageUp)
             {
                 //scroll window down one page
-                if (FormMain.Instance.CurrentWindowType != TabWindow.WindowType.Console)
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.Console)
                 {
                     if (FormMain.Instance.CurrentWindow != null)
                         ScrollWindowPage(true);

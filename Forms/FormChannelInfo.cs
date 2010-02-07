@@ -10,21 +10,37 @@ namespace IceChat
 {
     public partial class FormChannelInfo : Form
     {
-        private TabWindow channel;
+        private IceTabPage channel;
         
-        public FormChannelInfo(TabWindow Channel)
+        public FormChannelInfo(IceTabPage Channel)
         {
             InitializeComponent();
             this.FormClosing += new FormClosingEventHandler(OnFormClosing);
 
             this.channel = Channel;
             this.textTopic.Text = StripAllCodes(channel.ChannelTopic);
-            this.Text = channel.WindowName + "[" + channel.ChannelModes + "]";
+            this.Text = channel.TabCaption + "[" + channel.ChannelModes + "]";
             this.channel.HasChannelInfo = true;
             this.channel.ChannelInfoForm = this;
 
+            buttonRemoveBan.Enabled = false;
+
+            User u = channel.GetNick(channel.Connection.ServerSetting.NickName);
+            for (int y = 0; y < u.Level.Length; y++)
+            {
+                if (u.Level[y])
+                {
+                    if (channel.Connection.ServerSetting.StatusModes[0][y] == 'q')
+                        buttonRemoveBan.Enabled = true;
+                    else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'a')
+                        buttonRemoveBan.Enabled = true;
+                    else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                        buttonRemoveBan.Enabled = true;
+                }
+            }
+
             //parse out the modes
-            foreach (TabWindow.channelMode cm in channel.ChannelModesHash.Values)
+            foreach (IceTabPage.channelMode cm in channel.ChannelModesHash.Values)
             {
                 switch (cm.mode)
                 {
@@ -68,7 +84,6 @@ namespace IceChat
         {
             this.channel.HasChannelInfo = false;
             this.channel.ChannelInfoForm = null;
-
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -93,6 +108,16 @@ namespace IceChat
             }
             else
                 return "";
+        }
+
+        private void buttonRemoveBan_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listViewBans.SelectedItems)
+            {
+                FormMain.Instance.ParseOutGoingCommand(channel.Connection, "/mode " + channel.TabCaption + " -b " + eachItem.Text);
+                listViewBans.Items.Remove(eachItem);
+            }
+
         }
 
     }

@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,8 +108,8 @@ namespace IceChat
 
         private readonly int MaxTextLines = 500;
 
-        //private string logFile;
         private System.IO.FileStream logFile;
+        private Logging logClass;
 
         public TextWindow()
         {
@@ -321,15 +321,15 @@ namespace IceChat
             string popupType = "";
             string windowName = "";
             
-            if (this.Parent.GetType() == typeof(TabWindow))
+            if (this.Parent.GetType() == typeof(IceTabPage))
             {
-                TabWindow t = (TabWindow)this.Parent;
-                if (t.WindowStyle == TabWindow.WindowType.Channel)
+                IceTabPage t = (IceTabPage)this.Parent;
+                if (t.WindowStyle == IceTabPage.WindowType.Channel)
                     popupType = "Channel";
-                if (t.WindowStyle == TabWindow.WindowType.Query)
+                if (t.WindowStyle == IceTabPage.WindowType.Query)
                     popupType = "Query";
 
-                windowName = t.WindowName;
+                windowName = t.TabCaption;
             }
             if (this.Parent.GetType() == typeof(ConsoleTab))
             {
@@ -443,9 +443,9 @@ namespace IceChat
                 ConsoleTab c = (ConsoleTab)this.Parent;
                 FormMain.Instance.ParseOutGoingCommand(c.Connection, command);
             }
-            else if (this.Parent.GetType() == typeof(TabWindow))
+            else if (this.Parent.GetType() == typeof(IceTabPage))
             {
-                TabWindow t = (TabWindow)this.Parent;
+                IceTabPage t = (IceTabPage)this.Parent;
                 FormMain.Instance.ParseOutGoingCommand(t.Connection, command);
             }
 
@@ -483,9 +483,9 @@ namespace IceChat
                 }                
                 
                 //check if it is a channel
-                if (this.Parent.GetType() == typeof(TabWindow))
+                if (this.Parent.GetType() == typeof(IceTabPage))
                 {
-                    TabWindow t = (TabWindow)this.Parent;
+                    IceTabPage t = (IceTabPage)this.Parent;
                     if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
                     {
                         FormMain.Instance.ParseOutGoingCommand(t.Connection, "/join " + clickedWord);
@@ -515,9 +515,9 @@ namespace IceChat
                 ConsoleTab c = (ConsoleTab)this.Parent;
                 FormMain.Instance.ParseOutGoingCommand(c.Connection, "/lusers");
             }
-            else if (this.Parent.GetType() == typeof(TabWindow))
+            else if (this.Parent.GetType() == typeof(IceTabPage))
             {
-                TabWindow t = (TabWindow)this.Parent;
+                IceTabPage t = (IceTabPage)this.Parent;
                 FormMain.Instance.ParseOutGoingCommand(t.Connection, "/channelinfo");
             }
         }
@@ -598,41 +598,58 @@ namespace IceChat
             Invalidate();
         }
 
+        internal void SetLogFile()
+        {
+            if (this.Parent.GetType() == typeof(IceTabPage))
+            {
+                //get the proper object
+                IceTabPage t = (IceTabPage)this.Parent;
+                logClass = new Logging(t);
+            }
+            else if (this.Parent.GetType() == typeof(ConsoleTab))
+            {
+                ConsoleTab c = (ConsoleTab)this.Parent;
+                logClass = new Logging(c);
+            }
+        }
+
+        /*
         internal void SetLogFile(string logFolder)
         {
+
             if (!System.IO.File.Exists(logFolder))
                 System.IO.Directory.CreateDirectory(logFolder);
 
             string date = "-" + System.DateTime.Today.ToString("yyyy-MM-dd");
 
             //get the type
-            if (this.Parent.GetType() == typeof(TabWindow))
+            if (this.Parent.GetType() == typeof(IceTabPage))
             {
                 //get the name of the channel
-                TabWindow t = (TabWindow)this.Parent;
-                if (t.WindowStyle == TabWindow.WindowType.Channel)
+                IceTabPage t = (IceTabPage)this.Parent;
+                if (t.WindowStyle == IceTabPage.WindowType.Channel)
                 {
                     if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel"))
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel");
 
                     if (FormMain.Instance.IceChatOptions.SeperateLogs)
                     {
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                     }
                     else
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
 
                 }
-                else if (t.WindowStyle == TabWindow.WindowType.Query)
+                else if (t.WindowStyle == IceTabPage.WindowType.Query)
                 {
                     if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Query"))
                         System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Query");
                     if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                     else
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.WindowName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 }
-                else if (t.WindowStyle == TabWindow.WindowType.Debug)
+                else if (t.WindowStyle == IceTabPage.WindowType.Debug)
                 {
                     logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 }
@@ -649,6 +666,8 @@ namespace IceChat
 
         internal void CloseLogFile()
         {
+            return;
+            
             if (logFile != null)
             {
                 try
@@ -662,7 +681,7 @@ namespace IceChat
                 }
             }
         }
-
+        */
         internal bool ShowTimeStamp
         {
             get { return showTimeStamp; }
@@ -671,127 +690,131 @@ namespace IceChat
         
         internal void AppendText(string newLine, int color)
         {
-            //adds a new line to the Text Window
-            if (newLine.Length == 0)
-                return;
-
-            newLine = newLine.Replace("\n", " ");
-            newLine = newLine.Replace("&#x3;", colorChar.ToString());
-            newLine = ParseUrl(newLine);
-
-            //get the color from the line
-            if (newLine[0] == colorChar)
+            try
             {
-                if (Char.IsNumber(newLine[1]) && Char.IsNumber(newLine[2]))
-                    foreColor = Convert.ToInt32(newLine[1].ToString() + newLine[2].ToString());
-                else if (Char.IsNumber(newLine[1]) && !Char.IsNumber(newLine[2]))
-                    foreColor = Convert.ToInt32(newLine[1].ToString());
 
-                //check of foreColor is less then 32     
-                if (foreColor > 31)
+                //adds a new line to the Text Window
+                if (newLine.Length == 0)
+                    return;
+
+                newLine = newLine.Replace("\n", " ");
+                newLine = newLine.Replace("&#x3;", colorChar.ToString());
+                newLine = ParseUrl(newLine);
+
+                //get the color from the line
+                if (newLine[0] == colorChar)
                 {
-                    foreColor = foreColor - 32;
+                    if (Char.IsNumber(newLine[1]) && Char.IsNumber(newLine[2]))
+                        foreColor = Convert.ToInt32(newLine[1].ToString() + newLine[2].ToString());
+                    else if (Char.IsNumber(newLine[1]) && !Char.IsNumber(newLine[2]))
+                        foreColor = Convert.ToInt32(newLine[1].ToString());
+
+                    //check of foreColor is less then 32     
                     if (foreColor > 31)
+                    {
                         foreColor = foreColor - 32;
+                        if (foreColor > 31)
+                            foreColor = foreColor - 32;
+                    }
                 }
-            }
-            else
-                foreColor = color;
+                else
+                    foreColor = color;
 
-            if (!singleLine && showTimeStamp)
-                newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
+                if (!singleLine && showTimeStamp)
+                    newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
 
-            if (noColorMode)
-                newLine = StripCodes(newLine);
-            else
-                newLine = RedefineColorCodes(newLine);
+                if (noColorMode)
+                    newLine = StripCodes(newLine);
+                else
+                    newLine = RedefineColorCodes(newLine);
 
-            if (logFile != null)
-            {
-                //logFile.WriteLine(StripCodes(newLine));
-                logFile.Write(System.Text.Encoding.Default.GetBytes(StripCodes(newLine) + "\r\n"), 0, StripCodes(newLine).Length + 2);
-                logFile.Flush();
-            }
-
-            totalLines++;
-
-            //emoticons not being parsed as of yet
-            newLine = ParseEmoticons(newLine);
-
-            if (singleLine) totalLines = 1;
-
-            //check if 500 lines, and trim if so
-            if (totalLines >= (MaxTextLines - 5))
-            {
-                System.Diagnostics.Debug.WriteLine("Reset Lines back to " + MaxTextLines + ":" + totalLines);
-                int x = 1;
-                for (int i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
-                {
-                    textLines[x].totalLines = textLines[i].totalLines;
-                    textLines[x].width = textLines[i].width;
-                    textLines[x].line = textLines[i].line;
-                    textLines[x].textColor = textLines[i].textColor;
-                    x++;
-                }
-
-                for (int i = (MaxTextLines - 49); i < MaxTextLines; i++)
-                {
-                    textLines[i].totalLines = 0;
-                    textLines[i].line = "";
-                    textLines[i].width = 0;
-                }
-
-                totalLines = MaxTextLines - 50;
-
-                System.Diagnostics.Debug.WriteLine("Reset1:" + totalLines + ":" + totalDisplayLines);
-
-                if (this.Height != 0)
-                {
-                    totalDisplayLines = FormatLines(totalLines, 1, 0);
-                    UpdateScrollBar(totalDisplayLines);
-                    Invalidate();
-                }
-
+                if (logClass != null)
+                    logClass.WriteLogFile(StripCodes(newLine));
+                
                 totalLines++;
-                System.Diagnostics.Debug.WriteLine("Reset2:" + totalLines + ":" + totalDisplayLines);
+
+                //emoticons not being parsed as of yet
+                newLine = ParseEmoticons(newLine);
+
+                if (singleLine) totalLines = 1;
+
+                //check if 500 lines, and trim if so
+                if (totalLines >= (MaxTextLines - 5))
+                {
+                    //System.Diagnostics.Debug.WriteLine("Reset Lines back to " + MaxTextLines + ":" + totalLines);
+                    int x = 1;
+                    for (int i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
+                    {
+                        textLines[x].totalLines = textLines[i].totalLines;
+                        textLines[x].width = textLines[i].width;
+                        textLines[x].line = textLines[i].line;
+                        textLines[x].textColor = textLines[i].textColor;
+                        x++;
+                    }
+
+                    for (int i = (MaxTextLines - 49); i < MaxTextLines; i++)
+                    {
+                        textLines[i].totalLines = 0;
+                        textLines[i].line = "";
+                        textLines[i].width = 0;
+                    }
+
+                    totalLines = MaxTextLines - 50;
+
+                    //System.Diagnostics.Debug.WriteLine("Reset1:" + totalLines + ":" + totalDisplayLines);
+
+                    if (this.Height != 0)
+                    {
+                        totalDisplayLines = FormatLines(totalLines, 1, 0);
+                        UpdateScrollBar(totalDisplayLines);
+                        Invalidate();
+                    }
+
+                    totalLines++;
+                    //System.Diagnostics.Debug.WriteLine("Reset2:" + totalLines + ":" + totalDisplayLines);
+                }
+
+                //add line numbers for temp measure
+                //newLine = totalLines.ToString() + ":" + newLine; 
+
+                textLines[totalLines].line = newLine;
+
+                Graphics g = this.CreateGraphics();
+                //properly measure for bold characters needed
+                StringFormat sf = StringFormat.GenericTypographic;
+                sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                textLines[totalLines].width = (int)g.MeasureString(StripCodes(newLine), this.Font, 0, sf).Width;
+
+                g.Dispose();
+
+                textLines[totalLines].textColor = foreColor;
+
+                int addedLines = FormatLines(totalLines, totalLines, totalDisplayLines);
+                addedLines -= totalDisplayLines;
+
+                textLines[totalLines].totalLines = addedLines;
+
+                for (int i = totalDisplayLines + 1; i < totalDisplayLines + addedLines; i++)
+                    displayLines[i].textLine = totalLines;
+
+                totalDisplayLines += addedLines;
+
+                if (singleLine)
+                {
+                    totalLines = 1;
+                    totalDisplayLines = 1;
+                    displayLines[1].textLine = 1;
+                    textLines[1].totalLines = 1;
+                }
+
+                UpdateScrollBar(totalDisplayLines);
+
+                Invalidate();
             }
-
-            //add line numbers for temp measure
-            //newLine = totalLines.ToString() + ":" + newLine; 
-
-            textLines[totalLines].line = newLine;
-
-            Graphics g = this.CreateGraphics();
-            //properly measure for bold characters needed
-            StringFormat sf = StringFormat.GenericTypographic;
-            sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-            textLines[totalLines].width = (int)g.MeasureString(StripCodes(newLine), this.Font, 0, sf).Width;
-            
-            g.Dispose();
-
-            textLines[totalLines].textColor = foreColor;
-
-            int addedLines = FormatLines(totalLines, totalLines, totalDisplayLines);
-            addedLines -= totalDisplayLines;
-
-            textLines[totalLines].totalLines = addedLines;
-
-            for (int i = totalDisplayLines + 1; i < totalDisplayLines + addedLines; i++)
-                displayLines[i].textLine = totalLines;
-
-            totalDisplayLines += addedLines;
-
-            if (singleLine)
+            catch (Exception e)
             {
-                totalLines = 1;
-                totalDisplayLines = 1;
-                displayLines[1].textLine = 1;
-                textLines[1].totalLines = 1;
+                FormMain.Instance.WriteErrorFile("AppendText Error:" + e.Message, e.StackTrace);
             }
-                        
-            UpdateScrollBar(totalDisplayLines);
-
-            Invalidate();
         }
         /// <summary>
         /// Used to scroll the Text Window a Page at a Time
@@ -1102,18 +1125,18 @@ namespace IceChat
                 //check of the line width is the same or less then the display width            
                 if (textLines[currentLine].width <= displayWidth)
                 {
-                try
-                {
-                    //System.Diagnostics.Debug.WriteLine("fits 1 line");
-                    displayLines[line].line = textLines[currentLine].line;
-                    displayLines[line].textLine = currentLine;
-                    displayLines[line].textColor = textLines[currentLine].textColor;
-                    line++;
-                }
-                catch (Exception e)
-                {
-                    System.Diagnostics.Debug.WriteLine("Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length + ":" + e.StackTrace);
-                }
+                    try
+                    {
+                        //System.Diagnostics.Debug.WriteLine("fits 1 line");
+                        displayLines[line].line = textLines[currentLine].line;
+                        displayLines[line].textLine = currentLine;
+                        displayLines[line].textColor = textLines[currentLine].textColor;
+                        line++;
+                    }
+                    catch (Exception e)
+                    {
+                        FormMain.Instance.WriteErrorFile("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length, e.StackTrace);
+                    }
                 }
                 else
                 {
@@ -1177,8 +1200,8 @@ namespace IceChat
                     }
                     catch(Exception e)
                     {
-                        System.Diagnostics.Debug.WriteLine("Error:" + startLine + ":" + endLine +  ":" + ii + ":" + currentLine + ":" + textLines.Length + ":" +e.StackTrace);
                         System.Diagnostics.Debug.WriteLine("Line:" + curLine.Length + ":" + curLine);
+                        FormMain.Instance.WriteErrorFile("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length, e.StackTrace);
                     }
                     
                     //get the remainder
@@ -1212,60 +1235,59 @@ namespace IceChat
         /// </summary>
         private void OnDisplayText(PaintEventArgs e)
         {
-            int startY;
-            float startX = 0;
-            int LinesToDraw = 0;
-            
-            StringBuilder buildString = new StringBuilder();
-            int textSize;
-            
-            int curLine;
-            int curForeColor, curBackColor;
-            char[] ch;
-            
-            Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
-            Graphics g = Graphics.FromImage(buffer);
-
-            g.Clear(IrcColor.colors[backColor]);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;            
-
-            if (totalLines == 0)
-            {
-                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
-                buffer.Dispose();
-                g.Dispose();
-                return;
-            }
-
-            int val = vScrollBar.Value;
-
-            for (curLine = val; curLine > val - showMaxLines; curLine--)
-                if (curLine > 0) 
-                    LinesToDraw++;
-            
-            curLine = val - LinesToDraw;
-
-            if (singleLine)
-            {
-                startY = 0;
-                LinesToDraw = 1;
-                curLine = 0;
-            }
-            else
-                startY = this.Height - (lineSize * LinesToDraw) - (lineSize / 2);
-
-            StringFormat sf = StringFormat.GenericTypographic;
-            sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-            int lineCounter = 0;
-            
-            bool underline = false;
-            bool isInUrl = false;
-            Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
-            
             try
             {
+                int startY;
+                float startX = 0;
+                int LinesToDraw = 0;
+                
+                StringBuilder buildString = new StringBuilder();
+                int textSize;
+                
+                int curLine;
+                int curForeColor, curBackColor;
+                char[] ch;
+                
+                Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+                Graphics g = Graphics.FromImage(buffer);
 
+                g.Clear(IrcColor.colors[backColor]);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;            
+
+                if (totalLines == 0)
+                {
+                    e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+                    buffer.Dispose();
+                    g.Dispose();
+                    return;
+                }
+
+                int val = vScrollBar.Value;
+
+                for (curLine = val; curLine > val - showMaxLines; curLine--)
+                    if (curLine > 0) 
+                        LinesToDraw++;
+                
+                curLine = val - LinesToDraw;
+
+                if (singleLine)
+                {
+                    startY = 0;
+                    LinesToDraw = 1;
+                    curLine = 0;
+                }
+                else
+                    startY = this.Height - (lineSize * LinesToDraw) - (lineSize / 2);
+
+                StringFormat sf = StringFormat.GenericTypographic;
+                sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                int lineCounter = 0;
+                
+                bool underline = false;
+                bool isInUrl = false;
+                Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
+            
                 while (lineCounter < LinesToDraw)
                 {
                     int i = 0, j = 0;
@@ -1514,18 +1536,18 @@ namespace IceChat
                     buildString = new StringBuilder();
 
                 }
+                buildString = null;
+
+                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+                buffer.Dispose();
+                sf.Dispose();
+                g.Dispose();
             }
             catch(Exception ee)
             {
-                System.Diagnostics.Debug.WriteLine(ee.Message + "\r\n" + ee.StackTrace);
+                FormMain.Instance.WriteErrorFile("TextWindow OnDisplayText Error:" + ee.Message, ee.StackTrace);
             }
 
-            buildString = null;
-
-            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
-            buffer.Dispose();
-            sf.Dispose();
-            g.Dispose();
         }
         
         #region TextWidth and TextSizes Methods

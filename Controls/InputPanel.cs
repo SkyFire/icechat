@@ -112,10 +112,5 @@ namespace IceChat
             FormMain.Instance.FocusInputBox();
         }
 
-        private void textInput_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }

@@ -13,6 +13,7 @@ namespace IceChat
         public FormAbout()
         {
             InitializeComponent();
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version;
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

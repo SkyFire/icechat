@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,30 @@ namespace IceChat
         [STAThread]
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormMain());
             
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                Exception ex = (Exception)e.ExceptionObject;
+                //System.Diagnostics.Debug.WriteLine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "UnHandledException.log");
+                System.IO.StreamWriter io = new System.IO.StreamWriter(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "UnHandledException.log");
+                io.WriteLine(ex.Message + ":" + ex.StackTrace);
+                io.Flush();
+                io.Close();
+                MessageBox.Show("IceChat 2009 Unhandled Exception Error\n\n" + ex.Message + ex.StackTrace, "Fatal Error - Written to Error Log", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+            finally
+            {
+                Application.Exit();
+            }
         }
     }
 }

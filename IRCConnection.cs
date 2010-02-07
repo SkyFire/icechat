@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,9 +144,9 @@ namespace IceChat
             string msg = GetMessageFormat("Server Disconnect");
             msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
             
-            foreach (TabWindow t in FormMain.Instance.TabMain.WindowTabs)
+            foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
             {
-                if (t.WindowStyle == TabWindow.WindowType.Channel || t.WindowStyle == TabWindow.WindowType.Query)
+                if (t.WindowStyle == IceTabPage.WindowType.Channel || t.WindowStyle == IceTabPage.WindowType.Query)
                 {
                     if (t.Connection == this)
                     {
@@ -157,7 +157,7 @@ namespace IceChat
                         t.LastMessageType = FormMain.ServerMessageType.ServerMessage;
 
                         if (FormMain.Instance.CurrentWindow == t)
-                            FormMain.Instance.NickList.Header = t.WindowName + ":0";                            
+                            FormMain.Instance.NickList.Header = t.TabCaption + ":0";                            
                     }
                 }
             }
@@ -165,12 +165,13 @@ namespace IceChat
 
             FormMain.Instance.ServerTree.Invalidate();
 
-            if (FormMain.Instance.CurrentWindowType == TabWindow.WindowType.Console)
+            if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
                 if (FormMain.Instance.InputPanel.CurrentConnection == this)
                     FormMain.Instance.StatusText(serverSetting.NickName + " disconnected (" + serverSetting.ServerName + ")");
 
             serverSocket = null;
-            
+            serverSetting.ConnectedTime = DateTime.Now;
+
             commandQueue.Clear();
             initialLogon = false;
             triedAltNickName = false;
@@ -240,6 +241,8 @@ namespace IceChat
             try
             {
                 thisSocket.workSocket.BeginReceive(thisSocket.dataBuffer, 0, thisSocket.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), thisSocket);
+
+                this.serverSetting.ConnectedTime = DateTime.Now;
 
                 FormMain.Instance.ServerTree.Invalidate();
 
@@ -409,8 +412,7 @@ namespace IceChat
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
 
                 }
-            }            
-            
+            }                        
             catch (SocketException se)
             {
                 ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());

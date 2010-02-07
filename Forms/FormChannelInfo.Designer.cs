@@ -45,10 +45,11 @@
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.buttonClose = new System.Windows.Forms.Button();
             this.listViewExceptions = new System.Windows.Forms.ListView();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.buttonClose = new System.Windows.Forms.Button();
+            this.buttonRemoveBan = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -180,6 +181,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.buttonRemoveBan);
             this.tabPage2.Controls.Add(this.listViewBans);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
@@ -197,7 +199,7 @@
             this.listViewBans.Location = new System.Drawing.Point(8, 6);
             this.listViewBans.MultiSelect = false;
             this.listViewBans.Name = "listViewBans";
-            this.listViewBans.Size = new System.Drawing.Size(419, 244);
+            this.listViewBans.Size = new System.Drawing.Size(419, 226);
             this.listViewBans.TabIndex = 0;
             this.listViewBans.UseCompatibleStateImageBehavior = false;
             this.listViewBans.View = System.Windows.Forms.View.Details;
@@ -205,7 +207,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Banned Host";
-            this.columnHeader1.Width = 159;
+            this.columnHeader1.Width = 191;
             // 
             // columnHeader2
             // 
@@ -222,16 +224,6 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Exception List";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // buttonClose
-            // 
-            this.buttonClose.Location = new System.Drawing.Point(348, 302);
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(93, 27);
-            this.buttonClose.TabIndex = 1;
-            this.buttonClose.Text = "Close";
-            this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // listViewExceptions
             // 
@@ -255,6 +247,26 @@
             // 
             this.columnHeader4.Text = "Added By";
             this.columnHeader4.Width = 308;
+            // 
+            // buttonClose
+            // 
+            this.buttonClose.Location = new System.Drawing.Point(348, 302);
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(93, 27);
+            this.buttonClose.TabIndex = 1;
+            this.buttonClose.Text = "Close";
+            this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // buttonRemoveBan
+            // 
+            this.buttonRemoveBan.Location = new System.Drawing.Point(324, 238);
+            this.buttonRemoveBan.Name = "buttonRemoveBan";
+            this.buttonRemoveBan.Size = new System.Drawing.Size(107, 23);
+            this.buttonRemoveBan.TabIndex = 1;
+            this.buttonRemoveBan.Text = "Remove Ban";
+            this.buttonRemoveBan.UseVisualStyleBackColor = true;
+            this.buttonRemoveBan.Click += new System.EventHandler(this.buttonRemoveBan_Click);
             // 
             // FormChannelInfo
             // 
@@ -304,5 +316,6 @@
         private System.Windows.Forms.ListView listViewExceptions;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Button buttonRemoveBan;
     }
 }

@@ -199,6 +199,7 @@ namespace IceChat
         */
         internal void UpdateNick(string nick, string mode, bool addMode)
         {
+            /*
             string justNick = nick;
             
             for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
@@ -215,11 +216,12 @@ namespace IceChat
                     if (mode == connection.ServerSetting.StatusModes[1][i].ToString())
                         u.Level[i] = addMode;
 
-                if (FormMain.Instance.CurrentWindowType != WindowType.Console)
-                    if (FormMain.Instance.CurrentWindow.WindowName == this.windowName)
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.Console)
+                    if (FormMain.Instance.CurrentWindow.TabCaption == this.windowName)
                         if (FormMain.Instance.CurrentWindow.Connection == this.connection)
                             FormMain.Instance.NickList.RefreshList(this);
             }
+             */ 
         }
 
 
@@ -252,6 +254,7 @@ namespace IceChat
 
         internal void AddNick(string nick, bool refresh)
         {
+            /*
             //replace any user modes from the nick
             string justNick = nick;
             for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
@@ -271,6 +274,7 @@ namespace IceChat
                         if (FormMain.Instance.CurrentWindow.Connection == this.connection)
                             FormMain.Instance.NickList.RefreshList(this);
             }
+             */ 
         }
         /*            
         internal void AddNick(string nick, string host, bool refresh)
@@ -302,6 +306,7 @@ namespace IceChat
         */
         internal void RemoveNick(string nick)
         {
+            /*
             nicks.Remove(nick);
 
             if (FormMain.Instance.CurrentWindow != null && FormMain.Instance.CurrentWindowType != WindowType.Console)
@@ -312,6 +317,7 @@ namespace IceChat
                         FormMain.Instance.NickList.RefreshList(this);
                 }
             }
+             */ 
         }
 
         internal void ClearNicks()
@@ -477,8 +483,9 @@ namespace IceChat
             {
                 if (lastMessageType != value)
                 {
+                    /*
                     //check if we are the current window or not
-                    if (FormMain.Instance.CurrentWindowType != WindowType.Console)
+                    if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.Console)
                     {
                         if (this == FormMain.Instance.CurrentWindow)
                         {
@@ -488,9 +495,10 @@ namespace IceChat
                     }
 
                     lastMessageType = value;
-                    ((IceTabControl)this.Parent).RefreshTabs();
+                    ((MainTabControl)this.Parent).RefreshTabs();
                     FormMain.Instance.ServerTree.Invalidate();
-                }
+                
+                     */ }
             }
         }
 

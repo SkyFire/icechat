@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,12 @@ namespace IceChat
         private int _tabBarCurrentBG2 = 0;
         private int _tabBarOtherBG1 = 14;
         private int _tabBarOtherBG2 = 0;
+        private int _tabBarHoverBG1 = 0;
+        private int _tabBarHoverBG2 = 7;
+
+        private int _panelHeaderBGColor1 = 15;
+        private int _panelHeaderBGColor2 = 0;
+        private int _panelHeaderForeColor = 1;
 
         private int _consoleBack = 0;
         private int _channelBack = 0;
@@ -170,6 +176,27 @@ namespace IceChat
         [XmlElement("TabBarOtherBG2")]
         public int TabBarOtherBG2
         { get { return _tabBarOtherBG2; } set { _tabBarOtherBG2 = value; } }
+
+        [XmlElement("TabBarHoverBG1")]
+        public int TabBarHoverBG1
+        { get { return _tabBarHoverBG1; } set { _tabBarHoverBG1 = value; } }
+
+        [XmlElement("TabBarHoverBG2")]
+        public int TabBarHoverBG2
+        { get { return _tabBarHoverBG2; } set { _tabBarHoverBG2 = value; } }
+
+        [XmlElement("PanelHeaderBG1")]
+        public int PanelHeaderBG1
+        { get { return _panelHeaderBGColor1; } set { _panelHeaderBGColor1 = value; } }
+
+        [XmlElement("PanelHeaderBG2")]
+        public int PanelHeaderBG2
+        { get { return _panelHeaderBGColor2; } set { _panelHeaderBGColor2 = value; } }
+
+        [XmlElement("PanelHeaderForeColor")]
+        public int PanelHeaderForeColor
+        { get { return _panelHeaderForeColor; } set { _panelHeaderForeColor = value; } }
+
     }
     
     

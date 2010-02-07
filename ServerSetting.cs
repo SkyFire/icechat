@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ namespace IceChat
         private string _quitMessage = "$randquit";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
-
+        
         [XmlAttribute("ServerID")]
         public int ID
         { get; set; }
@@ -218,6 +218,11 @@ namespace IceChat
         [XmlIgnore()]
         public DateTime AwayStart
         { get; set; }
+
+        [XmlIgnore()]
+        public DateTime ConnectedTime
+        { get; set; }
+
     
     }
     

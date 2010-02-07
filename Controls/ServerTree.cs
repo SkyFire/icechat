@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ namespace IceChat
             
             g.Dispose();
 
-            SelectNodeByIndex(nodeNumber);
+            SelectNodeByIndex(nodeNumber, true);
 
         }
 
@@ -184,20 +184,20 @@ namespace IceChat
                             toolTipNode = nodeNumber;
                         }
                     }
-                    else if (findNode.GetType() == typeof(TabWindow))
+                    else if (findNode.GetType() == typeof(IceTabPage))
                     {
                         //this is a window, switch to this channel/query
                         if (toolTipNode != nodeNumber)
                         {
-                            if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Channel)
+                            if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Channel)
                             {
                                 toolTip.ToolTipTitle = "Channel Information";
-                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName + " {" + ((TabWindow)findNode).Nicks.Count + "} " + "[" + ((TabWindow)findNode).ChannelModes + "]");
+                                toolTip.SetToolTip(this, ((IceTabPage)findNode).TabCaption + " {" + ((IceTabPage)findNode).Nicks.Count + "} " + "[" + ((IceTabPage)findNode).ChannelModes + "]");
                             }
                             else
                             {
                                 toolTip.ToolTipTitle = "User Information";
-                                toolTip.SetToolTip(this, ((TabWindow)findNode).WindowName);
+                                toolTip.SetToolTip(this, ((IceTabPage)findNode).TabCaption);
                             }
                             toolTipNode = nodeNumber;
                         }
@@ -212,70 +212,97 @@ namespace IceChat
             g.Dispose();
         }
 
-        internal void SelectNodeByIndex(int nodeNumber)
+        internal void SelectNodeByIndex(int nodeNumber, bool RefreshMainTab)
         {
-            if (nodeNumber <= serverNodes.Count)
-                selectedNodeIndex = nodeNumber;
-            else
-                selectedNodeIndex = 0;
-            selectedServerID = 0;
-
-			Invalidate();
-            object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode != null)
+            try
             {
-                if (findNode.GetType() == typeof(ServerSetting))
-                {
-                    //this is a server, switch to console
-                    FormMain.Instance.TabMain.SelectTab(0);
 
-                    //(ConsoleTabWindow)tabMain.TabPages[0]//find the correct tab for the server tab
-                    foreach (ConsoleTab c in ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.TabPages)
+                if (nodeNumber <= serverNodes.Count)
+                    selectedNodeIndex = nodeNumber;
+                else
+                    selectedNodeIndex = 0;
+
+                selectedServerID = 0;
+
+                //System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
+
+                Invalidate();
+                object findNode = FindNodeValue(selectedNodeIndex);
+                if (findNode != null)
+                {
+                    if (findNode.GetType() == typeof(ServerSetting))
                     {
-                        if (c.Connection != null)
+                        //this is a server, switch to console
+                        if (RefreshMainTab)
+                            FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.GetTabPage("Console"));
+
+                        //find the correct tab for the server tab
+                        foreach (ConsoleTab c in FormMain.Instance.TabMain.GetTabPage("Console").ConsoleTab.TabPages)
                         {
-                            if (c.Connection.ServerSetting == ((ServerSetting)findNode))
+                            if (c.Connection != null)
                             {
-                                //found the connection, switch to this tab in the Console Tab Window
-                                ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedTab = c;
-                                return;
+                                if (c.Connection.ServerSetting == ((ServerSetting)findNode))
+                                {
+                                    //found the connection, switch to this tab in the Console Tab Window
+                                    FormMain.Instance.TabMain.GetTabPage("Console").SelectConsoleTab(c);
+                                    return;
+                                }
                             }
                         }
+                        //select the default console window
+                        FormMain.Instance.TabMain.GetTabPage("Console").ConsoleTab.SelectedIndex = 0;
+                        return;
                     }
 
-                    //select the default console window
-                    ((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).ConsoleTab.SelectedIndex = 0;
-                    return;
+                    else if (findNode.GetType() == typeof(IceTabPage))
+                    {
+                        //this is a window, switch to this channel/query
+                        if (RefreshMainTab)
+                            FormMain.Instance.TabMain.SelectTab((IceTabPage)findNode);
+                        return;
+                    }
                 }
-                
-                else if (findNode.GetType() == typeof(TabWindow))
-                {
-                    //this is a window, switch to this channel/query
-                    FormMain.Instance.TabMain.SelectTab((TabWindow)findNode);
-                    return;
-                }
+            }
+            catch (Exception e)
+            {
+                FormMain.Instance.WriteErrorFile("SelectNodeByIndex:" + e.Message, e.StackTrace);
             }
         }
 
-        internal void SelectTab(object selectedNode)
+        internal void SelectTab(object selectedNode, bool RefreshMainTab)
         {
+            //System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
+            
             if (selectedNode.GetType() == typeof(ServerSetting))
             {
+                //System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
+                
                 //this is a console tab
-                SelectNodeByIndex(FindServerNodeMatch(selectedNode));
+                int node = FindServerNodeMatch(selectedNode);
+                //System.Diagnostics.Debug.WriteLine("find node:" + node);
+
+                SelectNodeByIndex(node, RefreshMainTab);
+                
+
+               // System.Diagnostics.Debug.WriteLine("select tab server setting 2");
             }
-            else if (selectedNode.GetType() == typeof(TabWindow))
+            else if (selectedNode.GetType() == typeof(IceTabPage))
             {
                 //this is a window tab
-                SelectNodeByIndex(FindWindowNodeMatch(selectedNode));
-            }
-            else if (selectedNode.GetType() == typeof(ConsoleTabWindow))
-            {
-                //this is the main console tab
-                if (((ConsoleTab)((ConsoleTabWindow)selectedNode).ConsoleTab.SelectedTab).Connection != null)
-                    SelectNodeByIndex(FindServerNodeMatch(((ConsoleTab)((ConsoleTabWindow)selectedNode).ConsoleTab.SelectedTab).Connection.ServerSetting));
+                //check if it is a console tab or not
+                //System.Diagnostics.Debug.WriteLine("select tab:" + ((IceTabPage)selectedNode).WindowStyle);
+                
+                if (((IceTabPage)selectedNode).WindowStyle == IceTabPage.WindowType.Console)
+                {
+                    if (((ConsoleTab)((IceTabPage)selectedNode).ConsoleTab.SelectedTab).Connection != null)
+                        SelectNodeByIndex(FindServerNodeMatch(((ConsoleTab)((IceTabPage)selectedNode).ConsoleTab.SelectedTab).Connection.ServerSetting), RefreshMainTab);
+                    else
+                        SelectNodeByIndex(FindWindowNodeMatch(selectedNode), RefreshMainTab);
+                }
                 else
-                    SelectNodeByIndex(0);
+                    SelectNodeByIndex(FindWindowNodeMatch(selectedNode), RefreshMainTab);
+
+
             }
             
             Invalidate();                
@@ -301,7 +328,7 @@ namespace IceChat
             foreach (KeyValuePair<string, object> de in serverNodes)
             {
                 nodeCount++;
-                if (de.Value == (TabWindow)nodeMatch)
+                if (de.Value == (IceTabPage)nodeMatch)
                 {
                     return nodeCount;
                 }
@@ -360,10 +387,10 @@ namespace IceChat
 
                         contextMenuServer.Show(this, new Point(e.X, e.Y));
                     }
-                    else if (findNode.GetType() == typeof(TabWindow))
+                    else if (findNode.GetType() == typeof(IceTabPage))
                     {
                         //check if it is a channel or query window
-                        if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Channel)
+                        if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Channel)
                         {
                             contextMenuChannel.Items.Clear();
                             this.contextMenuChannel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -377,7 +404,7 @@ namespace IceChat
 
                             contextMenuChannel.Show(this, new Point(e.X, e.Y));
                         }
-                        else if (((TabWindow)findNode).WindowStyle == TabWindow.WindowType.Query)
+                        else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Query)
                         {
                             contextMenuQuery.Items.Clear();
                             this.contextMenuQuery.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -449,19 +476,19 @@ namespace IceChat
                             {
                                 if (p.PopupType == "Channel")
                                 {
-                                    if (findNode.GetType() == typeof(TabWindow))
+                                    if (findNode.GetType() == typeof(IceTabPage))
                                     {
-                                        caption = caption.Replace("$chan", ((TabWindow)findNode).WindowName);
-                                        command = command.Replace("$chan", ((TabWindow)findNode).WindowName);
+                                        caption = caption.Replace("$chan", ((IceTabPage)findNode).TabCaption);
+                                        command = command.Replace("$chan", ((IceTabPage)findNode).TabCaption);
                                     }
                                 }
 
                                 if (p.PopupType == "Query")
                                 {
-                                    if (findNode.GetType() == typeof(TabWindow))
+                                    if (findNode.GetType() == typeof(IceTabPage))
                                     {
-                                        caption = caption.Replace("$nick", ((TabWindow)findNode).WindowName);
-                                        command = command.Replace("$nick", ((TabWindow)findNode).WindowName);
+                                        caption = caption.Replace("$nick", ((IceTabPage)findNode).TabCaption);
+                                        command = command.Replace("$nick", ((IceTabPage)findNode).TabCaption);
                                     }
                                 }
 
@@ -528,170 +555,181 @@ namespace IceChat
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            //make the buffer we draw this all to
-            Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
-            Graphics g = Graphics.FromImage(buffer);
-
-            //draw the header
-            g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.ServerListBackColor]);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-            Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
-            Brush l = new LinearGradientBrush(headerR, Color.Silver, Color.White, 300);
-            g.FillRectangle(l, headerR);
-
-            StringFormat sf = new StringFormat();
-            sf.Alignment = StringAlignment.Center;
-            Font headerFont = new Font("Verdana", 10);
-            Rectangle centered = headerR;
-            centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
-
-            g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
-
-            //draw each individual server
-            Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
-
-            int currentY = listR.Y;
-            int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
-
-            BuildServerNodes();
-
-            int nodeCount = 0;
-
-            foreach (KeyValuePair<string,object> de in serverNodes)
+            try
             {
-                //get the object type for this node
-                string node = (string)de.Key;
-                string[] nodes = node.Split(':');
-                
-                object value = de.Value;
-                
-                int x = 0;
-                Brush b;
-                nodeCount++;
-                if (nodeCount == selectedNodeIndex)
+                //make the buffer we draw this all to
+                Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+                Graphics g = Graphics.FromImage(buffer);
+
+                //draw the header
+                g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.ServerListBackColor]);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+                Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+                g.FillRectangle(l, headerR);
+
+                StringFormat sf = new StringFormat();
+                sf.Alignment = StringAlignment.Center;
+                Font headerFont = new Font("Verdana", 10);
+                Rectangle centered = headerR;
+                centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
+
+                g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
+
+                //draw each individual server
+                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
+
+                int currentY = listR.Y;
+                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+
+                BuildServerNodes();
+
+                int nodeCount = 0;
+
+                //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
+
+                foreach (KeyValuePair<string, object> de in serverNodes)
                 {
-                    g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
-                    b = new SolidBrush(SystemColors.HighlightText);
-                }
-                else
-                    b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);                
-                
-                if (value.GetType() == typeof(ServerSetting))
-                {
+                    //get the object type for this node
+                    string node = (string)de.Key;
+                    string[] nodes = node.Split(':');
+
+                    object value = de.Value;
+
+                    int x = 0;
+                    Brush b;
+                    nodeCount++;
                     if (nodeCount == selectedNodeIndex)
                     {
-                        selectedServerID = ((ServerSetting)value).ID;
+                        g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
+                        b = new SolidBrush(SystemColors.HighlightText);
                     }
-                    
-                    x = 0;
-                }
+                    else
+                        b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
 
-                if (value.GetType() == typeof(TabWindow))
-                {
-                    x = 16;
-                    if (((TabWindow)value).WindowStyle == TabWindow.WindowType.Channel || ((TabWindow)value).WindowStyle == TabWindow.WindowType.Query)
+                    if (value.GetType() == typeof(ServerSetting))
                     {
                         if (nodeCount == selectedNodeIndex)
-                            selectedServerID = ((TabWindow)value).Connection.ServerSetting.ID;
+                        {
+                            selectedServerID = ((ServerSetting)value).ID;
+                        }
+
+                        x = 0;
                     }
+
+                    if (value.GetType() == typeof(IceTabPage))
+                    {
+                        x = 16;
+                        if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query)
+                        {
+                            if (nodeCount == selectedNodeIndex)
+                                selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
+                        }
+                    }
+                    g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
+
+                    g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
+                    currentY += lineSize;
+                    b.Dispose();
+
                 }
-                g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
-                
-                g.DrawString(nodes[3], this.Font, b, x+ 16, currentY);
-                currentY += lineSize;
-                b.Dispose();
 
+
+                //paint the buffer onto the usercontrol
+                e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+
+                buffer.Dispose();
+                headerFont.Dispose();
+                l.Dispose();
+                sf.Dispose();
+                g.Dispose();
             }
-
-
-            //paint the buffer onto the usercontrol
-            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
-
-            buffer.Dispose();
-            headerFont.Dispose();
-            l.Dispose();
-            sf.Dispose();
-            g.Dispose();
-
+            catch (Exception ee)
+            {
+                FormMain.Instance.WriteErrorFile("ServerTree OnPaint:" + ee.Message, ee.StackTrace);
+            }
         }
 
         private void BuildServerNodes()
         {
-            serverNodes.Clear();
-
-            int nodeCount = 0;
-
-            //make a list of all the servers/windows open
-            foreach (ServerSetting s in serversCollection.listServers)
+            try
             {
-                nodeCount++;
+                serverNodes.Clear();
 
-                //icon_number:color:text
-                //1st check for server name/connected
-                if (s.DisplayName.Length > 0)
-                    serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.DisplayName,s));
-                else
-                    serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.ServerName, s));
+                int nodeCount = 0;
 
-                //find all open windows for this server                
-
-                //add the channels 1st
-                foreach (TabWindow t in FormMain.Instance.TabMain.WindowTabs)
+                //make a list of all the servers/windows open
+                foreach (ServerSetting s in serversCollection.listServers)
                 {
-                    if (t.Connection != null)
-                    {
-                        if (t.Connection.ServerSetting == s && t.WindowStyle == TabWindow.WindowType.Channel)
-                        {
-                            int color = 0;
-                            if (t.LastMessageType == FormMain.ServerMessageType.Default)
-                                color = FormMain.Instance.IceChatColors.TabBarCurrent;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.JoinChannel)
-                                color = FormMain.Instance.IceChatColors.TabBarChannelJoin;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.PartChannel)
-                                color = FormMain.Instance.IceChatColors.TabBarChannelPart;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
-                                color = FormMain.Instance.IceChatColors.TabBarNewMessage;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.ServerMessage)
-                                color = FormMain.Instance.IceChatColors.TabBarServerMessage;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.QuitServer)
-                                color = FormMain.Instance.IceChatColors.TabBarServerQuit;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.Other)
-                                color = FormMain.Instance.IceChatColors.TabBarOtherMessage;
-                            else
-                                color = FormMain.Instance.IceChatColors.TabBarDefault;
+                    nodeCount++;
+                    //icon_number:color:text
+                    //1st check for server name/connected
+                    if (s.DisplayName.Length > 0)
+                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.DisplayName, s));
+                    else
+                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.ServerName, s));
 
-                            nodeCount++;
-                            serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":2:" + color.ToString() + ":" + t.WindowName, t));
+                    //find all open windows for this server                
+                    //add the channels 1st
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.Connection != null)
+                        {
+                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Channel)
+                            {
+                                int color = 0;
+                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                    color = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.JoinChannel)
+                                    color = FormMain.Instance.IceChatColors.TabBarChannelJoin;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.PartChannel)
+                                    color = FormMain.Instance.IceChatColors.TabBarChannelPart;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                    color = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.ServerMessage)
+                                    color = FormMain.Instance.IceChatColors.TabBarServerMessage;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.QuitServer)
+                                    color = FormMain.Instance.IceChatColors.TabBarServerQuit;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.Other)
+                                    color = FormMain.Instance.IceChatColors.TabBarOtherMessage;
+                                else
+                                    color = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                nodeCount++;
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":2:" + color.ToString() + ":" + t.TabCaption, t));
+                            }
                         }
                     }
-                }
-                
-                //add the queries next
-                foreach (TabWindow t in FormMain.Instance.TabMain.WindowTabs)
-                {
-                    if (t.Connection != null)
+
+                    //add the queries next
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
                     {
-                        if (t.Connection.ServerSetting == s && t.WindowStyle == TabWindow.WindowType.Query)
+                        if (t.Connection != null)
                         {
-                            //get the color
-                            int colorQ = 0;
-                            if (t.LastMessageType == FormMain.ServerMessageType.Default)
-                                colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
-                            else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
-                                colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
-                            else
-                                colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
-                            
-                            nodeCount++;
-                            serverNodes.Add(new KeyValuePair<string,object>(nodeCount.ToString() + ":3:" + colorQ.ToString() +  ":" + t.WindowName, t));
+                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Query)
+                            {
+                                //get the color
+                                int colorQ = 0;
+                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                else
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                nodeCount++;
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":3:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                            }
                         }
                     }
                 }
             }
-
-
+            catch (Exception e)
+            {
+                FormMain.Instance.WriteErrorFile("BuildServerNodes:" + e.Message, e.StackTrace);
+            }
         }
 
         private string IsServerConnected(ServerSetting s)
@@ -780,7 +818,7 @@ namespace IceChat
             if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
             IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
-            if (c!=null)
+            if (c != null)
             {
                 if (!c.IsConnected)
                 {
@@ -790,7 +828,6 @@ namespace IceChat
                 }
                 return;
             }
-            
             if (NewServerConnection != null)
                 NewServerConnection(GetServerSetting(selectedServerID));
         }
@@ -815,7 +852,7 @@ namespace IceChat
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(selectedServerID);
+            //System.Diagnostics.Debug.WriteLine(selectedServerID);
             //open up the Server Editor
             //check if a server is selected or not
             if (selectedServerID > 0)
@@ -958,8 +995,8 @@ namespace IceChat
         {
             //clear the channel window for the selected channel
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                ((TabWindow)findNode).TextWindow.ClearTextWindow();
+            if (findNode.GetType() == typeof(IceTabPage))
+                ((IceTabPage)findNode).TextWindow.ClearTextWindow();
 
         }
 
@@ -967,18 +1004,18 @@ namespace IceChat
         {
             //close the channel
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/part " + ((TabWindow)findNode).WindowName);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/part " + ((IceTabPage)findNode).TabCaption);
         }
 
         private void reJoinChannelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //do a channel hop
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
+            if (findNode.GetType() == typeof(IceTabPage))
             {
-                ((TabWindow)findNode).Connection.SendData("PART " + ((TabWindow)findNode).WindowName);
-                ((TabWindow)findNode).Connection.SendData("JOIN " + ((TabWindow)findNode).WindowName);
+                ((IceTabPage)findNode).Connection.SendData("PART " + ((IceTabPage)findNode).TabCaption);
+                ((IceTabPage)findNode).Connection.SendData("JOIN " + ((IceTabPage)findNode).TabCaption);
             }
         }
 
@@ -986,24 +1023,24 @@ namespace IceChat
         {
             //popup channel information window
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/channelinfo " + ((TabWindow)findNode).WindowName);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/channelinfo " + ((IceTabPage)findNode).TabCaption);
         }
 
         private void clearWindowToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             //clear query window
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                ((TabWindow)findNode).TextWindow.ClearTextWindow();
+            if (findNode.GetType() == typeof(IceTabPage))
+                ((IceTabPage)findNode).TextWindow.ClearTextWindow();
         }
 
         private void closeWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //close query window
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/part " + ((TabWindow)findNode).WindowName);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/part " + ((IceTabPage)findNode).TabCaption);
 
         }
 
@@ -1011,16 +1048,16 @@ namespace IceChat
         {
             //user information for query nick
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/userinfo " + ((TabWindow)findNode).WindowName);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/userinfo " + ((IceTabPage)findNode).TabCaption);
         }
 
         private void silenceUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //silence query user
             object findNode = FindNodeValue(selectedNodeIndex);
-            if (findNode.GetType() == typeof(TabWindow))
-                FormMain.Instance.ParseOutGoingCommand(((TabWindow)findNode).Connection, "/silence +" + ((TabWindow)findNode).WindowName);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/silence +" + ((IceTabPage)findNode).TabCaption);
         }
 
         #endregion

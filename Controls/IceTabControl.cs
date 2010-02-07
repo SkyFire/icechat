@@ -1,113 +1,272 @@
-/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
- *
- * Copyright (C) 2009 Paul Vanderzee <snerf@icechat.net>
- *                                    <www.icechat.net> 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * Please consult the LICENSE.txt file included with this project for
- * more details
- *
-\******************************************************************************/
+//http://www.codeproject.com/KB/tabs/CustomizedTabcontrol.aspx
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
 
 namespace IceChat
 {
-    public partial class IceTabControl : TabControl
+    public partial class IceTabControl : UserControl 
     {
+
+        //Tab font which affect the cards' height and width
+        private Font m_fontTab = new Font("Verdana", 10F);
+
+        //Tabs Area Rectangle grouped by the tab selectindex
+        private Dictionary<int, Rectangle> m_TabSizeRects = new Dictionary<int, Rectangle>();
+        private Dictionary<int, Rectangle> m_TabTextRects = new Dictionary<int, Rectangle>();
+
+        //MyTabPages(inherited from Panel) of this TabControl
+        private List<IceTabPage> m_lTabPages = new List<IceTabPage>();
+
+        //tabs' height
+        private int m_TabRowHeight = 30;
+        
+        //how many rows of tabs to display
+        private int m_TotalTabRows = 1;
+
+        //TabControl's selectedIndex
+        private int m_SelectedIndex = -1;
+        private int m_PreviousSelectedIndex = 0;
+
+        //TabControl's hoveredIndex
+        private int m_iHoveredIndex = -1;
+
+        //starting position of dragging
         private Point DragStartPosition = Point.Empty;
         
-        private TabWindow drag_Tab;
-        private int selectedTabIndex;
+        //which tab will be dragged
+        private IceTabPage drag_Tab;
 
-        private IList tabPages;
+        private int m_TabStartXPos = 0;
 
-        private delegate int SelectedTabIndexDelegate();
-        private delegate void RefreshTabsDelegate();
-
-        public delegate void CloseTabDelegate(int tab);
-        public event CloseTabDelegate CloseTab;
-
+        //for the popupmenu
         private ContextMenuStrip popupMenu;
 
-        public IceTabControl()
-        {
-            InitializeComponent();
-			
-            this.MouseDown += new MouseEventHandler(OnMouseDown);
-            this.MouseMove += new MouseEventHandler(OnMouseMove);
-            this.DragOver += new DragEventHandler(OnDragOver);
-            this.MouseUp += new MouseEventHandler(OnMouseUp);
-            this.SelectedIndexChanged += new EventHandler(OnSelectedIndexChanged);
-            this.FontChanged += new EventHandler(OnFontChanged);
-            this.Selecting += new TabControlCancelEventHandler(OnSelecting);
-            this.ControlAdded += new ControlEventHandler(OnControlAdded);
-            this.ControlRemoved += new ControlEventHandler(OnControlRemoved);
+        private Panel m_pnlCloseButton;
 
+        public event System.EventHandler SelectedIndexChanged;
+        
+        public delegate void TabClosedDelegate(int nIndex);
+        public event TabClosedDelegate OnTabClosed;
+
+        public List<IceTabPage> TabPages 
+        {
+            get
+            {
+                return this.m_lTabPages;
+            }
+        }
+
+        public int SelectedIndex 
+        {
+            set 
+            {
+                if (m_SelectedIndex != value)
+                {
+                    this.m_PreviousSelectedIndex = m_SelectedIndex;
+                    this.m_SelectedIndex = value;
+                    if (this.SelectedIndexChanged != null)
+                    {
+                        EventArgs e = new EventArgs();
+                        SelectedIndexChanged(this, e);
+                    }
+                }
+            }
+            get
+            {
+                return this.m_SelectedIndex;
+            }
+        }
+
+        public int TabCount 
+        {
+            get 
+            {
+                return this.m_lTabPages.Count;
+            }
+        }
+
+        public Font TabFont 
+        {
+            set 
+            {
+                this.m_fontTab = value;
+            }
+        }
+
+        internal IceTabPage CurrentTab
+        {
+            get
+            {
+                //System.Diagnostics.Debug.WriteLine("Current Tab:" + m_SelectedIndex + ":" + m_lTabPages.Count);
+                if (m_SelectedIndex == -1) m_SelectedIndex = 0;
+                if (m_SelectedIndex > (m_lTabPages.Count - 1)) m_SelectedIndex = 0;
+                return m_lTabPages[m_SelectedIndex];
+            }
+        }
+
+        internal void SelectTab(IceTabPage page)
+        {
+            for (int i = 0; i < m_lTabPages.Count; i++)
+            {
+                if (m_lTabPages[i] == page)
+                {
+                    SelectedIndex = i;
+                    Invalidate();
+                    if (this.SelectedIndexChanged != null)
+                    {
+                        EventArgs e = new EventArgs();
+                        SelectedIndexChanged(this, e);
+                    }
+                    break;                
+                }
+            }
+        }
+
+        internal void SelectTab(IRCConnection connection, string sCaption)
+        {
+            for (int i = 0; i < m_lTabPages.Count; i++)
+            {
+                if (m_lTabPages[i].TabCaption.Equals(sCaption))
+                {
+                    if (m_lTabPages[i].Connection == connection)
+                    {
+                        SelectedIndex = i;
+                        Invalidate();
+                        
+                        if (this.SelectedIndexChanged != null)
+                        {
+                            EventArgs e = new EventArgs();
+                            SelectedIndexChanged(this, e);
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void SelectTab(string sCaption)
+        {
+            for (int i = 0; i < m_lTabPages.Count; i++)
+            {
+                if (m_lTabPages[i].TabCaption.Equals(sCaption))
+                {
+                    SelectedIndex = i;
+                    Invalidate();
+                    break;
+                }
+            }
+        }
+        
+        internal IceTabPage GetTabPage(string sCaption)
+        {
+            for (int i = 0; i < m_lTabPages.Count; i++)
+            {
+                if (m_lTabPages[i].TabCaption.Equals(sCaption))
+                    return m_lTabPages[i];
+            }
+            return null;
+        }
+
+        internal bool WindowExists(IRCConnection connection, string windowName, IceTabPage.WindowType windowType)
+        {
+            foreach (IceTabPage t in this.TabPages)
+            {
+                if (t.Connection == connection)
+                {
+                    if (t.WindowStyle == windowType)
+                    {
+                        if (t.TabCaption == windowName)
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        internal IceTabPage GetTabPage(int iTabIndex)
+        {
+            if (iTabIndex < m_lTabPages.Count)
+                return m_lTabPages[iTabIndex];
+            return null;
+        }
+
+        public IceTabControl() 
+        {
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            
-            this.UpdateStyles();
-            
-            tabPages = new List<TabPage>();
+
+            InitializeComponent();
+            InitializeCustom();
 
             popupMenu = ConsolePopupMenu();
             popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-            
-            
-            // http://www.koders.com/csharp/fid169847566777A4F89EE9CAE80755155A457B13E0.aspx
+
         }
 
-        private void OnSelecting(object sender, TabControlCancelEventArgs e)
+        private void InitializeCustom() 
         {
-            if (this.GetTabRect(e.TabPageIndex).Contains(this.PointToClient(Cursor.Position)) && e.TabPageIndex != 0)
-            {
-                if (this.PointToClient(Cursor.Position).X > this.GetTabRect(e.TabPageIndex).Right - 14)
-                    e.Cancel = true;
-            }
+            this.MouseDown += new MouseEventHandler(OnMouseDown);
+            this.MouseMove += new MouseEventHandler(OnMouseMove);
+            this.MouseLeave += new EventHandler(OnMouseLeave);
+            this.MouseUp += new MouseEventHandler(OnMouseUp);
+            //this.ControlAdded += new ControlEventHandler(OnControlAdded);
+            this.ControlRemoved += new ControlEventHandler(OnControlRemoved);
+            
+            this.m_pnlCloseButton = new Panel();
+            this.m_pnlCloseButton.BackColor = SystemColors.Control;
+            this.m_pnlCloseButton.Size = new Size(21, 21);
+            this.m_pnlCloseButton.MouseDown += new MouseEventHandler(m_pnlCloseButton_MouseDown);
+            this.m_pnlCloseButton.MouseHover += new EventHandler(m_pnlCloseButton_MouseHover);
+            this.m_pnlCloseButton.MouseLeave += new EventHandler(m_pnlCloseButton_MouseLeave);
+            this.m_pnlCloseButton.Dock = DockStyle.Right;
+
+            this.Controls.Add(m_pnlCloseButton);
+
+            this.AutoSize = false;
+
+        }
+
+        private void m_pnlCloseButton_MouseLeave(object sender, EventArgs e)
+        {
+            DrawCloseButton();
+        }
+
+        private void m_pnlCloseButton_MouseHover(object sender, EventArgs e)
+        {
+            DrawCloseButtonHover();
         }
 
         private void OnPopupMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             //send the command to the proper window
             if (e.ClickedItem.Tag == null) return;
-            
+
             string command = e.ClickedItem.Tag.ToString();
-            
-            if (selectedTabIndex == 0)
+
+            if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
-                FormMain.Instance.ParseOutGoingCommand(((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentConnection, command);
+                FormMain.Instance.ParseOutGoingCommand(GetTabPage("Console").CurrentConnection, command);
             }
             else
             {
-                TabWindow t = ((TabWindow)FormMain.Instance.TabMain.TabPages[selectedTabIndex]);
+                
+                IceTabPage t = FormMain.Instance.TabMain.TabPages[m_SelectedIndex];
                 if (t != null)
                 {
-                    command = command.Replace("$1", t.WindowName);
+                    command = command.Replace("$1", t.TabCaption);
                     FormMain.Instance.ParseOutGoingCommand(t.Connection, command);
                 }
             }
@@ -115,13 +274,13 @@ namespace IceChat
 
         private ContextMenuStrip ConsolePopupMenu()
         {
-            ContextMenuStrip menu = new ContextMenuStrip();           
+            ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear","/clear $1"));
+            menu.Items.Add(NewMenuItem("Clear", "/clear $1"));
             menu.Items.Add(NewMenuItem("Clear All", "/clear all console"));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(NewMenuItem("Quit Server","/quit"));
-            
+            menu.Items.Add(NewMenuItem("Quit Server", "/quit"));
+
             //add the console popup menu
             AddPopupMenu("Console", menu);
             return menu;
@@ -130,7 +289,7 @@ namespace IceChat
         private ContextMenuStrip ChannelPopupMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            
+
             menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
             menu.Items.Add(NewMenuItem("Close Channel", "/part $1"));
             menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1"));
@@ -212,20 +371,20 @@ namespace IceChat
                         if (caption.Length > 0)
                         {
                             //parse out $identifiers
-                            TabWindow tw = null;
-                            if (selectedTabIndex != 0)
+                            IceTabPage tw = null;
+                            if (GetTabPage(m_SelectedIndex).TabCaption != "Console")
                             {
-                                tw = ((TabWindow)FormMain.Instance.TabMain.TabPages[selectedTabIndex]);
+                                tw = GetTabPage(m_SelectedIndex);
                             }
 
                             if (p.PopupType == "Channel")
                             {
                                 if (tw != null)
                                 {
-                                    caption = caption.Replace("$chan", tw.WindowName);
-                                    command = command.Replace("$chan", tw.WindowName);
-                                    caption = caption.Replace("$1", tw.WindowName);
-                                    command = command.Replace("$1", tw.WindowName);
+                                    caption = caption.Replace("$chan", tw.TabCaption);
+                                    command = command.Replace("$chan", tw.TabCaption);
+                                    caption = caption.Replace("$1", tw.TabCaption);
+                                    command = command.Replace("$1", tw.TabCaption);
                                 }
                             }
 
@@ -233,10 +392,10 @@ namespace IceChat
                             {
                                 if (tw != null)
                                 {
-                                    caption = caption.Replace("$nick", tw.WindowName);
-                                    command = command.Replace("$nick", tw.WindowName);
-                                    caption = caption.Replace("$1", tw.WindowName);
-                                    command = command.Replace("$1", tw.WindowName);
+                                    caption = caption.Replace("$nick", tw.TabCaption);
+                                    command = command.Replace("$nick", tw.TabCaption);
+                                    caption = caption.Replace("$1", tw.TabCaption);
+                                    command = command.Replace("$1", tw.TabCaption);
                                 }
                             }
                             
@@ -260,7 +419,6 @@ namespace IceChat
                     }
                 }
             }
-
         }
 
         private void OnPopupExtraMenuClick(object sender, EventArgs e)
@@ -269,174 +427,430 @@ namespace IceChat
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            if (selectedTabIndex == 0)
+            if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
-                FormMain.Instance.ParseOutGoingCommand(((ConsoleTabWindow)FormMain.Instance.TabMain.TabPages[0]).CurrentConnection, command);
+                FormMain.Instance.ParseOutGoingCommand(GetTabPage("Console").CurrentConnection, command);
             }
             else
             {
-                
-                TabWindow t = ((TabWindow)FormMain.Instance.TabMain.TabPages[selectedTabIndex]);
+
+                IceTabPage t = GetTabPage(m_SelectedIndex);
                 if (t != null)
                 {
-                    command = command.Replace("$1", t.WindowName);
+                    command = command.Replace("$1", t.TabCaption);
                     FormMain.Instance.ParseOutGoingCommand(t.Connection, command);
                 }
             }
-
-
-        }
-        private void OnFontChanged(object sender, EventArgs e)
-        {
-            Invalidate();
         }
 
-        private void OnSelectedIndexChanged(object sender, EventArgs e)
+        private void m_pnlCloseButton_MouseDown(object sender, MouseEventArgs e)
         {
-            FormMain.Instance.ServerTree.SelectTab(this.SelectedTab);
-        }
-
-        private void OnControlRemoved(object sender, ControlEventArgs e)
-        {
-            if (e.Control.GetType() != typeof(ConsoleTabWindow))
+            IceTabPage current = GetTabPage(SelectedIndex);
+            if (current != null)
             {
-                ((TabWindow)e.Control).TextWindow.CloseLogFile();
-                tabPages.Remove((TabWindow)e.Control);
+                //System.Diagnostics.Debug.WriteLine("close tab:" + current.TabCaption);
+                if (this.OnTabClosed != null)
+                    OnTabClosed(SelectedIndex);
             }
         }
 
-        private void OnControlAdded(object sender, ControlEventArgs e)
+        protected override void OnPaint(PaintEventArgs e) 
         {
-            if (e.Control.GetType() != typeof(IceChat.ConsoleTabWindow))
-                tabPages.Add((TabWindow)e.Control);
+            //base.OnPaint(e);
+            DrawControl(e.Graphics);
         }
 
-        internal IList WindowTabs
+        private void CalculateTabSizes(Graphics g)
         {
-            get { return tabPages; }
-        }
-        
-        internal bool WindowExists(IRCConnection connection, string windowName, TabWindow.WindowType windowType)
-        {
-            foreach (TabWindow t in this.tabPages)
+            try
             {
-                if (t.Connection == connection)
+                m_TabSizeRects.Clear();
+                m_TabTextRects.Clear();
+
+                m_TotalTabRows = 1;
+
+
+                int totalWidth = 0;
+                int xPos = m_TabStartXPos;
+                int yPos = 0;
+
+                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 5;
+                if ((m_TabRowHeight / 2) * 2 == m_TabRowHeight)
+                    m_TabRowHeight++;
+
+                for (int i = 0; i < m_lTabPages.Count; i++)
                 {
-                    if (t.WindowStyle == windowType)
+
+                    Rectangle recBounds = new Rectangle();
+                    Rectangle recTextArea = new Rectangle();
+
+                    //caclulate the width of the text
+                    int textWidth = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Width;
+                    recBounds.Width = textWidth + 26;
+                    recBounds.Height = m_TabRowHeight + 5;
+
+                    recTextArea.Width = textWidth + 1;
+                    recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
+
+                    if ((totalWidth + recBounds.Width) > (this.Width - 20))
                     {
-                        if (t.WindowName == windowName)
-                            return true;
+                        m_TotalTabRows++;
+                        totalWidth = recBounds.Width;
+                        xPos = m_TabStartXPos;
+                        yPos = yPos + m_TabRowHeight + 5;
                     }
+
+                    recBounds.X = xPos;
+                    recBounds.Y = yPos;
+
+                    recTextArea.X = xPos + 21;  //add area for image and a little extra
+                    recTextArea.Y = yPos;
+
+                    m_TabSizeRects.Add(i, recBounds);
+                    m_TabTextRects.Add(i, recTextArea);
+
+                    xPos = xPos + recBounds.Width;
+                    totalWidth = totalWidth + recBounds.Width;
+
+
+                }
+                for (int i = 0; i < m_lTabPages.Count; i++)
+                {
+                    m_lTabPages[i].Width = this.Width - 4;
+                    m_lTabPages[i].Height = this.Height - ((m_TabRowHeight + 7) * m_TotalTabRows);
                 }
             }
-            return false;
+            catch (Exception e)
+            {
+                FormMain.Instance.WriteErrorFile("CalculateTabSizes:" + e.Message, e.StackTrace);
+            }
         }
 
-        internal void SelectTab(TabWindow tabWindow)
+
+        internal void DrawControl(Graphics g) 
         {
-            foreach (TabWindow t in this.tabPages)
+            try
             {
-                if (t == tabWindow)
+                if (this.m_lTabPages.Count == 0) return;
+
+                if (this.m_lTabPages.Count != 0 && m_SelectedIndex == -1)
+                    SelectedIndex = 0;
+
+                if (this.m_SelectedIndex > (m_lTabPages.Count - 1))
+                    SelectedIndex = 0;
+
+                CalculateTabSizes(g);
+
+                //Tab Buttons Area
+                Rectangle TabButtonArea = new Rectangle(5, 0, this.Size.Width - 10, (m_TabRowHeight + 5) * m_TotalTabRows);
+
+                //Total Tab Control Area
+                Rectangle TabControlArea = new Rectangle(new Point(0, 0), this.Size);
+
+                //calcute the area of where the TabPages sit
+                Rectangle TabArea = new Rectangle(4, ((m_TabRowHeight + 7) * m_TotalTabRows), this.Size.Width - 8, this.Size.Height - ((m_TabRowHeight + 7) * m_TotalTabRows) - 11);
+
+                Region rsaved = g.Clip;
+                for (int i = 0; i < m_lTabPages.Count; i++)
                 {
-                    this.SelectedTab = t;
+                    m_lTabPages[i].Location = new Point(m_TabStartXPos, ((m_TabRowHeight + 7) * m_TotalTabRows));
+                    if (!this.Controls.Contains(m_lTabPages[i]))
+                        this.Controls.Add(m_lTabPages[i]);
+
+                    DrawTab(g, m_lTabPages[i], i);
+                }
+
+                g.Clip = rsaved;
+
+                if (GetTabPage(SelectedIndex) != null)
+                    GetTabPage(SelectedIndex).BringToFront();
+
+                DrawCloseButton();
+            }
+            catch (Exception e) 
+            {
+                FormMain.Instance.WriteErrorFile("IceTabControl DrawControl Error:" + e.Message, e.StackTrace);
+            }
+        }
+
+        internal void DrawTab(Graphics g, IceTabPage tabPage, int nIndex) 
+        {
+            try
+            {
+                Rectangle recBounds = m_TabSizeRects[nIndex];
+                Rectangle tabTextArea = m_TabTextRects[nIndex];
+
+                Brush br;
+                Point[] pt;
+
+                bool bSelected = (this.m_SelectedIndex == nIndex);
+                bool bHovered = (this.m_iHoveredIndex == nIndex);
+
+                if (bSelected)
+                    br = new LinearGradientBrush(recBounds, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG2], 90);
+                else if (bHovered)
+                    br = new LinearGradientBrush(recBounds, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarHoverBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarHoverBG2], 90);
+                else
+                    br = new LinearGradientBrush(recBounds, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherBG2], 90);
+
+                pt = new Point[7];
+                pt[0] = new Point(recBounds.Left + 1, recBounds.Bottom);
+                if (bSelected)
+                {
+                    pt[1] = new Point(recBounds.Left + 1, recBounds.Top + 3);
+                    pt[2] = new Point(recBounds.Left + 4, recBounds.Top);
+                    pt[3] = new Point(recBounds.Right - 4, recBounds.Top);
+                    pt[4] = new Point(recBounds.Right - 1, recBounds.Top + 3);
+                }
+                else
+                {
+                    pt[1] = new Point(recBounds.Left + 1, recBounds.Top + 6);
+                    pt[2] = new Point(recBounds.Left + 4, recBounds.Top + 3);
+                    pt[3] = new Point(recBounds.Right - 4, recBounds.Top + 3);
+                    pt[4] = new Point(recBounds.Right - 1, recBounds.Top + 6);
+                }
+                pt[5] = new Point(recBounds.Right - 1, recBounds.Bottom);
+                pt[6] = new Point(recBounds.Left + 1, recBounds.Bottom);
+
+
+                g.FillPolygon(br, pt);
+                // draw the border around the control
+                g.DrawPolygon(new Pen(Color.Black, 1), pt);
+
+                br.Dispose();
+                Image img = null;
+
+                switch (tabPage.WindowStyle)
+                {
+                    case IceTabPage.WindowType.Console:
+                        img = this.ImageList.Images[0];
+                        break;
+                    case IceTabPage.WindowType.Channel:
+                        img = this.ImageList.Images[1];
+                        break;
+                    case IceTabPage.WindowType.Query:
+                        img = this.ImageList.Images[2];
+                        break;
+                    case IceTabPage.WindowType.Debug:
+                        img = this.ImageList.Images[3];
+                        break;
+
+                }
+                //Image img = tabPage.IconImg;
+
+                Rectangle rimage = new Rectangle(recBounds.X, recBounds.Y, img.Width, img.Height);
+                if (bSelected)
+                {
+                    rimage.Offset(4, 4);
+                    g.DrawImage(img, rimage);
+                }
+                else
+                {
+                    rimage.Offset(4, 6);
+                    g.DrawImage(img, rimage);
+                }
+
+                //img.Dispose();
+
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Near;
+                stringFormat.LineAlignment = StringAlignment.Center;
+
+                //get the tab text color
+                if (bSelected)
+                {
+                    br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
+                    tabPage.LastMessageType = FormMain.ServerMessageType.Default;
+                }
+                else if (bHovered)
+                {
+                    br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
+                }
+                else
+                {
+                    switch (tabPage.LastMessageType)
+                    {
+                        case FormMain.ServerMessageType.JoinChannel:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelJoin]);
+                            break;
+                        case FormMain.ServerMessageType.PartChannel:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelPart]);
+                            break;
+                        case FormMain.ServerMessageType.Message:
+                        case FormMain.ServerMessageType.Action:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarNewMessage]);
+                            break;
+                        case FormMain.ServerMessageType.QuitServer:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerQuit]);
+                            break;
+                        case FormMain.ServerMessageType.ServerMessage:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerMessage]);
+                            break;
+                        case FormMain.ServerMessageType.Other:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherMessage]);
+                            break;
+                        default:
+                            br = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarDefault]);
+                            break;
+                    }
+                }
+
+                g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+            }            
+            catch (Exception e) 
+            { 
+                FormMain.Instance.WriteErrorFile("IceTabControl DrawTab Error:" + e.Message + ":" + nIndex, e.StackTrace);
+            }
+        }
+
+        internal void DrawCloseButton()
+        {
+            Graphics g = m_pnlCloseButton.CreateGraphics();
+
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+            Rectangle m_CloseButton = new Rectangle(0, 0, 20, 20);
+            g.FillRectangle(new SolidBrush(m_pnlCloseButton.BackColor), m_CloseButton);
+            g.DrawString("X", this.Font, new SolidBrush(Color.Black), m_CloseButton, stringFormat);
+
+            g.Dispose();
+        }
+
+        internal void DrawCloseButtonHover()
+        {
+            Graphics g = m_pnlCloseButton.CreateGraphics();
+
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+            Rectangle m_CloseButton = new Rectangle(0, 0, 20, 20);
+            g.FillRectangle(new SolidBrush(SystemColors.GradientActiveCaption), m_CloseButton);
+            g.DrawRectangle(new Pen(SystemColors.ActiveBorder), m_CloseButton);
+            g.DrawString("X", this.Font, new SolidBrush(Color.Black), m_CloseButton, stringFormat);
+
+            g.Dispose();
+        }
+
+        private void OnControlAdded(object sender, ControlEventArgs e) 
+        {
+            /*  //not used for the time being
+            if (e.Control is IceTabPage)
+            {
+                IceTabPage page = (IceTabPage)e.Control;
+
+                if (page.WindowStyle == IceTabPage.WindowType.Console)
+                    page.IconImg = this.ImageList.Images[0];
+                
+                if (page.WindowStyle == IceTabPage.WindowType.Channel)
+                    page.IconImg = this.ImageList.Images[1];
+
+                if (page.WindowStyle == IceTabPage.WindowType.Query)
+                    page.IconImg = this.ImageList.Images[2];
+
+                if (page.WindowStyle == IceTabPage.WindowType.Debug)
+                    page.IconImg = this.ImageList.Images[3];
+
+                m_lTabPages.Add((IceTabPage)e.Control);
+
+                Invalidate();
+            }
+            */
+        }
+
+        private void OnControlRemoved(object sender, ControlEventArgs e) 
+        {
+            if (e.Control is IceTabPage) 
+            {                
+                m_lTabPages.Remove((IceTabPage)e.Control);
+                ((IceTabPage)e.Control).Dispose();
+                SelectedIndex = m_PreviousSelectedIndex;
+                
+                Invalidate();
+                FormMain.Instance.ServerTree.Invalidate();
+            }
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e) 
+        {
+            if (m_TabSizeRects.Count == 0)
+                return;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                Rectangle r = new Rectangle(DragStartPosition, Size.Empty);
+
+                r.Inflate(SystemInformation.DragSize);
+
+                if (drag_Tab != null)
+                {
+                    if (!r.Contains(e.X, e.Y))
+                    {
+                        IceTabPage hover_Tab = HoverTab(e.Location);
+                        if (hover_Tab != null)
+                        {
+                            SwapTabPages(drag_Tab, hover_Tab);
+                            drag_Tab = setSelectedByClickLocation(e.Location);
+                            Invalidate();
+                        }
+                    }
+                }
+
+                DragStartPosition = Point.Empty;
+                return;
+            }
+
+
+            if (e.Y < m_TabSizeRects[0].Y + 3 || e.Y > m_TabSizeRects[0].Y + m_TabSizeRects[0].Height) 
+            {
+                m_iHoveredIndex = -1;
+                Invalidate();
+                return;
+            }
+
+
+            int iHoveredIndexBeforeClick = m_iHoveredIndex;
+
+            for (int i = 0; i < m_TabSizeRects.Count; i++) 
+            {
+                Rectangle rectTab = m_TabSizeRects[i];
+                if (e.X > rectTab.X && e.X < rectTab.X + rectTab.Width) 
+                {
+                    if (this.m_iHoveredIndex != i) 
+                        this.m_iHoveredIndex = i;
                     break;
                 }
             }
+
+            if (m_iHoveredIndex == iHoveredIndexBeforeClick)
+                return;
+
+            Invalidate();
+
         }
 
-        internal int SelectedWindowTabIndex()
+        private void OnMouseLeave(object sender, EventArgs e)
         {
-            if (this.InvokeRequired)
-            {
-                SelectedTabIndexDelegate s = new SelectedTabIndexDelegate(SelectedWindowTabIndex);
-                return (int)this.Invoke(s, new object[] { });
-            }
-            else
-            {
-                return this.TabPages.IndexOf(this.SelectedTab);
-            }
+            m_iHoveredIndex = -1;
+            Invalidate();
         }
 
-        private int SelectedMenuTab()
+        private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            for (int index = 0; index <= this.TabCount - 1; index++)
-            {
-                if (this.GetTabRect(index).Contains(this.PointToClient(Cursor.Position)))
-                {
-                    //check if close button was pressed on current tab
-                    if (this.GetTabRect(index).Right - 14 < this.PointToClient(Cursor.Position).X && index == this.selectedTabIndex)
-                    {
-                        if (CloseTab != null && index != 0)
-                            CloseTab(index);
-                    }
-                    return index;
-                }
-            }
-            return -1;
+            DragStartPosition = new Point(e.X, e.Y);
+            drag_Tab = setSelectedByClickLocation(e.Location);
         }
-
-        #region Swap Tab Pages Methods
-
-        private TabWindow HoverTab()
-        {
-            for (int index = 1; index <= this.TabCount - 1; index++)
-            {
-                if (this.GetTabRect(index).Contains(this.PointToClient(Cursor.Position)))
-                    return (TabWindow)this.TabPages[index];
-            }
-            return null;
-        }
-
-        private void SwapTabPages(TabWindow tp1, TabWindow tp2)
-        {
-            int Index1 = this.TabPages.IndexOf(tp1);
-            int Index2 = this.TabPages.IndexOf(tp2);
-            
-            this.TabPages[Index1] = tp2;
-            this.TabPages[Index2] = tp1;
-            
-        }
-      
-        private void OnDragOver(object sender, DragEventArgs e)
-        {            
-            TabWindow hover_Tab = HoverTab();            
-
-            if (hover_Tab == null)
-                e.Effect = DragDropEffects.None;
-            else
-            {
-                if (hover_Tab.WindowName == "Console") return;
-
-                if (e.Data.GetDataPresent(typeof(TabWindow)))
-                {                    
-                    e.Effect = DragDropEffects.Move;
-
-                    if (drag_Tab == null) return;                    
-                    if (hover_Tab == drag_Tab) return;
-                    
-                    Rectangle TabRect = this.GetTabRect(this.TabPages.IndexOf(hover_Tab));
-                    
-                    TabRect.Inflate(-3, -3);
-
-                    if (TabRect.Contains(this.PointToClient(new Point(e.X, e.Y))))
-                    {
-                        SwapTabPages(drag_Tab, hover_Tab);
-                        this.SelectedTab = drag_Tab;
-                        //this.Invalidate();
-                    }
-                }
-            }
-            
-        }
-
+        
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 //show the proper popup menu according to what kind of tab
-                if (selectedTabIndex == 0)
+                if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
                 {
                     //console tab
                     popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
@@ -447,7 +861,8 @@ namespace IceChat
                 }
                 else
                 {
-                    if (((TabWindow)TabPages[selectedTabIndex]).WindowStyle == TabWindow.WindowType.Channel)
+                    
+                    if (GetTabPage(m_SelectedIndex).WindowStyle == IceTabPage.WindowType.Channel)
                     {
                         popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         popupMenu.Items.Clear();
@@ -455,7 +870,7 @@ namespace IceChat
                         popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         popupMenu.Show(this, e.Location);
                     }
-                    else if (((TabWindow)TabPages[selectedTabIndex]).WindowStyle == TabWindow.WindowType.Query)
+                    else if (GetTabPage(m_SelectedIndex).WindowStyle == IceTabPage.WindowType.Query)
                     {
                         popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         popupMenu.Items.Clear();
@@ -463,7 +878,6 @@ namespace IceChat
                         popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         popupMenu.Show(this, e.Location);
                     }
-                    
                 }
             }
             
@@ -471,181 +885,57 @@ namespace IceChat
             FormMain.Instance.FocusInputBox();
         }
 
-        private void OnMouseMove(object sender, MouseEventArgs e)
+        private void SwapTabPages(IceTabPage tp1, IceTabPage tp2)
         {
-            if (e.Button != MouseButtons.Left) return;
+            int Index1 = this.TabPages.IndexOf(tp1);
+            int Index2 = this.TabPages.IndexOf(tp2);
 
-            Rectangle r = new Rectangle(DragStartPosition, Size.Empty);
-
-            r.Inflate(SystemInformation.DragSize);
-
-            if (drag_Tab != null)
+            this.TabPages[Index1] = tp2;
+            this.TabPages[Index2] = tp1;
+        }
+       
+        private IceTabPage HoverTab(Point pClickLocation)
+        {
+            for (int i = 0; i < m_TabSizeRects.Count; i++)
             {
-                if (!r.Contains(e.X, e.Y))
-                    this.DoDragDrop(drag_Tab, DragDropEffects.Move);
+                Rectangle rectTab = m_TabSizeRects[i];
+                if ((pClickLocation.X > rectTab.X && pClickLocation.X < rectTab.X + rectTab.Width) && (pClickLocation.Y > rectTab.Y && pClickLocation.Y < rectTab.Bottom))
+                    return GetTabPage(i);
             }
+            return null;
+        }
+
+
+        private IceTabPage setSelectedByClickLocation(Point pClickLocation) 
+        {
+            if (m_TabSizeRects.Count == 0) return null;
             
-            DragStartPosition = Point.Empty;
-            
-        }
-        
-        private void OnMouseDown(object sender, MouseEventArgs e)
-        {
-            DragStartPosition = new Point(e.X, e.Y);
-            drag_Tab = HoverTab();
-
-            //which tab was selected
-            selectedTabIndex = SelectedMenuTab();
-
-        }
-
-        #endregion
-
-        internal void RefreshTabs()
-        {
-            if (this.InvokeRequired)
+            for (int i = 0; i < m_TabSizeRects.Count; i++) 
             {
-                RefreshTabsDelegate r = new RefreshTabsDelegate(RefreshTabs);
-                this.Invoke(r, new object[] { });
-            }
-            else
-                this.Refresh();
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            for (int i = 0; i < this.TabCount; i++)
-                DrawTab(e.Graphics, this.TabPages[i], i);
-        }
-
-        private void DrawTab(Graphics g, TabPage tabPage, int nIndex)
-        {
-            //http://www.codeproject.com/KB/tabs/flattabcontrol.aspx
-
-            Rectangle r = (Rectangle)this.GetTabRect(nIndex);
-            RectangleF tabTextArea = (RectangleF)this.GetTabRect(nIndex);
-
-            bool bSelected = (this.SelectedIndex == nIndex);
-
-            Point[] pt = new Point[7];
-            pt[0] = new Point(r.Left + 1, r.Bottom);
-            if (bSelected)
-            {
-                pt[1] = new Point(r.Left + 1, r.Top + 3);
-                pt[2] = new Point(r.Left + 4, r.Top);
-                pt[3] = new Point(r.Right - 4, r.Top);
-                pt[4] = new Point(r.Right - 1, r.Top + 3);
-            }
-            else
-            {
-                pt[1] = new Point(r.Left + 1, r.Top + 6);
-                pt[2] = new Point(r.Left + 4, r.Top + 3);
-                pt[3] = new Point(r.Right - 4, r.Top + 3);
-                pt[4] = new Point(r.Right - 1, r.Top + 6);
-            }
-            pt[5] = new Point(r.Right - 1, r.Bottom);
-            pt[6] = new Point(r.Left + 1, r.Bottom);
-
-            string title;
-            if (nIndex == 0)
-            {
-                title = "Console";
-            }
-            else
-            {
-                title = ((TabWindow)tabPage).WindowName;
-            }
-
-            Brush b;
-            Brush l;
-
-            if (bSelected)
-            {
-                b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
-                l = new LinearGradientBrush(r, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG2], 90);
-            }
-            else
-            {
-                if (nIndex == 0)
-                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarDefault]);
-                else
+                Rectangle rectTab = m_TabSizeRects[i];
+                if ((pClickLocation.X > rectTab.X && pClickLocation.X < rectTab.X + rectTab.Width) && (pClickLocation.Y > rectTab.Y && pClickLocation.Y < rectTab.Bottom)  ) 
                 {
-                    //get the font color from the last message type in the channel            
-                    switch (((TabWindow)tabPage).LastMessageType)
-                    {
-                        case FormMain.ServerMessageType.JoinChannel:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelJoin]);
-                            break;
-                        case FormMain.ServerMessageType.PartChannel:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarChannelPart]);
-                            break;
-                        case FormMain.ServerMessageType.Message:
-                        case FormMain.ServerMessageType.Action:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarNewMessage]);
-                            break;
-                        case FormMain.ServerMessageType.QuitServer:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerQuit]);
-                            break;
-                        case FormMain.ServerMessageType.ServerMessage:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarServerMessage]);
-                            break;
-                        case FormMain.ServerMessageType.Other:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherMessage]);
-                            break;
-                        default:
-                            b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarDefault]);
-                            break;
-                    }
+                    if (this.SelectedIndex != i) 
+                        this.SelectedIndex = i;
+                    break;
                 }
-                l = new LinearGradientBrush(r, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarOtherBG2], 270);
             }
 
-
-            // fill the polygon region with the brush color            
-            g.FillPolygon(l, pt);
-            // draw the border around the control
-            g.DrawPolygon(new Pen(Color.Black, 1), pt);
-
-            //draw the icon
-            Image img = this.ImageList.Images[tabPage.ImageIndex];
-            Rectangle rimage = new Rectangle(r.X, r.Y, img.Width, img.Height);            
-            Rectangle closeButton = new Rectangle(r.Right - 12, r.Top + 5, 12, 12);
-
-            if (bSelected)
+            if (GetTabPage(SelectedIndex) != null)
             {
-                rimage.Offset(2, 4);
-                g.DrawImage(img, rimage);
-                tabTextArea.Offset(17, 2);
-                closeButton.Offset(0, -2);
+                GetTabPage(SelectedIndex).BringToFront();
+                if (this.SelectedIndexChanged != null)
+                {
+                    EventArgs e = new EventArgs();
+                    SelectedIndexChanged(this, e);
+                }
             }
-            else
-            {
-                rimage.Offset(2, 6);
-                g.DrawImage(img, rimage);
-                tabTextArea.Offset(17, 4);
-            }
-            img.Dispose();
 
-            g.DrawString(title, this.Font, b, tabTextArea);
-            
-            //draw the close button
-            if (nIndex != 0 && bSelected)
-            {
-                Image icon = new Bitmap(Properties.Resources.CloseButton);
-                g.DrawImage(icon, closeButton);
-                icon.Dispose();
-            }
-            
-            l.Dispose();
-            b.Dispose();
+            Invalidate();
+
+            return GetTabPage(SelectedIndex);
         }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.Font = new System.Drawing.Font("Verdana", 19.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ResumeLayout(false);
-
-        }
     }
+
 }
