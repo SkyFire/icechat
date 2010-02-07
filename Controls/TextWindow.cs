@@ -108,7 +108,6 @@ namespace IceChat
 
         private readonly int MaxTextLines = 500;
 
-        private System.IO.FileStream logFile;
         private Logging logClass;
 
         public TextWindow()
@@ -151,9 +150,16 @@ namespace IceChat
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
             //get the current line mouse is over
-            int line = ((this.Height + (lineSize/2)) - e.Y)  / lineSize;
-            line = totalDisplayLines - line;
-            line = (line - (totalDisplayLines - vScrollBar.Value));
+            int line = 0;
+
+            if (!SingleLine)
+            {
+                // Get the line count from the bottom... 
+                line = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
+
+                // Then, convert it to count from the top. 
+                line = vScrollBar.Value - line;
+            }
 
             linkedWord = ReturnWord(line, e.Location.X);
             
@@ -237,8 +243,11 @@ namespace IceChat
                 {
                     // this line wraps from the previous one. 
                     string prevline = StripAllCodes(displayLines[lineNumber-1].line);
-                    int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
-                    return ReturnWord(lineNumber - 1, prevwidth);
+                    if (prevline[prevline.Length - 1] != ' ')
+                    {
+                        int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
+                        return ReturnWord(lineNumber - 1, prevwidth);
+                    }
                 }
                 
                 if (!foundSpace && space<line.Length)                
@@ -1121,6 +1130,9 @@ namespace IceChat
             for (int currentLine = endLine; currentLine <= startLine ; currentLine++)
             {
                 lastColor = "";
+                displayLines[line].previous = false;
+                displayLines[line].wrapped = false;
+
                 //System.Diagnostics.Debug.WriteLine("checking:" + currentLine + ":" + startLine + ":" + line + ":" + textLines[currentLine].width + ":" + displayWidth);
                 //check of the line width is the same or less then the display width            
                 if (textLines[currentLine].width <= displayWidth)
@@ -1169,7 +1181,7 @@ namespace IceChat
                                     break;
                                 default:
                                     //check if there needs to be a linewrap
-                                    if ((int)g.MeasureString(StripAllCodes(buildString.ToString()), this.Font, 0, sf).Width > displayWidth)
+                                    if ((int)g.MeasureString(StripAllCodes(buildString.ToString()),this.Font, 0, sf).Width > displayWidth)
                                     {
                                         if (lineSplit)
                                             displayLines[line].line = lastColor + buildString;
@@ -1323,7 +1335,7 @@ namespace IceChat
                                     line.Remove(0, 3);
                                     if (!isInUrl)
                                     {
-                                        //select the emoticon here                                
+                                        //select the emoticon here
                                         Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + ((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).EmoticonImage);
 
                                         if (curBackColor != backColor)
@@ -1415,7 +1427,7 @@ namespace IceChat
                                     font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline);
                                     break;
                                 case newColorChar:
-                                    //draw whats previously in the string                                
+                                    //draw whats previously in the string
                                     if (curBackColor != backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
