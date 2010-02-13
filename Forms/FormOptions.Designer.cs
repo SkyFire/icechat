@@ -81,6 +81,10 @@ namespace IceChat
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabSounds = new System.Windows.Forms.TabPage();
+            this.buttonTest = new System.Windows.Forms.Button();
+            this.buttonChooseSound = new System.Windows.Forms.Button();
+            this.textSound = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.listBoxSounds = new System.Windows.Forms.ListBox();
             this.tabEmoticon = new System.Windows.Forms.TabPage();
@@ -99,10 +103,6 @@ namespace IceChat
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.textSound = new System.Windows.Forms.TextBox();
-            this.buttonChooseSound = new System.Windows.Forms.Button();
-            this.buttonTest = new System.Windows.Forms.Button();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -115,9 +115,8 @@ namespace IceChat
             // 
             // buttonSave
             // 
-            this.buttonSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(420, 250);
+            this.buttonSave.Location = new System.Drawing.Point(430, 250);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -128,7 +127,6 @@ namespace IceChat
             // 
             // buttonCancel
             // 
-            this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonCancel.Location = new System.Drawing.Point(541, 250);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
@@ -651,6 +649,42 @@ namespace IceChat
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
             // 
+            // buttonTest
+            // 
+            this.buttonTest.Location = new System.Drawing.Point(350, 190);
+            this.buttonTest.Name = "buttonTest";
+            this.buttonTest.Size = new System.Drawing.Size(55, 23);
+            this.buttonTest.TabIndex = 6;
+            this.buttonTest.Text = "Test";
+            this.buttonTest.UseVisualStyleBackColor = true;
+            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            // 
+            // buttonChooseSound
+            // 
+            this.buttonChooseSound.Location = new System.Drawing.Point(312, 190);
+            this.buttonChooseSound.Name = "buttonChooseSound";
+            this.buttonChooseSound.Size = new System.Drawing.Size(32, 23);
+            this.buttonChooseSound.TabIndex = 5;
+            this.buttonChooseSound.Text = "...";
+            this.buttonChooseSound.UseVisualStyleBackColor = true;
+            this.buttonChooseSound.Click += new System.EventHandler(this.buttonChooseSound_Click);
+            // 
+            // textSound
+            // 
+            this.textSound.Location = new System.Drawing.Point(7, 190);
+            this.textSound.Name = "textSound";
+            this.textSound.Size = new System.Drawing.Size(299, 23);
+            this.textSound.TabIndex = 4;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(8, 174);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(119, 16);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Sound Event File";
+            // 
             // label11
             // 
             this.label11.AutoSize = true;
@@ -824,42 +858,6 @@ namespace IceChat
             this.label13.Size = new System.Drawing.Size(75, 16);
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(8, 174);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(119, 16);
-            this.label12.TabIndex = 3;
-            this.label12.Text = "Sound Event File";
-            // 
-            // textSound
-            // 
-            this.textSound.Location = new System.Drawing.Point(7, 190);
-            this.textSound.Name = "textSound";
-            this.textSound.Size = new System.Drawing.Size(299, 23);
-            this.textSound.TabIndex = 4;
-            // 
-            // buttonChooseSound
-            // 
-            this.buttonChooseSound.Location = new System.Drawing.Point(312, 190);
-            this.buttonChooseSound.Name = "buttonChooseSound";
-            this.buttonChooseSound.Size = new System.Drawing.Size(32, 23);
-            this.buttonChooseSound.TabIndex = 5;
-            this.buttonChooseSound.Text = "...";
-            this.buttonChooseSound.UseVisualStyleBackColor = true;
-            this.buttonChooseSound.Click += new System.EventHandler(this.buttonChooseSound_Click);
-            // 
-            // buttonTest
-            // 
-            this.buttonTest.Location = new System.Drawing.Point(350, 190);
-            this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(55, 23);
-            this.buttonTest.TabIndex = 6;
-            this.buttonTest.Text = "Test";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // FormSettings
             // 

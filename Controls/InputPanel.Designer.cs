@@ -37,7 +37,6 @@
             // buttonSend
             // 
             this.buttonSend.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSend.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSend.Location = new System.Drawing.Point(562, 0);
             this.buttonSend.Name = "buttonSend";

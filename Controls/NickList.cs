@@ -66,7 +66,7 @@ namespace IceChat
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
-
+            this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;            
@@ -80,10 +80,29 @@ namespace IceChat
             popupMenu = new ContextMenuStrip();
         }
 
+        private void panelButtons_Resize(object sender, EventArgs e)
+        {
+            buttonOp.Width = (this.panelButtons.Width / 4) - 4;
+            buttonVoice.Width = buttonOp.Width;
+            buttonBan.Width = buttonOp.Width;
+            buttonInfo.Width = buttonOp.Width;
+            buttonHop.Width = buttonOp.Width;
+            buttonQuery.Width = buttonOp.Width;
+            buttonKick.Width = buttonOp.Width;
+            buttonWhois.Width = buttonOp.Width;
+
+            buttonVoice.Left = this.panelButtons.Width / 4 + 1;
+            buttonQuery.Left = buttonVoice.Left;
+            buttonBan.Left = this.panelButtons.Width / 2;
+            buttonKick.Left = buttonBan.Left;
+            buttonInfo.Left = this.panelButtons.Width / 4 * 3 + 1;
+            buttonWhois.Left = buttonInfo.Left;
+        }
+
 
         private void OnScroll(object sender, ScrollEventArgs e)
         {
-            topIndex = ((VScrollBar)sender).Value;
+            topIndex = e.NewValue;
             Invalidate();
         }
 
@@ -286,8 +305,8 @@ namespace IceChat
 
                 g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
 
-                //draw the nicks            
-                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
+                //draw the nicks 
+                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
 
                 if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                 {
@@ -310,18 +329,27 @@ namespace IceChat
                         {
                             if (u.Level[y])
                             {
-                                if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'q')
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
-                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'a')
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelAdminColor]);
-                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOpColor]);
-                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelHalfOpColor]);
-                                else if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelVoiceColor]);
-                                else
-                                    b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
+                                switch (currentWindow.Connection.ServerSetting.StatusModes[0][y])
+                                {
+                                    case 'q':
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOwnerColor]);
+                                        break;
+                                    case 'a':
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelAdminColor]);
+                                        break;
+                                    case 'o':
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelOpColor]);
+                                        break;
+                                    case 'h':
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelHalfOpColor]);
+                                        break;
+                                    case 'v':
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelVoiceColor]);
+                                        break;
+                                    default:
+                                        b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
+                                        break;
+                                }
 
                                 break;
                             }
@@ -348,19 +376,18 @@ namespace IceChat
                                 g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }
                         currentY += lineSize;
-                        if (currentY >= listR.Height)
+                        if (currentY >= listR.Height+listR.Y)
                         {
-                            vScrollBar.Maximum = sortedNicks.Count - ((currentY - lineSize) / lineSize) + 1;
+                            vScrollBar.Maximum = sortedNicks.Count - ((listR.Height - lineSize) / lineSize);
                             break;
                         }
                     }
 
-                    if (currentY > listR.Height)
+                    if (currentY > listR.Height || vScrollBar.Value > 0)
                         vScrollBar.Visible = true;
                     else
                     {
-                        if (vScrollBar.Value == 1)
-                            vScrollBar.Visible = false;
+                        vScrollBar.Visible = false;
                     }
 
                 }
@@ -424,7 +451,6 @@ namespace IceChat
                 this.currentWindow = page;
                 UpdateHeader("Query:" + page.TabCaption);
             }
-
         }
 
         /// <summary>

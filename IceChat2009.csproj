@@ -116,6 +116,12 @@
     <Compile Include="Forms\FormEmoticons.Designer.cs">
       <DependentUpon>FormEmoticons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormMainEvents.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMainSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormPluginInfo.cs">
       <SubType>Form</SubType>
     </Compile>

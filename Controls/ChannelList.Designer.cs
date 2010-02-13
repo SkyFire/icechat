@@ -49,7 +49,7 @@
             this.listChannels.ItemHeight = 16;
             this.listChannels.Location = new System.Drawing.Point(0, 23);
             this.listChannels.Name = "listChannels";
-            this.listChannels.Size = new System.Drawing.Size(150, 214);
+            this.listChannels.Size = new System.Drawing.Size(150, 212);
             this.listChannels.TabIndex = 0;
             this.listChannels.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listChannels_MouseDoubleClick);
             // 
@@ -74,17 +74,16 @@
             this.panelButtons.Controls.Add(this.buttonAdd);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelButtons.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelButtons.Location = new System.Drawing.Point(0, 237);
+            this.panelButtons.Location = new System.Drawing.Point(0, 235);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(150, 55);
+            this.panelButtons.Size = new System.Drawing.Size(150, 57);
             this.panelButtons.TabIndex = 3;
             // 
             // buttonRemove
             // 
-            this.buttonRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonRemove.Location = new System.Drawing.Point(53, 29);
+            this.buttonRemove.Location = new System.Drawing.Point(53, 28);
             this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(74, 22);
+            this.buttonRemove.Size = new System.Drawing.Size(74, 24);
             this.buttonRemove.TabIndex = 3;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
@@ -92,10 +91,9 @@
             // 
             // buttonEdit
             // 
-            this.buttonEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonEdit.Location = new System.Drawing.Point(3, 29);
+            this.buttonEdit.Location = new System.Drawing.Point(2, 28);
             this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(46, 22);
+            this.buttonEdit.Size = new System.Drawing.Size(46, 24);
             this.buttonEdit.TabIndex = 2;
             this.buttonEdit.Text = "Edit";
             this.buttonEdit.UseVisualStyleBackColor = true;
@@ -103,10 +101,9 @@
             // 
             // buttonJoin
             // 
-            this.buttonJoin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonJoin.Location = new System.Drawing.Point(53, 3);
+            this.buttonJoin.Location = new System.Drawing.Point(53, 2);
             this.buttonJoin.Name = "buttonJoin";
-            this.buttonJoin.Size = new System.Drawing.Size(74, 22);
+            this.buttonJoin.Size = new System.Drawing.Size(74, 24);
             this.buttonJoin.TabIndex = 1;
             this.buttonJoin.Text = "Join";
             this.buttonJoin.UseVisualStyleBackColor = true;
@@ -114,11 +111,10 @@
             // 
             // buttonAdd
             // 
-            this.buttonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonAdd.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAdd.Location = new System.Drawing.Point(3, 3);
+            this.buttonAdd.Location = new System.Drawing.Point(2, 2);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(46, 22);
+            this.buttonAdd.Size = new System.Drawing.Size(46, 24);
             this.buttonAdd.TabIndex = 0;
             this.buttonAdd.Text = "Add";
             this.buttonAdd.UseVisualStyleBackColor = true;

@@ -1,4 +1,26 @@
-//http://www.codeproject.com/KB/tabs/CustomizedTabcontrol.aspx
+/******************************************************************************\
+ * IceChat 2009 Internet Relay Chat Client
+ *
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
+ *                                    <www.icechat.net> 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * Please consult the LICENSE.txt file included with this project for
+ * more details
+ *
+\******************************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -55,7 +77,23 @@ namespace IceChat
         public delegate void TabClosedDelegate(int nIndex);
         public event TabClosedDelegate OnTabClosed;
 
-        public List<IceTabPage> TabPages 
+        public IceTabControl()
+        {
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+
+            InitializeComponent();
+            InitializeCustom();
+
+            popupMenu = ConsolePopupMenu();
+            popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+
+        }
+
+        internal List<IceTabPage> TabPages 
         {
             get
             {
@@ -84,7 +122,7 @@ namespace IceChat
             }
         }
 
-        public int TabCount 
+        internal int TabCount 
         {
             get 
             {
@@ -92,7 +130,7 @@ namespace IceChat
             }
         }
 
-        public Font TabFont 
+        internal Font TabFont 
         {
             set 
             {
@@ -152,19 +190,6 @@ namespace IceChat
             }
         }
 
-        private void SelectTab(string sCaption)
-        {
-            for (int i = 0; i < m_lTabPages.Count; i++)
-            {
-                if (m_lTabPages[i].TabCaption.Equals(sCaption))
-                {
-                    SelectedIndex = i;
-                    Invalidate();
-                    break;
-                }
-            }
-        }
-        
         internal IceTabPage GetTabPage(string sCaption)
         {
             for (int i = 0; i < m_lTabPages.Count; i++)
@@ -196,22 +221,6 @@ namespace IceChat
             if (iTabIndex < m_lTabPages.Count)
                 return m_lTabPages[iTabIndex];
             return null;
-        }
-
-        public IceTabControl() 
-        {
-            this.SetStyle(ControlStyles.UserPaint, true);
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.DoubleBuffer, true);
-            this.SetStyle(ControlStyles.ResizeRedraw, true);
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-
-            InitializeComponent();
-            InitializeCustom();
-
-            popupMenu = ConsolePopupMenu();
-            popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-
         }
 
         private void InitializeCustom() 
@@ -459,73 +468,8 @@ namespace IceChat
         protected override void OnPaint(PaintEventArgs e) 
         {
             //base.OnPaint(e);
-            DrawControl(e.Graphics);
-        }
-
-        private void CalculateTabSizes(Graphics g)
-        {
-            try
-            {
-                m_TabSizeRects.Clear();
-                m_TabTextRects.Clear();
-
-                m_TotalTabRows = 1;
-
-
-                int totalWidth = 0;
-                int xPos = m_TabStartXPos;
-                int yPos = 0;
-
-                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 5;
-                if ((m_TabRowHeight / 2) * 2 == m_TabRowHeight)
-                    m_TabRowHeight++;
-
-                for (int i = 0; i < m_lTabPages.Count; i++)
-                {
-
-                    Rectangle recBounds = new Rectangle();
-                    Rectangle recTextArea = new Rectangle();
-
-                    //caclulate the width of the text
-                    int textWidth = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Width;
-                    recBounds.Width = textWidth + 26;
-                    recBounds.Height = m_TabRowHeight + 5;
-
-                    recTextArea.Width = textWidth + 1;
-                    recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
-
-                    if ((totalWidth + recBounds.Width) > (this.Width - 20))
-                    {
-                        m_TotalTabRows++;
-                        totalWidth = recBounds.Width;
-                        xPos = m_TabStartXPos;
-                        yPos = yPos + m_TabRowHeight + 5;
-                    }
-
-                    recBounds.X = xPos;
-                    recBounds.Y = yPos;
-
-                    recTextArea.X = xPos + 21;  //add area for image and a little extra
-                    recTextArea.Y = yPos;
-
-                    m_TabSizeRects.Add(i, recBounds);
-                    m_TabTextRects.Add(i, recTextArea);
-
-                    xPos = xPos + recBounds.Width;
-                    totalWidth = totalWidth + recBounds.Width;
-
-
-                }
-                for (int i = 0; i < m_lTabPages.Count; i++)
-                {
-                    m_lTabPages[i].Width = this.Width - 4;
-                    m_lTabPages[i].Height = this.Height - ((m_TabRowHeight + 7) * m_TotalTabRows);
-                }
-            }
-            catch (Exception e)
-            {
-                FormMain.Instance.WriteErrorFile("CalculateTabSizes:" + e.Message, e.StackTrace);
-            }
+            if (FormMain.Instance != null)
+                DrawControl(e.Graphics);
         }
 
 
@@ -533,6 +477,9 @@ namespace IceChat
         {
             try
             {
+                this.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.TabbarBackColor];
+                this.m_pnlCloseButton.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.TabbarBackColor];
+
                 if (this.m_lTabPages.Count == 0) return;
 
                 if (this.m_lTabPages.Count != 0 && m_SelectedIndex == -1)
@@ -541,16 +488,7 @@ namespace IceChat
                 if (this.m_SelectedIndex > (m_lTabPages.Count - 1))
                     SelectedIndex = 0;
 
-                CalculateTabSizes(g);
-
-                //Tab Buttons Area
-                Rectangle TabButtonArea = new Rectangle(5, 0, this.Size.Width - 10, (m_TabRowHeight + 5) * m_TotalTabRows);
-
-                //Total Tab Control Area
-                Rectangle TabControlArea = new Rectangle(new Point(0, 0), this.Size);
-
-                //calcute the area of where the TabPages sit
-                Rectangle TabArea = new Rectangle(4, ((m_TabRowHeight + 7) * m_TotalTabRows), this.Size.Width - 8, this.Size.Height - ((m_TabRowHeight + 7) * m_TotalTabRows) - 11);
+                CalculateTabSizes(g);                
 
                 Region rsaved = g.Clip;
                 for (int i = 0; i < m_lTabPages.Count; i++)
@@ -571,6 +509,8 @@ namespace IceChat
             }
             catch (Exception e) 
             {
+                //System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
+                MessageBox.Show(e.StackTrace);
                 FormMain.Instance.WriteErrorFile("IceTabControl DrawControl Error:" + e.Message, e.StackTrace);
             }
         }
@@ -638,8 +578,7 @@ namespace IceChat
                         break;
 
                 }
-                //Image img = tabPage.IconImg;
-
+                
                 Rectangle rimage = new Rectangle(recBounds.X, recBounds.Y, img.Width, img.Height);
                 if (bSelected)
                 {
@@ -651,8 +590,6 @@ namespace IceChat
                     rimage.Offset(4, 6);
                     g.DrawImage(img, rimage);
                 }
-
-                //img.Dispose();
 
                 StringFormat stringFormat = new StringFormat();
                 stringFormat.Alignment = StringAlignment.Near;
@@ -698,12 +635,14 @@ namespace IceChat
                 }
 
                 g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+
             }            
             catch (Exception e) 
             { 
                 FormMain.Instance.WriteErrorFile("IceTabControl DrawTab Error:" + e.Message + ":" + nIndex, e.StackTrace);
             }
         }
+
 
         internal void DrawCloseButton()
         {
@@ -735,6 +674,72 @@ namespace IceChat
 
             g.Dispose();
         }
+
+        private void CalculateTabSizes(Graphics g)
+        {
+            try
+            {
+                m_TabSizeRects.Clear();
+                m_TabTextRects.Clear();
+
+                m_TotalTabRows = 1;
+
+                int totalWidth = 0;
+                int xPos = m_TabStartXPos;
+                int yPos = 0;
+
+                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 5;
+                if ((m_TabRowHeight / 2) * 2 == m_TabRowHeight)
+                    m_TabRowHeight++;
+
+                for (int i = 0; i < m_lTabPages.Count; i++)
+                {
+
+                    Rectangle recBounds = new Rectangle();
+                    Rectangle recTextArea = new Rectangle();
+
+                    //caclulate the width of the text
+                    int textWidth = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Width;
+                    recBounds.Width = textWidth + 26;
+                    recBounds.Height = m_TabRowHeight + 5;
+
+                    recTextArea.Width = textWidth + 1;
+                    recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
+
+                    if ((totalWidth + recBounds.Width) > (this.Width - 20))
+                    {
+                        m_TotalTabRows++;
+                        totalWidth = recBounds.Width;
+                        xPos = m_TabStartXPos;
+                        yPos = yPos + m_TabRowHeight + 5;
+                    }
+
+                    recBounds.X = xPos;
+                    recBounds.Y = yPos;
+
+                    recTextArea.X = xPos + 21;  //add area for image and a little extra
+                    recTextArea.Y = yPos;
+
+                    m_TabSizeRects.Add(i, recBounds);
+                    m_TabTextRects.Add(i, recTextArea);
+
+                    xPos = xPos + recBounds.Width;
+                    totalWidth = totalWidth + recBounds.Width;
+
+
+                }
+                for (int i = 0; i < m_lTabPages.Count; i++)
+                {
+                    m_lTabPages[i].Width = this.Width;
+                    m_lTabPages[i].Height = this.Height - ((m_TabRowHeight + 7) * m_TotalTabRows);
+                }
+            }
+            catch (Exception e)
+            {
+                FormMain.Instance.WriteErrorFile("CalculateTabSizes:" + e.Message, e.StackTrace);
+            }
+        }
+
 
         private void OnControlAdded(object sender, ControlEventArgs e) 
         {
@@ -805,7 +810,7 @@ namespace IceChat
             }
 
 
-            if (e.Y < m_TabSizeRects[0].Y + 3 || e.Y > m_TabSizeRects[0].Y + m_TabSizeRects[0].Height) 
+            if (e.Y < m_TabSizeRects[0].Y + 3 || e.Y > m_TabSizeRects[m_TabSizeRects.Count-1].Y + m_TabSizeRects[0].Height) 
             {
                 m_iHoveredIndex = -1;
                 Invalidate();
@@ -818,7 +823,7 @@ namespace IceChat
             for (int i = 0; i < m_TabSizeRects.Count; i++) 
             {
                 Rectangle rectTab = m_TabSizeRects[i];
-                if (e.X > rectTab.X && e.X < rectTab.X + rectTab.Width) 
+                if ((e.X > rectTab.X && e.X < (rectTab.X + rectTab.Width)) && (e.Y > rectTab.Y && e.Y < (rectTab.Y + rectTab.Height))) 
                 {
                     if (this.m_iHoveredIndex != i) 
                         this.m_iHoveredIndex = i;

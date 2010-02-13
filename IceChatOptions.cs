@@ -67,6 +67,15 @@ namespace IceChat
         private int _queryBack = 0;
         private int _nicklistBack = 0;
         private int _serverlistBack = 0;
+        private int _inputboxBack = 0;
+        private int _inputboxFore = 1;
+        private int _channellistBack = 0;
+        private int _channellistFore = 1;
+        private int _tabbarBack = 20;
+        private int _menubarBack = 20;
+        private int _toolbarBack = 20;
+        private int _statusbarBack = 20;
+        private int _statusbarFore = 1;
 
         [XmlElement("ConsoleBackColor")]
         public int ConsoleBackColor
@@ -88,45 +97,65 @@ namespace IceChat
         public int ServerListBackColor
         { get { return _serverlistBack; }  set { _serverlistBack = value; } }
 
+        [XmlElement("ChannelListBackColor")]
+        public int ChannelListBackColor
+        { get { return _channellistBack; } set { _channellistBack = value; } }
+
+        [XmlElement("ChannelListForeColor")]
+        public int ChannelListForeColor
+        { get { return _channellistFore; } set { _channellistFore = value; } }
+
+        [XmlElement("InputboxBackColor")]
+        public int InputboxBackColor
+        { get { return _inputboxBack; } set { _inputboxBack = value; } }
+
+        [XmlElement("InputboxForeColor")]
+        public int InputboxForeColor
+        { get { return _inputboxFore; } set { _inputboxFore = value; } }
+
+        [XmlElement("TabbarBackColor")]
+        public int TabbarBackColor
+        { get { return _tabbarBack; } set { _tabbarBack = value; } }
+
+        [XmlElement("MenubarBackColor")]
+        public int MenubarBackColor
+        { get { return _menubarBack; } set { _menubarBack = value; } }
+
+        [XmlElement("ToolbarBackColor")]
+        public int ToolbarBackColor
+        { get { return _toolbarBack; } set { _toolbarBack = value; } }
+
+        [XmlElement("StatusbarBackColor")]
+        public int StatusbarBackColor
+        { get { return _statusbarBack; } set { _statusbarBack = value; } }
+
+        [XmlElement("StatusbarForeColor")]
+        public int StatusbarForeColor
+        { get { return _statusbarFore; } set { _statusbarFore = value; } }
+
         [XmlElement("ChannelOwnerColor")]
         public int ChannelOwnerColor
         { get { return _channelOwnerColor; }  set { _channelOwnerColor = value; } }
 
         [XmlElement("ChannelAdminColor")]
         public int ChannelAdminColor
-        { 
-          get { return this._channelAdminColor; }
-          set { this._channelAdminColor = value; } 
-        }
+        { get { return this._channelAdminColor; } set { this._channelAdminColor = value; } }
 
         [XmlElement("ChannelOpColor")]
         public int ChannelOpColor
-        {
-            get { return this._channelOpColor; }
-            set { this._channelOpColor = value; }
-        }
+        { get { return this._channelOpColor; } set { this._channelOpColor = value; } }
 
         [XmlElement("ChannelHalfOpColor")]
         public int ChannelHalfOpColor
-        {
-            get { return this._channelHalfOpColor; }
-            set { this._channelHalfOpColor = value; }
-        }
+        { get { return this._channelHalfOpColor; } set { this._channelHalfOpColor = value; } }
 
         [XmlElement("ChannelVoiceColor")]
         public int ChannelVoiceColor
-        {
-            get { return this._channelVoiceColor; }
-            set { this._channelVoiceColor = value; }
-        }
+        { get { return this._channelVoiceColor; } set { this._channelVoiceColor = value; } }
 
         [XmlElement("ChannelRegularColor")]
         public int ChannelRegularColor
-        {
-            get { return this._channelRegularColor; }
-            set { this._channelRegularColor = value; }
-        }
-
+        { get { return this._channelRegularColor; } set { this._channelRegularColor = value; } }
 
         [XmlElement("TabBarCurrent")]
         public int TabBarCurrent

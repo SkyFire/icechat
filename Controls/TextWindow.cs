@@ -132,7 +132,9 @@ namespace IceChat
             this.UpdateStyles();
 
             LoadTextSizes();
-            if (FormMain.Instance.IceChatEmoticons != null)
+            
+            
+            if (FormMain.Instance != null && FormMain.Instance.IceChatEmoticons != null)
             {
                 if (FormMain.Instance.IceChatEmoticons.listEmoticons.Count > 0)
                 {
@@ -143,6 +145,7 @@ namespace IceChat
                     emotMatch = emotMatch.Substring(0, emotMatch.Length - 1);
                 }
             }
+             
             popupMenu = new ContextMenuStrip();
             
         }
@@ -559,7 +562,7 @@ namespace IceChat
             }
         }
 
-        internal bool SingleLine
+        public bool SingleLine
         {
             get
             {
@@ -831,24 +834,31 @@ namespace IceChat
         /// <param name="scrollUp"></param>
         internal void ScrollWindowPage(bool scrollUp)
         {
-            if (vScrollBar.Enabled == false)
-                return;
-
-            if (scrollUp == true)
+            try
             {
-                if (vScrollBar.Value > vScrollBar.LargeChange)
+                if (vScrollBar.Enabled == false)
+                    return;
+
+                if (scrollUp == true)
                 {
-                    vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
+                    if (vScrollBar.Value > vScrollBar.LargeChange)
+                    {
+                        vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
+                        Invalidate();
+                    }
+                }
+                else
+                {
+                    if (vScrollBar.Value <= vScrollBar.Maximum - (vScrollBar.LargeChange * 2))
+                        vScrollBar.Value = vScrollBar.Value + (vScrollBar.LargeChange - 1);
+                    else
+                        vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange + 1;
                     Invalidate();
                 }
             }
-            else
+            catch (Exception e)
             {
-                if (vScrollBar.Value <= vScrollBar.Maximum - (vScrollBar.LargeChange * 2))
-                    vScrollBar.Value = vScrollBar.Value + (vScrollBar.LargeChange - 1);
-                else
-                    vScrollBar.Value = vScrollBar.Maximum - vScrollBar.LargeChange + 1;
-                Invalidate();
+                FormMain.Instance.WriteErrorFile("ScrollWindowPage:" + e.Message, e.StackTrace);
             }
 
         }
@@ -857,25 +867,32 @@ namespace IceChat
         /// </summary>
         /// <param name="scrollUp"></param>
         internal void ScrollWindow(bool scrollUp)
-        {            
-            if (vScrollBar.Enabled == false)
-                return;
-
-            if (scrollUp == true)
+        {
+            try
             {
-                if (vScrollBar.Value > 1)
+                if (vScrollBar.Enabled == false)
+                    return;
+
+                if (scrollUp == true)
                 {
-                    vScrollBar.Value--;
-                    Invalidate();
+                    if (vScrollBar.Value > 1)
+                    {
+                        vScrollBar.Value--;
+                        Invalidate();
+                    }
+                }
+                else
+                {
+                    if (vScrollBar.Value <= vScrollBar.Maximum - vScrollBar.LargeChange)
+                    {
+                        vScrollBar.Value++;
+                        Invalidate();
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                if (vScrollBar.Value <= vScrollBar.Maximum-vScrollBar.LargeChange)
-                {
-                    vScrollBar.Value++;
-                    Invalidate();
-                }
+                FormMain.Instance.WriteErrorFile("ScrollWindow:" + e.Message, e.StackTrace);
             }
         }
 
@@ -1144,7 +1161,7 @@ namespace IceChat
                         displayLines[line].textLine = currentLine;
                         displayLines[line].textColor = textLines[currentLine].textColor;
                         line++;
-                    }
+                    } 
                     catch (Exception e)
                     {
                         FormMain.Instance.WriteErrorFile("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length, e.StackTrace);

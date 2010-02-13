@@ -69,19 +69,19 @@
             this.panelButtons.Controls.Add(this.buttonDisconnect);
             this.panelButtons.Controls.Add(this.buttonConnect);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelButtons.Location = new System.Drawing.Point(0, 264);
-            this.panelButtons.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.panelButtons.Location = new System.Drawing.Point(0, 266);
+            this.panelButtons.Margin = new System.Windows.Forms.Padding(2);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(180, 59);
+            this.panelButtons.Size = new System.Drawing.Size(180, 57);
             this.panelButtons.TabIndex = 0;
             this.panelButtons.TabStop = true;
             // 
             // buttonAdd
             // 
-            this.buttonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAdd.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAdd.Location = new System.Drawing.Point(95, 30);
-            this.buttonAdd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonAdd.Location = new System.Drawing.Point(99, 28);
+            this.buttonAdd.Margin = new System.Windows.Forms.Padding(2);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(77, 24);
             this.buttonAdd.TabIndex = 3;
@@ -92,10 +92,10 @@
             // 
             // buttonEdit
             // 
-            this.buttonEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEdit.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonEdit.Location = new System.Drawing.Point(95, 3);
-            this.buttonEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonEdit.Location = new System.Drawing.Point(99, 2);
+            this.buttonEdit.Margin = new System.Windows.Forms.Padding(2);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(77, 24);
             this.buttonEdit.TabIndex = 2;
@@ -106,9 +106,8 @@
             // 
             // buttonDisconnect
             // 
-            this.buttonDisconnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonDisconnect.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonDisconnect.Location = new System.Drawing.Point(4, 31);
+            this.buttonDisconnect.Location = new System.Drawing.Point(2, 28);
             this.buttonDisconnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(83, 24);
@@ -120,16 +119,14 @@
             // 
             // buttonConnect
             // 
-            this.buttonConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonConnect.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonConnect.Location = new System.Drawing.Point(4, 3);
-            this.buttonConnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.buttonConnect.Location = new System.Drawing.Point(2, 2);
+            this.buttonConnect.Margin = new System.Windows.Forms.Padding(2);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(83, 24);
             this.buttonConnect.TabIndex = 1;
             this.buttonConnect.TabStop = false;
             this.buttonConnect.Text = "Connect";
-            this.buttonConnect.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonConnect.UseVisualStyleBackColor = true;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
@@ -141,7 +138,7 @@
             this.vScrollBar.Maximum = 1;
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Padding = new System.Windows.Forms.Padding(0, 25, 0, 0);
-            this.vScrollBar.Size = new System.Drawing.Size(17, 264);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 266);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Value = 1;
             this.vScrollBar.Visible = false;
@@ -238,7 +235,7 @@
             this.autoPerformToolStripMenuItem,
             this.openLogFolderToolStripMenuItem});
             this.contextMenuServer.Name = "contextMenuServer";
-            this.contextMenuServer.Size = new System.Drawing.Size(163, 158);
+            this.contextMenuServer.Size = new System.Drawing.Size(163, 136);
             // 
             // openLogFolderToolStripMenuItem
             // 

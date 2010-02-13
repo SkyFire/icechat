@@ -25,11 +25,14 @@ namespace IceChat
         {
             string logFolder = FormMain.Instance.LogsFolder;
 
+            if (!Directory.Exists(logFolder))
+                Directory.CreateDirectory(logFolder);
+
             logFolder += Path.DirectorySeparatorChar + _consoleTab.Connection.ServerSetting.ServerName;
 
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (!File.Exists(logFolder))
+            if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
             if (FormMain.Instance.IceChatOptions.SeperateLogs)
@@ -57,16 +60,17 @@ namespace IceChat
 
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (!File.Exists(logFolder))
+            if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
             //set the log folder to the server name
-            logFolder += Path.DirectorySeparatorChar + _tabPage.Connection.ServerSetting.ServerName;
+            if (_tabPage.WindowStyle != IceTabPage.WindowType.Debug)
+                logFolder += Path.DirectorySeparatorChar + _tabPage.Connection.ServerSetting.ServerName;
 
             if (_tabPage.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 logFolder += Path.DirectorySeparatorChar + "Channel";
-                if (!File.Exists(logFolder))
+                if (!Directory.Exists(logFolder))
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
@@ -77,7 +81,7 @@ namespace IceChat
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Query)
             {
                 logFolder += Path.DirectorySeparatorChar + "Query";
-                if (!File.Exists(logFolder))
+                if (!Directory.Exists(logFolder))
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
@@ -87,7 +91,7 @@ namespace IceChat
             }
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Debug)
             {
-                if (!File.Exists(logFolder))
+                if (!Directory.Exists(logFolder))
                     Directory.CreateDirectory(logFolder);
 
                 logFile = new FileStream(FormMain.Instance.LogsFolder + Path.DirectorySeparatorChar + "debug.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);

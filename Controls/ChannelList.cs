@@ -47,19 +47,36 @@ namespace IceChat
             InitializeComponent();
 
             labelHeader.Paint += new PaintEventHandler(OnHeaderPaint);
+            this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
 
             DoubleBuffered = true;
             //load channel list from XML File
             ReadSettings();
         }
 
+        private void panelButtons_Resize(object sender, EventArgs e)
+        {
+            this.buttonAdd.Width = (panelButtons.Width / 2) - 4;
+            this.buttonJoin.Width = buttonAdd.Width;
+            this.buttonEdit.Width = buttonAdd.Width;
+            this.buttonRemove.Width = buttonAdd.Width;
+
+            this.buttonJoin.Left = (panelButtons.Width / 2) + 1;
+            this.buttonRemove.Left = buttonJoin.Left;
+        }
+
+        internal void SetListColors()
+        {
+            this.listChannels.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.ChannelListBackColor];
+            this.listChannels.ForeColor = IrcColor.colors[FormMain.Instance.IceChatColors.ChannelListForeColor];
+        }
 
         /// <summary>
         /// Paint the header with a Gradient Background
         /// </summary>
         private void OnHeaderPaint(object sender, PaintEventArgs e)
         {
-            Brush l = new LinearGradientBrush(e.Graphics.ClipBounds, Color.Silver, Color.White, 90);
+            Brush l = new LinearGradientBrush(e.Graphics.ClipBounds, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
             e.Graphics.FillRectangle(l, e.Graphics.ClipBounds);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
@@ -71,24 +88,6 @@ namespace IceChat
 
 
             l.Dispose();            
-            /*
-            //draw the close/expand button
-            Rectangle box = new Rectangle((int)e.Graphics.ClipBounds.Left + 1, 1, 20, (int)e.Graphics.ClipBounds.Height-6);
-
-            //draw the highlight box around
-            l = new LinearGradientBrush(box, Color.Silver, Color.White, 270);
-            e.Graphics.FillEllipse(l, box);
-
-            if (!collapsed)
-            {
-                //draw the top hash
-                e.Graphics.DrawLine(new Pen(Color.Black, 2), box.Left + 6, box.Top + 5, box.Left + 10, box.Top + 9);
-                e.Graphics.DrawLine(new Pen(Color.Black, 2), box.Left + 14, box.Top + 5, box.Left + 10, box.Top + 9);
-                //draw the bottom hash
-                e.Graphics.DrawLine(new Pen(Color.Black, 2), box.Left + 6, box.Top + 10, box.Left + 10, box.Top + 14);
-                e.Graphics.DrawLine(new Pen(Color.Black, 2), box.Left + 14, box.Top + 10, box.Left + 10, box.Top + 14);
-            }
-            */
         }
 
         /// <summary>

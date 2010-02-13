@@ -77,7 +77,8 @@ namespace IceChat
 
         private void OnReconnectTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            ConnectSocket();
+            if (attemptReconnect)
+                ConnectSocket();
         }
 
         #region Public Properties and Methods
@@ -210,6 +211,7 @@ namespace IceChat
         private void OnConnectionReady(IAsyncResult ar)
         {
             reconnectTimer.Stop();
+            attemptReconnect = true;
 
             if (serverSocket == null)
             {

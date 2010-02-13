@@ -56,80 +56,50 @@ namespace IceChat
         {
             InitializeComponent();
 
-            this.textFormattedBasic = new TextWindow();
-            this.textFormattedText = new TextWindow();
-
-
-
-            // 
-            // textFormattedBasic
-            // 
-            this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedBasic.IRCBackColor = 0;
-            this.textFormattedBasic.IRCForeColor = 0;
-            this.textFormattedBasic.Location = new System.Drawing.Point(16, 316);
-            this.textFormattedBasic.Name = "textFormattedBasic";
-            this.textFormattedBasic.NoColorMode = false;
-            this.textFormattedBasic.ShowTimeStamp = true;
-            this.textFormattedBasic.SingleLine = true;
-            this.textFormattedBasic.Size = new System.Drawing.Size(607, 26);
-            this.textFormattedBasic.TabIndex = 48;
-            // 
-            // textFormattedText
-            // 
-            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedText.IRCBackColor = 0;
-            this.textFormattedText.IRCForeColor = 0;
-            this.textFormattedText.Location = new System.Drawing.Point(13, 314);
-            this.textFormattedText.Name = "textFormattedText";
-            this.textFormattedText.NoColorMode = false;
-            this.textFormattedText.ShowTimeStamp = true;
-            this.textFormattedText.SingleLine = true;
-            this.textFormattedText.Size = new System.Drawing.Size(607, 26);
-            this.textFormattedText.TabIndex = 46;
-
-            this.tabBasic.Controls.Add(this.textFormattedBasic);
-            this.tabAdvanced.Controls.Add(this.textFormattedText);
-
-
             //add the events for the Tab Bar Color Picker
-            this.pictureTabCurrent.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabMessage.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabJoin.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabPart.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabQuit.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabServer.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabOther.Click += new EventHandler(OnTabBarColor_Click);
-            this.pictureTabDefault.Click += new EventHandler(OnTabBarColor_Click);
+            this.pictureTabCurrent.Click += new EventHandler(OnColor_Click);
+            this.pictureTabMessage.Click += new EventHandler(OnColor_Click);
+            this.pictureTabJoin.Click += new EventHandler(OnColor_Click);
+            this.pictureTabPart.Click += new EventHandler(OnColor_Click);
+            this.pictureTabQuit.Click += new EventHandler(OnColor_Click);
+            this.pictureTabServer.Click += new EventHandler(OnColor_Click);
+            this.pictureTabOther.Click += new EventHandler(OnColor_Click);
+            this.pictureTabDefault.Click += new EventHandler(OnColor_Click);
 
             //add the events for the Nick Color Picker
-            this.pictureAdmin.Click += new EventHandler(OnNickColor_Click);
-            this.pictureOwner.Click += new EventHandler(OnNickColor_Click);
-            this.pictureOperator.Click += new EventHandler(OnNickColor_Click);
-            this.pictureHalfOperator.Click += new EventHandler(OnNickColor_Click);
-            this.pictureVoice.Click += new EventHandler(OnNickColor_Click);
-            this.pictureDefault.Click += new EventHandler(OnNickColor_Click);
+            this.pictureAdmin.Click += new EventHandler(OnColor_Click);
+            this.pictureOwner.Click += new EventHandler(OnColor_Click);
+            this.pictureOperator.Click += new EventHandler(OnColor_Click);
+            this.pictureHalfOperator.Click += new EventHandler(OnColor_Click);
+            this.pictureVoice.Click += new EventHandler(OnColor_Click);
+            this.pictureDefault.Click += new EventHandler(OnColor_Click);
 
-            this.pictureConsole.Click += new EventHandler(OnBackColor_Click);
-            this.pictureChannel.Click += new EventHandler(OnBackColor_Click);
-            this.pictureQuery.Click += new EventHandler(OnBackColor_Click);
-            this.pictureNickList.Click += new EventHandler(OnBackColor_Click);
-            this.pictureServerList.Click += new EventHandler(OnBackColor_Click);
-            this.pictureTabBarCurrent1.Click += new EventHandler(OnBackColor_Click);
-            this.pictureTabBarCurrent2.Click += new EventHandler(OnBackColor_Click);
-            this.pictureTabBarOther1.Click += new EventHandler(OnBackColor_Click);
-            this.pictureTabBarOther2.Click += new EventHandler(OnBackColor_Click);
+            this.pictureConsole.Click += new EventHandler(OnColor_Click);
+            this.pictureChannel.Click += new EventHandler(OnColor_Click);
+            this.pictureQuery.Click += new EventHandler(OnColor_Click);
+            this.pictureNickList.Click += new EventHandler(OnColor_Click);
+            this.pictureServerList.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBarCurrent1.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBarCurrent2.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBarOther1.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBarOther2.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBackground.Click += new EventHandler(OnColor_Click);
 
-            this.pictureTabBarHover1.Click += new EventHandler(OnTabBarHover1_Click);
-            this.pictureTabBarHover2.Click += new EventHandler(OnTabBarHover2_Click);
+            this.pictureTabBarHover1.Click += new EventHandler(OnColor_Click);
+            this.pictureTabBarHover2.Click += new EventHandler(OnColor_Click);
 
-            this.picturePanelHeaderBG1.Click += new EventHandler(OnPanelHeaderBG1_Click);
-            this.picturePanelHeaderBG2.Click += new EventHandler(OnPanelHeaderBG2_Click);
-            this.picturePanelHeaderForeColor.Click += new EventHandler(OnPanelHeaderForeColor_Click);
-            
-            //this.textFormattedText.IRCBackColor = 5;
+            this.picturePanelHeaderBG1.Click += new EventHandler(OnColor_Click);
+            this.picturePanelHeaderBG2.Click += new EventHandler(OnColor_Click);
+            this.picturePanelHeaderForeColor.Click += new EventHandler(OnColor_Click);
+
+            this.pictureToolBar.Click += new EventHandler(OnColor_Click);
+            this.pictureMenuBar.Click += new EventHandler(OnColor_Click);
+            this.pictureInputBox.Click += new EventHandler(OnColor_Click);
+            this.pictureInputBoxFore.Click += new EventHandler(OnColor_Click);
+            this.pictureChannelList.Click += new EventHandler(OnColor_Click);
+            this.pictureChannelListFore.Click += new EventHandler(OnColor_Click);
+            this.pictureStatusBar.Click += new EventHandler(OnColor_Click);
+            this.pictureStatusFore.Click += new EventHandler(OnColor_Click);
             
             this.iceChatColors = IceChatColors;
             
@@ -193,6 +163,9 @@ namespace IceChat
             this.pictureTabBarHover2.BackColor = IrcColor.colors[iceChatColors.TabBarHoverBG2];
             this.pictureTabBarHover2.Tag = iceChatColors.TabBarHoverBG2;
 
+            this.pictureTabBackground.BackColor = IrcColor.colors[iceChatColors.TabbarBackColor];
+            this.pictureTabBackground.Tag = iceChatColors.TabbarBackColor;
+
             this.picturePanelHeaderBG1.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
             this.picturePanelHeaderBG1.Tag = iceChatColors.PanelHeaderBG1;
 
@@ -201,6 +174,12 @@ namespace IceChat
 
             this.picturePanelHeaderForeColor.BackColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.picturePanelHeaderForeColor.Tag = iceChatColors.PanelHeaderForeColor;
+
+            this.pictureMenuBar.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
+            this.pictureMenuBar.Tag = iceChatColors.MenubarBackColor;
+
+            this.pictureToolBar.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
+            this.pictureToolBar.Tag = iceChatColors.ToolbarBackColor;
 
             this.pictureConsole.BackColor = IrcColor.colors[iceChatColors.ConsoleBackColor];
             this.pictureConsole.Tag = iceChatColors.ConsoleBackColor;
@@ -216,6 +195,24 @@ namespace IceChat
 
             this.pictureServerList.BackColor = IrcColor.colors[iceChatColors.ServerListBackColor];
             this.pictureServerList.Tag = iceChatColors.ServerListBackColor;
+
+            this.pictureChannelList.BackColor = IrcColor.colors[iceChatColors.ChannelListBackColor];
+            this.pictureChannelList.Tag = iceChatColors.ChannelListBackColor;
+
+            this.pictureInputBox.BackColor = IrcColor.colors[iceChatColors.InputboxBackColor];
+            this.pictureInputBox.Tag = iceChatColors.InputboxBackColor;
+
+            this.pictureInputBoxFore.BackColor = IrcColor.colors[iceChatColors.InputboxForeColor];
+            this.pictureInputBoxFore.Tag = iceChatColors.InputboxForeColor;
+
+            this.pictureChannelListFore.BackColor = IrcColor.colors[iceChatColors.ChannelListForeColor];
+            this.pictureChannelListFore.Tag = iceChatColors.ChannelListForeColor;
+
+            this.pictureStatusBar.BackColor = IrcColor.colors[iceChatColors.StatusbarBackColor];
+            this.pictureStatusBar.Tag = iceChatColors.StatusbarBackColor;
+
+            this.pictureStatusFore.BackColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
+            this.pictureStatusFore.Tag = iceChatColors.StatusbarForeColor;
 
             messageIdentifiers = new Hashtable();
             AddMessageIdentifiers();
@@ -234,8 +231,8 @@ namespace IceChat
 
             iceChatMessages = MessageFormat;
 
-            textFormattedText.SingleLine = true;
-            textFormattedText.NoEmoticons = true;
+            //textFormattedText.SingleLine = true;
+            //textFormattedText.NoEmoticons = true;
 
             //populate Message Settings            
             if (iceChatMessages.MessageSettings != null)
@@ -328,56 +325,7 @@ namespace IceChat
         }
 
 
-        private void OnBackColor_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);            
-        }
-
-        private void OnTabBarColor_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);            
-        }
-        
-        private void OnTabBarHover2_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);
-        }
-
-        private void OnTabBarHover1_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);
-        }
-
-        private void OnPanelHeaderBG1_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);
-        }
-
-        private void OnPanelHeaderBG2_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);
-        }
-
-        private void OnPanelHeaderForeColor_Click(object sender, EventArgs e)
-        {
-            currentColorPick = sender;
-            colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);
-        }
-
-        private void OnNickColor_Click(object sender, EventArgs e)
+        private void OnColor_Click(object sender, EventArgs e)
         {
             currentColorPick = sender;
             colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
@@ -739,7 +687,7 @@ namespace IceChat
                 }
             }
             
-            if (tabControlColors.SelectedTab.Text == "Background")
+            if (tabControlColors.SelectedTab.Text == "Other")
             {
                 if (currentColorPick != null)
                 {
@@ -1086,16 +1034,28 @@ namespace IceChat
             iceChatColors.QueryBackColor = (int)pictureQuery.Tag;
             iceChatColors.NickListBackColor = (int)pictureNickList.Tag;
             iceChatColors.ServerListBackColor = (int)pictureServerList.Tag;
+            iceChatColors.ChannelListBackColor = (int)pictureChannelList.Tag;
+            iceChatColors.InputboxBackColor = (int)pictureInputBox.Tag;
+            
             iceChatColors.TabBarCurrentBG1 = (int)pictureTabBarCurrent1.Tag;
             iceChatColors.TabBarCurrentBG2 = (int)pictureTabBarCurrent2.Tag;
             iceChatColors.TabBarOtherBG1 = (int)pictureTabBarOther1.Tag;
             iceChatColors.TabBarOtherBG2 = (int)pictureTabBarOther2.Tag;
             iceChatColors.TabBarHoverBG1 = (int)pictureTabBarHover1.Tag;
             iceChatColors.TabBarHoverBG2 = (int)pictureTabBarHover2.Tag;
+            iceChatColors.TabbarBackColor = (int)pictureTabBackground.Tag;
 
             iceChatColors.PanelHeaderBG1 = (int)picturePanelHeaderBG1.Tag;
             iceChatColors.PanelHeaderBG2 = (int)picturePanelHeaderBG2.Tag;
             iceChatColors.PanelHeaderForeColor = (int)picturePanelHeaderForeColor.Tag;
+
+            iceChatColors.MenubarBackColor = (int)pictureMenuBar.Tag;
+            iceChatColors.ToolbarBackColor = (int)pictureToolBar.Tag;
+            iceChatColors.ChannelListForeColor = (int)pictureChannelListFore.Tag;
+            iceChatColors.InputboxForeColor = (int)pictureInputBoxFore.Tag;
+
+            iceChatColors.StatusbarBackColor = (int)pictureStatusBar.Tag;
+            iceChatColors.StatusbarForeColor = (int)pictureStatusFore.Tag;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)

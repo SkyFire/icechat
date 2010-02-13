@@ -69,6 +69,7 @@ namespace IceChat
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
+            this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
 
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;
@@ -99,6 +100,18 @@ namespace IceChat
 
         }
 
+        private void panelButtons_Resize(object sender, EventArgs e)
+        {
+            buttonConnect.Width = (panelButtons.Width / 2) - 4;
+            buttonDisconnect.Width = buttonConnect.Width;
+
+            buttonAdd.Width = buttonConnect.Width;
+            buttonEdit.Width = buttonConnect.Width;
+            
+            buttonEdit.Left = (panelButtons.Width / 2) + 1;
+            buttonAdd.Left = (panelButtons.Width / 2) + 1;
+        }
+
 
         private void OnScroll(object sender, ScrollEventArgs e)
         {
@@ -115,7 +128,9 @@ namespace IceChat
             if (c != null) 
             {
                 if (c.IsConnected)
+                {
                     FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
+                }
                 else
                 {
                     //switch to Console
@@ -216,7 +231,6 @@ namespace IceChat
         {
             try
             {
-
                 if (nodeNumber <= serverNodes.Count)
                     selectedNodeIndex = nodeNumber;
                 else
@@ -224,7 +238,7 @@ namespace IceChat
 
                 selectedServerID = 0;
 
-                //System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
+                System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
 
                 Invalidate();
                 object findNode = FindNodeValue(selectedNodeIndex);
@@ -271,20 +285,20 @@ namespace IceChat
 
         internal void SelectTab(object selectedNode, bool RefreshMainTab)
         {
-            //System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
+            System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
             
             if (selectedNode.GetType() == typeof(ServerSetting))
             {
-                //System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
+                System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
                 
                 //this is a console tab
                 int node = FindServerNodeMatch(selectedNode);
-                //System.Diagnostics.Debug.WriteLine("find node:" + node);
+                System.Diagnostics.Debug.WriteLine("find node:" + node);
 
                 SelectNodeByIndex(node, RefreshMainTab);
                 
 
-               // System.Diagnostics.Debug.WriteLine("select tab server setting 2");
+                System.Diagnostics.Debug.WriteLine("select tab server setting 2");
             }
             else if (selectedNode.GetType() == typeof(IceTabPage))
             {
@@ -841,9 +855,9 @@ namespace IceChat
             IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
             if (c != null)
             {
+                c.AttemptReconnect = false;
                 if (c.IsConnected)
                 {
-                    c.AttemptReconnect = false;
                     FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);                    
                 }
                 return;

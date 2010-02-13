@@ -73,7 +73,8 @@ namespace IceChat
         private string _quitMessage = "$randquit";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
-        
+        private bool _showPingPong = false;
+
         [XmlAttribute("ServerID")]
         public int ID
         { get; set; }
@@ -92,6 +93,10 @@ namespace IceChat
 
         [XmlElement("NickName")]
         public string NickName
+        { get; set; }
+
+        [XmlElement("Password")]
+        public string Password
         { get; set; }
 
         [XmlElement("AltNickName")]
@@ -124,7 +129,7 @@ namespace IceChat
 
         [XmlElement("ShowPingPong")]
         public bool ShowPingPong
-        { get; set; }
+        { get { return this._showPingPong; } set { this._showPingPong = value; } }
 
         [XmlArray("AutoPerform")]
         [XmlArrayItem("Item")]

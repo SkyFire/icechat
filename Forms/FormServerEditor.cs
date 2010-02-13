@@ -108,7 +108,8 @@ namespace IceChat
             this.checkRejoinChannel.Checked = serverSetting.RejoinChannels;
             this.checkDisableCTCP.Checked = serverSetting.DisableCTCP;
             this.comboEncoding.Text = serverSetting.Encoding;
-            
+            this.textServerPassword.Text = serverSetting.Password;
+
             if (serverSetting.AutoJoinChannels != null)
             {
                 foreach (string chan in serverSetting.AutoJoinChannels)
@@ -157,7 +158,8 @@ namespace IceChat
                 serverSetting.AwayNickName = textNickName.Text + "[A]";
 
             serverSetting.ServerName = textServername.Text;
-            serverSetting.DisplayName = textDisplayName.Text;            
+            serverSetting.DisplayName = textDisplayName.Text;
+            serverSetting.Password = textServerPassword.Text;
 
             if (textServerPort.Text.Length == 0)
                 textServerPort.Text = "6667";

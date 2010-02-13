@@ -107,7 +107,7 @@ namespace IceChat
                         SendData("PONG " + ircData[1]);
 
                         if (serverSetting.ShowPingPong)
-                          ServerMessage(this, "Ping? Pong!");
+                            ServerMessage(this, "Ping? Pong!");
                         return;
                     }
                 }
@@ -300,6 +300,7 @@ namespace IceChat
                             msg = "using " + ircData[4] + " (" + JoinString(ircData, 5, true) + ")";
                             WhoisData(this, ircData[3], msg);
                             break;
+                        case "301":     //whois information
                         case "307":     //whois information
                         case "313":     //whois information
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])

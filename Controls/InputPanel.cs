@@ -52,6 +52,13 @@ namespace IceChat
             set { textInput.Font = value; }
         }
 
+        internal void SetInputBoxColors()
+        {
+            this.textInput.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.InputboxBackColor];
+            this.textInput.ForeColor = IrcColor.colors[FormMain.Instance.IceChatColors.InputboxForeColor];
+            this.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.InputboxBackColor];
+        }
+
         internal void AppendText(string data)
         {
             textInput.AppendText(data);
