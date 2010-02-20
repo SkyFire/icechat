@@ -1,3 +1,8 @@
+Build Alpha 10 - February 20 2010
+
+* Fixed issue with not being able to select colors for Nick List
+
+
 Build Alpha 10 - February 19 2010
 
 * Fixed Logging Class to fix invalid characters in logfile names and paths

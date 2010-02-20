@@ -231,8 +231,10 @@ namespace IceChat
 
             iceChatMessages = MessageFormat;
 
-            //textFormattedText.SingleLine = true;
-            //textFormattedText.NoEmoticons = true;
+            textFormattedText.SingleLine = true;
+            textFormattedText.NoEmoticons = true;
+            textFormattedText.SingleLine = true;
+            textFormattedText.NoEmoticons = true;
 
             //populate Message Settings            
             if (iceChatMessages.MessageSettings != null)
@@ -669,7 +671,7 @@ namespace IceChat
                 }
             }
 
-            if (tabControlColors.SelectedTab.Text == "Nick Names")
+            if (tabControlColors.SelectedTab.Text == "Nick List")
             {
                 if (currentColorPick != null)
                 {
