@@ -1,0 +1,17 @@
+Build Alpha 10 - February 19 2010
+
+* Fixed Logging Class to fix invalid characters in logfile names and paths
+* Moved data files from MyDocuments to Local App Data\IceChat Networks\IceChat folder
+* IceChatEmoticons folder renamed to Emoticons
+* IceChatLogs folder renamed to Logs
+
+
+
+
+
+
+
+
+
+
+

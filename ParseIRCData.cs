@@ -271,7 +271,7 @@ namespace IceChat
                                 System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
                                 foreach (System.Net.IPAddress address in addresslist)
                                 {
-                                    FormMain.Instance.ParseOutGoingCommand(this, "/echo " + nick + " resolved to " + address.ToString());
+                                    OutGoingCommand(this, "/echo " + nick + " resolved to " + address.ToString());
                                     UserHostReply(this, msg);
                                 }
                             }

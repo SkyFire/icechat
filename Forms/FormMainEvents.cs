@@ -450,6 +450,7 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
+                    
                     if (ipc.ChannelMessage(args) == true)
                         ishandled = true;
                 }

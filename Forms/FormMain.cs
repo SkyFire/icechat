@@ -101,65 +101,31 @@ namespace IceChat
             FormMain.Instance = this;
 
             #region Settings Files 
+            
             //check if the xml settings files exist in current folder
             currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-       
-            //load all files from the Documents folder, unless it exist in the current folder
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml"))
+
+            if (!File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml"))
             {
-                serversFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml";
-                logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatLogs";
-            }
-            else
-            {
-                serversFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml";
-                logsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatLogs";
+                if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "IceChat Networks" + Path.DirectorySeparatorChar + "IceChat"))
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "IceChat Networks" + Path.DirectorySeparatorChar + "IceChat");
+
+                currentFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "IceChat Networks" + Path.DirectorySeparatorChar + "IceChat";
             }
             
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatOptions.xml"))
-                optionsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatOptions.xml";
-            else
-                optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatOptions.xml";
+            //load all files from the Local AppData folder, unless it exist in the current folder
+            serversFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml";
+            optionsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatOptions.xml";
+            messagesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatMessages.xml";
+            fontsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatFonts.xml";
+            colorsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
+            favoriteChannelsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml";
+            aliasesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatAliases.xml";
+            popupsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml";
+            highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
+            emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
 
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatMessages.xml"))
-                messagesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatMessages.xml";
-            else
-                messagesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatMessages.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatFonts.xml"))
-                fontsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatFonts.xml";
-            else
-                fontsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatFonts.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml"))
-                colorsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
-            else
-                colorsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml"))
-                favoriteChannelsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml";
-            else
-                favoriteChannelsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatAliases.xml"))
-                aliasesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatAliases.xml";
-            else
-                aliasesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatAliases.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml"))
-                popupsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml";
-            else
-                popupsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml"))
-                highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
-            else
-                highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml"))
-                emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
-            else
-                emoticonsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
+            logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
 
             #endregion
 
@@ -172,12 +138,17 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 12 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 19 2010";
 
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
-            
-            errorFile = new StreamWriter(logsFolder + System.IO.Path.DirectorySeparatorChar + "errors.log");
+            try
+            {
+                errorFile = new StreamWriter(logsFolder + System.IO.Path.DirectorySeparatorChar + "errors.log");
+            }
+            catch (IOException)
+            {
+            }
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
                 iceChatOptions.TimeStamp += " ";
@@ -289,9 +260,12 @@ namespace IceChat
 
                 SaveOptions();
             }
-
-            errorFile.Close();
-            errorFile.Dispose();
+            
+            if (errorFile != null)
+            {
+                errorFile.Close();
+                errorFile.Dispose();
+            }
         }
 
         /// <summary>
@@ -2778,8 +2752,11 @@ namespace IceChat
         internal void WriteErrorFile(string message, string stackTrace)
         {
             System.Diagnostics.Debug.WriteLine(message + ":" + stackTrace);
-            errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + message + ":" + stackTrace);
-            errorFile.Flush();
+            if (errorFile != null)
+            {
+                errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + message + ":" + stackTrace);
+                errorFile.Flush();
+            }
         }
 
     }

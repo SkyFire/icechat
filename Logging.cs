@@ -30,6 +30,10 @@ namespace IceChat
 
             logFolder += Path.DirectorySeparatorChar + _consoleTab.Connection.ServerSetting.ServerName;
 
+            //replace any invalid characters in the log folder
+            foreach (char c in Path.GetInvalidPathChars())
+                logFolder = logFolder.Replace(c, '_');
+
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
             if (!Directory.Exists(logFolder))
@@ -60,12 +64,22 @@ namespace IceChat
 
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
+            string fileName = _tabPage.TabCaption;
+            
+            //replace any invalid characters in the file name
+            foreach (char c in Path.GetInvalidFileNameChars())
+                fileName = fileName.Replace(c, '_');
+            
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
             //set the log folder to the server name
             if (_tabPage.WindowStyle != IceTabPage.WindowType.Debug)
                 logFolder += Path.DirectorySeparatorChar + _tabPage.Connection.ServerSetting.ServerName;
+
+            //replace any invalid characters in the log folder
+            foreach (char c in Path.GetInvalidPathChars())
+                logFolder = logFolder.Replace(c, '_');
 
             if (_tabPage.WindowStyle == IceTabPage.WindowType.Channel)
             {
@@ -74,9 +88,9 @@ namespace IceChat
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + _tabPage.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 else
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + _tabPage.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Query)
             {
@@ -85,9 +99,9 @@ namespace IceChat
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + _tabPage.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 else
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + _tabPage.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Debug)
             {

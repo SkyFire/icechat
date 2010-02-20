@@ -1276,13 +1276,21 @@ namespace IceChat
                 int curLine;
                 int curForeColor, curBackColor;
                 char[] ch;
-                
-                Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
-                Graphics g = Graphics.FromImage(buffer);
 
-                g.Clear(IrcColor.colors[backColor]);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;            
+                Rectangle displayRect = new Rectangle(0, 0, this.Width, this.Height);
+                //Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+                Bitmap buffer = new Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                Graphics g = Graphics.FromImage(buffer);
+                //g.Clear(IrcColor.colors[backColor]);
+                g.FillRectangle(new SolidBrush(IrcColor.colors[backColor]), displayRect);
+                
+                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.Low;
+                g.SmoothingMode = SmoothingMode.HighSpeed;
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
 
                 if (totalLines == 0)
                 {

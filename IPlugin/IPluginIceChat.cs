@@ -15,9 +15,14 @@ namespace IceChatPlugin
 
     public delegate void InputTextHandler(object sender, PluginArgs e);
     public delegate void ServerRawHandler(object sender, PluginArgs e);
-    
+
+
     public interface IPluginIceChat
     {
+
+        void Initialize();
+        void Dispose();        
+
         string Name { get; }
         string Version { get; }
         string Author { get; }
@@ -35,7 +40,6 @@ namespace IceChatPlugin
         void SaveSettingsForm();
 
         void MainProgramLoaded();       //the main icechat form/program has loaded
-
 
         bool ChannelMessage(PluginArgs args);       //return whether default message has been overriden
         bool ChannelAction(PluginArgs args);

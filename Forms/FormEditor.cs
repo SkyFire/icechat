@@ -21,6 +21,7 @@ namespace IceChat
         private string[] queryPopup;
 
         private string currentPopup;
+        private string currentScript;
         private ToolStripMenuItem currentPopupMenu;
 
         public FormEditor()
@@ -209,6 +210,7 @@ namespace IceChat
             string[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
             
             System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);
+            
             par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IPluginIceChat.dll");
             par.GenerateExecutable = false;
             par.GenerateInMemory = true;
@@ -220,6 +222,7 @@ namespace IceChat
                 foreach (System.CodeDom.Compiler.CompilerError ce in err.Errors)
                 {
                     System.Diagnostics.Debug.WriteLine("Error:" + ce.ToString());
+                    FormMain.Instance.WindowMessage(null, "Console", "Error:" + ce.ToString(), 4, true);
                 }
                 return;
             }
@@ -270,23 +273,106 @@ namespace IceChat
             //save what is in the current
             if (tabControlEditor.SelectedTab.Text == "Scripts")
             {
-                StreamWriter stream = new StreamWriter("script.txt");
-                stream.WriteLine(textScripts.Text);
-                stream.Flush();
-                stream.Close();
+                if (currentScript != null && currentScript.Length > 0)
+                {
+                    StreamWriter stream = new StreamWriter(currentScript);
+                    stream.WriteLine(textScripts.Text);
+                    stream.Flush();
+                    stream.Close();
 
-                MessageBox.Show("script.txt Saved");
+                    MessageBox.Show(currentScript + " saved");
+                }
+                else
+                {
+                    //ask for a file name
+                    FileDialog fd = new SaveFileDialog();
+                    fd.DefaultExt = ".cs";
+                    fd.Filter = "Script file (*.cs)|*.cs";
+                    fd.AddExtension = true;
+                    fd.AutoUpgradeEnabled = true;
+                    fd.Title = "Where do you want to save the file?";
+                    fd.InitialDirectory = Application.StartupPath;
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        StreamWriter stream = new StreamWriter(fd.FileName);
+                        stream.WriteLine(textScripts.Text);
+                        stream.Flush();
+                        stream.Close();
+                        stream.Dispose();
+                        stream = null;
+                    }
+                    
+                    fd.Dispose();
+                    fd = null;
+                }
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //save what is in the current
+            if (tabControlEditor.SelectedTab.Text == "Scripts")
+            {
+                FileDialog fd = new SaveFileDialog();
+                fd.DefaultExt = ".cs";
+                fd.Filter = "Script file (*.cs)|*.cs";
+                fd.AddExtension = true;
+                fd.AutoUpgradeEnabled = true;
+                fd.Title = "Where do you want to save the file?";
+                fd.InitialDirectory = Application.StartupPath;
+                if (fd.ShowDialog() == DialogResult.OK)
+                {
+                    StreamWriter stream = new StreamWriter(fd.FileName);
+                    stream.WriteLine(textScripts.Text);
+                    stream.Flush();
+                    stream.Close();
+                    stream.Dispose();
+                    stream = null;
+                }
+
+                fd.Dispose();
+                fd = null;
             }
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (tabControlEditor.SelectedTab.Text == "Scripts")
+            {
+                FileDialog fd = new OpenFileDialog();
+                fd.DefaultExt = ".cs";
+                fd.CheckFileExists = true;
+                fd.CheckPathExists = true;
+                fd.AddExtension = true;
+                fd.AutoUpgradeEnabled = true;
+                fd.Filter = "Script file (*.cs)|*.cs";
+                fd.Title = "Which file do you want to open?";
+                fd.InitialDirectory = Application.StartupPath;
+                
+                if (fd.ShowDialog() == DialogResult.OK)
+                {
+                    currentScript = fd.FileName;
+                    StreamReader stream = new StreamReader(fd.FileName);
+                    textScripts.Text = stream.ReadToEnd();
+                    stream.Close();
+                    stream.Dispose();
+                    stream = null;
+                }
+
+                fd.Dispose();
+                fd = null;
+
+            
+            
+            }
+            /*
             if (File.Exists("script.txt"))
             {
                 StreamReader stream = new StreamReader("script.txt");
                 textScripts.Text = stream.ReadToEnd();
                 stream.Close();
             }
+            */
         }
 
 
@@ -367,6 +453,7 @@ namespace IceChat
             currentPopupMenu.Checked = true;
             LoadPopups(queryPopup);
         }
+
 
     }
 }

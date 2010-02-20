@@ -1,4 +1,4 @@
-Copyright (c) 2009, Paul Vanderzee
+Copyright (c) 2009-2010, Paul Vanderzee
 
 All rights reserved.
 

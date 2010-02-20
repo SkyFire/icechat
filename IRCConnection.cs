@@ -48,6 +48,10 @@ namespace IceChat
         private ArrayList commandQueue;
         private ArrayList ircTimers;
 
+
+        private const int bytesperlong = 4; // 32 / 8
+        private const int bitsperbyte = 8;
+
         public IRCConnection(ServerSetting ss)
         {
             dataBuffer = "";
@@ -223,6 +227,8 @@ namespace IceChat
             try
             {
                 serverSocket.EndConnect(ar);
+                serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
+                SetKeepAlive(serverSocket, 180 * 1000, 540 * 1000); //check every 5 minutes, max of 15 mins inactivity
             }            
             catch (Exception e)
             {
@@ -247,6 +253,9 @@ namespace IceChat
                 this.serverSetting.ConnectedTime = DateTime.Now;
 
                 FormMain.Instance.ServerTree.Invalidate();
+
+                if (serverSetting.Password != null && serverSetting.Password.Length > 0)
+                    SendData("PASS " + serverSetting.Password);
 
                 //send the USER / NICK stuff
                 SendData("NICK " + serverSetting.NickName);
@@ -279,7 +288,45 @@ namespace IceChat
                 serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
             }
         }
+        
+        private bool SetKeepAlive(Socket sock, ulong time, ulong interval)
+        {
+            try
+            {
+                // resulting structure
+                byte[] SIO_KEEPALIVE_VALS = new byte[3 * bytesperlong];
 
+                // array to hold input values
+                ulong[] input = new ulong[3];
+
+                // put input arguments in input array
+                if (time == 0 || interval == 0) // enable disable keep-alive
+                    input[0] = (0UL); // off
+                else
+                    input[0] = (1UL); // on
+
+                input[1] = (time); // time millis
+                input[2] = (interval); // interval millis
+
+                // pack input into byte struct
+                for (int i = 0; i < input.Length; i++)
+                {
+                    SIO_KEEPALIVE_VALS[i * bytesperlong + 3] = (byte)(input[i] >> ((bytesperlong - 1) * bitsperbyte) & 0xff);
+                    SIO_KEEPALIVE_VALS[i * bytesperlong + 2] = (byte)(input[i] >> ((bytesperlong - 2) * bitsperbyte) & 0xff);
+                    SIO_KEEPALIVE_VALS[i * bytesperlong + 1] = (byte)(input[i] >> ((bytesperlong - 3) * bitsperbyte) & 0xff);
+                    SIO_KEEPALIVE_VALS[i * bytesperlong + 0] = (byte)(input[i] >> ((bytesperlong - 4) * bitsperbyte) & 0xff);
+                }
+                // create bytestruct for result (bytes pending on server socket)
+                byte[] result = BitConverter.GetBytes(0);
+                // write SIO_VALS to Socket IOControl
+                sock.IOControl(IOControlCode.KeepAliveValues, SIO_KEEPALIVE_VALS, result);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
         /// <summary>
         /// Function for sending RAW IRC Data to the Server Connection
         /// </summary>
@@ -319,7 +366,7 @@ namespace IceChat
                 else
                 {
                     if (ServerError != null)
-                        ServerError(this, "You are not Connected - Can not send:" + data);
+                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data);
 
                     disconnectError = true;
                     serverSocket.Shutdown(SocketShutdown.Both);
@@ -457,7 +504,7 @@ namespace IceChat
                     {
                         IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
                         Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
+                        
                         if (ServerMessage != null)
                         {
                             string msg = GetMessageFormat("Server Connect");
