@@ -110,6 +110,11 @@ namespace IceChat
 
         private Logging logClass;
 
+        private int unreadMarker;  // Unread marker
+        private bool unreadReset; // Unread marker 
+
+        private bool reformatLines;
+
         public TextWindow()
         {
             InitializeComponent();
@@ -322,6 +327,8 @@ namespace IceChat
 
         private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            unreadReset = true;
+
             //get the current character the mouse is over. 
             startHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
             startHighLine = totalDisplayLines - startHighLine;
@@ -709,6 +716,13 @@ namespace IceChat
                 if (newLine.Length == 0)
                     return;
 
+                if (unreadReset)
+                {
+                    unreadMarker = 0;
+                    unreadReset = false;
+                }
+                ++unreadMarker;
+
                 newLine = newLine.Replace("\n", " ");
                 newLine = newLine.Replace("&#x3;", colorChar.ToString());
                 newLine = ParseUrl(newLine);
@@ -969,9 +983,8 @@ namespace IceChat
                 return;
 
             displayLines.Initialize();
-            
-            totalDisplayLines = FormatLines(totalLines, 1, 0);
-            UpdateScrollBar(totalDisplayLines);
+
+            reformatLines = true;
             
             Invalidate();
 
@@ -1264,6 +1277,13 @@ namespace IceChat
         /// </summary>
         private void OnDisplayText(PaintEventArgs e)
         {
+            if (reformatLines)
+            {
+                totalDisplayLines = FormatLines(totalLines, 1, 0);
+                UpdateScrollBar(totalDisplayLines);
+                reformatLines = false;
+            }
+
             try
             {
                 int startY;
@@ -1302,9 +1322,7 @@ namespace IceChat
 
                 int val = vScrollBar.Value;
 
-                for (curLine = val; curLine > val - showMaxLines; curLine--)
-                    if (curLine > 0) 
-                        LinesToDraw++;
+                LinesToDraw = (showMaxLines > val ? val : showMaxLines);
                 
                 curLine = val - LinesToDraw;
 
@@ -1325,11 +1343,35 @@ namespace IceChat
                 bool isInUrl = false;
                 Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
             
+                int redline = -1;
+                if (FormMain.Instance.IceChatOptions.ShowUnreadLine)
+                {
+                    for (int i = totalDisplayLines - 1, j = 0; i >= 0; --i)
+                    {
+                        if (!displayLines[i].previous)
+                        {
+                            ++j;
+                            if (j >= unreadMarker)
+                            {
+                                redline = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+ 
                 while (lineCounter < LinesToDraw)
                 {
                     int i = 0, j = 0;
                     bool highlight = false;
                     bool oldHighlight = false;
+
+                    if (redline == curLine)
+                    {
+                        Pen p = new Pen(Color.Red);
+                        g.DrawLine(p, 0, startY, this.Width, startY);
+                    }
+                    
                     lineCounter++;
 
                     curForeColor = displayLines[curLine].textColor;

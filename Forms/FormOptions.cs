@@ -135,6 +135,7 @@ namespace IceChat
             checkDisableQueries.Checked = iceChatOptions.DisableQueries;
             checkNewQueryForegound.Checked = iceChatOptions.NewQueryForegound;
             checkWhoisNewQuery.Checked = iceChatOptions.WhoisNewQuery;
+            checkShowUnreadLine.Checked = iceChatOptions.ShowUnreadLine;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -199,6 +200,7 @@ namespace IceChat
             iceChatOptions.DisableQueries = checkDisableQueries.Checked;
             iceChatOptions.NewQueryForegound = checkNewQueryForegound.Checked;
             iceChatOptions.WhoisNewQuery = checkWhoisNewQuery.Checked;
+            iceChatOptions.ShowUnreadLine = checkShowUnreadLine.Checked;
 
             //set all the fonts
             iceChatFonts.FontSettings[0].FontName = textConsoleFont.Text;

@@ -1,3 +1,12 @@
+Build Alpha 11 - February 24 2010
+* Added $aliasfile identifier
+* Added $serverfile identifier
+* Added $popupfile identifier
+* $nick(#,N).host and $nick(#,N).ident both work now
+* Added option for a Line Marker for Windows
+* Fixed a small issue with Tab sizes
+
+
 Build Alpha 10 - February 20 2010
 
 * Fixed issue with not being able to select colors for Nick List

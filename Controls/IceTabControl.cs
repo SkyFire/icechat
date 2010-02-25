@@ -688,7 +688,7 @@ namespace IceChat
                 int xPos = m_TabStartXPos;
                 int yPos = 0;
 
-                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 5;
+                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 4;
                 if ((m_TabRowHeight / 2) * 2 == m_TabRowHeight)
                     m_TabRowHeight++;
 
@@ -706,10 +706,10 @@ namespace IceChat
                     recTextArea.Width = textWidth + 1;
                     recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
 
-                    if ((totalWidth + recBounds.Width) > (this.Width - 20))
+                    if (totalWidth>0 && (totalWidth + recBounds.Width) > (this.Width - 20))
                     {
                         m_TotalTabRows++;
-                        totalWidth = recBounds.Width;
+                        totalWidth = 0;
                         xPos = m_TabStartXPos;
                         yPos = yPos + m_TabRowHeight + 5;
                     }

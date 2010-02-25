@@ -129,6 +129,7 @@ namespace IceChat
 
             #endregion
 
+
             LoadOptions();
             LoadColors();
 
@@ -138,7 +139,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 19 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 24 2010";
 
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -787,70 +788,7 @@ namespace IceChat
 
                 if (page.WindowStyle == IceTabPage.WindowType.Query && iceChatOptions.WhoisNewQuery)
                     ParseOutGoingCommand(page.Connection, "/whois " + page.TabCaption);
-                                
-                
-                /*
-                
-                //old stuff
-                TabWindow t = new TabWindow(windowName);
-                t.WindowStyle = windowType;                
-                t.Connection = connection;
-
-                if (t.WindowStyle == IceTabPage.WindowType.Channel)
-                {
-                    t.TextWindow.Font = new Font(iceChatFonts.FontSettings[1].FontName, iceChatFonts.FontSettings[1].FontSize);
-                    t.TopicWindow.Font = new Font(iceChatFonts.FontSettings[1].FontName, iceChatFonts.FontSettings[1].FontSize);
-                
-                    //send the message
-                    string msg = GetMessageFormat("Self Channel Join");
-                    msg = msg.Replace("$nick", connection.ServerSetting.NickName).Replace("$channel", windowName);
-
-                    if (FormMain.Instance.IceChatOptions.LogChannel)
-                        t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
-
-                    t.TextWindow.AppendText(msg, 1);
-                }
-                else if (t.WindowStyle == IceTabPage.WindowType.Query)
-                {
-                    t.TextWindow.Font = new Font(iceChatFonts.FontSettings[2].FontName, iceChatFonts.FontSettings[2].FontSize);
-                    if (FormMain.Instance.IceChatOptions.LogQuery)
-                        t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + connection.ServerSetting.ServerName);
-                }
-                else if (t.WindowStyle == IceTabPage.WindowType.Debug)
-                {
-                    t.TextWindow.NoColorMode = true;
-                    t.TextWindow.Font = new Font("Verdana", 10);
-                    t.TextWindow.SetLogFile(FormMain.Instance.LogsFolder);
-                }
-                
-                //find the last window index for this connection
-                int index = 0;
-                if (t.WindowStyle == IceTabPage.WindowType.Channel || t.WindowStyle == IceTabPage.WindowType.Query)
-                {
-                    for (int i = 1; i < tabMain.TabPages.Count; i++)
-                    {
-                        if (((TabWindow)tabMain.TabPages[i]).Connection == connection)
-                            index = i + 1;
-                    }
-                }
-                
-                if (index == 0)
-                    tabMain.TabPages.Add(t);
-                else
-                    tabMain.TabPages.Insert(index, t);
-
-                if (t.WindowStyle == IceTabPage.WindowType.Query && !iceChatOptions.NewQueryForegound)
-                    tabMain.SelectedTab = tabMain.SelectedTab;
-                else
-                {
-                    tabMain.SelectedTab = t;
-                    nickList.CurrentWindow = t;
-                }
-                serverTree.Invalidate();
-
-                if (t.WindowStyle == IceTabPage.WindowType.Query && iceChatOptions.WhoisNewQuery)
-                    ParseOutGoingCommand(t.Connection, "/whois " + t.WindowName);
-                */        
+               
             }
         }
         /// <summary>
@@ -995,87 +933,6 @@ namespace IceChat
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
-        }
-
-
-        private void TabMainCloseTab(int tab)
-        {
-            /*
-            if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == IceTabPage.WindowType.Channel)
-            {
-                foreach (IRCConnection c in serverTree.ServerConnections.Values)
-                {
-                    if (c == ((TabWindow)tabMain.TabPages[tab]).Connection)
-                    {
-                        //check if connected
-                        if (c.IsConnected)
-                            ParseOutGoingCommand(c, "/part " + ((TabWindow)tabMain.TabPages[tab]).WindowName);
-                        else
-                            RemoveWindow(c, ((TabWindow)tabMain.TabPages[tab]).WindowName);
-
-                        return;
-                    }
-                }
-            }
-            else if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == IceTabPage.WindowType.Query)
-            {
-                tabMain.TabPages.Remove(tabMain.TabPages[tab]);
-                return;
-            }
-            else if (((TabWindow)tabMain.TabPages[tab]).WindowStyle == IceTabPage.WindowType.Debug)
-            {
-                tabMain.TabPages.RemoveAt(tabMain.TabPages.IndexOf(tabMain.TabPages[tab]));
-                return;
-            }
-            */
-        }
-
-
-        /// <summary>
-        /// Checks for a Middle Mouse Click to Close a Tab Window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TabMainMouseClick(object sender, MouseEventArgs e)
-        {
-            /*
-            if (e.Button == MouseButtons.Middle)
-            {
-                //make sure its not the Console window
-                for (int i = 1; i < tabMain.TabPages.Count; i++)
-                {
-                    if (tabMain.GetTabRect(i).Contains(e.Location))
-                    {                        
-                        if (((TabWindow)tabMain.TabPages[i]).WindowStyle == IceTabPage.WindowType.Channel)
-                        {
-                            foreach (IRCConnection c in serverTree.ServerConnections.Values)
-                            {
-                                if (c == ((TabWindow)tabMain.TabPages[i]).Connection)
-                                {
-                                    //check if connected
-                                    if (c.IsConnected)
-                                        ParseOutGoingCommand(c, "/part " + ((TabWindow)tabMain.TabPages[i]).WindowName);
-                                    else
-                                        RemoveWindow(c, ((TabWindow)tabMain.TabPages[i]).WindowName);
-                                    
-                                    return;
-                                }
-                            }
-                        }
-                        else if (((TabWindow)tabMain.TabPages[i]).WindowStyle == IceTabPage.WindowType.Query)
-                        {
-                            tabMain.TabPages.Remove(tabMain.TabPages[i]);                             
-                            return;
-                        }
-                        else if (((TabWindow)tabMain.TabPages[i]).WindowStyle == IceTabPage.WindowType.Debug)
-                        {
-					        tabMain.TabPages.RemoveAt(tabMain.TabPages.IndexOf(tabMain.TabPages[i]));
-                            return;
-                        }
-                    }
-                }
-            }
-            */
         }
 
         private void tabPanelRight_SelectedIndexChanged(object sender, EventArgs e)
@@ -2062,6 +1919,15 @@ namespace IceChat
                     case "$icechatdir":
                         data = data.Replace(m.Value, Directory.GetCurrentDirectory());
                         break;
+                    case "$aliasfile":
+                        data = data.Replace(m.Value, aliasesFile);
+                        break;
+                    case "$serverfile":
+                        data = data.Replace(m.Value, serversFile);
+                        break;
+                    case "$popupfile":
+                        data = data.Replace(m.Value, popupsFile);
+                        break;
                     case "$icechatver":
                         data = data.Replace(m.Value, Settings.Default.Version);
                         break;
@@ -2277,15 +2143,16 @@ namespace IceChat
                                                 {
                                                     //$nick(#channel,1).op , .voice, .halfop, .admin,.owner. 
                                                     //.mode, .host, .nick,.ident
+                                                    InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[u.NickName];
                                                     switch (prop)
                                                     {
                                                         case "host":
-                                                            //if (u.Host.IndexOf('@') > -1)
-                                                            //    changedData[count] = u.Host.Substring(u.Host.IndexOf('@'));
+                                                            if (ial != null && ial.Host != null && ial.Host.Length > 0)
+                                                                changedData[count] = ial.Host.Substring(ial.Host.IndexOf('@') + 1);
                                                             break;
                                                         case "ident":
-                                                            //if (u.Host.IndexOf('@') > -1)
-                                                            //    changedData[count] = u.Host.Substring(0,u.Host.IndexOf('@'));
+                                                            if (ial != null && ial.Host != null && ial.Host.Length > 0)
+                                                                changedData[count] = ial.Host.Substring(0,ial.Host.IndexOf('@'));
                                                             break;
                                                         case "nick":
                                                             changedData[count] = u.NickName;
@@ -2318,6 +2185,7 @@ namespace IceChat
                                                             }
                                                             break;
                                                     }
+                                                    ial = null;
                                                 }
                                             }
                                         }
@@ -2586,7 +2454,25 @@ namespace IceChat
         {
             //check if away or not
             if (FormMain.Instance.InputPanel.CurrentConnection != null)
-                ParseOutGoingCommand(FormMain.Instance.InputPanel.CurrentConnection, "/away");
+            {
+                if (inputPanel.CurrentConnection.ServerSetting.Away)
+                {
+                    ParseOutGoingCommand(inputPanel.CurrentConnection, "/away");
+                }
+                else
+                {
+                    //ask for an away reason
+                    InputBoxDialog i = new InputBoxDialog();
+                    i.FormCaption = "Enter your away Reason";
+                    i.FormPrompt = "Away Reason";
+
+                    i.ShowDialog();
+                    if (i.InputResponse.Length > 0)
+                        ParseOutGoingCommand(inputPanel.CurrentConnection, "/away " + i.InputResponse);
+                    
+                    i.Dispose();
+                }
+            }
         }
 
         private void OnQuickConnectServer(ServerSetting s)

@@ -103,6 +103,7 @@ namespace IceChat
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
+            this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -220,6 +221,7 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.checkShowUnreadLine);
             this.tabDisplay.Controls.Add(this.checkWhoisNewQuery);
             this.tabDisplay.Controls.Add(this.checkNewQueryForegound);
             this.tabDisplay.Controls.Add(this.checkDisableQueries);
@@ -859,6 +861,16 @@ namespace IceChat
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
+            // checkShowUnreadLine
+            // 
+            this.checkShowUnreadLine.AutoSize = true;
+            this.checkShowUnreadLine.Location = new System.Drawing.Point(12, 116);
+            this.checkShowUnreadLine.Name = "checkShowUnreadLine";
+            this.checkShowUnreadLine.Size = new System.Drawing.Size(198, 20);
+            this.checkShowUnreadLine.TabIndex = 45;
+            this.checkShowUnreadLine.Text = "Show Unread Text Marker";
+            this.checkShowUnreadLine.UseVisualStyleBackColor = true;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -970,5 +982,6 @@ namespace IceChat
         private System.Windows.Forms.TextBox textSound;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button buttonTest;
+        private System.Windows.Forms.CheckBox checkShowUnreadLine;
     }
 }

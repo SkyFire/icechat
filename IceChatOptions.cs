@@ -250,6 +250,7 @@ namespace IceChat
         private bool _disableQueries = false;
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
+        private bool _showUnreadLine = true;
 
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
@@ -384,6 +385,13 @@ namespace IceChat
         {
             get { return this._whoisNewQuery; }
             set { this._whoisNewQuery = value; }
+        }
+
+        [XmlElement("ShowUnreadLine")]
+        public bool ShowUnreadLine
+        {
+            get { return this._showUnreadLine; }
+            set { this._showUnreadLine = value; }
         }
     }
     
