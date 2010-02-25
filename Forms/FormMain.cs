@@ -1954,12 +1954,12 @@ namespace IceChat
                         System.Diagnostics.PerformanceCounter pc = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
                         pc.NextValue();
                         TimeSpan ts2 = TimeSpan.FromSeconds(pc.NextValue());
-                        data = data.Replace(m.Value, GetDuration(ts2.Seconds));
+                        data = data.Replace(m.Value, GetDuration(ts2.TotalSeconds));
                         break;
                     case "$uptime2":
                         int systemUpTime = System.Environment.TickCount / 1000;
                         TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
-                        data = data.Replace(m.Value, GetDuration(ts.Seconds));
+                        data = data.Replace(m.Value, GetDuration(ts.TotalSeconds));
                         break;
                 }
                 m = m.NextMatch();
@@ -2252,9 +2252,9 @@ namespace IceChat
                 return data.Substring(data.LastIndexOf('.') + 1);
         }
 
-        private string GetDuration(int seconds)
+        private string GetDuration(double seconds)
         {
-            TimeSpan t = new TimeSpan(0, 0, seconds);
+            TimeSpan t = new TimeSpan(0, 0,(int)seconds);
 
             string s = t.Seconds.ToString() + " secs";
             if (t.Minutes > 0)

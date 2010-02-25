@@ -376,14 +376,14 @@ namespace IceChat
                                 g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }
                         currentY += lineSize;
-                        if (currentY >= listR.Height+listR.Y)
+                        if (currentY >= listR.Height + listR.Y)
                         {
                             vScrollBar.Maximum = sortedNicks.Count - ((listR.Height - lineSize) / lineSize);
                             break;
                         }
                     }
 
-                    if (currentY > listR.Height || vScrollBar.Value > 0)
+                    if (currentY >= listR.Height || vScrollBar.Value > 0)
                         vScrollBar.Visible = true;
                     else
                     {

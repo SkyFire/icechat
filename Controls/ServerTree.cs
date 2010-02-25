@@ -159,7 +159,7 @@ namespace IceChat
             
             int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
-            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1;
+            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1 + topIndex;
             
             g.Dispose();
 
@@ -593,7 +593,7 @@ namespace IceChat
                 g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
 
                 //draw each individual server
-                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
+                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
 
                 int currentY = listR.Y;
                 int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
@@ -615,6 +615,9 @@ namespace IceChat
                     int x = 0;
                     Brush b;
                     nodeCount++;
+                    if (nodeCount <= topIndex)
+                        continue;
+                    
                     if (nodeCount == selectedNodeIndex)
                     {
                         g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
@@ -645,10 +648,22 @@ namespace IceChat
                     g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
 
                     g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
-                    currentY += lineSize;
+
                     b.Dispose();
 
+                    if (currentY >= listR.Height + listR.Y)
+                    {
+                        vScrollBar.Maximum = serverNodes.Count - ((listR.Height - lineSize) / lineSize);
+                        break;
+                    }
+
+                    currentY += lineSize;
                 }
+                
+                if (currentY > listR.Height || vScrollBar.Value > 0)
+                    vScrollBar.Visible = true;
+                else
+                    vScrollBar.Visible = false;
 
 
                 //paint the buffer onto the usercontrol

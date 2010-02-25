@@ -140,7 +140,6 @@
             this.vScrollBar.Padding = new System.Windows.Forms.Padding(0, 25, 0, 0);
             this.vScrollBar.Size = new System.Drawing.Size(17, 266);
             this.vScrollBar.TabIndex = 3;
-            this.vScrollBar.Value = 1;
             this.vScrollBar.Visible = false;
             // 
             // imageListServers

@@ -1,3 +1,9 @@
+Build Alpha 11.1
+* Made Line Marker disabled by default
+* $uptime now uses TotalSeconds and not just Seconds
+* Added ScrollBar to the Server Tree
+
+
 Build Alpha 11 - February 24 2010
 * Added $aliasfile identifier
 * Added $serverfile identifier
