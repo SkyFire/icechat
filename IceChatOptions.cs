@@ -250,7 +250,7 @@ namespace IceChat
         private bool _disableQueries = false;
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
-        private bool _showUnreadLine = true;
+        private bool _showUnreadLine = false;
 
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
