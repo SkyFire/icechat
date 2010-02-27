@@ -80,6 +80,13 @@ namespace IceChat
             popupMenu = new ContextMenuStrip();
         }
 
+        internal void ApplyLanguage()
+        {
+            IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
+            if (FormMain.Instance.TabMain.CurrentTab == FormMain.Instance.TabMain.GetTabPage("Console")) Header = FormMain.Instance.IceChatLanguage.consoleTabTitle;
+            // TODO: add code to load button texts from language class
+        }
+
         private void panelButtons_Resize(object sender, EventArgs e)
         {
             buttonOp.Width = (this.panelButtons.Width / 4) - 4;
@@ -98,7 +105,6 @@ namespace IceChat
             buttonInfo.Left = this.panelButtons.Width / 4 * 3 + 1;
             buttonWhois.Left = buttonInfo.Left;
         }
-
 
         private void OnScroll(object sender, ScrollEventArgs e)
         {

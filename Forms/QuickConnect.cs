@@ -16,18 +16,30 @@ namespace IceChat
         public QuickConnect()
         {
             InitializeComponent();
+            ApplyLanguage();
+        }
+
+        public void ApplyLanguage()
+        {
+            IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
+
+            label1.Text = iceChatLanguage.quickConnectLblServer;
+            label2.Text = iceChatLanguage.quickConnectLblNick;
+            label3.Text = iceChatLanguage.quickConnectLblChannel;
+            buttonConnect.Text = iceChatLanguage.quickConnectButtonConnect;
+            Text = iceChatLanguage.quickConnectTitle;
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
             if (textServer.Text.Length == 0)
             {
-                MessageBox.Show("Please Enter a Server Name","Quick Connect");
+                MessageBox.Show(FormMain.Instance.IceChatLanguage.quickConnectErrorNoServer, FormMain.Instance.IceChatLanguage.quickConnectTitle);
                 return;
             }
             if (textNick.Text.Length == 0)
             {
-                MessageBox.Show("Please Enter a Nick Name", "Quick Connect");
+                MessageBox.Show(FormMain.Instance.IceChatLanguage.quickConnectErrorNoNick, FormMain.Instance.IceChatLanguage.quickConnectTitle);
                 return;
             }
 

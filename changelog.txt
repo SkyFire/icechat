@@ -1,3 +1,8 @@
+Build Alpha 11.2
+* Added /anick and /aquit commands
+* Added Language Options
+
+
 Build Alpha 11.1
 * Made Line Marker disabled by default
 * $uptime now uses TotalSeconds and not just Seconds

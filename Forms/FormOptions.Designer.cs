@@ -34,6 +34,8 @@ namespace IceChat
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
             this.tabMain = new System.Windows.Forms.TabPage();
+            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
+            this.labelLanguage = new System.Windows.Forms.Label();
             this.checkStatusBar = new System.Windows.Forms.CheckBox();
             this.checkColorPicker = new System.Windows.Forms.CheckBox();
             this.checkEmoticonPicker = new System.Windows.Forms.CheckBox();
@@ -157,6 +159,8 @@ namespace IceChat
             // 
             // tabMain
             // 
+            this.tabMain.Controls.Add(this.comboBoxLanguage);
+            this.tabMain.Controls.Add(this.labelLanguage);
             this.tabMain.Controls.Add(this.checkStatusBar);
             this.tabMain.Controls.Add(this.checkColorPicker);
             this.tabMain.Controls.Add(this.checkEmoticonPicker);
@@ -170,6 +174,24 @@ namespace IceChat
             this.tabMain.TabIndex = 0;
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxLanguage
+            // 
+            this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLanguage.FormattingEnabled = true;
+            this.comboBoxLanguage.Location = new System.Drawing.Point(115, 132);
+            this.comboBoxLanguage.Name = "comboBoxLanguage";
+            this.comboBoxLanguage.Size = new System.Drawing.Size(178, 24);
+            this.comboBoxLanguage.TabIndex = 46;
+            // 
+            // labelLanguage
+            // 
+            this.labelLanguage.AutoSize = true;
+            this.labelLanguage.Location = new System.Drawing.Point(15, 135);
+            this.labelLanguage.Name = "labelLanguage";
+            this.labelLanguage.Size = new System.Drawing.Size(71, 16);
+            this.labelLanguage.TabIndex = 45;
+            this.labelLanguage.Text = "Language";
             // 
             // checkStatusBar
             // 
@@ -983,5 +1005,7 @@ namespace IceChat
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.CheckBox checkShowUnreadLine;
+        private System.Windows.Forms.Label labelLanguage;
+        private System.Windows.Forms.ComboBox comboBoxLanguage;
     }
 }

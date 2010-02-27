@@ -143,6 +143,15 @@ namespace IceChat
                 ipc.LoadSettingsForm(this.tabControlOptions);
             }
 
+            comboBoxLanguage.DataSource = FormMain.Instance.IceChatLanguageFiles;
+            comboBoxLanguage.SelectedItem = FormMain.Instance.IceChatCurrentLanguageFile;
+
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+
         }
 
         private void listViewEmot_MouseUp(object sender, MouseEventArgs e)
@@ -200,7 +209,9 @@ namespace IceChat
             iceChatOptions.DisableQueries = checkDisableQueries.Checked;
             iceChatOptions.NewQueryForegound = checkNewQueryForegound.Checked;
             iceChatOptions.WhoisNewQuery = checkWhoisNewQuery.Checked;
+
             iceChatOptions.ShowUnreadLine = checkShowUnreadLine.Checked;
+            iceChatOptions.Language = ((LanguageItem)comboBoxLanguage.SelectedItem).LanguageName;
 
             //set all the fonts
             iceChatFonts.FontSettings[0].FontName = textConsoleFont.Text;
@@ -238,6 +249,9 @@ namespace IceChat
             }
 
             FormMain.Instance.IceChatEmoticons = iceChatEmoticons;
+
+            // apply language change
+            FormMain.Instance.IceChatCurrentLanguageFile = (LanguageItem) comboBoxLanguage.SelectedItem;
             
             if (SaveOptions != null)
                 SaveOptions();

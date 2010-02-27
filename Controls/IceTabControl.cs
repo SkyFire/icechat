@@ -633,8 +633,14 @@ namespace IceChat
                             break;
                     }
                 }
-
-                g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+                if (tabPage.TabCaption != "Console")
+                {
+                    g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+                }
+                else
+                {
+                    g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, m_fontTab, br, tabTextArea, stringFormat);
+                }
 
             }            
             catch (Exception e) 

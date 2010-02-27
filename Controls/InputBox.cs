@@ -50,6 +50,7 @@ namespace IceChat
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+            ApplyLanguage();
         }
 
         #endregion
@@ -195,6 +196,11 @@ namespace IceChat
             this.txtInput.Focus();
         }
 
+        internal void ApplyLanguage()
+        {
+            btnOK.Text = FormMain.Instance.IceChatLanguage.buttonOk;
+            buttonCancel.Text = FormMain.Instance.IceChatLanguage.buttonCancel;
+        }
 
         private void btnOK_Click(object sender, System.EventArgs e)
         {

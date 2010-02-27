@@ -54,13 +54,22 @@ namespace IceChat
             ReadSettings();
         }
 
+        internal void ApplyLanguage()
+        {
+            IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
+            labelHeader.Text = iceChatLanguage.favChanHeader;
+            buttonAdd.Text = iceChatLanguage.favChanbuttonAdd;
+            buttonJoin.Text = iceChatLanguage.favChanbuttonJoin;
+            buttonEdit.Text = iceChatLanguage.favChanbuttonEdit;
+            buttonRemove.Text = iceChatLanguage.favChanbuttonRemove;
+        }
+
         private void panelButtons_Resize(object sender, EventArgs e)
         {
             this.buttonAdd.Width = (panelButtons.Width / 2) - 4;
             this.buttonJoin.Width = buttonAdd.Width;
             this.buttonEdit.Width = buttonAdd.Width;
             this.buttonRemove.Width = buttonAdd.Width;
-
             this.buttonJoin.Left = (panelButtons.Width / 2) + 1;
             this.buttonRemove.Left = buttonJoin.Left;
         }

@@ -57,6 +57,8 @@ namespace IceChat
         private string currentFolder;
         private string logsFolder;
         private string emoticonsFile;
+        private List<LanguageItem> languageFiles;
+        private LanguageItem currentLanguageFile;
 
         private StreamWriter errorFile;
 
@@ -67,6 +69,7 @@ namespace IceChat
         private IceChatAliases iceChatAliases;
         private IceChatPopupMenus iceChatPopups;
         private IceChatEmoticon iceChatEmoticons;
+        private IceChatLanguage iceChatLanguage;
 
         private ArrayList loadedPlugins;
 
@@ -129,9 +132,45 @@ namespace IceChat
 
             #endregion
 
+            languageFiles = new List<LanguageItem>();
+            currentLanguageFile = new LanguageItem();
+            languageFiles.Add(currentLanguageFile);     // default language English
+
+            DirectoryInfo languageDirectory = null;
+            
+            if (Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages"))
+                languageDirectory = new DirectoryInfo(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages");
+            else if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "Languages"))
+                languageDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "Languages");
+            
+            if (languageDirectory != null)
+            {
+                // scan the language directory for xml files and make LanguageItems for each file
+                FileInfo[] langFiles = languageDirectory.GetFiles("*.xml");
+                foreach (FileInfo fi in langFiles)
+                {
+                    string langFile = languageDirectory.FullName + System.IO.Path.DirectorySeparatorChar + fi.Name;
+                    LanguageItem languageItem = LoadLanguageItem(langFile);
+                    if (languageItem != null) languageFiles.Add(languageItem);
+                }
+            }
+
 
             LoadOptions();
             LoadColors();
+
+            // use the language saved in options if availlable,
+            // if not (e.g. user deleted xml file) default is used
+            foreach (LanguageItem li in languageFiles)
+            {
+                if (li.LanguageName == iceChatOptions.Language)
+                {
+                    currentLanguageFile = li;
+                    break;
+                }
+            }
+            LoadLanguage(); // The language class MUST be loaded before any GUI component is created
+
 
             InitializeComponent();
 
@@ -186,8 +225,8 @@ namespace IceChat
             inputPanel.SetInputBoxColors();
             channelList.SetListColors();
 
-            nickList = new NickList();
-            nickList.Header = "Console";
+            nickList = new NickList();            
+            nickList.Header = iceChatLanguage.consoleTabTitle;
             nickList.Dock = DockStyle.Fill;
             nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName,iceChatFonts.FontSettings[3].FontSize);
 
@@ -228,7 +267,100 @@ namespace IceChat
             {
                 ipc.MainProgramLoaded();
             }
+
+
+            if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
+        
         }
+
+         #region load language file
+
+        private LanguageItem LoadLanguageItem(string languageFileName)
+        {
+            if (File.Exists(languageFileName))
+            {
+                LanguageItem languageItem = null;
+                XmlSerializer deserializer = new XmlSerializer(typeof(LanguageItem));
+                TextReader textReader = new StreamReader(languageFileName);
+                try
+                {
+                    languageItem = (LanguageItem)deserializer.Deserialize(textReader);
+                    languageItem.LanguageFile = languageFileName;
+               }
+                catch
+                {
+                    languageItem = null;
+                }
+                finally
+                {
+                    textReader.Close();
+                    textReader.Dispose();
+                }
+                return languageItem;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private void LoadLanguage()
+        {
+            if (File.Exists(currentLanguageFile.LanguageFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatLanguage));
+                TextReader textReader = new StreamReader(currentLanguageFile.LanguageFile);
+                iceChatLanguage = (IceChatLanguage)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+            }
+            else
+            {
+                iceChatLanguage = new IceChatLanguage();
+            }
+        }
+
+        private void ApplyLanguage()
+        {
+            mainToolStripMenuItem.Text = iceChatLanguage.mainToolStripMenuItem;
+            minimizeToTrayToolStripMenuItem.Text = iceChatLanguage.minimizeToTrayToolStripMenuItem;
+            debugWindowToolStripMenuItem.Text = iceChatLanguage.debugWindowToolStripMenuItem;
+            exitToolStripMenuItem.Text = iceChatLanguage.exitToolStripMenuItem;
+            optionsToolStripMenuItem.Text = iceChatLanguage.optionsToolStripMenuItem;
+            iceChatSettingsToolStripMenuItem.Text = iceChatLanguage.iceChatSettingsToolStripMenuItem;
+            iceChatColorsToolStripMenuItem.Text = iceChatLanguage.iceChatColorsToolStripMenuItem;
+            iceChatEditorToolStripMenuItem.Text = iceChatLanguage.iceChatEditorToolStripMenuItem;
+            pluginsToolStripMenuItem.Text = iceChatLanguage.pluginsToolStripMenuItem;
+            viewToolStripMenuItem.Text = iceChatLanguage.viewToolStripMenuItem;
+            serverListToolStripMenuItem.Text = iceChatLanguage.serverListToolStripMenuItem;
+            nickListToolStripMenuItem.Text = iceChatLanguage.nickListToolStripMenuItem;
+            statusBarToolStripMenuItem.Text = iceChatLanguage.statusBarToolStripMenuItem;
+            toolBarToolStripMenuItem.Text = iceChatLanguage.toolBarToolStripMenuItem;
+            helpToolStripMenuItem.Text = iceChatLanguage.helpToolStripMenuItem;
+            codePlexPageToolStripMenuItem.Text = iceChatLanguage.codePlexPageToolStripMenuItem;
+            iceChatHomePageToolStripMenuItem.Text = iceChatLanguage.iceChatHomePageToolStripMenuItem;
+            forumsToolStripMenuItem.Text = iceChatLanguage.forumsToolStripMenuItem;
+            aboutToolStripMenuItem.Text = iceChatLanguage.aboutToolStripMenuItem;
+            toolStripQuickConnect.Text = iceChatLanguage.toolStripQuickConnect;
+            toolStripSettings.Text = iceChatLanguage.toolStripSettings;
+            toolStripColors.Text = iceChatLanguage.toolStripColors;
+            toolStripEditor.Text = iceChatLanguage.toolStripEditor;
+            toolStripAway.Text = iceChatLanguage.toolStripAway;
+            toolStripSystemTray.Text = iceChatLanguage.toolStripSystemTray;
+            toolStripStatus.Text = iceChatLanguage.toolStripStatus;
+            tabPageFaveChannels.Text = iceChatLanguage.tabPageFaveChannels;
+            tabPageNicks.Text = iceChatLanguage.tabPageNicks;
+
+            channelList.ApplyLanguage();
+            nickList.ApplyLanguage();
+            serverTree.ApplyLanguage();
+            inputPanel.ApplyLanguage();
+
+            mainTabControl.Invalidate(); // repaint tabs to apply changes to user drawn tabs
+        }
+
+        #endregion
+
 
         private void FormMainClosing(object sender, FormClosingEventArgs e)
         {
@@ -275,7 +407,7 @@ namespace IceChat
         private void CreateDefaultConsoleWindow()
         {
             IceTabPage p = new IceTabPage(IceTabPage.WindowType.Console, "Console");
-            p.AddConsoleTab("Welcome");
+            p.AddConsoleTab(iceChatLanguage.consoleTabWelcome);
             //mainTabControl.Controls.Add(p);
             mainTabControl.TabPages.Add(p);
 
@@ -396,6 +528,40 @@ namespace IceChat
                 SaveEmoticons();
             }
         }
+
+        internal IceChatLanguage IceChatLanguage
+        {
+            get
+            {
+                return iceChatLanguage;
+            }
+        }
+
+        internal List<LanguageItem> IceChatLanguageFiles
+        {
+            get
+            {
+                return languageFiles;
+            }
+        }
+
+        internal LanguageItem IceChatCurrentLanguageFile
+        {
+            get
+            {
+                return currentLanguageFile;
+            }
+            set
+            {
+                if (currentLanguageFile != value)
+                {
+                    currentLanguageFile = value;
+                    LoadLanguage();
+                    ApplyLanguage();
+                }
+           }
+        }
+
 
         internal string FavoriteChannelsFile
         {
@@ -878,7 +1044,7 @@ namespace IceChat
             {
                 //make sure the 1st tab is not selected
                 nickList.RefreshList();
-                nickList.Header = "Console";
+                nickList.Header = iceChatLanguage.consoleTabTitle; 
                 if (mainTabControl.GetTabPage("Console").ConsoleTab.SelectedIndex != 0)
                 {
                     inputPanel.CurrentConnection = mainTabControl.GetTabPage("Console").CurrentConnection;
@@ -937,7 +1103,7 @@ namespace IceChat
 
         private void tabPanelRight_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabPanelRight.SelectedTab.Text == "Nick List")
+            if (tabPanelRight.SelectedIndex == 0)
             {
                 nickList.Visible = true;
                 channelList.Visible = false;
@@ -1075,6 +1241,11 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/anick":
+                            foreach (IRCConnection c in serverTree.ServerConnections.Values)
+                                if (c.IsConnected)
+                                    SendData(c, "NICK " + data);
+                            break;                        
                         case "/autojoin":
                             if (connection != null)
                             {
@@ -1476,6 +1647,7 @@ namespace IceChat
                                     SendData(connection, "QUIT :" + ParseIdentifiers(connection, connection.ServerSetting.QuitMessage, ""));
                             }
                             break;
+                        case "/aquit":
                         case "/quitall":
                             foreach (IRCConnection c in serverTree.ServerConnections.Values)
                             {

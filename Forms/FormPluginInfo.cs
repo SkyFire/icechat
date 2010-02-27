@@ -25,6 +25,13 @@ namespace IceChat
 
             this.plugin = plugin;
             this.menuItem = menuItem;
+
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+
         }
 
         private void buttonClose_Click(object sender, EventArgs e)

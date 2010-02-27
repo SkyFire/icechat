@@ -14,6 +14,12 @@ namespace IceChat
         {
             InitializeComponent();
             this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version;
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+            labelAbout.Text = FormMain.Instance.IceChatLanguage.aboutText;
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

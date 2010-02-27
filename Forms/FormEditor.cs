@@ -50,6 +50,13 @@ namespace IceChat
             nickListToolStripMenuItem.Checked = true;
             currentPopup = "NickList";
             currentPopupMenu = nickListToolStripMenuItem;
+
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)

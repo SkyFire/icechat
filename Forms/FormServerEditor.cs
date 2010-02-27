@@ -61,6 +61,8 @@ namespace IceChat
             }
             comboEncoding.Text = System.Text.Encoding.Default.WebName.ToString();
             buttonRemoveServer.Enabled = false;
+
+            ApplyLanguage();
         }
 
         public FormServers(ServerSetting s)
@@ -81,6 +83,13 @@ namespace IceChat
             LoadSettings();
 
             this.Text = "Server Editor: " + s.ServerName;
+
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+
         }
         
         /// <summary>

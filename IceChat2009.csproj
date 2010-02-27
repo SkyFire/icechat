@@ -175,6 +175,7 @@
     <Compile Include="IrcTimer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Language.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="ParseIRCData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -23,6 +23,12 @@ namespace IceChat
             _connection = connection;
             _connection.UserInfoWindow = this;
 
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+
         }
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)

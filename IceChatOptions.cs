@@ -255,6 +255,8 @@ namespace IceChat
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
 
+        private string _language = "English";
+
         [XmlElement("TimeStamp")]
         public string TimeStamp
         { 
@@ -392,6 +394,13 @@ namespace IceChat
         {
             get { return this._showUnreadLine; }
             set { this._showUnreadLine = value; }
+        }
+
+        [XmlElement("Language")]
+        public string Language
+        {
+            get { return this._language; }
+            set { this._language = value; }
         }
     }
     

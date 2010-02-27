@@ -22,6 +22,16 @@ namespace IceChat
             textInput.OnCommand += new IceInputBox.SendCommand(textInput_OnCommand);
         }
 
+
+        internal void ApplyLanguage()
+        {
+            if (FormMain.Instance != null)
+            {
+                IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
+                buttonSend.Text = iceChatLanguage.buttonSend;
+            }
+        }
+
         internal IRCConnection CurrentConnection
         {
             get

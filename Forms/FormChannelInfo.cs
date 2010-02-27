@@ -65,7 +65,15 @@ namespace IceChat
                         break;
                 }
             }
+
+            ApplyLanguage();
         }
+
+        private void ApplyLanguage()
+        {
+            
+        }
+
         internal void AddChannelBan(string host, string bannedBy)
         {
             ListViewItem lvi = new ListViewItem(host);

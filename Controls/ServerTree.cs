@@ -97,7 +97,17 @@ namespace IceChat
             //toolTip.ReshowDelay = 2000;
             toolTip.IsBalloon = true;
             Invalidate();
+        }
 
+        internal void ApplyLanguage()
+        {
+            IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
+            buttonConnect.Text = iceChatLanguage.serverTreeButtonConnect;
+            buttonEdit.Text = iceChatLanguage.serverTreeButtonEdit;
+            buttonDisconnect.Text = iceChatLanguage.serverTreeButtonDisconnect;
+            buttonAdd.Text = iceChatLanguage.serverTreeButtonAdd;
+            headerCaption = iceChatLanguage.serverTreeHeader;
+            Invalidate();
         }
 
         private void panelButtons_Resize(object sender, EventArgs e)

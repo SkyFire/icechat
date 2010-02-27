@@ -50,6 +50,11 @@ namespace IceChat
             g.Dispose();
 
             pictureEmoticons.MouseDown += new MouseEventHandler(pictureEmoticons_MouseDown);
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
 
         }
 

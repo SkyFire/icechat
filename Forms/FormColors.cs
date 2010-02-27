@@ -323,9 +323,13 @@ namespace IceChat
             {
                 ipc.LoadColorsForm(this.tabControlColors);
             }
-
+            ApplyLanguage();
         }
 
+        private void ApplyLanguage()
+        {
+            
+        }
 
         private void OnColor_Click(object sender, EventArgs e)
         {
