@@ -1,3 +1,10 @@
+Build Alpha 11.3 - March 6 2010
+* Added AutoJoin Delay option (5 Seconds)
+* Fixed bug with Nick list buttons and invalid nick
+* Fixed bug in Language File, Close button was not specified
+* Added icons to menus and such
+* Added /forcequit command to force drop a connection
+
 Build Alpha 11.2
 * Added /anick and /aquit commands
 * Added Language Options

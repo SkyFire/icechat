@@ -72,8 +72,9 @@ namespace IceChat
 
         private Panel m_pnlCloseButton;
 
-        public event System.EventHandler SelectedIndexChanged;
-        
+        //public event System.EventHandler SelectedIndexChanged;
+        public delegate void TabEventHandler(object sender, TabEventArgs e);
+        public event TabEventHandler SelectedIndexChanged;
         public delegate void TabClosedDelegate(int nIndex);
         public event TabClosedDelegate OnTabClosed;
 
@@ -105,16 +106,17 @@ namespace IceChat
         {
             set 
             {
-                if (m_SelectedIndex != value)
+                //System.Diagnostics.Debug.WriteLine(m_SelectedIndex + ":" + value);
+                //if (m_SelectedIndex != value)
+                this.m_PreviousSelectedIndex = m_SelectedIndex;
+                this.m_SelectedIndex = value;
+                                        
+                if (this.SelectedIndexChanged != null)
                 {
-                    this.m_PreviousSelectedIndex = m_SelectedIndex;
-                    this.m_SelectedIndex = value;
-                    if (this.SelectedIndexChanged != null)
-                    {
-                        EventArgs e = new EventArgs();
-                        SelectedIndexChanged(this, e);
-                    }
-                }
+                    TabEventArgs e = new TabEventArgs();
+                    e.IsHandled = true;
+                    SelectedIndexChanged(this, e);
+                }                    
             }
             get
             {
@@ -157,39 +159,20 @@ namespace IceChat
                 {
                     SelectedIndex = i;
                     Invalidate();
+                    
+                    
                     if (this.SelectedIndexChanged != null)
                     {
-                        EventArgs e = new EventArgs();
+                        TabEventArgs e = new TabEventArgs();
+                        e.IsHandled = true;
                         SelectedIndexChanged(this, e);
                     }
+                    
                     break;                
                 }
             }
         }
-
-        internal void SelectTab(IRCConnection connection, string sCaption)
-        {
-            for (int i = 0; i < m_lTabPages.Count; i++)
-            {
-                if (m_lTabPages[i].TabCaption.Equals(sCaption))
-                {
-                    if (m_lTabPages[i].Connection == connection)
-                    {
-                        SelectedIndex = i;
-                        Invalidate();
-                        
-                        if (this.SelectedIndexChanged != null)
-                        {
-                            EventArgs e = new EventArgs();
-                            SelectedIndexChanged(this, e);
-                        }
-                        
-                        break;
-                    }
-                }
-            }
-        }
-
+        
         internal IceTabPage GetTabPage(string sCaption)
         {
             for (int i = 0; i < m_lTabPages.Count; i++)
@@ -238,12 +221,18 @@ namespace IceChat
             this.m_pnlCloseButton.MouseDown += new MouseEventHandler(m_pnlCloseButton_MouseDown);
             this.m_pnlCloseButton.MouseHover += new EventHandler(m_pnlCloseButton_MouseHover);
             this.m_pnlCloseButton.MouseLeave += new EventHandler(m_pnlCloseButton_MouseLeave);
+            this.m_pnlCloseButton.Paint += new PaintEventHandler(m_pnlCloseButton_Paint);
             this.m_pnlCloseButton.Dock = DockStyle.Right;
 
             this.Controls.Add(m_pnlCloseButton);
 
             this.AutoSize = false;
 
+        }
+
+        private void m_pnlCloseButton_Paint(object sender, PaintEventArgs e)
+        {
+            DrawCloseButton();
         }
 
         private void m_pnlCloseButton_MouseLeave(object sender, EventArgs e)
@@ -285,10 +274,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear", "/clear $1"));
-            menu.Items.Add(NewMenuItem("Clear All", "/clear all console"));
+            menu.Items.Add(NewMenuItem("Clear", "/clear $1",global::IceChat.Properties.Resources.clear));
+            menu.Items.Add(NewMenuItem("Clear All", "/clear all console", global::IceChat.Properties.Resources.clear));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(NewMenuItem("Quit Server", "/quit"));
+            menu.Items.Add(NewMenuItem("Quit Server", "/quit", global::IceChat.Properties.Resources.disconected));
 
             //add the console popup menu
             AddPopupMenu("Console", menu);
@@ -299,10 +288,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
-            menu.Items.Add(NewMenuItem("Close Channel", "/part $1"));
-            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1"));
-            menu.Items.Add(NewMenuItem("Channel Information", "/channelinfo $1"));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", global::IceChat.Properties.Resources.clear));
+            menu.Items.Add(NewMenuItem("Close Channel", "/part $1", global::IceChat.Properties.Resources.CloseButton));
+            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", global::IceChat.Properties.Resources.refresh));
+            menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", global::IceChat.Properties.Resources.info));
 
             //add then channel popup menu
             AddPopupMenu("Channel", menu);
@@ -313,10 +302,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
-            menu.Items.Add(NewMenuItem("Close Window", "/part $1"));
-            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1"));
-            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1"));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1",global::IceChat.Properties.Resources.clear));
+            menu.Items.Add(NewMenuItem("Close Window", "/part $1", global::IceChat.Properties.Resources.CloseButton));
+            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1", global::IceChat.Properties.Resources.user_info));
+            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1", null));
 
             //add then channel popup menu
             AddPopupMenu("Query", menu);
@@ -324,9 +313,12 @@ namespace IceChat
 
         }
 
-        private ToolStripMenuItem NewMenuItem(string caption, string command)
+        private ToolStripMenuItem NewMenuItem(string caption, string command, Bitmap icon)
         {
             ToolStripMenuItem t = new ToolStripMenuItem(caption);
+            //global::IceChat.Properties.Resources.connected
+            if (icon != null)
+                t.Image = icon;
             t.Tag = command;
             return t;
         }
@@ -456,7 +448,7 @@ namespace IceChat
 
         private void m_pnlCloseButton_MouseDown(object sender, MouseEventArgs e)
         {
-            IceTabPage current = GetTabPage(SelectedIndex);
+            IceTabPage current = GetTabPage(m_SelectedIndex);
             if (current != null)
             {
                 //System.Diagnostics.Debug.WriteLine("close tab:" + current.TabCaption);
@@ -502,8 +494,8 @@ namespace IceChat
 
                 g.Clip = rsaved;
 
-                if (GetTabPage(SelectedIndex) != null)
-                    GetTabPage(SelectedIndex).BringToFront();
+                if (GetTabPage(m_SelectedIndex) != null)
+                    GetTabPage(m_SelectedIndex).BringToFront();
 
                 DrawCloseButton();
             }
@@ -926,27 +918,30 @@ namespace IceChat
                 Rectangle rectTab = m_TabSizeRects[i];
                 if ((pClickLocation.X > rectTab.X && pClickLocation.X < rectTab.X + rectTab.Width) && (pClickLocation.Y > rectTab.Y && pClickLocation.Y < rectTab.Bottom)  ) 
                 {
-                    if (this.SelectedIndex != i) 
-                        this.SelectedIndex = i;
+                    if (this.m_SelectedIndex != i) 
+                        this.m_SelectedIndex = i;
                     break;
                 }
             }
 
-            if (GetTabPage(SelectedIndex) != null)
+            if (GetTabPage(m_SelectedIndex) != null)
             {
-                GetTabPage(SelectedIndex).BringToFront();
+                GetTabPage(m_SelectedIndex).BringToFront();
                 if (this.SelectedIndexChanged != null)
                 {
-                    EventArgs e = new EventArgs();
+                    TabEventArgs e = new TabEventArgs();
                     SelectedIndexChanged(this, e);
                 }
             }
 
             Invalidate();
 
-            return GetTabPage(SelectedIndex);
+            return GetTabPage(m_SelectedIndex);
         }
 
     }
-
+    public class TabEventArgs : System.EventArgs
+    {
+        public bool IsHandled;
+    }
 }

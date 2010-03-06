@@ -522,132 +522,164 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                User u = currentWindow.GetNick(nick);
-                if (u != null)
+                if (selectedIndex < sortedNicks.Count)
                 {
-                    //check if opped or not
-                    for (int y = 0; y < u.Level.Length; y++)
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    User u = currentWindow.GetNick(nick);
+                    if (u != null)
                     {
-                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                        //check if opped or not
+                        for (int y = 0; y < u.Level.Length; y++)
                         {
-                            if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -o " + u.NickName);
-                            else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +o " + u.NickName);
+                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                            {
+                                if (u.Level[y])
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -o " + u.NickName);
+                                else
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +o " + u.NickName);
+                            }
                         }
                     }
                 }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonVoice_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                User u = currentWindow.GetNick(nick);
-                if (u != null)
+                if (selectedIndex < sortedNicks.Count)
                 {
-                    //check if voiced or not
-                    for (int y = 0; y < u.Level.Length; y++)
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    User u = currentWindow.GetNick(nick);
+                    if (u != null)
                     {
-                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                        //check if voiced or not
+                        for (int y = 0; y < u.Level.Length; y++)
                         {
-                            if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -v " + u.NickName);
-                            else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +v " + u.NickName);
+                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                            {
+                                if (u.Level[y])
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -v " + u.NickName);
+                                else
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +v " + u.NickName);
+                            }
                         }
                     }
                 }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonQuery_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                if (selectedIndex < sortedNicks.Count)
+                {
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query))
-                    FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query);
-                else
-                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
+                    if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query))
+                        FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query);
+                    else
+                        FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
+                }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonHop_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                User u = currentWindow.GetNick(nick);
-                if (u != null)
+                if (selectedIndex < sortedNicks.Count)
                 {
-                    //check if voiced or not
-                    for (int y = 0; y < u.Level.Length; y++)
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    User u = currentWindow.GetNick(nick);
+                    if (u != null)
                     {
-                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                        //check if voiced or not
+                        for (int y = 0; y < u.Level.Length; y++)
                         {
-                            if (u.Level[y])
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -h " + u.NickName);
-                            else
-                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +h " + u.NickName);
+                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                            {
+                                if (u.Level[y])
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -h " + u.NickName);
+                                else
+                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +h " + u.NickName);
+                            }
                         }
                     }
                 }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonInfo_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
-                
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nick); ;                
+                if (selectedIndex < sortedNicks.Count)
+                {
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nick);
+                }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonBan_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                if (selectedIndex < sortedNicks.Count)
+                {
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nick); ;            
+                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nick); ;
+                }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonKick_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                if (selectedIndex < sortedNicks.Count)
+                {
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nick); ;
+                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nick); ;
+                }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
         private void buttonWhois_Click(object sender, EventArgs e)
         {
             if (selectedIndex >= 0)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
-                for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                    nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
-                
-                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nick); ;
+                if (selectedIndex < sortedNicks.Count)
+                {
+                    string nick = sortedNicks[selectedIndex].ToString();
+                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nick); ;
+                }
             }
+            FormMain.Instance.FocusInputBox();
         }
 
 

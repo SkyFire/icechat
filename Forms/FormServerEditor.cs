@@ -109,6 +109,7 @@ namespace IceChat
             this.textQuitMessage.Text = serverSetting.QuitMessage;
             
             this.checkAutoJoin.Checked = serverSetting.AutoJoinEnable;
+            this.checkAutoJoinDelay.Checked = serverSetting.AutoJoinDelay;
             this.checkAutoPerform.Checked = serverSetting.AutoPerformEnable;
 
             this.checkModeI.Checked = serverSetting.SetModeI;
@@ -188,6 +189,7 @@ namespace IceChat
             serverSetting.QuitMessage = textQuitMessage.Text;
 
             serverSetting.AutoJoinEnable = checkAutoJoin.Checked;
+            serverSetting.AutoJoinDelay = checkAutoJoinDelay.Checked;
             serverSetting.AutoPerformEnable = checkAutoPerform.Checked;
 
             serverSetting.AutoJoinChannels = new string[listChannel.Items.Count];

@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormServers));
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
@@ -61,6 +63,7 @@
             this.checkMOTD = new System.Windows.Forms.CheckBox();
             this.checkModeI = new System.Windows.Forms.CheckBox();
             this.tabPageAutoJoin = new System.Windows.Forms.TabPage();
+            this.checkAutoJoinDelay = new System.Windows.Forms.CheckBox();
             this.buttonEdit = new System.Windows.Forms.Button();
             this.listChannel = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -73,6 +76,7 @@
             this.tabPageAutoPerform = new System.Windows.Forms.TabPage();
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
+            this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -85,6 +89,8 @@
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
+            this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(525, 245);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
@@ -97,6 +103,8 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(416, 246);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonSave.Name = "buttonSave";
@@ -114,6 +122,7 @@
             this.tabControlSettings.Controls.Add(this.tabPageAutoJoin);
             this.tabControlSettings.Controls.Add(this.tabPageAutoPerform);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tabControlSettings.ImageList = this.imageListEditor;
             this.tabControlSettings.Location = new System.Drawing.Point(0, 0);
             this.tabControlSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tabControlSettings.Name = "tabControlSettings";
@@ -142,6 +151,7 @@
             this.tabPageMain.Controls.Add(this.label3);
             this.tabPageMain.Controls.Add(this.label2);
             this.tabPageMain.Controls.Add(this.label1);
+            this.tabPageMain.ImageIndex = 0;
             this.tabPageMain.Location = new System.Drawing.Point(4, 25);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageMain.Name = "tabPageMain";
@@ -151,7 +161,7 @@
             // 
             // textAwayNick
             // 
-            this.textAwayNick.Location = new System.Drawing.Point(459, 99);
+            this.textAwayNick.Location = new System.Drawing.Point(459, 100);
             this.textAwayNick.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAwayNick.Name = "textAwayNick";
             this.textAwayNick.Size = new System.Drawing.Size(150, 23);
@@ -168,7 +178,7 @@
             // 
             // textAltNickName
             // 
-            this.textAltNickName.Location = new System.Drawing.Point(459, 68);
+            this.textAltNickName.Location = new System.Drawing.Point(459, 69);
             this.textAltNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAltNickName.Name = "textAltNickName";
             this.textAltNickName.Size = new System.Drawing.Size(150, 23);
@@ -185,7 +195,7 @@
             // 
             // textDisplayName
             // 
-            this.textDisplayName.Location = new System.Drawing.Point(115, 36);
+            this.textDisplayName.Location = new System.Drawing.Point(115, 33);
             this.textDisplayName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textDisplayName.Name = "textDisplayName";
             this.textDisplayName.Size = new System.Drawing.Size(150, 23);
@@ -194,7 +204,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(5, 35);
+            this.label5.Location = new System.Drawing.Point(15, 36);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 16);
             this.label5.TabIndex = 46;
@@ -202,7 +212,7 @@
             // 
             // textQuitMessage
             // 
-            this.textQuitMessage.Location = new System.Drawing.Point(115, 162);
+            this.textQuitMessage.Location = new System.Drawing.Point(115, 159);
             this.textQuitMessage.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textQuitMessage.Name = "textQuitMessage";
             this.textQuitMessage.Size = new System.Drawing.Size(228, 23);
@@ -211,7 +221,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(5, 161);
+            this.label8.Location = new System.Drawing.Point(15, 162);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(97, 16);
             this.label8.TabIndex = 45;
@@ -220,7 +230,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(5, 130);
+            this.label7.Location = new System.Drawing.Point(15, 131);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(71, 16);
             this.label7.TabIndex = 43;
@@ -228,7 +238,7 @@
             // 
             // textFullName
             // 
-            this.textFullName.Location = new System.Drawing.Point(115, 131);
+            this.textFullName.Location = new System.Drawing.Point(115, 128);
             this.textFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textFullName.Name = "textFullName";
             this.textFullName.Size = new System.Drawing.Size(228, 23);
@@ -236,7 +246,7 @@
             // 
             // textIdentName
             // 
-            this.textIdentName.Location = new System.Drawing.Point(115, 100);
+            this.textIdentName.Location = new System.Drawing.Point(115, 99);
             this.textIdentName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textIdentName.Name = "textIdentName";
             this.textIdentName.Size = new System.Drawing.Size(150, 23);
@@ -245,7 +255,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 99);
+            this.label6.Location = new System.Drawing.Point(15, 102);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(84, 16);
             this.label6.TabIndex = 41;
@@ -253,7 +263,7 @@
             // 
             // textServerPort
             // 
-            this.textServerPort.Location = new System.Drawing.Point(459, 7);
+            this.textServerPort.Location = new System.Drawing.Point(459, 4);
             this.textServerPort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServerPort.Name = "textServerPort";
             this.textServerPort.Size = new System.Drawing.Size(53, 23);
@@ -261,7 +271,7 @@
             // 
             // textServername
             // 
-            this.textServername.Location = new System.Drawing.Point(115, 8);
+            this.textServername.Location = new System.Drawing.Point(115, 4);
             this.textServername.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServername.Name = "textServername";
             this.textServername.Size = new System.Drawing.Size(228, 23);
@@ -269,7 +279,7 @@
             // 
             // textNickName
             // 
-            this.textNickName.Location = new System.Drawing.Point(115, 69);
+            this.textNickName.Location = new System.Drawing.Point(115, 65);
             this.textNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textNickName.Name = "textNickName";
             this.textNickName.Size = new System.Drawing.Size(150, 23);
@@ -278,7 +288,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(367, 11);
+            this.label3.Location = new System.Drawing.Point(367, 7);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(83, 16);
             this.label3.TabIndex = 39;
@@ -288,7 +298,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Red;
-            this.label2.Location = new System.Drawing.Point(5, 7);
+            this.label2.Location = new System.Drawing.Point(15, 7);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(92, 16);
             this.label2.TabIndex = 38;
@@ -298,7 +308,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(5, 68);
+            this.label1.Location = new System.Drawing.Point(15, 68);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 16);
             this.label1.TabIndex = 36;
@@ -316,6 +326,7 @@
             this.tabPageExtra.Controls.Add(this.checkPingPong);
             this.tabPageExtra.Controls.Add(this.checkMOTD);
             this.tabPageExtra.Controls.Add(this.checkModeI);
+            this.tabPageExtra.ImageIndex = 1;
             this.tabPageExtra.Location = new System.Drawing.Point(4, 25);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
@@ -334,7 +345,7 @@
             // 
             // textServerPassword
             // 
-            this.textServerPassword.Location = new System.Drawing.Point(396, 7);
+            this.textServerPassword.Location = new System.Drawing.Point(412, 9);
             this.textServerPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServerPassword.Name = "textServerPassword";
             this.textServerPassword.Size = new System.Drawing.Size(143, 23);
@@ -343,7 +354,7 @@
             // checkDisableCTCP
             // 
             this.checkDisableCTCP.AutoSize = true;
-            this.checkDisableCTCP.Location = new System.Drawing.Point(8, 115);
+            this.checkDisableCTCP.Location = new System.Drawing.Point(15, 115);
             this.checkDisableCTCP.Name = "checkDisableCTCP";
             this.checkDisableCTCP.Size = new System.Drawing.Size(163, 20);
             this.checkDisableCTCP.TabIndex = 6;
@@ -353,7 +364,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 170);
+            this.label10.Location = new System.Drawing.Point(12, 170);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(67, 16);
             this.label10.TabIndex = 5;
@@ -363,7 +374,7 @@
             // 
             this.comboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboEncoding.FormattingEnabled = true;
-            this.comboEncoding.Location = new System.Drawing.Point(81, 167);
+            this.comboEncoding.Location = new System.Drawing.Point(88, 167);
             this.comboEncoding.Name = "comboEncoding";
             this.comboEncoding.Size = new System.Drawing.Size(147, 24);
             this.comboEncoding.TabIndex = 4;
@@ -371,7 +382,7 @@
             // checkRejoinChannel
             // 
             this.checkRejoinChannel.AutoSize = true;
-            this.checkRejoinChannel.Location = new System.Drawing.Point(8, 89);
+            this.checkRejoinChannel.Location = new System.Drawing.Point(15, 89);
             this.checkRejoinChannel.Name = "checkRejoinChannel";
             this.checkRejoinChannel.Size = new System.Drawing.Size(220, 20);
             this.checkRejoinChannel.TabIndex = 3;
@@ -381,7 +392,7 @@
             // checkPingPong
             // 
             this.checkPingPong.AutoSize = true;
-            this.checkPingPong.Location = new System.Drawing.Point(8, 63);
+            this.checkPingPong.Location = new System.Drawing.Point(15, 63);
             this.checkPingPong.Name = "checkPingPong";
             this.checkPingPong.Size = new System.Drawing.Size(209, 20);
             this.checkPingPong.TabIndex = 2;
@@ -391,7 +402,7 @@
             // checkMOTD
             // 
             this.checkMOTD.AutoSize = true;
-            this.checkMOTD.Location = new System.Drawing.Point(8, 37);
+            this.checkMOTD.Location = new System.Drawing.Point(15, 37);
             this.checkMOTD.Name = "checkMOTD";
             this.checkMOTD.Size = new System.Drawing.Size(188, 20);
             this.checkMOTD.TabIndex = 1;
@@ -401,7 +412,7 @@
             // checkModeI
             // 
             this.checkModeI.AutoSize = true;
-            this.checkModeI.Location = new System.Drawing.Point(8, 11);
+            this.checkModeI.Location = new System.Drawing.Point(15, 11);
             this.checkModeI.Name = "checkModeI";
             this.checkModeI.Size = new System.Drawing.Size(188, 20);
             this.checkModeI.TabIndex = 0;
@@ -411,6 +422,7 @@
             // tabPageAutoJoin
             // 
             this.tabPageAutoJoin.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageAutoJoin.Controls.Add(this.checkAutoJoinDelay);
             this.tabPageAutoJoin.Controls.Add(this.buttonEdit);
             this.tabPageAutoJoin.Controls.Add(this.listChannel);
             this.tabPageAutoJoin.Controls.Add(this.checkAutoJoin);
@@ -418,6 +430,7 @@
             this.tabPageAutoJoin.Controls.Add(this.buttonAdd);
             this.tabPageAutoJoin.Controls.Add(this.textChannel);
             this.tabPageAutoJoin.Controls.Add(this.label4);
+            this.tabPageAutoJoin.ImageIndex = 2;
             this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 25);
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
@@ -425,6 +438,15 @@
             this.tabPageAutoJoin.Size = new System.Drawing.Size(617, 208);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
+            // 
+            // checkAutoJoinDelay
+            // 
+            this.checkAutoJoinDelay.Location = new System.Drawing.Point(183, 184);
+            this.checkAutoJoinDelay.Name = "checkAutoJoinDelay";
+            this.checkAutoJoinDelay.Size = new System.Drawing.Size(263, 20);
+            this.checkAutoJoinDelay.TabIndex = 34;
+            this.checkAutoJoinDelay.Text = "Enable AutoJoin Delay (5 seconds)";
+            this.checkAutoJoinDelay.UseVisualStyleBackColor = true;
             // 
             // buttonEdit
             // 
@@ -463,11 +485,9 @@
             // 
             // checkAutoJoin
             // 
-            this.checkAutoJoin.AutoSize = true;
-            this.checkAutoJoin.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.checkAutoJoin.Location = new System.Drawing.Point(3, 184);
+            this.checkAutoJoin.Location = new System.Drawing.Point(6, 184);
             this.checkAutoJoin.Name = "checkAutoJoin";
-            this.checkAutoJoin.Size = new System.Drawing.Size(611, 20);
+            this.checkAutoJoin.Size = new System.Drawing.Size(151, 20);
             this.checkAutoJoin.TabIndex = 31;
             this.checkAutoJoin.Text = "Enable AutoJoin";
             this.checkAutoJoin.UseVisualStyleBackColor = true;
@@ -516,6 +536,7 @@
             // 
             this.tabPageAutoPerform.Controls.Add(this.textAutoPerform);
             this.tabPageAutoPerform.Controls.Add(this.checkAutoPerform);
+            this.tabPageAutoPerform.ImageIndex = 3;
             this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 25);
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
@@ -545,6 +566,15 @@
             this.checkAutoPerform.TabIndex = 29;
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
+            // 
+            // imageListEditor
+            // 
+            this.imageListEditor.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEditor.ImageStream")));
+            this.imageListEditor.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListEditor.Images.SetKeyName(0, "quickconnect.png");
+            this.imageListEditor.Images.SetKeyName(1, "info.png");
+            this.imageListEditor.Images.SetKeyName(2, "refresh.png");
+            this.imageListEditor.Images.SetKeyName(3, "autoperform.png");
             // 
             // buttonRemoveServer
             // 
@@ -638,5 +668,7 @@
         private System.Windows.Forms.CheckBox checkDisableCTCP;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox textServerPassword;
+        private System.Windows.Forms.CheckBox checkAutoJoinDelay;
+        private System.Windows.Forms.ImageList imageListEditor;
     }
 }

@@ -74,6 +74,7 @@ namespace IceChat
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
         private bool _showPingPong = false;
+        private bool _autoJoinDelay = false;
 
         [XmlAttribute("ServerID")]
         public int ID
@@ -130,6 +131,10 @@ namespace IceChat
         [XmlElement("ShowPingPong")]
         public bool ShowPingPong
         { get { return this._showPingPong; } set { this._showPingPong = value; } }
+
+        [XmlElement("AutoJoinDelay")]
+        public bool AutoJoinDelay
+        { get { return this._autoJoinDelay; } set { this._autoJoinDelay = value; } }
 
         [XmlArray("AutoPerform")]
         [XmlArrayItem("Item")]

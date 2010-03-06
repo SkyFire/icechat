@@ -67,7 +67,6 @@
             // 
             // panelButtons
             // 
-            this.panelButtons.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelButtons.Controls.Add(this.buttonRemove);
             this.panelButtons.Controls.Add(this.buttonEdit);
             this.panelButtons.Controls.Add(this.buttonJoin);

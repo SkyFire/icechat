@@ -116,6 +116,12 @@
     <Compile Include="Forms\FormEmoticons.Designer.cs">
       <DependentUpon>FormEmoticons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormFirstRun.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFirstRun.Designer.cs">
+      <DependentUpon>FormFirstRun.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMainEvents.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -235,6 +241,9 @@
     <EmbeddedResource Include="Forms\FormEmoticons.resx">
       <DependentUpon>FormEmoticons.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFirstRun.resx">
+      <DependentUpon>FormFirstRun.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -326,10 +335,29 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="color.png" />
-    <None Include="CloseButton.png" />
+    <None Include="Icons\color.png" />
+    <None Include="Icons\CloseButton.png" />
     <Content Include="icechat2009.ico" />
-    <None Include="Smile.png" />
+    <None Include="Icons\codeplex.ico" />
+    <None Include="Icons\smf.ico" />
+    <None Include="Icons\autoperform.png" />
+    <None Include="Icons\fonts.png" />
+    <None Include="Icons\user-info.png" />
+    <None Include="Icons\clear.png" />
+    <None Include="Icons\save.png" />
+    <None Include="Icons\refresh.png" />
+    <None Include="Icons\info.png" />
+    <None Include="Icons\folder.png" />
+    <None Include="Icons\disconected.png" />
+    <None Include="Icons\connected.png" />
+    <None Include="Icons\quickconnect.png" />
+    <None Include="Icons\editormenu.png" />
+    <None Include="Icons\debugmenu.png" />
+    <None Include="Icons\colorsmenu.png" />
+    <None Include="Icons\settingsmenu.png" />
+    <None Include="Icons\previous.svg.png" />
+    <None Include="Icons\next.svg.png" />
+    <None Include="Icons\Smile.png" />
     <None Include="Resources\Image1.bmp" />
   </ItemGroup>
   <ItemGroup>
@@ -346,4 +374,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -82,7 +82,7 @@ namespace IceChat
             buttonOk = "&OK";
             buttonCancel = "&Cancel";
             buttonSave = "Save";
-            buttonSave = "Close";
+            buttonClose = "Close";
 
             favChanHeader = "Favorite Channels";
             favChanbuttonAdd = "Add";

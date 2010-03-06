@@ -99,10 +99,16 @@ namespace IceChat
             Other = 7
         }
 
-        public FormMain()
+        public FormMain(string[] args)
         {
             FormMain.Instance = this;
-
+            /*
+            if (args.Length > 0)
+            {
+                foreach(string arg in args)
+                    System.Diagnostics.Debug.WriteLine("args:" + arg);
+            }
+            */
             #region Settings Files 
             
             //check if the xml settings files exist in current folder
@@ -137,11 +143,10 @@ namespace IceChat
             languageFiles.Add(currentLanguageFile);     // default language English
 
             DirectoryInfo languageDirectory = null;
-            
-            if (Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages"))
-                languageDirectory = new DirectoryInfo(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages");
-            else if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "Languages"))
-                languageDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "Languages");
+
+            languageDirectory = new DirectoryInfo(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages");
+            if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages"))
+                Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages");
             
             if (languageDirectory != null)
             {
@@ -154,7 +159,6 @@ namespace IceChat
                     if (languageItem != null) languageFiles.Add(languageItem);
                 }
             }
-
 
             LoadOptions();
             LoadColors();
@@ -172,14 +176,22 @@ namespace IceChat
             LoadLanguage(); // The language class MUST be loaded before any GUI component is created
 
 
+            //check if we have any servers/settings saved, if not, load firstrun
+            if (!File.Exists(serversFile))
+            {
+                FormFirstRun firstRun = new FormFirstRun(currentFolder);
+                firstRun.ShowDialog(this);
+            }
+
+
             InitializeComponent();
 
             serverTree = new ServerTree();
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 24 2010";
-
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 6 2010";
+            
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
             try
@@ -243,7 +255,7 @@ namespace IceChat
             inputPanel.OnCommand +=new InputPanel.OnCommandDelegate(inputPanel_OnCommand);
             inputPanel.InputBoxFont = new Font(iceChatFonts.FontSettings[5].FontName, iceChatFonts.FontSettings[5].FontSize);
 
-            mainTabControl.SelectedIndexChanged += new EventHandler(TabSelectedIndexChanged);
+            mainTabControl.SelectedIndexChanged += new IceTabControl.TabEventHandler(TabSelectedIndexChanged);
             mainTabControl.OnTabClosed += new IceTabControl.TabClosedDelegate(mainTabControl_OnTabClosed);
             
             serverTree.NewServerConnection += new NewServerConnectionDelegate(NewServerConnection);
@@ -273,7 +285,7 @@ namespace IceChat
         
         }
 
-         #region load language file
+        #region load language file
 
         private LanguageItem LoadLanguageItem(string languageFileName)
         {
@@ -360,7 +372,6 @@ namespace IceChat
         }
 
         #endregion
-
 
         private void FormMainClosing(object sender, FormClosingEventArgs e)
         {
@@ -1017,11 +1028,12 @@ namespace IceChat
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TabSelectedIndexChanged(object sender, EventArgs e)
+        private void TabSelectedIndexChanged(object sender, TabEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("tab select:");
             if (mainTabControl.CurrentTab.WindowStyle != IceTabPage.WindowType.Console)
             {
-                //System.Diagnostics.Debug.WriteLine("TabSelected:" + mainTabControl.CurrentTab.TabCaption);
+                System.Diagnostics.Debug.WriteLine("TabSelected:" + mainTabControl.CurrentTab.TabCaption);
                 if (mainTabControl.CurrentTab != null)
                 {
                     IceTabPage t = mainTabControl.CurrentTab;
@@ -1035,8 +1047,9 @@ namespace IceChat
 
                     CurrentWindow.LastMessageType = ServerMessageType.Default;
                     t = null;
-
-                    //serverTree.SelectTab(mainTabControl.CurrentTab, false);
+                    
+                    if (!e.IsHandled)
+                        serverTree.SelectTab(mainTabControl.CurrentTab, false);
 
                 }
             }
@@ -1052,13 +1065,14 @@ namespace IceChat
                         StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName);
                     else
                         StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected (" + inputPanel.CurrentConnection.ServerSetting.ServerName + ")");
-
-                    //serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting , false);
+                    if (!e.IsHandled)
+                        serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
                 }
                 else
                 {
                     inputPanel.CurrentConnection = null;
-                    //serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
+                    //if(!e.IsHandled)
+                    //   serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
                     StatusText("Welcome to IceChat 2009");
                 }
             }
@@ -1188,7 +1202,7 @@ namespace IceChat
                             }
                             break;
 
-                        case "/channelinfo":
+                        case "/chaninfo":
                             if (connection != null)
                             {
                                 if (data.Length > 0)
@@ -1662,6 +1676,10 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/forcequit":
+                            if (connection != null)
+                                connection.ForceDisconnect();
+                            break;
                         case "/say":
                             if (connection != null && data.Length > 0)
                             {
@@ -1725,7 +1743,7 @@ namespace IceChat
                             if (data.Length > 0)
                             {
                                 //check if default nick name has been set
-                                if (iceChatOptions.DefaultNick.Length == 0)
+                                if (iceChatOptions.DefaultNick == null || iceChatOptions.DefaultNick.Length == 0)
                                 {
                                     CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1, false);
                                 }

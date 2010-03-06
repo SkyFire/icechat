@@ -19,7 +19,7 @@ namespace IceChat
 
             this.channel = Channel;
             this.textTopic.Text = StripAllCodes(channel.ChannelTopic);
-            this.Text = channel.TabCaption + "[" + channel.ChannelModes + "]";
+            this.Text = channel.TabCaption + " [" + channel.ChannelModes + "]";
             this.channel.HasChannelInfo = true;
             this.channel.ChannelInfoForm = this;
 

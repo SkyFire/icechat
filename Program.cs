@@ -34,13 +34,13 @@ namespace IceChat
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+            Application.Run(new FormMain(args));
             
         }
 
@@ -54,6 +54,7 @@ namespace IceChat
                 io.WriteLine(ex.Message + ":" + ex.StackTrace);
                 io.Flush();
                 io.Close();
+                io.Dispose();
                 MessageBox.Show("IceChat 2009 Unhandled Exception Error\n\n" + ex.Message + ex.StackTrace, "Fatal Error - Written to Error Log", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
             finally

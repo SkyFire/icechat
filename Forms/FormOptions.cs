@@ -416,5 +416,10 @@ namespace IceChat
                 player.Play();
             }
         }
+
+        private void buttonBrowseLogs_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(FormMain.Instance.LogsFolder);
+        }
     }
 }

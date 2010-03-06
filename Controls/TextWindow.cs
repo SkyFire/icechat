@@ -537,7 +537,7 @@ namespace IceChat
             else if (this.Parent.GetType() == typeof(IceTabPage))
             {
                 IceTabPage t = (IceTabPage)this.Parent;
-                FormMain.Instance.ParseOutGoingCommand(t.Connection, "/channelinfo");
+                FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
             }
         }
 

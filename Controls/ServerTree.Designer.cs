@@ -42,18 +42,20 @@
             this.closeChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reJoinChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoPerformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forceDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openLogFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuQuery = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearWindowToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silenceUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemBlank = new System.Windows.Forms.ToolStripSeparator();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
@@ -63,7 +65,6 @@
             // panelButtons
             // 
             this.panelButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelButtons.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelButtons.Controls.Add(this.buttonAdd);
             this.panelButtons.Controls.Add(this.buttonEdit);
             this.panelButtons.Controls.Add(this.buttonDisconnect);
@@ -80,7 +81,7 @@
             // 
             this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAdd.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAdd.Location = new System.Drawing.Point(99, 28);
+            this.buttonAdd.Location = new System.Drawing.Point(101, 28);
             this.buttonAdd.Margin = new System.Windows.Forms.Padding(2);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(77, 24);
@@ -94,7 +95,7 @@
             // 
             this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEdit.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonEdit.Location = new System.Drawing.Point(99, 2);
+            this.buttonEdit.Location = new System.Drawing.Point(101, 2);
             this.buttonEdit.Margin = new System.Windows.Forms.Padding(2);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(77, 24);
@@ -146,10 +147,11 @@
             // 
             this.imageListServers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListServers.ImageStream")));
             this.imageListServers.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListServers.Images.SetKeyName(0, "disconnect.ico");
-            this.imageListServers.Images.SetKeyName(1, "check.ico");
-            this.imageListServers.Images.SetKeyName(2, "channel.ico");
-            this.imageListServers.Images.SetKeyName(3, "query.ico");
+            this.imageListServers.Images.SetKeyName(0, "disconected.png");
+            this.imageListServers.Images.SetKeyName(1, "connected.png");
+            this.imageListServers.Images.SetKeyName(2, "refresh.png");
+            this.imageListServers.Images.SetKeyName(3, "window.png");
+            this.imageListServers.Images.SetKeyName(4, "query.png");
             // 
             // contextMenuChannel
             // 
@@ -163,6 +165,7 @@
             // 
             // clearWindowToolStripMenuItem
             // 
+            this.clearWindowToolStripMenuItem.Image = global::IceChat.Properties.Resources.clear;
             this.clearWindowToolStripMenuItem.Name = "clearWindowToolStripMenuItem";
             this.clearWindowToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.clearWindowToolStripMenuItem.Text = "Clear Window";
@@ -170,6 +173,7 @@
             // 
             // closeChannelToolStripMenuItem
             // 
+            this.closeChannelToolStripMenuItem.Image = global::IceChat.Properties.Resources.CloseButton;
             this.closeChannelToolStripMenuItem.Name = "closeChannelToolStripMenuItem";
             this.closeChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.closeChannelToolStripMenuItem.Text = "Close Channel";
@@ -177,6 +181,7 @@
             // 
             // reJoinChannelToolStripMenuItem
             // 
+            this.reJoinChannelToolStripMenuItem.Image = global::IceChat.Properties.Resources.refresh;
             this.reJoinChannelToolStripMenuItem.Name = "reJoinChannelToolStripMenuItem";
             this.reJoinChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.reJoinChannelToolStripMenuItem.Text = "Rejoin Channel";
@@ -184,43 +189,17 @@
             // 
             // channelInformationToolStripMenuItem
             // 
+            this.channelInformationToolStripMenuItem.Image = global::IceChat.Properties.Resources.info;
             this.channelInformationToolStripMenuItem.Name = "channelInformationToolStripMenuItem";
             this.channelInformationToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.channelInformationToolStripMenuItem.Text = "Channel Information";
             this.channelInformationToolStripMenuItem.Click += new System.EventHandler(this.channelInformationToolStripMenuItem_Click);
             // 
-            // connectToolStripMenuItem
-            // 
-            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.connectToolStripMenuItem.Text = "Connect";
-            this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
-            // 
-            // disconnectToolStripMenuItem
-            // 
-            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.disconnectToolStripMenuItem.Text = "Disconnect";
-            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
-            // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.editToolStripMenuItem.Text = "Edit";
-            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
-            // 
-            // autoJoinToolStripMenuItem
-            // 
-            this.autoJoinToolStripMenuItem.Name = "autoJoinToolStripMenuItem";
-            this.autoJoinToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.autoJoinToolStripMenuItem.Text = "Auto Join";
-            this.autoJoinToolStripMenuItem.Click += new System.EventHandler(this.autoJoinToolStripMenuItem_Click);
-            // 
             // autoPerformToolStripMenuItem
             // 
+            this.autoPerformToolStripMenuItem.Image = global::IceChat.Properties.Resources.autoperform;
             this.autoPerformToolStripMenuItem.Name = "autoPerformToolStripMenuItem";
-            this.autoPerformToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.autoPerformToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autoPerformToolStripMenuItem.Text = "Auto Perform";
             this.autoPerformToolStripMenuItem.Click += new System.EventHandler(this.autoPerformToolStripMenuItem_Click);
             // 
@@ -229,17 +208,59 @@
             this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectToolStripMenuItem,
             this.disconnectToolStripMenuItem,
+            this.forceDisconnectToolStripMenuItem,
+            this.toolStripMenuItemBlank,
             this.editToolStripMenuItem,
             this.autoJoinToolStripMenuItem,
             this.autoPerformToolStripMenuItem,
             this.openLogFolderToolStripMenuItem});
             this.contextMenuServer.Name = "contextMenuServer";
-            this.contextMenuServer.Size = new System.Drawing.Size(163, 136);
+            this.contextMenuServer.Size = new System.Drawing.Size(166, 164);
+            // 
+            // connectToolStripMenuItem
+            // 
+            this.connectToolStripMenuItem.Image = global::IceChat.Properties.Resources.connected;
+            this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.connectToolStripMenuItem.Text = "Connect";
+            this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Image = global::IceChat.Properties.Resources.disconected;
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            // 
+            // forceDisconnectToolStripMenuItem
+            // 
+            this.forceDisconnectToolStripMenuItem.Name = "forceDisconnectToolStripMenuItem";
+            this.forceDisconnectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.forceDisconnectToolStripMenuItem.Text = "Force Disconnect";
+            this.forceDisconnectToolStripMenuItem.Click += new System.EventHandler(this.forceDisconnectToolStripMenuItem_Click);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Image = global::IceChat.Properties.Resources.quickconnect;
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.editToolStripMenuItem.Text = "Edit";
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // autoJoinToolStripMenuItem
+            // 
+            this.autoJoinToolStripMenuItem.Image = global::IceChat.Properties.Resources.refresh;
+            this.autoJoinToolStripMenuItem.Name = "autoJoinToolStripMenuItem";
+            this.autoJoinToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.autoJoinToolStripMenuItem.Text = "Auto Join";
+            this.autoJoinToolStripMenuItem.Click += new System.EventHandler(this.autoJoinToolStripMenuItem_Click);
             // 
             // openLogFolderToolStripMenuItem
             // 
+            this.openLogFolderToolStripMenuItem.Image = global::IceChat.Properties.Resources.folder;
             this.openLogFolderToolStripMenuItem.Name = "openLogFolderToolStripMenuItem";
-            this.openLogFolderToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.openLogFolderToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.openLogFolderToolStripMenuItem.Text = "Open Log Folder";
             this.openLogFolderToolStripMenuItem.Click += new System.EventHandler(this.openLogFolderToolStripMenuItem_Click);
             // 
@@ -255,6 +276,7 @@
             // 
             // clearWindowToolStripMenuItem1
             // 
+            this.clearWindowToolStripMenuItem1.Image = global::IceChat.Properties.Resources.clear;
             this.clearWindowToolStripMenuItem1.Name = "clearWindowToolStripMenuItem1";
             this.clearWindowToolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
             this.clearWindowToolStripMenuItem1.Text = "Clear Window";
@@ -262,6 +284,7 @@
             // 
             // closeWindowToolStripMenuItem
             // 
+            this.closeWindowToolStripMenuItem.Image = global::IceChat.Properties.Resources.CloseButton;
             this.closeWindowToolStripMenuItem.Name = "closeWindowToolStripMenuItem";
             this.closeWindowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeWindowToolStripMenuItem.Text = "Close Window";
@@ -269,6 +292,7 @@
             // 
             // userInformationToolStripMenuItem
             // 
+            this.userInformationToolStripMenuItem.Image = global::IceChat.Properties.Resources.user_info;
             this.userInformationToolStripMenuItem.Name = "userInformationToolStripMenuItem";
             this.userInformationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.userInformationToolStripMenuItem.Text = "User Information";
@@ -280,6 +304,11 @@
             this.silenceUserToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.silenceUserToolStripMenuItem.Text = "Silence User";
             this.silenceUserToolStripMenuItem.Click += new System.EventHandler(this.silenceUserToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItemBlank
+            // 
+            this.toolStripMenuItemBlank.Name = "toolStripMenuItemBlank";
+            this.toolStripMenuItemBlank.Size = new System.Drawing.Size(162, 6);
             // 
             // ServerTree
             // 
@@ -328,5 +357,7 @@
         private System.Windows.Forms.ToolStripMenuItem userInformationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem silenceUserToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLogFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forceDisconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItemBlank;
     }
 }

@@ -42,11 +42,13 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.checkWhoisNewQuery = new System.Windows.Forms.CheckBox();
             this.checkNewQueryForegound = new System.Windows.Forms.CheckBox();
             this.checkDisableQueries = new System.Windows.Forms.CheckBox();
             this.checkSaveWindowPosition = new System.Windows.Forms.CheckBox();
             this.tabLogging = new System.Windows.Forms.TabPage();
+            this.buttonBrowseLogs = new System.Windows.Forms.Button();
             this.checkSeperateLogs = new System.Windows.Forms.CheckBox();
             this.checkLogQuery = new System.Windows.Forms.CheckBox();
             this.checkLogChannel = new System.Windows.Forms.CheckBox();
@@ -105,7 +107,6 @@ namespace IceChat
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -119,6 +120,8 @@ namespace IceChat
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(430, 250);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
@@ -130,6 +133,8 @@ namespace IceChat
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
+            this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(541, 250);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
@@ -179,7 +184,7 @@ namespace IceChat
             // 
             this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLanguage.FormattingEnabled = true;
-            this.comboBoxLanguage.Location = new System.Drawing.Point(115, 132);
+            this.comboBoxLanguage.Location = new System.Drawing.Point(89, 132);
             this.comboBoxLanguage.Name = "comboBoxLanguage";
             this.comboBoxLanguage.Size = new System.Drawing.Size(178, 24);
             this.comboBoxLanguage.TabIndex = 46;
@@ -187,7 +192,7 @@ namespace IceChat
             // labelLanguage
             // 
             this.labelLanguage.AutoSize = true;
-            this.labelLanguage.Location = new System.Drawing.Point(15, 135);
+            this.labelLanguage.Location = new System.Drawing.Point(12, 135);
             this.labelLanguage.Name = "labelLanguage";
             this.labelLanguage.Size = new System.Drawing.Size(71, 16);
             this.labelLanguage.TabIndex = 45;
@@ -257,10 +262,20 @@ namespace IceChat
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
             // 
+            // checkShowUnreadLine
+            // 
+            this.checkShowUnreadLine.AutoSize = true;
+            this.checkShowUnreadLine.Location = new System.Drawing.Point(15, 116);
+            this.checkShowUnreadLine.Name = "checkShowUnreadLine";
+            this.checkShowUnreadLine.Size = new System.Drawing.Size(198, 20);
+            this.checkShowUnreadLine.TabIndex = 45;
+            this.checkShowUnreadLine.Text = "Show Unread Text Marker";
+            this.checkShowUnreadLine.UseVisualStyleBackColor = true;
+            // 
             // checkWhoisNewQuery
             // 
             this.checkWhoisNewQuery.AutoSize = true;
-            this.checkWhoisNewQuery.Location = new System.Drawing.Point(12, 89);
+            this.checkWhoisNewQuery.Location = new System.Drawing.Point(15, 90);
             this.checkWhoisNewQuery.Name = "checkWhoisNewQuery";
             this.checkWhoisNewQuery.Size = new System.Drawing.Size(218, 20);
             this.checkWhoisNewQuery.TabIndex = 44;
@@ -270,7 +285,7 @@ namespace IceChat
             // checkNewQueryForegound
             // 
             this.checkNewQueryForegound.AutoSize = true;
-            this.checkNewQueryForegound.Location = new System.Drawing.Point(12, 63);
+            this.checkNewQueryForegound.Location = new System.Drawing.Point(15, 63);
             this.checkNewQueryForegound.Name = "checkNewQueryForegound";
             this.checkNewQueryForegound.Size = new System.Drawing.Size(241, 20);
             this.checkNewQueryForegound.TabIndex = 43;
@@ -280,7 +295,7 @@ namespace IceChat
             // checkDisableQueries
             // 
             this.checkDisableQueries.AutoSize = true;
-            this.checkDisableQueries.Location = new System.Drawing.Point(12, 37);
+            this.checkDisableQueries.Location = new System.Drawing.Point(15, 37);
             this.checkDisableQueries.Name = "checkDisableQueries";
             this.checkDisableQueries.Size = new System.Drawing.Size(147, 20);
             this.checkDisableQueries.TabIndex = 42;
@@ -290,7 +305,7 @@ namespace IceChat
             // checkSaveWindowPosition
             // 
             this.checkSaveWindowPosition.AutoSize = true;
-            this.checkSaveWindowPosition.Location = new System.Drawing.Point(12, 11);
+            this.checkSaveWindowPosition.Location = new System.Drawing.Point(15, 11);
             this.checkSaveWindowPosition.Name = "checkSaveWindowPosition";
             this.checkSaveWindowPosition.Size = new System.Drawing.Size(229, 20);
             this.checkSaveWindowPosition.TabIndex = 0;
@@ -299,6 +314,7 @@ namespace IceChat
             // 
             // tabLogging
             // 
+            this.tabLogging.Controls.Add(this.buttonBrowseLogs);
             this.tabLogging.Controls.Add(this.checkSeperateLogs);
             this.tabLogging.Controls.Add(this.checkLogQuery);
             this.tabLogging.Controls.Add(this.checkLogChannel);
@@ -311,10 +327,20 @@ namespace IceChat
             this.tabLogging.Text = "Logging";
             this.tabLogging.UseVisualStyleBackColor = true;
             // 
+            // buttonBrowseLogs
+            // 
+            this.buttonBrowseLogs.Location = new System.Drawing.Point(15, 161);
+            this.buttonBrowseLogs.Name = "buttonBrowseLogs";
+            this.buttonBrowseLogs.Size = new System.Drawing.Size(178, 25);
+            this.buttonBrowseLogs.TabIndex = 5;
+            this.buttonBrowseLogs.Text = "Browse Logs Folder";
+            this.buttonBrowseLogs.UseVisualStyleBackColor = true;
+            this.buttonBrowseLogs.Click += new System.EventHandler(this.buttonBrowseLogs_Click);
+            // 
             // checkSeperateLogs
             // 
             this.checkSeperateLogs.AutoSize = true;
-            this.checkSeperateLogs.Location = new System.Drawing.Point(12, 125);
+            this.checkSeperateLogs.Location = new System.Drawing.Point(15, 126);
             this.checkSeperateLogs.Name = "checkSeperateLogs";
             this.checkSeperateLogs.Size = new System.Drawing.Size(178, 20);
             this.checkSeperateLogs.TabIndex = 4;
@@ -324,7 +350,7 @@ namespace IceChat
             // checkLogQuery
             // 
             this.checkLogQuery.AutoSize = true;
-            this.checkLogQuery.Location = new System.Drawing.Point(12, 63);
+            this.checkLogQuery.Location = new System.Drawing.Point(15, 63);
             this.checkLogQuery.Name = "checkLogQuery";
             this.checkLogQuery.Size = new System.Drawing.Size(66, 20);
             this.checkLogQuery.TabIndex = 3;
@@ -334,7 +360,7 @@ namespace IceChat
             // checkLogChannel
             // 
             this.checkLogChannel.AutoSize = true;
-            this.checkLogChannel.Location = new System.Drawing.Point(12, 37);
+            this.checkLogChannel.Location = new System.Drawing.Point(15, 37);
             this.checkLogChannel.Name = "checkLogChannel";
             this.checkLogChannel.Size = new System.Drawing.Size(79, 20);
             this.checkLogChannel.TabIndex = 2;
@@ -344,7 +370,7 @@ namespace IceChat
             // checkLogConsole
             // 
             this.checkLogConsole.AutoSize = true;
-            this.checkLogConsole.Location = new System.Drawing.Point(12, 11);
+            this.checkLogConsole.Location = new System.Drawing.Point(15, 11);
             this.checkLogConsole.Name = "checkLogConsole";
             this.checkLogConsole.Size = new System.Drawing.Size(78, 20);
             this.checkLogConsole.TabIndex = 1;
@@ -605,7 +631,7 @@ namespace IceChat
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 150);
+            this.label7.Location = new System.Drawing.Point(15, 149);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(71, 16);
             this.label7.TabIndex = 17;
@@ -614,7 +640,7 @@ namespace IceChat
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 120);
+            this.label6.Location = new System.Drawing.Point(15, 120);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(79, 16);
             this.label6.TabIndex = 12;
@@ -623,7 +649,7 @@ namespace IceChat
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 92);
+            this.label5.Location = new System.Drawing.Point(15, 92);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(63, 16);
             this.label5.TabIndex = 10;
@@ -632,7 +658,7 @@ namespace IceChat
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 65);
+            this.label4.Location = new System.Drawing.Point(15, 65);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 16);
             this.label4.TabIndex = 8;
@@ -641,7 +667,7 @@ namespace IceChat
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 37);
+            this.label3.Location = new System.Drawing.Point(15, 37);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 16);
             this.label3.TabIndex = 3;
@@ -650,7 +676,7 @@ namespace IceChat
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 10);
+            this.label1.Location = new System.Drawing.Point(15, 10);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 16);
             this.label1.TabIndex = 0;
@@ -675,7 +701,7 @@ namespace IceChat
             // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(350, 190);
+            this.buttonTest.Location = new System.Drawing.Point(368, 190);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(55, 23);
             this.buttonTest.TabIndex = 6;
@@ -685,7 +711,7 @@ namespace IceChat
             // 
             // buttonChooseSound
             // 
-            this.buttonChooseSound.Location = new System.Drawing.Point(312, 190);
+            this.buttonChooseSound.Location = new System.Drawing.Point(330, 190);
             this.buttonChooseSound.Name = "buttonChooseSound";
             this.buttonChooseSound.Size = new System.Drawing.Size(32, 23);
             this.buttonChooseSound.TabIndex = 5;
@@ -695,7 +721,7 @@ namespace IceChat
             // 
             // textSound
             // 
-            this.textSound.Location = new System.Drawing.Point(7, 190);
+            this.textSound.Location = new System.Drawing.Point(15, 188);
             this.textSound.Name = "textSound";
             this.textSound.Size = new System.Drawing.Size(299, 23);
             this.textSound.TabIndex = 4;
@@ -703,7 +729,7 @@ namespace IceChat
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(8, 174);
+            this.label12.Location = new System.Drawing.Point(15, 172);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(119, 16);
             this.label12.TabIndex = 3;
@@ -712,7 +738,7 @@ namespace IceChat
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(8, 4);
+            this.label11.Location = new System.Drawing.Point(15, 4);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(145, 16);
             this.label11.TabIndex = 1;
@@ -722,7 +748,7 @@ namespace IceChat
             // 
             this.listBoxSounds.FormattingEnabled = true;
             this.listBoxSounds.ItemHeight = 16;
-            this.listBoxSounds.Location = new System.Drawing.Point(8, 23);
+            this.listBoxSounds.Location = new System.Drawing.Point(15, 23);
             this.listBoxSounds.Name = "listBoxSounds";
             this.listBoxSounds.Size = new System.Drawing.Size(336, 148);
             this.listBoxSounds.TabIndex = 0;
@@ -848,7 +874,7 @@ namespace IceChat
             // checkServerReconnect
             // 
             this.checkServerReconnect.AutoSize = true;
-            this.checkServerReconnect.Location = new System.Drawing.Point(11, 68);
+            this.checkServerReconnect.Location = new System.Drawing.Point(18, 66);
             this.checkServerReconnect.Name = "checkServerReconnect";
             this.checkServerReconnect.Size = new System.Drawing.Size(209, 20);
             this.checkServerReconnect.TabIndex = 44;
@@ -858,7 +884,7 @@ namespace IceChat
             // checkIdentServer
             // 
             this.checkIdentServer.AutoSize = true;
-            this.checkIdentServer.Location = new System.Drawing.Point(11, 42);
+            this.checkIdentServer.Location = new System.Drawing.Point(18, 40);
             this.checkIdentServer.Name = "checkIdentServer";
             this.checkIdentServer.Size = new System.Drawing.Size(166, 20);
             this.checkIdentServer.TabIndex = 43;
@@ -877,27 +903,17 @@ namespace IceChat
             // 
             this.label13.AutoSize = true;
             this.label13.ForeColor = System.Drawing.Color.Black;
-            this.label13.Location = new System.Drawing.Point(8, 13);
+            this.label13.Location = new System.Drawing.Point(15, 13);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 16);
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
-            // checkShowUnreadLine
-            // 
-            this.checkShowUnreadLine.AutoSize = true;
-            this.checkShowUnreadLine.Location = new System.Drawing.Point(12, 116);
-            this.checkShowUnreadLine.Name = "checkShowUnreadLine";
-            this.checkShowUnreadLine.Size = new System.Drawing.Size(198, 20);
-            this.checkShowUnreadLine.TabIndex = 45;
-            this.checkShowUnreadLine.Text = "Show Unread Text Marker";
-            this.checkShowUnreadLine.UseVisualStyleBackColor = true;
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 291);
+            this.ClientSize = new System.Drawing.Size(640, 292);
             this.Controls.Add(this.tabControlOptions);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -1007,5 +1023,6 @@ namespace IceChat
         private System.Windows.Forms.CheckBox checkShowUnreadLine;
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
+        private System.Windows.Forms.Button buttonBrowseLogs;
     }
 }

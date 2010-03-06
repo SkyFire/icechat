@@ -94,20 +94,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Channel Messages");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Server Messages");
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Private Messages");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Self Messages");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Ctcp");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("DCC");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Other");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Channel Messages");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Server Messages");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Private Messages");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Self Messages");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Ctcp");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("DCC");
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Other");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Channel Messages");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Server Messages");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Private Messages");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Self Messages");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Ctcp");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DCC");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Other");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Channel Messages");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Server Messages");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Private Messages");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Self Messages");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Ctcp");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("DCC");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Other");
             this.tabControlColors = new System.Windows.Forms.TabControl();
             this.tabPageMessages = new System.Windows.Forms.TabPage();
             this.tabMessages = new System.Windows.Forms.TabControl();
@@ -356,28 +356,28 @@
             this.treeBasicMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeBasicMessages.Location = new System.Drawing.Point(16, 31);
             this.treeBasicMessages.Name = "treeBasicMessages";
-            treeNode15.Name = "";
-            treeNode15.Text = "Channel Messages";
-            treeNode16.Name = "";
-            treeNode16.Text = "Server Messages";
-            treeNode17.Name = "";
-            treeNode17.Text = "Private Messages";
-            treeNode18.Name = "";
-            treeNode18.Text = "Self Messages";
-            treeNode19.Name = "";
-            treeNode19.Text = "Ctcp";
-            treeNode20.Name = "";
-            treeNode20.Text = "DCC";
-            treeNode21.Name = "";
-            treeNode21.Text = "Other";
+            treeNode1.Name = "";
+            treeNode1.Text = "Channel Messages";
+            treeNode2.Name = "";
+            treeNode2.Text = "Server Messages";
+            treeNode3.Name = "";
+            treeNode3.Text = "Private Messages";
+            treeNode4.Name = "";
+            treeNode4.Text = "Self Messages";
+            treeNode5.Name = "";
+            treeNode5.Text = "Ctcp";
+            treeNode6.Name = "";
+            treeNode6.Text = "DCC";
+            treeNode7.Name = "";
+            treeNode7.Text = "Other";
             this.treeBasicMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20,
-            treeNode21});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6,
+            treeNode7});
             this.treeBasicMessages.Size = new System.Drawing.Size(352, 258);
             this.treeBasicMessages.TabIndex = 46;
             // 
@@ -442,28 +442,28 @@
             this.treeMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeMessages.Location = new System.Drawing.Point(13, 31);
             this.treeMessages.Name = "treeMessages";
-            treeNode22.Name = "";
-            treeNode22.Text = "Channel Messages";
-            treeNode23.Name = "";
-            treeNode23.Text = "Server Messages";
-            treeNode24.Name = "";
-            treeNode24.Text = "Private Messages";
-            treeNode25.Name = "";
-            treeNode25.Text = "Self Messages";
-            treeNode26.Name = "";
-            treeNode26.Text = "Ctcp";
-            treeNode27.Name = "";
-            treeNode27.Text = "DCC";
-            treeNode28.Name = "";
-            treeNode28.Text = "Other";
+            treeNode8.Name = "";
+            treeNode8.Text = "Channel Messages";
+            treeNode9.Name = "";
+            treeNode9.Text = "Server Messages";
+            treeNode10.Name = "";
+            treeNode10.Text = "Private Messages";
+            treeNode11.Name = "";
+            treeNode11.Text = "Self Messages";
+            treeNode12.Name = "";
+            treeNode12.Text = "Ctcp";
+            treeNode13.Name = "";
+            treeNode13.Text = "DCC";
+            treeNode14.Name = "";
+            treeNode14.Text = "Other";
             this.treeMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode22,
-            treeNode23,
-            treeNode24,
-            treeNode25,
-            treeNode26,
-            treeNode27,
-            treeNode28});
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12,
+            treeNode13,
+            treeNode14});
             this.treeMessages.Size = new System.Drawing.Size(352, 207);
             this.treeMessages.TabIndex = 38;
             // 
@@ -1379,6 +1379,8 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
+            this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(642, 436);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
@@ -1391,6 +1393,8 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(531, 436);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";

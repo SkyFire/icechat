@@ -33,9 +33,9 @@ namespace IceChat
             // 
             this.ImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageList.ImageStream")));
             this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageList.Images.SetKeyName(0, "console.ico");
-            this.ImageList.Images.SetKeyName(1, "channel.ico");
-            this.ImageList.Images.SetKeyName(2, "query.ico");
+            this.ImageList.Images.SetKeyName(0, "quickconnect.png");
+            this.ImageList.Images.SetKeyName(1, "window.png");
+            this.ImageList.Images.SetKeyName(2, "query.png");
             this.ImageList.Images.SetKeyName(3, "window.ico");
             this.ImageList.Images.SetKeyName(4, "channelllist.ico");
             // 
@@ -43,7 +43,7 @@ namespace IceChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "IceTabControl";
             this.Size = new System.Drawing.Size(708, 336);
             this.ResumeLayout(false);

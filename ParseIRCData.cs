@@ -234,6 +234,10 @@ namespace IceChat
 
 
                             break;
+                        case "042":
+                            msg = JoinString(ircData, 4, true) + " " + ircData[3];
+                            ServerMessage(this, msg);                            
+                            break;
                         case "219":
                             ServerMessage(this, JoinString(ircData, 4, true));
                             break;
@@ -561,7 +565,12 @@ namespace IceChat
                                     if (tw.WindowStyle == IceTabPage.WindowType.Channel)
                                     {
                                         if (tw.Connection == this)
-                                            SendData("JOIN " + tw.TabCaption);
+                                        {
+                                            if (this.serverSetting.AutoJoinDelay)
+                                                OutGoingCommand(this, "/timer rejoin 5 1 /join " + tw.TabCaption);
+                                            else
+                                                SendData("JOIN " + tw.TabCaption);
+                                        }
                                     }
                                 }
                             }
@@ -574,12 +583,18 @@ namespace IceChat
                                 foreach (string chan in serverSetting.AutoJoinChannels)
                                 {
                                     if (!chan.StartsWith(";"))
-                                        SendData("JOIN " + chan);
+                                    {
+                                        if (this.serverSetting.AutoJoinDelay)
+                                            OutGoingCommand(this, "/timer autojoin 5 1 /join " + chan);
+                                        else
+                                            SendData("JOIN " + chan);
+                                    }
                                 }
                             }
 
                             fullyConnected = true;
-                            
+                            FormMain.Instance.ServerTree.Invalidate();
+
                             //read the command queue
                             if (commandQueue.Count > 0)
                             {
@@ -593,7 +608,6 @@ namespace IceChat
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             ServerMessage(this, msg);
                             break;
-
                         case "439":
                         case "931":
                             msg = JoinString(ircData, 3, true);
@@ -824,11 +838,8 @@ namespace IceChat
                         case "TOPIC":   //channel topic change
                             channel = ircData[2];
                             msg = JoinString(ircData, 3, true);
-
                             ChannelTopic(this, channel, nick, host, msg);
-
                             break;
-
                         case "AUTH":    //NOTICE AUTH
                             ServerMessage(this, JoinString(ircData, 2, true));
                             break;
@@ -840,7 +851,10 @@ namespace IceChat
                         case "472": //unknown char to me (channel mode)
                             ServerError(this, JoinString(ircData, 3, false));
                             break;
-
+                        case "473":     //can not join channel invite only
+                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            ServerMessage(this, msg);
+                            break;
                         case "474": //Cannot join channel (+b)
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             ServerError(this, msg);                            

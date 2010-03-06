@@ -307,7 +307,6 @@ namespace IceChat
 
                 SelectNodeByIndex(node, RefreshMainTab);
                 
-
                 System.Diagnostics.Debug.WriteLine("select tab server setting 2");
             }
             else if (selectedNode.GetType() == typeof(IceTabPage))
@@ -401,6 +400,8 @@ namespace IceChat
                         this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                             this.connectToolStripMenuItem,
                             this.disconnectToolStripMenuItem,
+                            this.forceDisconnectToolStripMenuItem,
+                            this.toolStripMenuItemBlank,
                             this.editToolStripMenuItem,
                             this.autoJoinToolStripMenuItem,
                             this.autoPerformToolStripMenuItem,
@@ -737,7 +738,7 @@ namespace IceChat
                                     color = FormMain.Instance.IceChatColors.TabBarDefault;
 
                                 nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":2:" + color.ToString() + ":" + t.TabCaption, t));
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":3:" + color.ToString() + ":" + t.TabCaption, t));
                             }
                         }
                     }
@@ -759,7 +760,7 @@ namespace IceChat
                                     colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
 
                                 nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":3:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":4:" + colorQ.ToString() + ":" + t.TabCaption, t));
                             }
                         }
                     }
@@ -777,8 +778,10 @@ namespace IceChat
             {
                 //see if the server is connected
                 if (c.ServerSetting == s)
-                    if (c.IsConnected)
+                    if (c.IsFullyConnected)
                         return "1";
+                    else if (c.IsConnected)
+                        return "2";
             }
             return "0";
         }
@@ -981,6 +984,19 @@ namespace IceChat
             buttonDisconnect.PerformClick();
         }
 
+        private void forceDisconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
+
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c != null)
+            {
+                c.ForceDisconnect();
+            }
+        }
+
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
             buttonEdit.PerformClick();
@@ -1063,7 +1079,7 @@ namespace IceChat
             //popup channel information window
             object findNode = FindNodeValue(selectedNodeIndex);
             if (findNode.GetType() == typeof(IceTabPage))
-                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/channelinfo " + ((IceTabPage)findNode).TabCaption);
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/chaninfo " + ((IceTabPage)findNode).TabCaption);
         }
 
         private void clearWindowToolStripMenuItem1_Click(object sender, EventArgs e)

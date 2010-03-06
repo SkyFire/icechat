@@ -87,12 +87,12 @@ namespace IceChat
 
         #region Public Properties and Methods
 
-        public void AddToCommandQueue(string command)
+        internal void AddToCommandQueue(string command)
         {
             commandQueue.Add(command);
         }
 
-        public ServerSetting ServerSetting
+        internal ServerSetting ServerSetting
         {
             get
             {
@@ -119,7 +119,15 @@ namespace IceChat
 
         }
 
-        public bool IsFullyConnected
+        internal bool DisconnectError
+        {
+            get
+            {
+                return disconnectError;
+            }
+        }
+
+        internal bool IsFullyConnected
         {
             get
             {
@@ -127,7 +135,7 @@ namespace IceChat
             }
         }
         
-        public bool AttemptReconnect
+        internal bool AttemptReconnect
         {
             get { return attemptReconnect; }
             set { attemptReconnect = value; }
@@ -180,6 +188,8 @@ namespace IceChat
             commandQueue.Clear();
             initialLogon = false;
             triedAltNickName = false;
+            fullyConnected = false;
+
             serverSetting.IAL.Clear();
             serverSetting.Away = false;
 
@@ -227,8 +237,8 @@ namespace IceChat
             try
             {
                 serverSocket.EndConnect(ar);
-                serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
-                SetKeepAlive(serverSocket, 180 * 1000, 540 * 1000); //check every 5 minutes, max of 15 mins inactivity
+                //serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
+                //SetKeepAlive(serverSocket, 180 * 1000, 540 * 1000); //check every 5 minutes, max of 15 mins inactivity
             }            
             catch (Exception e)
             {
@@ -238,8 +248,7 @@ namespace IceChat
                 disconnectError = true;
                 if (serverSocket.Connected)
                 {
-                    serverSocket.Shutdown(SocketShutdown.Both);
-                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                    ForceDisconnect();
                 }
                 return;
             }
@@ -273,10 +282,7 @@ namespace IceChat
                     ServerError(this, "Socket Exception Error OnConnectionReady:" + se.Message.ToString() + ":" + se.ErrorCode);
 
                 disconnectError = true;
-                serverSocket.Shutdown(SocketShutdown.Both);
-                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
-
+                ForceDisconnect();
             }
             catch (Exception e)
             {
@@ -284,8 +290,7 @@ namespace IceChat
                     ServerError(this, "Exception Error OnConnectionReady:" + e.Message.ToString());
 
                 disconnectError = true;
-                serverSocket.Shutdown(SocketShutdown.Both);
-                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                ForceDisconnect();
             }
         }
         
@@ -361,6 +366,7 @@ namespace IceChat
                             ServerError(this, "You are not Connected - Can not send:" + se.Message);
 
                         disconnectError = true;
+                        ForceDisconnect();
                     }
                 }
                 else
@@ -369,8 +375,7 @@ namespace IceChat
                         ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data);
 
                     disconnectError = true;
-                    serverSocket.Shutdown(SocketShutdown.Both);
-                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                    ForceDisconnect();
                 }
             }
         }
@@ -378,7 +383,6 @@ namespace IceChat
         /// <summary>
         /// Event fire when Data needs to be sent to the Server Connection
         /// </summary>
-        /// <param name="ar"></param>
         private void OnSendData(IAsyncResult ar)
         {
             Socket handler = (Socket)ar.AsyncState;
@@ -392,9 +396,7 @@ namespace IceChat
                     ServerError(this, "SendData Error:" + e.Message.ToString());
 
                 disconnectError = true;
-                serverSocket.Shutdown(SocketShutdown.Both);
-                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
+                ForceDisconnect();
             }
         }
 
@@ -457,9 +459,7 @@ namespace IceChat
                         ServerError(this, "Connection Lost");
 
                     disconnectError = true;
-                    serverSocket.Shutdown(SocketShutdown.Both);
-                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-
+                    ForceDisconnect();
                 }
             }                        
             catch (SocketException se)
@@ -467,16 +467,14 @@ namespace IceChat
                 ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
 
                 disconnectError = true;
-                serverSocket.Shutdown(SocketShutdown.Both);
-                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                ForceDisconnect();
             }
             catch (Exception e)
             {
                 ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
 
                 disconnectError = true;
-                serverSocket.Shutdown(SocketShutdown.Both);
-                serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                ForceDisconnect(); 
             }     
             
         }
@@ -526,8 +524,7 @@ namespace IceChat
                         disconnectError = true;
                         if (serverSocket != null)
                         {
-                            serverSocket.Shutdown(SocketShutdown.Both);
-                            serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                            ForceDisconnect();
                         }
 
                     }
@@ -550,8 +547,27 @@ namespace IceChat
                 reconnectTimer.Start();            
             }
         }
+
+        internal void ForceDisconnect()
+        {
+            try
+            {
+                if (serverSocket != null)
+                {
+                    serverSocket.Shutdown(SocketShutdown.Both);
+                    serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                }
+            }
+            catch
+            {
+            }
+        }
+        
         #endregion
 
+        /// <summary>
+        /// Get the proper message formatting for the particular message type
+        /// </summary>
         private string GetMessageFormat(string MessageName)
         {
             foreach (ServerMessageFormatItem msg in FormMain.Instance.MessageFormats.MessageSettings)
