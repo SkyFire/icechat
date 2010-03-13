@@ -110,6 +110,7 @@ namespace IceChat
             checkLogChannel.Checked = iceChatOptions.LogChannel;
             checkLogQuery.Checked = iceChatOptions.LogQuery;
             checkSeperateLogs.Checked = iceChatOptions.SeperateLogs;
+            comboLogFormat.Text = iceChatOptions.LogFormat;
 
             textDefaultNick.Text = iceChatOptions.DefaultNick;
             checkIdentServer.Checked = iceChatOptions.IdentServer;
@@ -202,6 +203,7 @@ namespace IceChat
             iceChatOptions.LogChannel = checkLogChannel.Checked;
             iceChatOptions.LogQuery = checkLogQuery.Checked;
             iceChatOptions.SeperateLogs = checkSeperateLogs.Checked;
+            iceChatOptions.LogFormat = comboLogFormat.Text;
             iceChatOptions.ShowEmoticons = checkEmoticons.Checked;
             iceChatOptions.ShowEmoticonPicker = checkEmoticonPicker.Checked;
             iceChatOptions.ShowColorPicker = checkColorPicker.Checked;

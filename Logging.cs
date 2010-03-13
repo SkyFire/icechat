@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace IceChat
 {
@@ -25,6 +26,13 @@ namespace IceChat
         {
             string logFolder = FormMain.Instance.LogsFolder;
 
+            string fileExtension = null;
+
+            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
+                fileExtension = ".log";
+            else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
+                fileExtension = ".html";
+
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
@@ -40,9 +48,9 @@ namespace IceChat
                 Directory.CreateDirectory(logFolder);
 
             if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + "Console" + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + "Console" + date + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             else
-                logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + "Console.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + "Console" + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
 
             lastDayWritten = DateTime.Now.Day;
 
@@ -65,7 +73,13 @@ namespace IceChat
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
             string fileName = _tabPage.TabCaption;
-            
+            string fileExtension = null;
+
+            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
+                fileExtension = ".log";
+            else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
+                fileExtension = ".html";
+
             //replace any invalid characters in the file name
             foreach (char c in Path.GetInvalidFileNameChars())
                 fileName = fileName.Replace(c, '_');
@@ -88,9 +102,9 @@ namespace IceChat
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 else
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Query)
             {
@@ -99,9 +113,9 @@ namespace IceChat
                     Directory.CreateDirectory(logFolder);
 
                 if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + date + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                 else
-                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+                    logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + fileName + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             }
             else if (_tabPage.WindowStyle == IceTabPage.WindowType.Debug)
             {
@@ -133,7 +147,17 @@ namespace IceChat
                     else if (_tabPage != null)
                         CreateStandardLog();
                 }
-                logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
+
+                if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
+                {
+                    message = StripCodes(message);
+                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
+                }
+                else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
+                {
+                    message = ReplaceColorCodes(message);
+                    logFile.Write(System.Text.Encoding.Default.GetBytes(message), 0, message.Length);
+                }
                 logFile.Flush();
             }
         }
@@ -142,13 +166,13 @@ namespace IceChat
         {
             if (_tabPage != null)
             {
-                WriteLogFile("Session Start: " + DateTime.Now.ToString("ddd mmm dd hh:mm:ss yyyy"));
+                WriteLogFile("Session Start: " + DateTime.Now.ToString("ddd MMM dd hh:mm:ss yyyy"));
                 if (_tabPage.WindowStyle == IceTabPage.WindowType.Channel)
                     WriteLogFile("Session Ident: " + _tabPage.TabCaption);
             }
             else if (_consoleTab != null)
             {
-                WriteLogFile("Session Start: " + DateTime.Now.ToString("ddd mmm dd hh:mm:ss yyyy"));
+                WriteLogFile("Session Start: " + DateTime.Now.ToString("ddd MMM dd hh:mm:ss yyyy"));
             }
         }
 
@@ -172,5 +196,62 @@ namespace IceChat
                 }
             }
         }
+        
+        //replace color codes with HTML codes
+        private string ReplaceColorCodes(string line)
+        {
+            line = "<div style='float:left; display:block;'>" + line;
+            
+            //parse color codes
+            Regex parseColors = new Regex("\xFF03[0-9]{4}");
+            Match m = parseColors.Match(line);
+            while (m.Success)
+            {
+                int color = Convert.ToInt32(m.Value.Substring(1,2));
+                string c = System.Drawing.ColorTranslator.ToHtml(IrcColor.colors[color]);
+                line = line.Replace(m.Value, "<span style='color:" + c + ";'>");
+                m = m.NextMatch();  
+            }
+
+            //parse bold codes
+            Regex parseBold = new Regex(((char)2).ToString());
+            Match b = parseBold.Match(line);
+            bool isBold = false;
+            while (b.Success)
+            {
+                if (isBold)
+                    line = line.Replace(b.Value, "</b>");
+                else
+                    line = line.Replace(b.Value, "<b>");
+                isBold = !isBold;
+
+                b = b.NextMatch();
+            }
+
+            //parse underline codes
+            Regex parseUnderline = new Regex(((char)3).ToString());
+            Match u = parseUnderline.Match(line);
+            bool isUnderline = false;
+            while (u.Success)
+            {
+                if (isUnderline)
+                    line = line.Replace(u.Value, "</u>");
+                else
+                    line = line.Replace(u.Value, "<u>");
+                isUnderline = !isUnderline;
+
+                u = u.NextMatch();
+            }
+
+            return line + "</div><br />";
+        }
+        
+        //strip all the colors codes out
+        private string StripCodes(string line)
+        {
+            Regex parseStuff = new Regex("\xFF03[0-9]{4}");
+            return parseStuff.Replace(line, "");
+        }
+
     }
 }

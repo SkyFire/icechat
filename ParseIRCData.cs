@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace IceChat
 {
@@ -622,6 +623,8 @@ namespace IceChat
                             channel = ircData[2];
                             msg = JoinString(ircData, 3, true);
                             
+                            if (CheckIgnoreList(nick, host)) return;
+                
                             if (channel == serverSetting.NickName)
                             {
                                 //this is a private message to you
@@ -715,6 +718,8 @@ namespace IceChat
                                 ServerNotice(this, msg);
                             else
                             {
+                                if (CheckIgnoreList(nick, host)) return;
+                                
                                 if (initialLogon && serverSetting.StatusMSG == null)
                                 {
                                     serverSetting.StatusMSG = new char[serverSetting.StatusModes[1].Length];
@@ -890,6 +895,36 @@ namespace IceChat
                 FormMain.Instance.WriteErrorFile("ParseData Error:" + e.Message + "::" + data, e.StackTrace);
             }
         }
+
+        private bool CheckIgnoreList(string nick, string host)
+        {
+            if (!this.serverSetting.IgnoreListEnable) return false; //if ignore list is disabled, no match
+            if (this.serverSetting.IgnoreList.Length == 0) return false;    //if no items in list, no match
+
+            foreach (string ignore in serverSetting.IgnoreList)
+            {
+                if (!ignore.StartsWith(";"))    //check to make sure its not disabled
+                {
+                    //check for an exact match
+                    if (nick.ToLower() == ignore.ToLower()) return true;
+                    
+                    //check if we are looking for a host match
+                    if (ignore.Contains("!") && ignore.Contains("@"))
+                    {
+
+                    }
+                    else
+                    {
+                        //check for wildcard/regex match for nick name
+                        if (Regex.Match(nick, ignore, RegexOptions.IgnoreCase).Success) return true;
+                    }
+                }
+            }
+
+
+            return false;
+        }
+
 
         #region Parsing Methods
 

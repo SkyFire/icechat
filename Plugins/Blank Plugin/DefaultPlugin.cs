@@ -13,17 +13,7 @@ namespace IceChatPlugin
         private MenuStrip m_MenuStrip;
         
         //all the events get declared here
-        public event ChannelMessageHandler OnChannelMessage;
-        public event ChannelActionHandler OnChannelAction;
-        public event QueryMessageHandler OnQueryMessage;
-        public event QueryActionHandler OnQueryAction;
-
-        public event ChannelJoinHandler OnChannelJoin;
-        public event ChannelPartHandler OnChannelPart;
-        public event ServerQuitHandler OnServerQuit;
-
-        public event InputTextHandler OnInputText;
-        public event ServerRawHandler OnServerRaw;
+        public event OutGoingCommandHandler OnCommand;
 
         public Plugin()
         {
@@ -31,6 +21,16 @@ namespace IceChatPlugin
             m_Name = "Default Plugin";
             m_Author = "Default Author";
             m_Version = "1.0";
+        }
+
+        public void Dispose()
+        {
+
+        }
+
+        public void Initialize()
+        {
+
         }
 
         //declare the standard properties
@@ -96,44 +96,45 @@ namespace IceChatPlugin
 
         //declare all the necessary events
 
-        public bool ChannelMessage(PluginArgs args)
+        public PluginArgs ChannelMessage(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool ChannelAction(PluginArgs args)
+        public PluginArgs ChannelAction(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool QueryMessage(PluginArgs args)
+        public PluginArgs QueryMessage(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool QueryAction(PluginArgs args)
+        public PluginArgs QueryAction(PluginArgs args)
         {
-            return false;
+            return args;
         }
         
-        public bool ChannelJoin(PluginArgs args)
+        public PluginArgs ChannelJoin(PluginArgs args)
         {
-            return false;
+            return args;
         }
         
-        public bool ChannelPart(PluginArgs args)
+        public PluginArgs ChannelPart(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool ServerQuit(PluginArgs args)
+        public PluginArgs ServerQuit(PluginArgs args)
         {
-            return false;
+            return args;
         }
-
-        public bool InputText(PluginArgs args)
+        //args.Connection   -- current connection
+        //args.Extra        -- command data 
+        public PluginArgs InputText(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
         public void ServerRaw(PluginArgs args)

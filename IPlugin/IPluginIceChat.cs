@@ -4,17 +4,8 @@ using System.Windows.Forms;
 namespace IceChatPlugin
 {
   
-    public delegate void ChannelMessageHandler(object sender, PluginArgs e);
-    public delegate void ChannelActionHandler(object sender, PluginArgs e);
-    public delegate void QueryMessageHandler(object sender, PluginArgs e);
-    public delegate void QueryActionHandler(object sender, PluginArgs e);
 
-    public delegate void ChannelJoinHandler(object sender, PluginArgs e);
-    public delegate void ChannelPartHandler(object sender, PluginArgs e);
-    public delegate void ServerQuitHandler(object sender, PluginArgs e);
-
-    public delegate void InputTextHandler(object sender, PluginArgs e);
-    public delegate void ServerRawHandler(object sender, PluginArgs e);
+    public delegate void OutGoingCommandHandler(object sender, PluginArgs e);
 
 
     public interface IPluginIceChat
@@ -41,30 +32,19 @@ namespace IceChatPlugin
 
         void MainProgramLoaded();       //the main icechat form/program has loaded
 
-        bool ChannelMessage(PluginArgs args);       //return whether default message has been overriden
-        bool ChannelAction(PluginArgs args);
-        bool QueryMessage(PluginArgs args);
-        bool QueryAction(PluginArgs args);
+        PluginArgs ChannelMessage(PluginArgs args);       //return whether default message has been overriden
+        PluginArgs ChannelAction(PluginArgs args);
+        PluginArgs QueryMessage(PluginArgs args);
+        PluginArgs QueryAction(PluginArgs args);
 
-        bool ChannelJoin(PluginArgs args);
-        bool ChannelPart(PluginArgs args);
-        bool ServerQuit(PluginArgs args);
-        bool InputText(PluginArgs args);
+        PluginArgs ChannelJoin(PluginArgs args);
+        PluginArgs ChannelPart(PluginArgs args);
+        PluginArgs ServerQuit(PluginArgs args);
+        PluginArgs InputText(PluginArgs args);
 
         void ServerRaw(PluginArgs args);
 
-        event ChannelMessageHandler OnChannelMessage;
-        event ChannelActionHandler OnChannelAction;
-        event QueryMessageHandler OnQueryMessage;
-        event QueryActionHandler OnQueryAction;
-
-        event ChannelJoinHandler OnChannelJoin;
-        event ChannelPartHandler OnChannelPart;
-        event ServerQuitHandler OnServerQuit;
-
-        event InputTextHandler OnInputText;
-
-        event ServerRawHandler OnServerRaw;
+        event OutGoingCommandHandler OnCommand;
 
     }
 
@@ -81,7 +61,7 @@ namespace IceChatPlugin
 
         public string Command;      //if you wish to return back a command
 
-        public bool isHandled;      //if the default text message is over riden
+        //public bool isHandled;      //if the default text message is over riden
 
         public PluginArgs(Object textwindow, string channel, string nick, string host, string message)
         {

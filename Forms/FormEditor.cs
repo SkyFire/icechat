@@ -25,8 +25,9 @@ namespace IceChat
         private ToolStripMenuItem currentPopupMenu;
 
         public FormEditor()
-        {
+        {            
             InitializeComponent();
+
             popupTypeToolStripMenuItem.Visible = false;
 
             tabControlEditor.SelectedIndexChanged += new EventHandler(tabControlEditor_SelectedIndexChanged);

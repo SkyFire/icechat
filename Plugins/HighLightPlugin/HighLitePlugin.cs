@@ -17,17 +17,7 @@ namespace IceChatPlugin
         private MenuStrip m_MenuStrip;
 
         //all the events get declared here, do not change
-        public event ChannelMessageHandler OnChannelMessage;
-        public event ChannelActionHandler OnChannelAction;
-        public event QueryMessageHandler OnQueryMessage;
-        public event QueryActionHandler OnQueryAction;
-
-        public event ChannelJoinHandler OnChannelJoin;
-        public event ChannelPartHandler OnChannelPart;
-        public event ServerQuitHandler OnServerQuit;
-
-        public event InputTextHandler OnInputText;
-        public event ServerRawHandler OnServerRaw;        
+        public event OutGoingCommandHandler OnCommand;
 
         private TabPage tabPageHighlight;
         private Button buttonAdd;
@@ -58,8 +48,6 @@ namespace IceChatPlugin
                 highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
 
             LoadHighLites();
-
-            //MessageBox.Show(highlitesFile);
             
         }
 
@@ -94,6 +82,16 @@ namespace IceChatPlugin
         public void ShowInfo()
         {
             MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
+        }
+
+        public void Dispose()
+        {
+
+        }
+
+        public void Initialize()
+        {
+
         }
 
         public void MainProgramLoaded()
@@ -367,56 +365,48 @@ namespace IceChatPlugin
             return message;
         }
 
-        public bool ChannelMessage(PluginArgs args)
+        public PluginArgs ChannelMessage(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args.Message);
-            args.isHandled = true;
-            OnChannelMessage(this, args);
-            return false;
+            return args;
         }
 
-        public bool ChannelAction(PluginArgs args)
+        public PluginArgs ChannelAction(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args.Message);
-            args.isHandled = true;
-            OnChannelAction(this, args);
-            return false;
+            return args;
         }
 
-        public bool QueryMessage(PluginArgs args)
+        public PluginArgs QueryMessage(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args.Message);
-            args.isHandled = true;
-            OnQueryMessage(this, args);
-            return false;
+            return args;
         }
 
-        public bool QueryAction(PluginArgs args)
+        public PluginArgs QueryAction(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args.Message);
-            args.isHandled = true;
-            OnQueryAction(this, args);
-            return false;
+            return args;
         }
 
-        public bool ChannelJoin(PluginArgs args)
+        public PluginArgs ChannelJoin(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool ChannelPart(PluginArgs args)
+        public PluginArgs ChannelPart(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool ServerQuit(PluginArgs args)
+        public PluginArgs ServerQuit(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
-        public bool InputText(PluginArgs args)
+        public PluginArgs InputText(PluginArgs args)
         {
-            return false;
+            return args;
         }
 
         public void ServerRaw(PluginArgs args)

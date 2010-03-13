@@ -242,6 +242,7 @@ namespace IceChat
         private bool _logChannel = true;
         private bool _logQuery = true;
         private bool _seperateLogs = true;
+        private string _logFormat = "Plain Text";
 
         private bool _showEmoticons = false;
         private bool _showEmoticonPicker = true;
@@ -337,6 +338,13 @@ namespace IceChat
         {
             get { return this._seperateLogs; }
             set { this._seperateLogs = value; }
+        }
+
+        [XmlElement("LogFormat")]
+        public string LogFormat
+        {
+            get { return this._logFormat; }
+            set { this._logFormat = value; }
         }
 
         [XmlElement("ShowEmoticons")]

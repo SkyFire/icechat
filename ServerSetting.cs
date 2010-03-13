@@ -166,6 +166,15 @@ namespace IceChat
         public bool DisableCTCP
         { get; set; }
 
+        [XmlArray("IgnoreList")]
+        [XmlArrayItem("Item")]
+        public string[] IgnoreList
+        { get; set; }
+
+        [XmlElement("IgnoreListEnable")]
+        public bool IgnoreListEnable
+        { get; set; }
+
         //these are all temporary server settings, not saved to the XML file
 
         [XmlIgnore()]

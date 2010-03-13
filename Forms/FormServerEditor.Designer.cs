@@ -76,13 +76,24 @@
             this.tabPageAutoPerform = new System.Windows.Forms.TabPage();
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
+            this.tabPageIgnore = new System.Windows.Forms.TabPage();
+            this.listIgnore = new System.Windows.Forms.ListView();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.checkIgnore = new System.Windows.Forms.CheckBox();
+            this.textIgnore = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.buttonEditIgnore = new System.Windows.Forms.Button();
+            this.buttonRemoveIgnore = new System.Windows.Forms.Button();
+            this.buttonAddIgnore = new System.Windows.Forms.Button();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
+            this.labelNote = new System.Windows.Forms.Label();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
             this.tabPageAutoJoin.SuspendLayout();
             this.tabPageAutoPerform.SuspendLayout();
+            this.tabPageIgnore.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonCancel
@@ -121,6 +132,7 @@
             this.tabControlSettings.Controls.Add(this.tabPageExtra);
             this.tabControlSettings.Controls.Add(this.tabPageAutoJoin);
             this.tabControlSettings.Controls.Add(this.tabPageAutoPerform);
+            this.tabControlSettings.Controls.Add(this.tabPageIgnore);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlSettings.ImageList = this.imageListEditor;
             this.tabControlSettings.Location = new System.Drawing.Point(0, 0);
@@ -132,7 +144,7 @@
             // 
             // tabPageMain
             // 
-            this.tabPageMain.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageMain.BackColor = System.Drawing.Color.Transparent;
             this.tabPageMain.Controls.Add(this.textAwayNick);
             this.tabPageMain.Controls.Add(this.label11);
             this.tabPageMain.Controls.Add(this.textAltNickName);
@@ -158,6 +170,7 @@
             this.tabPageMain.Size = new System.Drawing.Size(617, 208);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main Settings";
+            this.tabPageMain.UseVisualStyleBackColor = true;
             // 
             // textAwayNick
             // 
@@ -316,7 +329,7 @@
             // 
             // tabPageExtra
             // 
-            this.tabPageExtra.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageExtra.BackColor = System.Drawing.Color.Transparent;
             this.tabPageExtra.Controls.Add(this.label12);
             this.tabPageExtra.Controls.Add(this.textServerPassword);
             this.tabPageExtra.Controls.Add(this.checkDisableCTCP);
@@ -333,6 +346,7 @@
             this.tabPageExtra.Size = new System.Drawing.Size(617, 208);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
+            this.tabPageExtra.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
@@ -421,7 +435,7 @@
             // 
             // tabPageAutoJoin
             // 
-            this.tabPageAutoJoin.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageAutoJoin.BackColor = System.Drawing.Color.Transparent;
             this.tabPageAutoJoin.Controls.Add(this.checkAutoJoinDelay);
             this.tabPageAutoJoin.Controls.Add(this.buttonEdit);
             this.tabPageAutoJoin.Controls.Add(this.listChannel);
@@ -438,6 +452,7 @@
             this.tabPageAutoJoin.Size = new System.Drawing.Size(617, 208);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
+            this.tabPageAutoJoin.UseVisualStyleBackColor = true;
             // 
             // checkAutoJoinDelay
             // 
@@ -450,7 +465,7 @@
             // 
             // buttonEdit
             // 
-            this.buttonEdit.Location = new System.Drawing.Point(373, 76);
+            this.buttonEdit.Location = new System.Drawing.Point(362, 74);
             this.buttonEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(87, 27);
@@ -494,7 +509,7 @@
             // 
             // buttonRemove
             // 
-            this.buttonRemove.Location = new System.Drawing.Point(373, 41);
+            this.buttonRemove.Location = new System.Drawing.Point(362, 39);
             this.buttonRemove.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemove.Name = "buttonRemove";
             this.buttonRemove.Size = new System.Drawing.Size(87, 27);
@@ -505,7 +520,7 @@
             // 
             // buttonAdd
             // 
-            this.buttonAdd.Location = new System.Drawing.Point(373, 8);
+            this.buttonAdd.Location = new System.Drawing.Point(362, 6);
             this.buttonAdd.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(87, 27);
@@ -567,6 +582,100 @@
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
             // 
+            // tabPageIgnore
+            // 
+            this.tabPageIgnore.Controls.Add(this.labelNote);
+            this.tabPageIgnore.Controls.Add(this.listIgnore);
+            this.tabPageIgnore.Controls.Add(this.checkIgnore);
+            this.tabPageIgnore.Controls.Add(this.textIgnore);
+            this.tabPageIgnore.Controls.Add(this.label13);
+            this.tabPageIgnore.Controls.Add(this.buttonEditIgnore);
+            this.tabPageIgnore.Controls.Add(this.buttonRemoveIgnore);
+            this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
+            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
+            this.tabPageIgnore.Name = "tabPageIgnore";
+            this.tabPageIgnore.Size = new System.Drawing.Size(617, 208);
+            this.tabPageIgnore.TabIndex = 4;
+            this.tabPageIgnore.Text = "Ignore List";
+            this.tabPageIgnore.UseVisualStyleBackColor = true;
+            // 
+            // listIgnore
+            // 
+            this.listIgnore.CheckBoxes = true;
+            this.listIgnore.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3});
+            this.listIgnore.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listIgnore.Location = new System.Drawing.Point(6, 39);
+            this.listIgnore.Name = "listIgnore";
+            this.listIgnore.Size = new System.Drawing.Size(350, 137);
+            this.listIgnore.TabIndex = 40;
+            this.listIgnore.UseCompatibleStateImageBehavior = false;
+            this.listIgnore.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Nick / Host";
+            this.columnHeader3.Width = 339;
+            // 
+            // checkIgnore
+            // 
+            this.checkIgnore.Location = new System.Drawing.Point(6, 182);
+            this.checkIgnore.Name = "checkIgnore";
+            this.checkIgnore.Size = new System.Drawing.Size(151, 20);
+            this.checkIgnore.TabIndex = 39;
+            this.checkIgnore.Text = "Enable Ignore List";
+            this.checkIgnore.UseVisualStyleBackColor = true;
+            // 
+            // textIgnore
+            // 
+            this.textIgnore.Location = new System.Drawing.Point(78, 5);
+            this.textIgnore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textIgnore.Name = "textIgnore";
+            this.textIgnore.Size = new System.Drawing.Size(278, 23);
+            this.textIgnore.TabIndex = 37;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(8, 9);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(71, 16);
+            this.label13.TabIndex = 38;
+            this.label13.Text = "Nick/Host";
+            // 
+            // buttonEditIgnore
+            // 
+            this.buttonEditIgnore.Location = new System.Drawing.Point(362, 73);
+            this.buttonEditIgnore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonEditIgnore.Name = "buttonEditIgnore";
+            this.buttonEditIgnore.Size = new System.Drawing.Size(87, 27);
+            this.buttonEditIgnore.TabIndex = 36;
+            this.buttonEditIgnore.Text = "Edit";
+            this.buttonEditIgnore.UseVisualStyleBackColor = true;
+            this.buttonEditIgnore.Click += new System.EventHandler(this.buttonEditIgnore_Click);
+            // 
+            // buttonRemoveIgnore
+            // 
+            this.buttonRemoveIgnore.Location = new System.Drawing.Point(362, 38);
+            this.buttonRemoveIgnore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonRemoveIgnore.Name = "buttonRemoveIgnore";
+            this.buttonRemoveIgnore.Size = new System.Drawing.Size(87, 27);
+            this.buttonRemoveIgnore.TabIndex = 35;
+            this.buttonRemoveIgnore.Text = "Remove";
+            this.buttonRemoveIgnore.UseVisualStyleBackColor = true;
+            this.buttonRemoveIgnore.Click += new System.EventHandler(this.buttonRemoveIgnore_Click);
+            // 
+            // buttonAddIgnore
+            // 
+            this.buttonAddIgnore.Location = new System.Drawing.Point(362, 5);
+            this.buttonAddIgnore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonAddIgnore.Name = "buttonAddIgnore";
+            this.buttonAddIgnore.Size = new System.Drawing.Size(87, 27);
+            this.buttonAddIgnore.TabIndex = 34;
+            this.buttonAddIgnore.Text = "Add";
+            this.buttonAddIgnore.UseVisualStyleBackColor = true;
+            this.buttonAddIgnore.Click += new System.EventHandler(this.buttonAddIgnore_Click);
+            // 
             // imageListEditor
             // 
             this.imageListEditor.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEditor.ImageStream")));
@@ -587,6 +696,14 @@
             this.buttonRemoveServer.Text = "Remove Server";
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
+            // 
+            // labelNote
+            // 
+            this.labelNote.Location = new System.Drawing.Point(362, 114);
+            this.labelNote.Name = "labelNote";
+            this.labelNote.Size = new System.Drawing.Size(252, 62);
+            this.labelNote.TabIndex = 41;
+            this.labelNote.Text = "Note: For wildcards, use the . character for nick names";
             // 
             // FormServers
             // 
@@ -616,6 +733,8 @@
             this.tabPageAutoJoin.PerformLayout();
             this.tabPageAutoPerform.ResumeLayout(false);
             this.tabPageAutoPerform.PerformLayout();
+            this.tabPageIgnore.ResumeLayout(false);
+            this.tabPageIgnore.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -670,5 +789,15 @@
         private System.Windows.Forms.TextBox textServerPassword;
         private System.Windows.Forms.CheckBox checkAutoJoinDelay;
         private System.Windows.Forms.ImageList imageListEditor;
+        private System.Windows.Forms.TabPage tabPageIgnore;
+        private System.Windows.Forms.ListView listIgnore;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.CheckBox checkIgnore;
+        private System.Windows.Forms.TextBox textIgnore;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Button buttonEditIgnore;
+        private System.Windows.Forms.Button buttonRemoveIgnore;
+        private System.Windows.Forms.Button buttonAddIgnore;
+        private System.Windows.Forms.Label labelNote;
     }
 }

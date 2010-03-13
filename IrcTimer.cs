@@ -39,7 +39,6 @@ namespace IceChat
 		internal void DisableTimer()
 		{
 			this.Stop();
-			System.Diagnostics.Debug.WriteLine("timer " + timerID + " has been disposed");
 			base.Dispose();
 		}
 		

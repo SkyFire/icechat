@@ -301,18 +301,15 @@ namespace IceChat
                 msg = msg.Replace("$nick", nick).Replace("$host", host);
                 msg = msg.Replace("$message", message);
 
-                bool ishandled = false;
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    if (ipc.QueryAction(args) == true)
-                        ishandled = true;
+                    args = ipc.QueryAction(args);
                 }
 
-                if (!ishandled)
-                    t.TextWindow.AppendText(msg, 1);
+                t.TextWindow.AppendText(args.Message, 1);
 
                 t.LastMessageType = ServerMessageType.Action;
             }
@@ -338,18 +335,15 @@ namespace IceChat
                 msg = msg.Replace("$nick", nick).Replace("$host", host);
                 msg = msg.Replace("$message", message);
 
-                bool ishandled = false;
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    if (ipc.QueryMessage(args) == true)
-                        ishandled = true;
+                    args = ipc.QueryMessage(args);
                 }
-
-                if (!ishandled)
-                    t.TextWindow.AppendText(msg, 1);
+                
+                t.TextWindow.AppendText(msg, 1);
 
                 t.LastMessageType = ServerMessageType.Message;
             }
@@ -372,18 +366,15 @@ namespace IceChat
                 msg = msg.Replace("$color", "");
                 msg = msg.Replace("$message", message);
 
-                bool ishandled = false;
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    if (ipc.ChannelMessage(args) == true)
-                        ishandled = true;
+                    args = ipc.ChannelMessage(args);
                 }
 
-                if (!ishandled)
-                    t.TextWindow.AppendText(msg, 1);
+                t.TextWindow.AppendText(args.Message, 1);
 
                 t.LastMessageType = ServerMessageType.Action;
             }
@@ -444,19 +435,15 @@ namespace IceChat
 
                 msg = msg.Replace("$message", message);
 
-                bool ishandled = false;
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
                 args.Connection = connection;
-
+                
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    
-                    if (ipc.ChannelMessage(args) == true)
-                        ishandled = true;
+                    args = ipc.ChannelMessage(args);
                 }
 
-                if (!ishandled)
-                    t.TextWindow.AppendText(msg, 1);
+                t.TextWindow.AppendText(args.Message, 1);
 
                 t.LastMessageType = ServerMessageType.Message;
             }
@@ -498,7 +485,6 @@ namespace IceChat
                     msg = msg.Replace("$host", host);
                     msg = msg.Replace("$reason", reason);
 
-                    bool ishandled = false;
                     PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
                     args.Extra = reason;
 
@@ -510,12 +496,10 @@ namespace IceChat
                         {
                             foreach (IPluginIceChat ipc in loadedPlugins)
                             {
-                                if (ipc.ServerQuit(args) == true)
-                                    ishandled = true;
+                                args = ipc.ServerQuit(args);
                             }
 
-                            if (!ishandled)
-                                t.TextWindow.AppendText(msg, 1);
+                            t.TextWindow.AppendText(args.Message, 1);
 
                             t.LastMessageType = ServerMessageType.QuitServer;
                             t.RemoveNick(nick);
@@ -527,12 +511,10 @@ namespace IceChat
                         {
                             foreach (IPluginIceChat ipc in loadedPlugins)
                             {
-                                if (ipc.ServerQuit(args) == true)
-                                    ishandled = true;
+                                args = ipc.ServerQuit(args);
                             }
 
-                            if (!ishandled)
-                                t.TextWindow.AppendText(msg, 1);
+                            t.TextWindow.AppendText(args.Message, 1);
 
                             t.LastMessageType = ServerMessageType.QuitServer;
                         }
@@ -558,18 +540,15 @@ namespace IceChat
                     string msg = GetMessageFormat("Channel Join");
                     msg = msg.Replace("$nick", nick).Replace("$channel", channel).Replace("$host", host);
 
-                    bool ishandled = false;
                     PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
                     args.Connection = connection;
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        if (ipc.ChannelJoin(args) == true)
-                            ishandled = true;
+                        args = ipc.ChannelJoin(args);
                     }
 
-                    if (!ishandled)
-                        t.TextWindow.AppendText(msg, 1);
+                    t.TextWindow.AppendText(args.Message, 1);
                 }
 
                 t.AddNick(nick, refresh);
@@ -592,18 +571,15 @@ namespace IceChat
                 string msg = GetMessageFormat("Channel Part");
                 msg = msg.Replace("$channel", channel).Replace("$nick", nick).Replace("$host", host).Replace("$reason", reason);
 
-                bool ishandled = false;
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    if (ipc.ChannelPart(args) == true)
-                        ishandled = true;
+                    args = ipc.ChannelPart(args);
                 }
 
-                if (!ishandled)
-                    t.TextWindow.AppendText(msg, 1);
+                t.TextWindow.AppendText(args.Message, 1);
 
                 t.RemoveNick(nick);
                 t.LastMessageType = ServerMessageType.PartChannel;
@@ -1061,11 +1037,6 @@ namespace IceChat
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
                 ipc.ServerRaw(args);
-                if (args.Command != null)
-                {
-                    if (args.Command.Length > 0)
-                        ParseOutGoingCommand(connection, args.Command);
-                }
             }
 
         }

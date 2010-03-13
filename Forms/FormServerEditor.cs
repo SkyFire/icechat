@@ -111,6 +111,7 @@ namespace IceChat
             this.checkAutoJoin.Checked = serverSetting.AutoJoinEnable;
             this.checkAutoJoinDelay.Checked = serverSetting.AutoJoinDelay;
             this.checkAutoPerform.Checked = serverSetting.AutoPerformEnable;
+            this.checkIgnore.Checked = serverSetting.IgnoreListEnable;
 
             this.checkModeI.Checked = serverSetting.SetModeI;
             this.checkMOTD.Checked = serverSetting.ShowMOTD;
@@ -139,6 +140,22 @@ namespace IceChat
             {
                 foreach (string command in serverSetting.AutoPerform)
                     textAutoPerform.AppendText(command + Environment.NewLine);
+            }
+
+            if (serverSetting.IgnoreList != null)
+            {
+                foreach (string ignore in serverSetting.IgnoreList)
+                {
+                    if (!ignore.StartsWith(";"))
+                    {
+                        ListViewItem lvi = new ListViewItem(ignore);
+                        lvi.Checked = true;
+                        listIgnore.Items.Add(lvi);
+                    }
+                    else
+                        listIgnore.Items.Add(ignore.Substring(1));
+
+                }
             }
         }
 
@@ -191,6 +208,7 @@ namespace IceChat
             serverSetting.AutoJoinEnable = checkAutoJoin.Checked;
             serverSetting.AutoJoinDelay = checkAutoJoinDelay.Checked;
             serverSetting.AutoPerformEnable = checkAutoPerform.Checked;
+            serverSetting.IgnoreListEnable = checkIgnore.Checked;
 
             serverSetting.AutoJoinChannels = new string[listChannel.Items.Count];
             for (int i = 0; i < listChannel.Items.Count; i++)
@@ -199,6 +217,16 @@ namespace IceChat
                     serverSetting.AutoJoinChannels[i] = ";" + listChannel.Items[i].Text;
                 else
                     serverSetting.AutoJoinChannels[i] = listChannel.Items[i].Text;
+            }
+            
+            serverSetting.IgnoreList = new string[listIgnore.Items.Count];
+            for (int i = 0; i < listIgnore.Items.Count; i++)
+            {
+                if (listIgnore.Items[i].Checked == false)
+                    serverSetting.IgnoreList[i] = ";" + listIgnore.Items[i].Text;
+                else
+                    serverSetting.IgnoreList[i] = listIgnore.Items[i].Text;
+
             }
 
             serverSetting.AutoPerform = textAutoPerform.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);
@@ -288,5 +316,32 @@ namespace IceChat
             }
         }
 
+        private void buttonAddIgnore_Click(object sender, EventArgs e)
+        {
+            if (textIgnore.Text.Length > 0)
+            {
+                ListViewItem lvi = new ListViewItem(textIgnore.Text);
+                lvi.Checked = true;
+                listIgnore.Items.Add(lvi);
+                textIgnore.Text = "";
+                textChannel.Focus();
+            }
+        }
+
+        private void buttonRemoveIgnore_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listIgnore.SelectedItems)
+                listIgnore.Items.Remove(eachItem);
+
+        }
+
+        private void buttonEditIgnore_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listIgnore.SelectedItems)
+            {
+                textIgnore.Text = eachItem.Text;
+                listIgnore.Items.Remove(eachItem);
+            }
+        }
     }
 }

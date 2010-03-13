@@ -107,6 +107,8 @@ namespace IceChat
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
+            this.comboLogFormat = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -314,6 +316,8 @@ namespace IceChat
             // 
             // tabLogging
             // 
+            this.tabLogging.Controls.Add(this.label17);
+            this.tabLogging.Controls.Add(this.comboLogFormat);
             this.tabLogging.Controls.Add(this.buttonBrowseLogs);
             this.tabLogging.Controls.Add(this.checkSeperateLogs);
             this.tabLogging.Controls.Add(this.checkLogQuery);
@@ -909,6 +913,27 @@ namespace IceChat
             this.label13.TabIndex = 42;
             this.label13.Text = "Nick name";
             // 
+            // comboLogFormat
+            // 
+            this.comboLogFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboLogFormat.FormattingEnabled = true;
+            this.comboLogFormat.Items.AddRange(new object[] {
+            "Plain Text",
+            "HTML"});
+            this.comboLogFormat.Location = new System.Drawing.Point(345, 9);
+            this.comboLogFormat.Name = "comboLogFormat";
+            this.comboLogFormat.Size = new System.Drawing.Size(134, 24);
+            this.comboLogFormat.TabIndex = 6;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(230, 12);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(109, 16);
+            this.label17.TabIndex = 7;
+            this.label17.Text = "Logging Format";
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1024,5 +1049,7 @@ namespace IceChat
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Button buttonBrowseLogs;
+        private System.Windows.Forms.ComboBox comboLogFormat;
+        private System.Windows.Forms.Label label17;
     }
 }

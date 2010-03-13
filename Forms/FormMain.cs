@@ -71,6 +71,8 @@ namespace IceChat
         private IceChatEmoticon iceChatEmoticons;
         private IceChatLanguage iceChatLanguage;
 
+        private System.Threading.Mutex mutex;
+
         private ArrayList loadedPlugins;
 
         private IdentServer identServer;
@@ -109,6 +111,8 @@ namespace IceChat
                     System.Diagnostics.Debug.WriteLine("args:" + arg);
             }
             */
+            //mutex = new System.Threading.Mutex(true, "IceChatIRCMutex");
+
             #region Settings Files 
             
             //check if the xml settings files exist in current folder
@@ -404,7 +408,9 @@ namespace IceChat
 
                 SaveOptions();
             }
-            
+
+            //mutex.ReleaseMutex();
+
             if (errorFile != null)
             {
                 errorFile.Close();
@@ -1477,6 +1483,12 @@ namespace IceChat
                             if (connection != null)
                                 ParseOutGoingCommand(connection, "/me Build Path = " + Directory.GetCurrentDirectory());
                             break;
+                        case "/ignore":
+                            if (connection != null)
+                            {
+
+                            }
+                            break;
                         case "/join":
                             if (connection != null && data.Length > 0)
                                 SendData(connection, "JOIN " + data);
@@ -1983,18 +1995,15 @@ namespace IceChat
         /// <param name="data"></param>
         private void inputPanel_OnCommand(object sender, string data)
         {
-            bool ishandled = false;
             PluginArgs args = new PluginArgs(inputPanel.CurrentConnection);
             args.Extra = data;
             
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                if (ipc.InputText(args) == true)
-                    ishandled = true;
+                args = ipc.InputText(args);
             }              
                         
-            if (!ishandled)
-                ParseOutGoingCommand(inputPanel.CurrentConnection, data);
+            ParseOutGoingCommand(inputPanel.CurrentConnection, args.Extra);
         }
 
         #endregion
@@ -2721,7 +2730,7 @@ namespace IceChat
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
-
+            System.Diagnostics.Debug.WriteLine(currentFolder);
             for (int i = 0; i < pluginFiles.Length; i++)
             {
                 //System.Diagnostics.Debug.WriteLine("checking:" + pluginFiles[i]);
@@ -2772,18 +2781,8 @@ namespace IceChat
                             t.Click += new EventHandler(OnPluginMenuItemClick);
                             pluginsToolStripMenuItem.DropDownItems.Add(t);
 
-                            //declare all the events                            
-                            ipi.OnChannelMessage += new ChannelMessageHandler(Plugin_OnChangedMessage);
-                            ipi.OnChannelAction += new ChannelActionHandler(Plugin_OnChangedMessage);
-                            ipi.OnQueryMessage += new QueryMessageHandler(Plugin_OnChangedMessage);
-                            ipi.OnQueryAction += new QueryActionHandler(Plugin_OnChangedMessage);
-
-                            ipi.OnChannelJoin += new ChannelJoinHandler(Plugin_OnChangedMessage);
-                            ipi.OnChannelPart += new ChannelPartHandler(Plugin_OnChangedMessage);
-                            ipi.OnServerQuit += new ServerQuitHandler(Plugin_OnChangedMessage);
-
-                            ipi.OnInputText += new InputTextHandler(Plugin_OnInputText);
-
+                            ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
+                            ipi.Initialize();
                             loadedPlugins.Add(ipi);
                         }
                         else
@@ -2799,30 +2798,24 @@ namespace IceChat
             }
         }
 
-        internal void UnloadPlugin(IPluginIceChat plugin, ToolStripMenuItem menuItem)
+        private void Plugin_OnCommand(object sender, PluginArgs e)
         {
-            //unload specified plugin
-            loadedPlugins.Remove(plugin);
-            pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
-            WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
-
-        }
-
-        private void Plugin_OnInputText(object sender, PluginArgs e)
-        {
-            ParseOutGoingCommand((IRCConnection)e.Connection, e.Extra);
-        }
-
-        //handles onChannelMessage, OnChannelAction, OnQueryMessage, OnQueryAction
-        //OnChannelJoin, OnChannelPart, OnServerQuit
-        private void Plugin_OnChangedMessage(object sender, PluginArgs e)
-        {
-            ((TextWindow)e.TextWindow).AppendText(e.Message, 1);
             if (e.Command != null)
             {
                 if (e.Connection != null)
                     ParseOutGoingCommand((IRCConnection)e.Connection, e.Command);
             }
+
+        }
+
+        internal void UnloadPlugin(IPluginIceChat plugin, ToolStripMenuItem menuItem)
+        {
+            plugin.Dispose();
+            //unload specified plugin
+            loadedPlugins.Remove(plugin);
+            pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
+            WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
+
         }
 
         internal void WriteErrorFile(string message, string stackTrace)

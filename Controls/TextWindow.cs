@@ -755,7 +755,7 @@ namespace IceChat
                     newLine = RedefineColorCodes(newLine);
 
                 if (logClass != null)
-                    logClass.WriteLogFile(StripCodes(newLine));
+                    logClass.WriteLogFile(newLine);
                 
                 totalLines++;
 
