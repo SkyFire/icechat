@@ -283,9 +283,15 @@ namespace IceChat
                 ipc.MainProgramLoaded();
             }
 
-
             if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
         
+            //auto start any Auto Connect Servers
+            foreach (ServerSetting s in serverTree.ServersCollection.listServers)
+            {
+                if (s.AutoStart)
+                    NewServerConnection(s);
+            }
+
         }
 
         #region load language file
@@ -1112,7 +1118,10 @@ namespace IceChat
             else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.Query)
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
-                return;
+            }
+            else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.ChannelList)
+            {
+                mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
             else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.Debug)
             {
@@ -2729,7 +2738,7 @@ namespace IceChat
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
-            System.Diagnostics.Debug.WriteLine(currentFolder);
+            
             for (int i = 0; i < pluginFiles.Length; i++)
             {
                 //System.Diagnostics.Debug.WriteLine("checking:" + pluginFiles[i]);

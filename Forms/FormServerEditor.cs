@@ -120,6 +120,7 @@ namespace IceChat
             this.checkDisableCTCP.Checked = serverSetting.DisableCTCP;
             this.comboEncoding.Text = serverSetting.Encoding;
             this.textServerPassword.Text = serverSetting.Password;
+            this.checkAutoStart.Checked = serverSetting.AutoStart;
 
             if (serverSetting.AutoJoinChannels != null)
             {
@@ -236,6 +237,7 @@ namespace IceChat
             serverSetting.ShowPingPong = checkPingPong.Checked;
             serverSetting.RejoinChannels = checkRejoinChannel.Checked;
             serverSetting.DisableCTCP = checkDisableCTCP.Checked;
+            serverSetting.AutoStart = checkAutoStart.Checked;
             serverSetting.Encoding = comboEncoding.Text;
 
             if (newServer == true)

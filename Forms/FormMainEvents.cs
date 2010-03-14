@@ -217,9 +217,14 @@ namespace IceChat
         private void OnChannelList(IRCConnection connection, string channel, string users, string topic)
         {
             //will make a seperate window for this eventually
-            //((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,channel + " : " + users + " : " + topic, 7, false);
+            if (!mainTabControl.WindowExists(connection, "Channels", IceTabPage.WindowType.ChannelList))
+                AddWindow(connection, "Channels", IceTabPage.WindowType.ChannelList);
 
-            mainTabControl.GetTabPage("Console").AddText(connection, channel + " : " + users + " : " + topic, 7, false);
+            IceTabPage t = GetWindow(connection, "Channels", IceTabPage.WindowType.ChannelList);
+            if (t != null)
+            {
+                t.AddChannelList(channel, Convert.ToInt32(users), topic);
+            }
         }
 
 

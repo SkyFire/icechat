@@ -1,8 +1,13 @@
-Build Alpha 11.5 
+Build Alpha 11.6 - March 13 2010
+* Added Channel List
+* Added Server AutoStart up Option
+
+
+Build Alpha 11.5 - March 13 2010
 * Fixed mode parsing problem with mulitple channel modes
 
 
-Build Alpha 11.4 _ March 13 2010
+Build Alpha 11.4 - March 13 2010
 * Started with Ignore List
 * Added HTML logging format, instead of Plain Text
 * Re-did the IPluginIceChat, plugins working much better

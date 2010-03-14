@@ -457,6 +457,16 @@ namespace IceChat
                 this.currentWindow = page;
                 UpdateHeader("Query:" + page.TabCaption);
             }
+            else if (page.WindowStyle == IceTabPage.WindowType.ChannelList)
+            {
+                this.currentWindow = page;
+                UpdateHeader("Channels(" + page.TotalChannels + ")");
+            }
+            else if (page.WindowStyle == IceTabPage.WindowType.Debug)
+            {
+                this.currentWindow = page;
+                UpdateHeader("Debug");
+            }
         }
 
         /// <summary>

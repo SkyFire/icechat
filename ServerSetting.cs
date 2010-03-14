@@ -128,6 +128,10 @@ namespace IceChat
         public bool ShowMOTD
         { get; set; }
 
+        [XmlElement("AutoStart")]
+        public bool AutoStart
+        { get; set; }
+
         [XmlElement("ShowPingPong")]
         public bool ShowPingPong
         { get { return this._showPingPong; } set { this._showPingPong = value; } }

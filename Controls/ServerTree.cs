@@ -851,6 +851,14 @@ namespace IceChat
             }
         }
 
+        internal IceChatServers ServersCollection
+        {
+            get
+            {
+                return serversCollection;
+            }
+        }
+
         #region Server Tree Buttons
         
         private void buttonConnect_Click(object sender, EventArgs e)

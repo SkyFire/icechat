@@ -77,6 +77,7 @@
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
             this.tabPageIgnore = new System.Windows.Forms.TabPage();
+            this.labelNote = new System.Windows.Forms.Label();
             this.listIgnore = new System.Windows.Forms.ListView();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.checkIgnore = new System.Windows.Forms.CheckBox();
@@ -87,7 +88,7 @@
             this.buttonAddIgnore = new System.Windows.Forms.Button();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.labelNote = new System.Windows.Forms.Label();
+            this.checkAutoStart = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -330,6 +331,7 @@
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.Color.Transparent;
+            this.tabPageExtra.Controls.Add(this.checkAutoStart);
             this.tabPageExtra.Controls.Add(this.label12);
             this.tabPageExtra.Controls.Add(this.textServerPassword);
             this.tabPageExtra.Controls.Add(this.checkDisableCTCP);
@@ -599,6 +601,14 @@
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
             // 
+            // labelNote
+            // 
+            this.labelNote.Location = new System.Drawing.Point(362, 114);
+            this.labelNote.Name = "labelNote";
+            this.labelNote.Size = new System.Drawing.Size(252, 62);
+            this.labelNote.TabIndex = 41;
+            this.labelNote.Text = "Note: For wildcards, use the . character for nick names";
+            // 
             // listIgnore
             // 
             this.listIgnore.CheckBoxes = true;
@@ -697,13 +707,15 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // labelNote
+            // checkAutoStart
             // 
-            this.labelNote.Location = new System.Drawing.Point(362, 114);
-            this.labelNote.Name = "labelNote";
-            this.labelNote.Size = new System.Drawing.Size(252, 62);
-            this.labelNote.TabIndex = 41;
-            this.labelNote.Text = "Note: For wildcards, use the . character for nick names";
+            this.checkAutoStart.AutoSize = true;
+            this.checkAutoStart.Location = new System.Drawing.Point(15, 141);
+            this.checkAutoStart.Name = "checkAutoStart";
+            this.checkAutoStart.Size = new System.Drawing.Size(158, 20);
+            this.checkAutoStart.TabIndex = 46;
+            this.checkAutoStart.Text = "Connect on Startup";
+            this.checkAutoStart.UseVisualStyleBackColor = true;
             // 
             // FormServers
             // 
@@ -799,5 +811,6 @@
         private System.Windows.Forms.Button buttonRemoveIgnore;
         private System.Windows.Forms.Button buttonAddIgnore;
         private System.Windows.Forms.Label labelNote;
+        private System.Windows.Forms.CheckBox checkAutoStart;
     }
 }

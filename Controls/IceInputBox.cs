@@ -113,7 +113,10 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                FormMain.Instance.TabMain.GetTabPage("Console").CurrentConsoleWindow().ScrollWindowPage(scrollUp);
+            {
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.ChannelList)
+                    FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
+            }
 
         }
 
@@ -125,7 +128,10 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                FormMain.Instance.CurrentWindow.TextWindow.ScrollWindowPage(scrollUp);
+            {
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.ChannelList)
+                    FormMain.Instance.CurrentWindow.TextWindow.ScrollWindowPage(scrollUp);
+            }
         }
 
 

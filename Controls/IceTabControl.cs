@@ -568,6 +568,9 @@ namespace IceChat
                     case IceTabPage.WindowType.Debug:
                         img = this.ImageList.Images[3];
                         break;
+                    default:
+                        img = this.ImageList.Images[3];
+                        break;
 
                 }
                 
@@ -627,7 +630,11 @@ namespace IceChat
                 }
                 if (tabPage.TabCaption != "Console")
                 {
-                    g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+                    if (tabPage.WindowStyle != IceTabPage.WindowType.ChannelList)
+                        g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+                    else
+                        g.DrawString(tabPage.TabCaption + "(" + tabPage.TotalChannels + ")", m_fontTab, br, tabTextArea, stringFormat);
+
                 }
                 else
                 {
@@ -698,6 +705,10 @@ namespace IceChat
 
                     //caclulate the width of the text
                     int textWidth = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Width;
+                    if (m_lTabPages[i].WindowStyle == IceTabPage.WindowType.ChannelList)
+                    {
+                        textWidth += (int)g.MeasureString(" (" + m_lTabPages[i].TotalChannels + ") ", m_fontTab).Width;
+                    }
                     recBounds.Width = textWidth + 26;
                     recBounds.Height = m_TabRowHeight + 5;
 

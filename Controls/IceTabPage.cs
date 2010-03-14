@@ -58,13 +58,15 @@ namespace IceChat
         private delegate void ChangeTopicDelegate(string topic);
         private delegate void ChangeTextDelegate(string text);
         private delegate TextWindow CurrentWindowDelegate();
+        private delegate void AddChannelListDelegate(string channel, int users, string topic);
 
-        private System.Windows.Forms.Panel panelTopic;
+        private Panel panelTopic;
         //private int ImageIndex;
 
         private TextWindow textWindow;
         private TextWindow textTopic;
         private WindowType windowType;
+        private ChannelListView channelList;
 
         private TabControl consoleTab;
 
@@ -77,6 +79,7 @@ namespace IceChat
             Console = 1,
             Channel = 2,
             Query = 3,
+            ChannelList = 4,
             Debug = 99
         }
 
@@ -106,6 +109,10 @@ namespace IceChat
             {
                 InitializeConsole();
             }
+            else if (windowType == WindowType.ChannelList)
+            {
+                InitializeChannelList();
+            }
             else if (windowType == WindowType.Debug)
             {
                 InitializeChannel();
@@ -124,7 +131,8 @@ namespace IceChat
 
         protected override void Dispose(bool disposing)
         {
-            if (this.windowType != WindowType.Console)
+            //this will dispose the TextWindow, making it close the log file
+            if (this.windowType == WindowType.Channel || this.windowType == WindowType.Query)
                 textWindow.Dispose();
         }
 
@@ -316,7 +324,6 @@ namespace IceChat
             if (nickNumber <= nicks.Count)
             {
                 int i = 1;
-                System.Diagnostics.Debug.WriteLine(i + ":" + nickNumber + ":" + nicks.Count);
                 foreach (User u in nicks.Values)
                 {
                     if (nickNumber == i)
@@ -429,6 +436,10 @@ namespace IceChat
                 {
                     //this.ImageIndex = 2;
                     textWindow.IRCBackColor = FormMain.Instance.IceChatColors.QueryBackColor;
+                }
+                else if (windowType == WindowType.ChannelList)
+                {
+                    //nada
                 }
                 else if (windowType == WindowType.Debug)
                 {
@@ -549,6 +560,11 @@ namespace IceChat
             }
         }
 
+        internal int TotalChannels
+        {
+            get { return this.channelList.Items.Count; }
+        }
+
         private void UpdateText(string text)
         {
             if (this.InvokeRequired)
@@ -576,6 +592,22 @@ namespace IceChat
                 textTopic.ClearTextWindow();
                 //get the topic color                
                 textTopic.AppendText(topic, 1);
+            }
+        }
+
+        public void AddChannelList(string channel, int users, string topic)
+        {
+            if (this.InvokeRequired)
+            {
+                AddChannelListDelegate a = new AddChannelListDelegate(AddChannelList);
+                this.Invoke(a, new object[] { channel, users, topic });
+            }
+            else
+            {
+                ListViewItem lvi = new ListViewItem(channel);
+                lvi.SubItems.Add(users.ToString());
+                lvi.SubItems.Add(topic);
+                channelList.Items.Add(lvi);
             }
         }
 
@@ -675,6 +707,7 @@ namespace IceChat
 
         private void OnControlRemoved(object sender, ControlEventArgs e)
         {
+            //this will close the log file for the particular server tab closed
             if (e.Control.GetType() == typeof(ConsoleTab))
                 ((TextWindow)((ConsoleTab)e.Control).Controls[0]).Dispose();
         }
@@ -748,6 +781,71 @@ namespace IceChat
             consoleTab.ControlRemoved += new ControlEventHandler(OnControlRemoved);
 
         }
+        
+        private void InitializeChannelList()
+        {
+            this.channelList = new ChannelListView();
+            this.channelList.SuspendLayout();
+            this.SuspendLayout();
+
+            this.channelList.Dock = DockStyle.Fill;
+            this.channelList.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.channelList.Location = new System.Drawing.Point(0, 0);
+            this.channelList.Name = "channelList";
+            this.channelList.DoubleClick += new EventHandler(channelList_DoubleClick);
+            this.channelList.ColumnClick += new ColumnClickEventHandler(channelList_ColumnClick);
+            
+            ColumnHeader c = new ColumnHeader();
+            c.Text = "Channel";
+            c.Width = 200;
+            this.channelList.Columns.Add(c);
+            
+            this.channelList.Columns.Add("Users");
+            ColumnHeader t = new ColumnHeader();
+            t.Text = "Topic";
+            t.Width = 2000;
+            this.channelList.Columns.Add(t);
+
+            this.channelList.View = View.Details;
+            this.channelList.MultiSelect = false;
+            this.channelList.FullRowSelect = true;
+            
+
+            this.Controls.Add(channelList);
+            this.channelList.ResumeLayout(false);
+            this.ResumeLayout(false);
+
+        }
+
+        private void channelList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            ListViewSorter Sorter = new ListViewSorter();
+            channelList.ListViewItemSorter = Sorter;
+            if (!(channelList.ListViewItemSorter is ListViewSorter))
+                return;
+
+            Sorter = (ListViewSorter)channelList.ListViewItemSorter;
+            if (Sorter.LastSort == e.Column)
+            {
+                if (channelList.Sorting == SortOrder.Descending)
+                    channelList.Sorting = SortOrder.Ascending;
+                else
+                    channelList.Sorting = SortOrder.Descending;
+            }
+            else
+            {
+                channelList.Sorting = SortOrder.Ascending;
+            }
+            Sorter.ByColumn = e.Column;
+            
+            channelList.Sort();
+        }
+
+        private void channelList_DoubleClick(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in channelList.SelectedItems)
+                FormMain.Instance.ParseOutGoingCommand(this.connection, "/join " + eachItem.Text);
+        }
 
         private void InitializeChannel()
         {
@@ -815,5 +913,105 @@ namespace IceChat
             base.Text = serverName;
         }
     }
+    
+    //flicker free listview for channel list
+    public class ChannelListView : ListView
+    {
+        public ChannelListView()
+        {
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+            this.SetStyle(ControlStyles.EnableNotifyMessage, true);
+        }
+
+        protected override void OnNotifyMessage(Message m)
+        {
+            // filter WM_ERASEBKGND
+            if (m.Msg != 0x14)
+            {
+                base.OnNotifyMessage(m);
+            }
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs pea)
+        {
+            // do nothing here since this event is now handled by OnPaint
+        }
+
+        protected override void OnPaint(PaintEventArgs pea)
+        {
+            base.OnPaint(pea);
+        }
+
+
+    }
+
+    public class ListViewSorter : System.Collections.IComparer
+    {
+        public int Compare(object o1, object o2)
+        {
+            if (!(o1 is ListViewItem))
+                return (0);
+            if (!(o2 is ListViewItem))
+                return (0);
+
+            ListViewItem lvi1 = (ListViewItem)o2;
+            string str1 = lvi1.SubItems[ByColumn].Text;
+            ListViewItem lvi2 = (ListViewItem)o1;
+            string str2 = lvi2.SubItems[ByColumn].Text;
+
+            int result;
+            if (lvi1.ListView.Sorting == SortOrder.Ascending)
+            {
+                int r1;
+                int r2;
+                if (int.TryParse(str1, out r1) && int.TryParse(str2, out r2))
+                {
+                    //check if numeric
+                    //System.Diagnostics.Debug.WriteLine("check str1 str2:" + str1 + ":" + str2);
+                    if (Convert.ToInt32(str1) > Convert.ToInt32(str2))
+                        result = 1;
+                    else
+                        result = -1;
+                }
+                else
+                    result = String.Compare(str1, str2);
+            }
+            else
+            {
+                int r3;
+                int r4;
+                if (int.TryParse(str1, out r3) && int.TryParse(str2, out r4))
+                {
+                    //check if numeric
+                    //System.Diagnostics.Debug.WriteLine("check str1 str2:" + str1 + ":" + str2);
+                    if (Convert.ToInt32(str1) < Convert.ToInt32(str2))
+                        result = 1;
+                    else
+                        result = -1;
+                }
+                else
+                    result = String.Compare(str2, str1);
+                //result = String.Compare(str2, str1);
+            }
+            LastSort = ByColumn;
+
+            return (result);
+        }
+
+
+        public int ByColumn
+        {
+            get { return Column; }
+            set { Column = value; }
+        }
+        int Column = 0;
+
+        public int LastSort
+        {
+            get { return LastColumn; }
+            set { LastColumn = value; }
+        }
+        int LastColumn = 0;
+    }   
 
 }
