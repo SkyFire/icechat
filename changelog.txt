@@ -1,3 +1,7 @@
+Build Alpha 11.5 
+* Fixed mode parsing problem with mulitple channel modes
+
+
 Build Alpha 11.4 _ March 13 2010
 * Started with Ignore List
 * Added HTML logging format, instead of Plain Text

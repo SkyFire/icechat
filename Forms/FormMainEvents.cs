@@ -888,15 +888,11 @@ namespace IceChat
                 msg = msg.Replace("$host", modeSetterHost);
                 msg = msg.Replace("$channel", channel);
 
-                //TabWindow chan = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
                 IceTabPage chan = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
                 if (chan != null)
                 {
-                    //chan.UpdateNick(modeSetter, modeSetterHost);
-
                     if (modeSetter != channel)
                     {
-                        //System.Diagnostics.Debug.WriteLine(msg);
                         WindowMessage(connection, channel, msg, 1, false);
                         //now update the modes accordingly
 
@@ -913,7 +909,7 @@ namespace IceChat
                     bool addMode = false;
                     int modelength = mode.Length;
                     string temp;
-
+                    
                     IEnumerator parametersEnumerator = parameters.GetEnumerator();
                     parametersEnumerator.MoveNext();
                     for (int i = 0; i < modelength; i++)
@@ -939,12 +935,12 @@ namespace IceChat
                                     if (mode[i] == connection.ServerSetting.StatusModes[0][j])
                                     {
                                         chan.UpdateNick(temp, connection.ServerSetting.StatusModes[1][j].ToString(), addMode);
+                                        parametersEnumerator.MoveNext();
                                         break;
                                     }
                                 }
 
                                 //check if the mode has a parameter (CHANMODES= from 005)
-                                //System.Diagnostics.Debug.WriteLine(connection.ServerSetting.ChannelModeParams.ToString() + ":" + mode[i]);
                                 if (connection.ServerSetting.ChannelModeParams.Contains(mode[i].ToString()))
                                 {
                                     //mode has parameter

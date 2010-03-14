@@ -187,14 +187,13 @@ namespace IceChat
                 firstRun.ShowDialog(this);
             }
 
-
             InitializeComponent();
 
             serverTree = new ServerTree();
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 6 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 13 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
