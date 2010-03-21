@@ -1,3 +1,14 @@
+Build Alpha 12 _ March 21 2010
+* Fix Tab swapping, properly move tabs around now, with short-cut keys as well
+* Added /query command
+* added /close command
+* Added DCC Chat - incoming and outgoing
+* Added DCC Options for DCC Chats
+* Applied Patch 5472
+* Applied Patch 5570
+* Temporarily added numbers to Tabs, to check for memory leaks
+
+
 Build Alpha 11.6 - March 13 2010
 * Added Channel List
 * Added Server AutoStart up Option

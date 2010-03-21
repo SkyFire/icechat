@@ -104,6 +104,12 @@
     <Compile Include="Forms\FormColors.Designer.cs">
       <DependentUpon>FormColors.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDCCAccept.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDCCAccept.Designer.cs">
+      <DependentUpon>FormDCCAccept.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -237,6 +243,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\FormColorPicker.resx">
       <DependentUpon>FormColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDCCAccept.resx">
+      <DependentUpon>FormDCCAccept.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEmoticons.resx">
       <DependentUpon>FormEmoticons.cs</DependentUpon>

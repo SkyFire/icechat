@@ -31,7 +31,7 @@
         private System.Windows.Forms.TabPage tabPageTabBar;
         private System.Windows.Forms.TabPage tabPageBackGround;
         private System.Windows.Forms.Label labelTabCurrent;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelIRCEvent;
         private System.Windows.Forms.Label labelTabMessage;
         private System.Windows.Forms.Label labelTabJoin;
         private System.Windows.Forms.Label labelTabPart;
@@ -56,7 +56,7 @@
         private System.Windows.Forms.Label labelHalfOperator;
         private System.Windows.Forms.Label labelOperator;
         private System.Windows.Forms.Label labelAdmin;
-        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label labelChannelUserTypes;
         private System.Windows.Forms.Label labelOwner;
         private System.Windows.Forms.PictureBox pictureServerList;
         private System.Windows.Forms.Label labelServerList;
@@ -67,7 +67,7 @@
         private System.Windows.Forms.PictureBox pictureChannel;
         private System.Windows.Forms.Label labelChannel;
         private System.Windows.Forms.PictureBox pictureConsole;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelBackgroundColorsWindowType;
         private System.Windows.Forms.Label labelConsole;
         private System.Windows.Forms.PictureBox pictureTabDefault;
         private System.Windows.Forms.Label labelTabDefault;
@@ -75,18 +75,18 @@
         private System.Windows.Forms.TabControl tabMessages;
         private System.Windows.Forms.TabPage tabAdvanced;
         private System.Windows.Forms.TextBox textRawMessage;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelIRCMessagesAdvanced;
         private System.Windows.Forms.CheckBox checkBGColor;
         private System.Windows.Forms.TreeView treeMessages;
         private System.Windows.Forms.ListBox listIdentifiers;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label labelEdit;
+        private System.Windows.Forms.Label labelFormatMessageAdvanced;
+        private System.Windows.Forms.Label labelIdentifiers;
+        private System.Windows.Forms.Label labelEditMessage;
         private System.Windows.Forms.TabPage tabBasic;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelIRCMessagesBasic;
         private System.Windows.Forms.TreeView treeBasicMessages;
         private System.Windows.Forms.CheckBox checkChangeBGBasic;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelFormatMessageBasic;
 
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -114,19 +114,19 @@
             this.tabBasic = new System.Windows.Forms.TabPage();
             this.textFormattedBasic = new IceChat.TextWindow();
             this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelFormatMessageBasic = new System.Windows.Forms.Label();
+            this.labelIRCMessagesBasic = new System.Windows.Forms.Label();
             this.treeBasicMessages = new System.Windows.Forms.TreeView();
             this.tabAdvanced = new System.Windows.Forms.TabPage();
             this.textFormattedText = new IceChat.TextWindow();
             this.textRawMessage = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labelIRCMessagesAdvanced = new System.Windows.Forms.Label();
             this.checkBGColor = new System.Windows.Forms.CheckBox();
             this.treeMessages = new System.Windows.Forms.TreeView();
             this.listIdentifiers = new System.Windows.Forms.ListBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelEdit = new System.Windows.Forms.Label();
+            this.labelFormatMessageAdvanced = new System.Windows.Forms.Label();
+            this.labelIdentifiers = new System.Windows.Forms.Label();
+            this.labelEditMessage = new System.Windows.Forms.Label();
             this.tabPageTabBar = new System.Windows.Forms.TabPage();
             this.pictureTabBackground = new System.Windows.Forms.PictureBox();
             this.labelTabBackground = new System.Windows.Forms.Label();
@@ -142,7 +142,7 @@
             this.labelTabBarOther1 = new System.Windows.Forms.Label();
             this.labelTabBarCurrent2 = new System.Windows.Forms.Label();
             this.labelTabBarCurrent1 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.labelBackgroundColors = new System.Windows.Forms.Label();
             this.pictureTabDefault = new System.Windows.Forms.PictureBox();
             this.labelTabDefault = new System.Windows.Forms.Label();
             this.pictureTabOther = new System.Windows.Forms.PictureBox();
@@ -158,7 +158,7 @@
             this.labelTabPart = new System.Windows.Forms.Label();
             this.labelTabJoin = new System.Windows.Forms.Label();
             this.labelTabMessage = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labelIRCEvent = new System.Windows.Forms.Label();
             this.labelTabCurrent = new System.Windows.Forms.Label();
             this.tabPageBackGround = new System.Windows.Forms.TabPage();
             this.pictureStatusFore = new System.Windows.Forms.PictureBox();
@@ -171,7 +171,7 @@
             this.labelPanelHeaderForeColor = new System.Windows.Forms.Label();
             this.pictureChannelListFore = new System.Windows.Forms.PictureBox();
             this.labelChannelListFore = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.labelOtherForeGroundColors = new System.Windows.Forms.Label();
             this.pictureToolBar = new System.Windows.Forms.PictureBox();
             this.pictureMenuBar = new System.Windows.Forms.PictureBox();
             this.labelMenuBar = new System.Windows.Forms.Label();
@@ -193,7 +193,7 @@
             this.pictureChannel = new System.Windows.Forms.PictureBox();
             this.labelChannel = new System.Windows.Forms.Label();
             this.pictureConsole = new System.Windows.Forms.PictureBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.labelBackgroundColorsWindowType = new System.Windows.Forms.Label();
             this.labelConsole = new System.Windows.Forms.Label();
             this.tabPageNickNames = new System.Windows.Forms.TabPage();
             this.pictureDefault = new System.Windows.Forms.PictureBox();
@@ -207,7 +207,7 @@
             this.labelHalfOperator = new System.Windows.Forms.Label();
             this.labelOperator = new System.Windows.Forms.Label();
             this.labelAdmin = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
+            this.labelChannelUserTypes = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -303,8 +303,8 @@
             this.tabBasic.BackColor = System.Drawing.SystemColors.Control;
             this.tabBasic.Controls.Add(this.textFormattedBasic);
             this.tabBasic.Controls.Add(this.checkChangeBGBasic);
-            this.tabBasic.Controls.Add(this.label6);
-            this.tabBasic.Controls.Add(this.label2);
+            this.tabBasic.Controls.Add(this.labelFormatMessageBasic);
+            this.tabBasic.Controls.Add(this.labelIRCMessagesBasic);
             this.tabBasic.Controls.Add(this.treeBasicMessages);
             this.tabBasic.Location = new System.Drawing.Point(4, 25);
             this.tabBasic.Name = "tabBasic";
@@ -331,25 +331,25 @@
             this.checkChangeBGBasic.TabIndex = 50;
             this.checkChangeBGBasic.Text = "Change Background Color";
             // 
-            // label6
+            // labelFormatMessageBasic
             // 
-            this.label6.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label6.Location = new System.Drawing.Point(20, 293);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(264, 16);
-            this.label6.TabIndex = 49;
-            this.label6.Text = "Formatted message:";
+            this.labelFormatMessageBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelFormatMessageBasic.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelFormatMessageBasic.Location = new System.Drawing.Point(20, 293);
+            this.labelFormatMessageBasic.Name = "labelFormatMessageBasic";
+            this.labelFormatMessageBasic.Size = new System.Drawing.Size(264, 16);
+            this.labelFormatMessageBasic.TabIndex = 49;
+            this.labelFormatMessageBasic.Text = "Formatted message:";
             // 
-            // label2
+            // labelIRCMessagesBasic
             // 
-            this.label2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label2.Location = new System.Drawing.Point(19, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(312, 16);
-            this.label2.TabIndex = 47;
-            this.label2.Text = "IRC Messages - Click to Select and Edit";
+            this.labelIRCMessagesBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIRCMessagesBasic.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelIRCMessagesBasic.Location = new System.Drawing.Point(19, 12);
+            this.labelIRCMessagesBasic.Name = "labelIRCMessagesBasic";
+            this.labelIRCMessagesBasic.Size = new System.Drawing.Size(312, 16);
+            this.labelIRCMessagesBasic.TabIndex = 47;
+            this.labelIRCMessagesBasic.Text = "IRC Messages - Click to Select and Edit";
             // 
             // treeBasicMessages
             // 
@@ -386,13 +386,13 @@
             this.tabAdvanced.BackColor = System.Drawing.SystemColors.Control;
             this.tabAdvanced.Controls.Add(this.textFormattedText);
             this.tabAdvanced.Controls.Add(this.textRawMessage);
-            this.tabAdvanced.Controls.Add(this.label4);
+            this.tabAdvanced.Controls.Add(this.labelIRCMessagesAdvanced);
             this.tabAdvanced.Controls.Add(this.checkBGColor);
             this.tabAdvanced.Controls.Add(this.treeMessages);
             this.tabAdvanced.Controls.Add(this.listIdentifiers);
-            this.tabAdvanced.Controls.Add(this.label3);
-            this.tabAdvanced.Controls.Add(this.label1);
-            this.tabAdvanced.Controls.Add(this.labelEdit);
+            this.tabAdvanced.Controls.Add(this.labelFormatMessageAdvanced);
+            this.tabAdvanced.Controls.Add(this.labelIdentifiers);
+            this.tabAdvanced.Controls.Add(this.labelEditMessage);
             this.tabAdvanced.Location = new System.Drawing.Point(4, 25);
             this.tabAdvanced.Name = "tabAdvanced";
             this.tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
@@ -419,15 +419,15 @@
             this.textRawMessage.Size = new System.Drawing.Size(607, 23);
             this.textRawMessage.TabIndex = 39;
             // 
-            // label4
+            // labelIRCMessagesAdvanced
             // 
-            this.label4.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label4.Location = new System.Drawing.Point(16, 12);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(312, 16);
-            this.label4.TabIndex = 45;
-            this.label4.Text = "IRC Messages - Click to Select and Edit";
+            this.labelIRCMessagesAdvanced.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIRCMessagesAdvanced.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelIRCMessagesAdvanced.Location = new System.Drawing.Point(16, 12);
+            this.labelIRCMessagesAdvanced.Name = "labelIRCMessagesAdvanced";
+            this.labelIRCMessagesAdvanced.Size = new System.Drawing.Size(312, 16);
+            this.labelIRCMessagesAdvanced.TabIndex = 45;
+            this.labelIRCMessagesAdvanced.Text = "IRC Messages - Click to Select and Edit";
             // 
             // checkBGColor
             // 
@@ -476,34 +476,34 @@
             this.listIdentifiers.TabIndex = 43;
             this.listIdentifiers.TabStop = false;
             // 
-            // label3
+            // labelFormatMessageAdvanced
             // 
-            this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label3.Location = new System.Drawing.Point(16, 293);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(264, 16);
-            this.label3.TabIndex = 42;
-            this.label3.Text = "Formatted message (Read only):";
+            this.labelFormatMessageAdvanced.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelFormatMessageAdvanced.Location = new System.Drawing.Point(16, 293);
+            this.labelFormatMessageAdvanced.Name = "labelFormatMessageAdvanced";
+            this.labelFormatMessageAdvanced.Size = new System.Drawing.Size(264, 16);
+            this.labelFormatMessageAdvanced.TabIndex = 42;
+            this.labelFormatMessageAdvanced.Text = "Formatted message (Read only):";
             // 
-            // label1
+            // labelIdentifiers
             // 
-            this.label1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(377, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(337, 16);
-            this.label1.TabIndex = 41;
-            this.label1.Text = "Identifiers (Double click to add to Raw Message)";
+            this.labelIdentifiers.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIdentifiers.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelIdentifiers.Location = new System.Drawing.Point(377, 12);
+            this.labelIdentifiers.Name = "labelIdentifiers";
+            this.labelIdentifiers.Size = new System.Drawing.Size(337, 16);
+            this.labelIdentifiers.TabIndex = 41;
+            this.labelIdentifiers.Text = "Identifiers (Double click to add to Raw Message)";
             // 
-            // labelEdit
+            // labelEditMessage
             // 
-            this.labelEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.labelEdit.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelEdit.Location = new System.Drawing.Point(16, 251);
-            this.labelEdit.Name = "labelEdit";
-            this.labelEdit.Size = new System.Drawing.Size(496, 16);
-            this.labelEdit.TabIndex = 40;
-            this.labelEdit.Text = "Edit message here (Click Color below for Color)";
+            this.labelEditMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.labelEditMessage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelEditMessage.Location = new System.Drawing.Point(16, 251);
+            this.labelEditMessage.Name = "labelEditMessage";
+            this.labelEditMessage.Size = new System.Drawing.Size(496, 16);
+            this.labelEditMessage.TabIndex = 40;
+            this.labelEditMessage.Text = "Edit message here (Click Color below for Color)";
             // 
             // tabPageTabBar
             // 
@@ -522,7 +522,7 @@
             this.tabPageTabBar.Controls.Add(this.labelTabBarOther1);
             this.tabPageTabBar.Controls.Add(this.labelTabBarCurrent2);
             this.tabPageTabBar.Controls.Add(this.labelTabBarCurrent1);
-            this.tabPageTabBar.Controls.Add(this.label8);
+            this.tabPageTabBar.Controls.Add(this.labelBackgroundColors);
             this.tabPageTabBar.Controls.Add(this.pictureTabDefault);
             this.tabPageTabBar.Controls.Add(this.labelTabDefault);
             this.tabPageTabBar.Controls.Add(this.pictureTabOther);
@@ -538,7 +538,7 @@
             this.tabPageTabBar.Controls.Add(this.labelTabPart);
             this.tabPageTabBar.Controls.Add(this.labelTabJoin);
             this.tabPageTabBar.Controls.Add(this.labelTabMessage);
-            this.tabPageTabBar.Controls.Add(this.label5);
+            this.tabPageTabBar.Controls.Add(this.labelIRCEvent);
             this.tabPageTabBar.Controls.Add(this.labelTabCurrent);
             this.tabPageTabBar.Location = new System.Drawing.Point(4, 25);
             this.tabPageTabBar.Name = "tabPageTabBar";
@@ -680,15 +680,15 @@
             this.labelTabBarCurrent1.TabIndex = 87;
             this.labelTabBarCurrent1.Text = "Current Tab - Color 1";
             // 
-            // label8
+            // labelBackgroundColors
             // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(342, 39);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(144, 16);
-            this.label8.TabIndex = 56;
-            this.label8.Text = "Background Colors";
+            this.labelBackgroundColors.AutoSize = true;
+            this.labelBackgroundColors.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBackgroundColors.Location = new System.Drawing.Point(342, 39);
+            this.labelBackgroundColors.Name = "labelBackgroundColors";
+            this.labelBackgroundColors.Size = new System.Drawing.Size(144, 16);
+            this.labelBackgroundColors.TabIndex = 56;
+            this.labelBackgroundColors.Text = "Background Colors";
             // 
             // pictureTabDefault
             // 
@@ -833,15 +833,15 @@
             this.labelTabMessage.TabIndex = 39;
             this.labelTabMessage.Text = "New Message";
             // 
-            // label5
+            // labelIRCEvent
             // 
-            this.label5.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label5.Location = new System.Drawing.Point(19, 3);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(410, 17);
-            this.label5.TabIndex = 38;
-            this.label5.Text = "IRC Event - Changes the Tab Bar and Server Tree text color";
+            this.labelIRCEvent.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelIRCEvent.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelIRCEvent.Location = new System.Drawing.Point(19, 3);
+            this.labelIRCEvent.Name = "labelIRCEvent";
+            this.labelIRCEvent.Size = new System.Drawing.Size(410, 17);
+            this.labelIRCEvent.TabIndex = 38;
+            this.labelIRCEvent.Text = "IRC Event - Changes the Tab Bar and Server Tree text color";
             // 
             // labelTabCurrent
             // 
@@ -865,7 +865,7 @@
             this.tabPageBackGround.Controls.Add(this.labelPanelHeaderForeColor);
             this.tabPageBackGround.Controls.Add(this.pictureChannelListFore);
             this.tabPageBackGround.Controls.Add(this.labelChannelListFore);
-            this.tabPageBackGround.Controls.Add(this.label9);
+            this.tabPageBackGround.Controls.Add(this.labelOtherForeGroundColors);
             this.tabPageBackGround.Controls.Add(this.pictureToolBar);
             this.tabPageBackGround.Controls.Add(this.pictureMenuBar);
             this.tabPageBackGround.Controls.Add(this.labelMenuBar);
@@ -887,7 +887,7 @@
             this.tabPageBackGround.Controls.Add(this.pictureChannel);
             this.tabPageBackGround.Controls.Add(this.labelChannel);
             this.tabPageBackGround.Controls.Add(this.pictureConsole);
-            this.tabPageBackGround.Controls.Add(this.label7);
+            this.tabPageBackGround.Controls.Add(this.labelBackgroundColorsWindowType);
             this.tabPageBackGround.Controls.Add(this.labelConsole);
             this.tabPageBackGround.Location = new System.Drawing.Point(4, 25);
             this.tabPageBackGround.Name = "tabPageBackGround";
@@ -991,15 +991,15 @@
             this.labelChannelListFore.TabIndex = 102;
             this.labelChannelListFore.Text = "Favorite Channel List";
             // 
-            // label9
+            // labelOtherForeGroundColors
             // 
-            this.label9.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label9.Location = new System.Drawing.Point(182, 248);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(277, 18);
-            this.label9.TabIndex = 101;
-            this.label9.Text = "Other Foreground colors";
+            this.labelOtherForeGroundColors.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelOtherForeGroundColors.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelOtherForeGroundColors.Location = new System.Drawing.Point(182, 248);
+            this.labelOtherForeGroundColors.Name = "labelOtherForeGroundColors";
+            this.labelOtherForeGroundColors.Size = new System.Drawing.Size(277, 18);
+            this.labelOtherForeGroundColors.TabIndex = 101;
+            this.labelOtherForeGroundColors.Text = "Other Foreground colors";
             // 
             // pictureToolBar
             // 
@@ -1170,7 +1170,7 @@
             this.labelQuery.Name = "labelQuery";
             this.labelQuery.Size = new System.Drawing.Size(161, 16);
             this.labelQuery.TabIndex = 69;
-            this.labelQuery.Text = "Query";
+            this.labelQuery.Text = "Query / DCC Chat";
             // 
             // pictureChannel
             // 
@@ -1201,15 +1201,15 @@
             this.pictureConsole.TabStop = false;
             this.pictureConsole.Tag = "Channel Owner";
             // 
-            // label7
+            // labelBackgroundColorsWindowType
             // 
-            this.label7.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label7.Location = new System.Drawing.Point(182, 3);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(277, 18);
-            this.label7.TabIndex = 65;
-            this.label7.Text = "Background colors for Window Types";
+            this.labelBackgroundColorsWindowType.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBackgroundColorsWindowType.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelBackgroundColorsWindowType.Location = new System.Drawing.Point(182, 3);
+            this.labelBackgroundColorsWindowType.Name = "labelBackgroundColorsWindowType";
+            this.labelBackgroundColorsWindowType.Size = new System.Drawing.Size(277, 18);
+            this.labelBackgroundColorsWindowType.TabIndex = 65;
+            this.labelBackgroundColorsWindowType.Text = "Background colors for Window Types";
             // 
             // labelConsole
             // 
@@ -1234,7 +1234,7 @@
             this.tabPageNickNames.Controls.Add(this.labelHalfOperator);
             this.tabPageNickNames.Controls.Add(this.labelOperator);
             this.tabPageNickNames.Controls.Add(this.labelAdmin);
-            this.tabPageNickNames.Controls.Add(this.label20);
+            this.tabPageNickNames.Controls.Add(this.labelChannelUserTypes);
             this.tabPageNickNames.Controls.Add(this.labelOwner);
             this.tabPageNickNames.Location = new System.Drawing.Point(4, 25);
             this.tabPageNickNames.Margin = new System.Windows.Forms.Padding(4);
@@ -1349,15 +1349,15 @@
             this.labelAdmin.TabIndex = 56;
             this.labelAdmin.Text = "&& Channel Admin";
             // 
-            // label20
+            // labelChannelUserTypes
             // 
-            this.label20.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label20.Location = new System.Drawing.Point(19, 4);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(236, 18);
-            this.label20.TabIndex = 55;
-            this.label20.Text = "Channel User Types";
+            this.labelChannelUserTypes.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelChannelUserTypes.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelChannelUserTypes.Location = new System.Drawing.Point(19, 4);
+            this.labelChannelUserTypes.Name = "labelChannelUserTypes";
+            this.labelChannelUserTypes.Size = new System.Drawing.Size(236, 18);
+            this.labelChannelUserTypes.TabIndex = 55;
+            this.labelChannelUserTypes.Text = "Channel User Types";
             // 
             // labelOwner
             // 
@@ -1502,7 +1502,7 @@
         private System.Windows.Forms.Label labelTabBarOther1;
         private System.Windows.Forms.Label labelTabBarCurrent2;
         private System.Windows.Forms.Label labelTabBarCurrent1;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelBackgroundColors;
         private System.Windows.Forms.PictureBox pictureChannelList;
         private System.Windows.Forms.Label labelChannelList;
         private System.Windows.Forms.PictureBox pictureInputBox;
@@ -1515,7 +1515,7 @@
         private System.Windows.Forms.Label labelToolBar;
         private System.Windows.Forms.PictureBox pictureChannelListFore;
         private System.Windows.Forms.Label labelChannelListFore;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label labelOtherForeGroundColors;
         private System.Windows.Forms.PictureBox pictureInputBoxFore;
         private System.Windows.Forms.Label labelInputBoxFore;
         private System.Windows.Forms.PictureBox picturePanelHeaderForeColor;

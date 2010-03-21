@@ -181,8 +181,6 @@ namespace IceChat
             string msg = GetMessageFormat("Server Message");
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
-            //((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1, false);            
-            //((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
 
             mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
             mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
@@ -245,14 +243,12 @@ namespace IceChat
                     error = error.Replace("$server", connection.ServerSetting.ServerName);
                     error = error.Replace("$message", msg);
 
-                    // ((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, error, 4, false);
                     mainTabControl.GetTabPage("Console").AddText(connection, error, 4, false);
 
                     //send it to the current window as well
                     if (CurrentWindowType != IceTabPage.WindowType.Console)
                         CurrentWindowMessage(connection, error, 4, false);
 
-                    //((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
                     mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
                 }
             }
@@ -297,7 +293,7 @@ namespace IceChat
                 return;
 
             if (!mainTabControl.WindowExists(connection, nick, IceTabPage.WindowType.Query))
-                AddWindow(connection, nick, IceTabPage.WindowType.Channel);
+                AddWindow(connection, nick, IceTabPage.WindowType.Query);
 
             IceTabPage t = GetWindow(connection, nick, IceTabPage.WindowType.Query);
             if (t != null)
@@ -1100,6 +1096,58 @@ namespace IceChat
                     connection.ServerSetting.IAL.Remove(nick);
             }
         }
+
+        private void OnDCCChat(IRCConnection connection, string nick, string host, string port, string ip)
+        {
+            //check if we have disabled DCC Chats, do we auto-accept or ask to allow
+            if (iceChatOptions.DCCChatIgnore)
+                return;
+
+            if (!iceChatOptions.DCCChatAutoAccept)
+            {
+                System.Diagnostics.Debug.WriteLine("Ask for DCC Chat");
+                //check if on System Tray
+                if (notifyIcon.Visible)
+                    return;
+
+                //ask for the dcc chat
+                DialogResult askDCC = MessageBox.Show(nick + " wants a DCC Chat, will you accept?\r\n" + host, "DCC Chat Request", MessageBoxButtons.YesNo);
+                if (askDCC == DialogResult.No)
+                    return;
+
+            }
+
+            if (!mainTabControl.WindowExists(connection, nick, IceTabPage.WindowType.DCCChat))
+                AddWindow(connection, nick, IceTabPage.WindowType.DCCChat);
+
+            IceTabPage t = GetWindow(connection, nick, IceTabPage.WindowType.DCCChat);
+            if (t != null)
+            {
+                string msg = GetMessageFormat("DCC Chat Request");
+                msg = msg.Replace("$nick", nick).Replace("$host", host);
+                msg = msg.Replace("$port", port).Replace("$ip", ip);
+
+                /*
+                PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
+                args.Connection = connection;
+
+                foreach (IPluginIceChat ipc in loadedPlugins)
+                {
+                    //
+                }
+                */
+                t.TextWindow.AppendText(msg, 1);
+                t.StartDCCChat(nick, ip, port);
+                t.LastMessageType = ServerMessageType.Other;
+            }
+
+        }
+
+        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file)
+        {
+            //throw new NotImplementedException();
+        }
+
 
 
     

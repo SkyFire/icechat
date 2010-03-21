@@ -40,7 +40,7 @@ namespace IceChat
             this.checkColorPicker = new System.Windows.Forms.CheckBox();
             this.checkEmoticonPicker = new System.Windows.Forms.CheckBox();
             this.textTimeStamp = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
             this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.checkWhoisNewQuery = new System.Windows.Forms.CheckBox();
@@ -48,6 +48,8 @@ namespace IceChat
             this.checkDisableQueries = new System.Windows.Forms.CheckBox();
             this.checkSaveWindowPosition = new System.Windows.Forms.CheckBox();
             this.tabLogging = new System.Windows.Forms.TabPage();
+            this.labelLoggingFormat = new System.Windows.Forms.Label();
+            this.comboLogFormat = new System.Windows.Forms.ComboBox();
             this.buttonBrowseLogs = new System.Windows.Forms.Button();
             this.checkSeperateLogs = new System.Windows.Forms.CheckBox();
             this.checkLogQuery = new System.Windows.Forms.CheckBox();
@@ -57,39 +59,45 @@ namespace IceChat
             this.buttonInputFont = new System.Windows.Forms.Button();
             this.buttonServerListFont = new System.Windows.Forms.Button();
             this.textInputFont = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
+            this.labelInputBoxSize = new System.Windows.Forms.Label();
             this.textInputFontSize = new System.Windows.Forms.TextBox();
             this.textServerListFontSize = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
+            this.labelServerListSize = new System.Windows.Forms.Label();
             this.textServerListFont = new System.Windows.Forms.TextBox();
             this.buttonNickListFont = new System.Windows.Forms.Button();
             this.textNickListFontSize = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
+            this.labelNickListSize = new System.Windows.Forms.Label();
             this.textNickListFont = new System.Windows.Forms.TextBox();
             this.buttonQueryFont = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
+            this.labelPrivateSize = new System.Windows.Forms.Label();
             this.textQueryFontSize = new System.Windows.Forms.TextBox();
             this.textQueryFont = new System.Windows.Forms.TextBox();
             this.buttonChannelFont = new System.Windows.Forms.Button();
             this.textChannelFontSize = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.labelChannelSize = new System.Windows.Forms.Label();
             this.textChannelFont = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.labelConsoleSize = new System.Windows.Forms.Label();
             this.buttonConsoleFont = new System.Windows.Forms.Button();
             this.textConsoleFontSize = new System.Windows.Forms.TextBox();
             this.textConsoleFont = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelInputBoxFont = new System.Windows.Forms.Label();
+            this.labelServerListFont = new System.Windows.Forms.Label();
+            this.labelNickListFont = new System.Windows.Forms.Label();
+            this.labelPrivateFont = new System.Windows.Forms.Label();
+            this.labelChannelFont = new System.Windows.Forms.Label();
+            this.labelConsoleFont = new System.Windows.Forms.Label();
+            this.tabDCC = new System.Windows.Forms.TabPage();
+            this.textDCCChatTimeout = new System.Windows.Forms.TextBox();
+            this.labelDCCChat = new System.Windows.Forms.Label();
+            this.labelDCCTimeOut = new System.Windows.Forms.Label();
+            this.checkIgnoreDCCChat = new System.Windows.Forms.CheckBox();
+            this.checkAutoDCCChat = new System.Windows.Forms.CheckBox();
             this.tabSounds = new System.Windows.Forms.TabPage();
             this.buttonTest = new System.Windows.Forms.Button();
             this.buttonChooseSound = new System.Windows.Forms.Button();
             this.textSound = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
+            this.labelSoundFile = new System.Windows.Forms.Label();
+            this.labelChooseSound = new System.Windows.Forms.Label();
             this.listBoxSounds = new System.Windows.Forms.ListBox();
             this.tabEmoticon = new System.Windows.Forms.TabPage();
             this.checkEmoticons = new System.Windows.Forms.CheckBox();
@@ -106,14 +114,19 @@ namespace IceChat
             this.checkServerReconnect = new System.Windows.Forms.CheckBox();
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.comboLogFormat = new System.Windows.Forms.ComboBox();
-            this.label17 = new System.Windows.Forms.Label();
+            this.labelDefaultNickName = new System.Windows.Forms.Label();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.labelPortRange = new System.Windows.Forms.Label();
+            this.textDCCPortLow = new System.Windows.Forms.TextBox();
+            this.textDCCPortHigh = new System.Windows.Forms.TextBox();
+            this.labelDCCPortLow = new System.Windows.Forms.Label();
+            this.labelDCCPortHigh = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
             this.tabLogging.SuspendLayout();
             this.tabFonts.SuspendLayout();
+            this.tabDCC.SuspendLayout();
             this.tabSounds.SuspendLayout();
             this.tabEmoticon.SuspendLayout();
             this.tabServer.SuspendLayout();
@@ -152,16 +165,18 @@ namespace IceChat
             this.tabControlOptions.Controls.Add(this.tabDisplay);
             this.tabControlOptions.Controls.Add(this.tabLogging);
             this.tabControlOptions.Controls.Add(this.tabFonts);
+            this.tabControlOptions.Controls.Add(this.tabDCC);
             this.tabControlOptions.Controls.Add(this.tabSounds);
             this.tabControlOptions.Controls.Add(this.tabEmoticon);
             this.tabControlOptions.Controls.Add(this.tabEvents);
             this.tabControlOptions.Controls.Add(this.tabServer);
+            this.tabControlOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlOptions.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(637, 242);
+            this.tabControlOptions.Size = new System.Drawing.Size(660, 242);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabMain
@@ -172,12 +187,12 @@ namespace IceChat
             this.tabMain.Controls.Add(this.checkColorPicker);
             this.tabMain.Controls.Add(this.checkEmoticonPicker);
             this.tabMain.Controls.Add(this.textTimeStamp);
-            this.tabMain.Controls.Add(this.label2);
+            this.tabMain.Controls.Add(this.labelTimeStamp);
             this.tabMain.Location = new System.Drawing.Point(4, 25);
             this.tabMain.Margin = new System.Windows.Forms.Padding(4);
             this.tabMain.Name = "tabMain";
             this.tabMain.Padding = new System.Windows.Forms.Padding(4);
-            this.tabMain.Size = new System.Drawing.Size(629, 213);
+            this.tabMain.Size = new System.Drawing.Size(652, 213);
             this.tabMain.TabIndex = 0;
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
@@ -238,15 +253,15 @@ namespace IceChat
             this.textTimeStamp.Size = new System.Drawing.Size(150, 23);
             this.textTimeStamp.TabIndex = 39;
             // 
-            // label2
+            // labelTimeStamp
             // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(12, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 16);
-            this.label2.TabIndex = 40;
-            this.label2.Text = "Time Stamp";
+            this.labelTimeStamp.AutoSize = true;
+            this.labelTimeStamp.ForeColor = System.Drawing.Color.Black;
+            this.labelTimeStamp.Location = new System.Drawing.Point(12, 11);
+            this.labelTimeStamp.Name = "labelTimeStamp";
+            this.labelTimeStamp.Size = new System.Drawing.Size(86, 16);
+            this.labelTimeStamp.TabIndex = 40;
+            this.labelTimeStamp.Text = "Time Stamp";
             // 
             // tabDisplay
             // 
@@ -259,7 +274,7 @@ namespace IceChat
             this.tabDisplay.Margin = new System.Windows.Forms.Padding(4);
             this.tabDisplay.Name = "tabDisplay";
             this.tabDisplay.Padding = new System.Windows.Forms.Padding(4);
-            this.tabDisplay.Size = new System.Drawing.Size(629, 213);
+            this.tabDisplay.Size = new System.Drawing.Size(652, 213);
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
@@ -316,7 +331,7 @@ namespace IceChat
             // 
             // tabLogging
             // 
-            this.tabLogging.Controls.Add(this.label17);
+            this.tabLogging.Controls.Add(this.labelLoggingFormat);
             this.tabLogging.Controls.Add(this.comboLogFormat);
             this.tabLogging.Controls.Add(this.buttonBrowseLogs);
             this.tabLogging.Controls.Add(this.checkSeperateLogs);
@@ -326,10 +341,31 @@ namespace IceChat
             this.tabLogging.Location = new System.Drawing.Point(4, 25);
             this.tabLogging.Name = "tabLogging";
             this.tabLogging.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLogging.Size = new System.Drawing.Size(629, 213);
+            this.tabLogging.Size = new System.Drawing.Size(652, 213);
             this.tabLogging.TabIndex = 6;
             this.tabLogging.Text = "Logging";
             this.tabLogging.UseVisualStyleBackColor = true;
+            // 
+            // labelLoggingFormat
+            // 
+            this.labelLoggingFormat.AutoSize = true;
+            this.labelLoggingFormat.Location = new System.Drawing.Point(230, 12);
+            this.labelLoggingFormat.Name = "labelLoggingFormat";
+            this.labelLoggingFormat.Size = new System.Drawing.Size(109, 16);
+            this.labelLoggingFormat.TabIndex = 7;
+            this.labelLoggingFormat.Text = "Logging Format";
+            // 
+            // comboLogFormat
+            // 
+            this.comboLogFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboLogFormat.FormattingEnabled = true;
+            this.comboLogFormat.Items.AddRange(new object[] {
+            "Plain Text",
+            "HTML"});
+            this.comboLogFormat.Location = new System.Drawing.Point(345, 9);
+            this.comboLogFormat.Name = "comboLogFormat";
+            this.comboLogFormat.Size = new System.Drawing.Size(134, 24);
+            this.comboLogFormat.TabIndex = 6;
             // 
             // buttonBrowseLogs
             // 
@@ -386,38 +422,38 @@ namespace IceChat
             this.tabFonts.Controls.Add(this.buttonInputFont);
             this.tabFonts.Controls.Add(this.buttonServerListFont);
             this.tabFonts.Controls.Add(this.textInputFont);
-            this.tabFonts.Controls.Add(this.label16);
+            this.tabFonts.Controls.Add(this.labelInputBoxSize);
             this.tabFonts.Controls.Add(this.textInputFontSize);
             this.tabFonts.Controls.Add(this.textServerListFontSize);
-            this.tabFonts.Controls.Add(this.label15);
+            this.tabFonts.Controls.Add(this.labelServerListSize);
             this.tabFonts.Controls.Add(this.textServerListFont);
             this.tabFonts.Controls.Add(this.buttonNickListFont);
             this.tabFonts.Controls.Add(this.textNickListFontSize);
-            this.tabFonts.Controls.Add(this.label14);
+            this.tabFonts.Controls.Add(this.labelNickListSize);
             this.tabFonts.Controls.Add(this.textNickListFont);
             this.tabFonts.Controls.Add(this.buttonQueryFont);
-            this.tabFonts.Controls.Add(this.label10);
+            this.tabFonts.Controls.Add(this.labelPrivateSize);
             this.tabFonts.Controls.Add(this.textQueryFontSize);
             this.tabFonts.Controls.Add(this.textQueryFont);
             this.tabFonts.Controls.Add(this.buttonChannelFont);
             this.tabFonts.Controls.Add(this.textChannelFontSize);
-            this.tabFonts.Controls.Add(this.label9);
+            this.tabFonts.Controls.Add(this.labelChannelSize);
             this.tabFonts.Controls.Add(this.textChannelFont);
-            this.tabFonts.Controls.Add(this.label8);
+            this.tabFonts.Controls.Add(this.labelConsoleSize);
             this.tabFonts.Controls.Add(this.buttonConsoleFont);
             this.tabFonts.Controls.Add(this.textConsoleFontSize);
             this.tabFonts.Controls.Add(this.textConsoleFont);
-            this.tabFonts.Controls.Add(this.label7);
-            this.tabFonts.Controls.Add(this.label6);
-            this.tabFonts.Controls.Add(this.label5);
-            this.tabFonts.Controls.Add(this.label4);
-            this.tabFonts.Controls.Add(this.label3);
-            this.tabFonts.Controls.Add(this.label1);
+            this.tabFonts.Controls.Add(this.labelInputBoxFont);
+            this.tabFonts.Controls.Add(this.labelServerListFont);
+            this.tabFonts.Controls.Add(this.labelNickListFont);
+            this.tabFonts.Controls.Add(this.labelPrivateFont);
+            this.tabFonts.Controls.Add(this.labelChannelFont);
+            this.tabFonts.Controls.Add(this.labelConsoleFont);
             this.tabFonts.Location = new System.Drawing.Point(4, 25);
             this.tabFonts.Margin = new System.Windows.Forms.Padding(4);
             this.tabFonts.Name = "tabFonts";
             this.tabFonts.Padding = new System.Windows.Forms.Padding(4);
-            this.tabFonts.Size = new System.Drawing.Size(629, 213);
+            this.tabFonts.Size = new System.Drawing.Size(652, 213);
             this.tabFonts.TabIndex = 2;
             this.tabFonts.Text = "Fonts";
             this.tabFonts.UseVisualStyleBackColor = true;
@@ -450,14 +486,14 @@ namespace IceChat
             this.textInputFont.Size = new System.Drawing.Size(232, 23);
             this.textInputFont.TabIndex = 44;
             // 
-            // label16
+            // labelInputBoxSize
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(346, 150);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(35, 16);
-            this.label16.TabIndex = 43;
-            this.label16.Text = "Size";
+            this.labelInputBoxSize.AutoSize = true;
+            this.labelInputBoxSize.Location = new System.Drawing.Point(346, 150);
+            this.labelInputBoxSize.Name = "labelInputBoxSize";
+            this.labelInputBoxSize.Size = new System.Drawing.Size(35, 16);
+            this.labelInputBoxSize.TabIndex = 43;
+            this.labelInputBoxSize.Text = "Size";
             // 
             // textInputFontSize
             // 
@@ -475,14 +511,14 @@ namespace IceChat
             this.textServerListFontSize.Size = new System.Drawing.Size(49, 23);
             this.textServerListFontSize.TabIndex = 41;
             // 
-            // label15
+            // labelServerListSize
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(346, 120);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(35, 16);
-            this.label15.TabIndex = 40;
-            this.label15.Text = "Size";
+            this.labelServerListSize.AutoSize = true;
+            this.labelServerListSize.Location = new System.Drawing.Point(346, 120);
+            this.labelServerListSize.Name = "labelServerListSize";
+            this.labelServerListSize.Size = new System.Drawing.Size(35, 16);
+            this.labelServerListSize.TabIndex = 40;
+            this.labelServerListSize.Text = "Size";
             // 
             // textServerListFont
             // 
@@ -510,14 +546,14 @@ namespace IceChat
             this.textNickListFontSize.Size = new System.Drawing.Size(49, 23);
             this.textNickListFontSize.TabIndex = 37;
             // 
-            // label14
+            // labelNickListSize
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(346, 92);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(35, 16);
-            this.label14.TabIndex = 36;
-            this.label14.Text = "Size";
+            this.labelNickListSize.AutoSize = true;
+            this.labelNickListSize.Location = new System.Drawing.Point(346, 92);
+            this.labelNickListSize.Name = "labelNickListSize";
+            this.labelNickListSize.Size = new System.Drawing.Size(35, 16);
+            this.labelNickListSize.TabIndex = 36;
+            this.labelNickListSize.Text = "Size";
             // 
             // textNickListFont
             // 
@@ -537,14 +573,14 @@ namespace IceChat
             this.buttonQueryFont.UseVisualStyleBackColor = true;
             this.buttonQueryFont.Click += new System.EventHandler(this.buttonQueryFont_Click);
             // 
-            // label10
+            // labelPrivateSize
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(346, 65);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(35, 16);
-            this.label10.TabIndex = 28;
-            this.label10.Text = "Size";
+            this.labelPrivateSize.AutoSize = true;
+            this.labelPrivateSize.Location = new System.Drawing.Point(346, 65);
+            this.labelPrivateSize.Name = "labelPrivateSize";
+            this.labelPrivateSize.Size = new System.Drawing.Size(35, 16);
+            this.labelPrivateSize.TabIndex = 28;
+            this.labelPrivateSize.Text = "Size";
             // 
             // textQueryFontSize
             // 
@@ -580,14 +616,14 @@ namespace IceChat
             this.textChannelFontSize.Size = new System.Drawing.Size(49, 23);
             this.textChannelFontSize.TabIndex = 24;
             // 
-            // label9
+            // labelChannelSize
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(346, 37);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 16);
-            this.label9.TabIndex = 23;
-            this.label9.Text = "Size";
+            this.labelChannelSize.AutoSize = true;
+            this.labelChannelSize.Location = new System.Drawing.Point(346, 37);
+            this.labelChannelSize.Name = "labelChannelSize";
+            this.labelChannelSize.Size = new System.Drawing.Size(35, 16);
+            this.labelChannelSize.TabIndex = 23;
+            this.labelChannelSize.Text = "Size";
             // 
             // textChannelFont
             // 
@@ -597,14 +633,14 @@ namespace IceChat
             this.textChannelFont.Size = new System.Drawing.Size(232, 23);
             this.textChannelFont.TabIndex = 22;
             // 
-            // label8
+            // labelConsoleSize
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(346, 10);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 16);
-            this.label8.TabIndex = 21;
-            this.label8.Text = "Size";
+            this.labelConsoleSize.AutoSize = true;
+            this.labelConsoleSize.Location = new System.Drawing.Point(346, 10);
+            this.labelConsoleSize.Name = "labelConsoleSize";
+            this.labelConsoleSize.Size = new System.Drawing.Size(35, 16);
+            this.labelConsoleSize.TabIndex = 21;
+            this.labelConsoleSize.Text = "Size";
             // 
             // buttonConsoleFont
             // 
@@ -632,73 +668,137 @@ namespace IceChat
             this.textConsoleFont.Size = new System.Drawing.Size(232, 23);
             this.textConsoleFont.TabIndex = 18;
             // 
-            // label7
+            // labelInputBoxFont
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 149);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(71, 16);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "Input Box";
+            this.labelInputBoxFont.AutoSize = true;
+            this.labelInputBoxFont.Location = new System.Drawing.Point(15, 149);
+            this.labelInputBoxFont.Name = "labelInputBoxFont";
+            this.labelInputBoxFont.Size = new System.Drawing.Size(71, 16);
+            this.labelInputBoxFont.TabIndex = 17;
+            this.labelInputBoxFont.Text = "Input Box";
             // 
-            // label6
+            // labelServerListFont
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 120);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 16);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Server List";
+            this.labelServerListFont.AutoSize = true;
+            this.labelServerListFont.Location = new System.Drawing.Point(15, 120);
+            this.labelServerListFont.Name = "labelServerListFont";
+            this.labelServerListFont.Size = new System.Drawing.Size(79, 16);
+            this.labelServerListFont.TabIndex = 12;
+            this.labelServerListFont.Text = "Server List";
             // 
-            // label5
+            // labelNickListFont
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 92);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(63, 16);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Nick List";
+            this.labelNickListFont.AutoSize = true;
+            this.labelNickListFont.Location = new System.Drawing.Point(15, 92);
+            this.labelNickListFont.Name = "labelNickListFont";
+            this.labelNickListFont.Size = new System.Drawing.Size(63, 16);
+            this.labelNickListFont.TabIndex = 10;
+            this.labelNickListFont.Text = "Nick List";
             // 
-            // label4
+            // labelPrivateFont
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 65);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 16);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Private";
+            this.labelPrivateFont.AutoSize = true;
+            this.labelPrivateFont.Location = new System.Drawing.Point(15, 65);
+            this.labelPrivateFont.Name = "labelPrivateFont";
+            this.labelPrivateFont.Size = new System.Drawing.Size(54, 16);
+            this.labelPrivateFont.TabIndex = 8;
+            this.labelPrivateFont.Text = "Private";
             // 
-            // label3
+            // labelChannelFont
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 37);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 16);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Channel";
+            this.labelChannelFont.AutoSize = true;
+            this.labelChannelFont.Location = new System.Drawing.Point(15, 37);
+            this.labelChannelFont.Name = "labelChannelFont";
+            this.labelChannelFont.Size = new System.Drawing.Size(60, 16);
+            this.labelChannelFont.TabIndex = 3;
+            this.labelChannelFont.Text = "Channel";
             // 
-            // label1
+            // labelConsoleFont
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Console";
+            this.labelConsoleFont.AutoSize = true;
+            this.labelConsoleFont.Location = new System.Drawing.Point(15, 10);
+            this.labelConsoleFont.Name = "labelConsoleFont";
+            this.labelConsoleFont.Size = new System.Drawing.Size(59, 16);
+            this.labelConsoleFont.TabIndex = 0;
+            this.labelConsoleFont.Text = "Console";
+            // 
+            // tabDCC
+            // 
+            this.tabDCC.Controls.Add(this.labelDCCPortHigh);
+            this.tabDCC.Controls.Add(this.labelDCCPortLow);
+            this.tabDCC.Controls.Add(this.textDCCPortHigh);
+            this.tabDCC.Controls.Add(this.textDCCPortLow);
+            this.tabDCC.Controls.Add(this.labelPortRange);
+            this.tabDCC.Controls.Add(this.textDCCChatTimeout);
+            this.tabDCC.Controls.Add(this.labelDCCChat);
+            this.tabDCC.Controls.Add(this.labelDCCTimeOut);
+            this.tabDCC.Controls.Add(this.checkIgnoreDCCChat);
+            this.tabDCC.Controls.Add(this.checkAutoDCCChat);
+            this.tabDCC.Location = new System.Drawing.Point(4, 25);
+            this.tabDCC.Name = "tabDCC";
+            this.tabDCC.Size = new System.Drawing.Size(652, 213);
+            this.tabDCC.TabIndex = 8;
+            this.tabDCC.Text = "DCC";
+            this.tabDCC.UseVisualStyleBackColor = true;
+            // 
+            // textDCCChatTimeout
+            // 
+            this.textDCCChatTimeout.Location = new System.Drawing.Point(401, 35);
+            this.textDCCChatTimeout.Name = "textDCCChatTimeout";
+            this.textDCCChatTimeout.Size = new System.Drawing.Size(55, 23);
+            this.textDCCChatTimeout.TabIndex = 47;
+            // 
+            // labelDCCChat
+            // 
+            this.labelDCCChat.AutoSize = true;
+            this.labelDCCChat.Location = new System.Drawing.Point(306, 41);
+            this.labelDCCChat.Name = "labelDCCChat";
+            this.labelDCCChat.Size = new System.Drawing.Size(77, 16);
+            this.labelDCCChat.TabIndex = 46;
+            this.labelDCCChat.Text = "DCC Chat:";
+            // 
+            // labelDCCTimeOut
+            // 
+            this.labelDCCTimeOut.AutoSize = true;
+            this.labelDCCTimeOut.Location = new System.Drawing.Point(306, 15);
+            this.labelDCCTimeOut.Name = "labelDCCTimeOut";
+            this.labelDCCTimeOut.Size = new System.Drawing.Size(150, 16);
+            this.labelDCCTimeOut.TabIndex = 45;
+            this.labelDCCTimeOut.Text = "Time outs in Seconds";
+            // 
+            // checkIgnoreDCCChat
+            // 
+            this.checkIgnoreDCCChat.AutoSize = true;
+            this.checkIgnoreDCCChat.Location = new System.Drawing.Point(15, 37);
+            this.checkIgnoreDCCChat.Name = "checkIgnoreDCCChat";
+            this.checkIgnoreDCCChat.Size = new System.Drawing.Size(199, 20);
+            this.checkIgnoreDCCChat.TabIndex = 44;
+            this.checkIgnoreDCCChat.Text = "Ignore DCC Chat requests";
+            this.checkIgnoreDCCChat.UseVisualStyleBackColor = true;
+            // 
+            // checkAutoDCCChat
+            // 
+            this.checkAutoDCCChat.AutoSize = true;
+            this.checkAutoDCCChat.Location = new System.Drawing.Point(15, 11);
+            this.checkAutoDCCChat.Name = "checkAutoDCCChat";
+            this.checkAutoDCCChat.Size = new System.Drawing.Size(240, 20);
+            this.checkAutoDCCChat.TabIndex = 43;
+            this.checkAutoDCCChat.Text = "Auto Accept DCC Chat requests";
+            this.checkAutoDCCChat.UseVisualStyleBackColor = true;
             // 
             // tabSounds
             // 
             this.tabSounds.Controls.Add(this.buttonTest);
             this.tabSounds.Controls.Add(this.buttonChooseSound);
             this.tabSounds.Controls.Add(this.textSound);
-            this.tabSounds.Controls.Add(this.label12);
-            this.tabSounds.Controls.Add(this.label11);
+            this.tabSounds.Controls.Add(this.labelSoundFile);
+            this.tabSounds.Controls.Add(this.labelChooseSound);
             this.tabSounds.Controls.Add(this.listBoxSounds);
             this.tabSounds.Location = new System.Drawing.Point(4, 25);
             this.tabSounds.Margin = new System.Windows.Forms.Padding(4);
             this.tabSounds.Name = "tabSounds";
             this.tabSounds.Padding = new System.Windows.Forms.Padding(4);
-            this.tabSounds.Size = new System.Drawing.Size(629, 213);
+            this.tabSounds.Size = new System.Drawing.Size(652, 213);
             this.tabSounds.TabIndex = 3;
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
@@ -730,23 +830,23 @@ namespace IceChat
             this.textSound.Size = new System.Drawing.Size(299, 23);
             this.textSound.TabIndex = 4;
             // 
-            // label12
+            // labelSoundFile
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(15, 172);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(119, 16);
-            this.label12.TabIndex = 3;
-            this.label12.Text = "Sound Event File";
+            this.labelSoundFile.AutoSize = true;
+            this.labelSoundFile.Location = new System.Drawing.Point(15, 172);
+            this.labelSoundFile.Name = "labelSoundFile";
+            this.labelSoundFile.Size = new System.Drawing.Size(119, 16);
+            this.labelSoundFile.TabIndex = 3;
+            this.labelSoundFile.Text = "Sound Event File";
             // 
-            // label11
+            // labelChooseSound
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(15, 4);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(145, 16);
-            this.label11.TabIndex = 1;
-            this.label11.Text = "Choose Sound Event";
+            this.labelChooseSound.AutoSize = true;
+            this.labelChooseSound.Location = new System.Drawing.Point(15, 4);
+            this.labelChooseSound.Name = "labelChooseSound";
+            this.labelChooseSound.Size = new System.Drawing.Size(145, 16);
+            this.labelChooseSound.TabIndex = 1;
+            this.labelChooseSound.Text = "Choose Sound Event";
             // 
             // listBoxSounds
             // 
@@ -768,7 +868,7 @@ namespace IceChat
             this.tabEmoticon.Location = new System.Drawing.Point(4, 25);
             this.tabEmoticon.Name = "tabEmoticon";
             this.tabEmoticon.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEmoticon.Size = new System.Drawing.Size(629, 213);
+            this.tabEmoticon.Size = new System.Drawing.Size(652, 213);
             this.tabEmoticon.TabIndex = 7;
             this.tabEmoticon.Text = "Emoticons";
             this.tabEmoticon.UseVisualStyleBackColor = true;
@@ -856,7 +956,7 @@ namespace IceChat
             this.tabEvents.Location = new System.Drawing.Point(4, 25);
             this.tabEvents.Name = "tabEvents";
             this.tabEvents.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEvents.Size = new System.Drawing.Size(629, 213);
+            this.tabEvents.Size = new System.Drawing.Size(652, 213);
             this.tabEvents.TabIndex = 4;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
@@ -866,11 +966,11 @@ namespace IceChat
             this.tabServer.Controls.Add(this.checkServerReconnect);
             this.tabServer.Controls.Add(this.checkIdentServer);
             this.tabServer.Controls.Add(this.textDefaultNick);
-            this.tabServer.Controls.Add(this.label13);
+            this.tabServer.Controls.Add(this.labelDefaultNickName);
             this.tabServer.Location = new System.Drawing.Point(4, 25);
             this.tabServer.Name = "tabServer";
             this.tabServer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabServer.Size = new System.Drawing.Size(629, 213);
+            this.tabServer.Size = new System.Drawing.Size(652, 213);
             this.tabServer.TabIndex = 5;
             this.tabServer.Text = "Default Server";
             this.tabServer.UseVisualStyleBackColor = true;
@@ -903,42 +1003,68 @@ namespace IceChat
             this.textDefaultNick.Size = new System.Drawing.Size(150, 23);
             this.textDefaultNick.TabIndex = 41;
             // 
-            // label13
+            // labelDefaultNickName
             // 
-            this.label13.AutoSize = true;
-            this.label13.ForeColor = System.Drawing.Color.Black;
-            this.label13.Location = new System.Drawing.Point(15, 13);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(75, 16);
-            this.label13.TabIndex = 42;
-            this.label13.Text = "Nick name";
+            this.labelDefaultNickName.AutoSize = true;
+            this.labelDefaultNickName.ForeColor = System.Drawing.Color.Black;
+            this.labelDefaultNickName.Location = new System.Drawing.Point(15, 13);
+            this.labelDefaultNickName.Name = "labelDefaultNickName";
+            this.labelDefaultNickName.Size = new System.Drawing.Size(75, 16);
+            this.labelDefaultNickName.TabIndex = 42;
+            this.labelDefaultNickName.Text = "Nick name";
             // 
-            // comboLogFormat
+            // imageList1
             // 
-            this.comboLogFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboLogFormat.FormattingEnabled = true;
-            this.comboLogFormat.Items.AddRange(new object[] {
-            "Plain Text",
-            "HTML"});
-            this.comboLogFormat.Location = new System.Drawing.Point(345, 9);
-            this.comboLogFormat.Name = "comboLogFormat";
-            this.comboLogFormat.Size = new System.Drawing.Size(134, 24);
-            this.comboLogFormat.TabIndex = 6;
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // label17
+            // labelPortRange
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(230, 12);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(109, 16);
-            this.label17.TabIndex = 7;
-            this.label17.Text = "Logging Format";
+            this.labelPortRange.AutoSize = true;
+            this.labelPortRange.Location = new System.Drawing.Point(306, 129);
+            this.labelPortRange.Name = "labelPortRange";
+            this.labelPortRange.Size = new System.Drawing.Size(112, 16);
+            this.labelPortRange.TabIndex = 48;
+            this.labelPortRange.Text = "DCC Port Range";
+            // 
+            // textDCCPortLow
+            // 
+            this.textDCCPortLow.Location = new System.Drawing.Point(429, 151);
+            this.textDCCPortLow.Name = "textDCCPortLow";
+            this.textDCCPortLow.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortLow.TabIndex = 49;
+            // 
+            // textDCCPortHigh
+            // 
+            this.textDCCPortHigh.Location = new System.Drawing.Point(429, 180);
+            this.textDCCPortHigh.Name = "textDCCPortHigh";
+            this.textDCCPortHigh.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortHigh.TabIndex = 50;
+            // 
+            // labelDCCPortLow
+            // 
+            this.labelDCCPortLow.AutoSize = true;
+            this.labelDCCPortLow.Location = new System.Drawing.Point(306, 158);
+            this.labelDCCPortLow.Name = "labelDCCPortLow";
+            this.labelDCCPortLow.Size = new System.Drawing.Size(93, 16);
+            this.labelDCCPortLow.TabIndex = 51;
+            this.labelDCCPortLow.Text = "Lowest Port:";
+            // 
+            // labelDCCPortHigh
+            // 
+            this.labelDCCPortHigh.AutoSize = true;
+            this.labelDCCPortHigh.Location = new System.Drawing.Point(306, 183);
+            this.labelDCCPortHigh.Name = "labelDCCPortHigh";
+            this.labelDCCPortHigh.Size = new System.Drawing.Size(95, 16);
+            this.labelDCCPortHigh.TabIndex = 52;
+            this.labelDCCPortHigh.Text = "Highest Port:";
             // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 292);
+            this.ClientSize = new System.Drawing.Size(660, 292);
             this.Controls.Add(this.tabControlOptions);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -960,6 +1086,8 @@ namespace IceChat
             this.tabLogging.PerformLayout();
             this.tabFonts.ResumeLayout(false);
             this.tabFonts.PerformLayout();
+            this.tabDCC.ResumeLayout(false);
+            this.tabDCC.PerformLayout();
             this.tabSounds.ResumeLayout(false);
             this.tabSounds.PerformLayout();
             this.tabEmoticon.ResumeLayout(false);
@@ -980,42 +1108,42 @@ namespace IceChat
         private System.Windows.Forms.TabPage tabFonts;
         private System.Windows.Forms.TabPage tabSounds;
         private System.Windows.Forms.TextBox textTimeStamp;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelTimeStamp;
         private System.Windows.Forms.CheckBox checkSaveWindowPosition;
         private System.Windows.Forms.TabPage tabEvents;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelChannelFont;
+        private System.Windows.Forms.Label labelConsoleFont;
+        private System.Windows.Forms.Label labelServerListFont;
+        private System.Windows.Forms.Label labelNickListFont;
+        private System.Windows.Forms.Label labelPrivateFont;
+        private System.Windows.Forms.Label labelInputBoxFont;
         private System.Windows.Forms.Button buttonConsoleFont;
         private System.Windows.Forms.TextBox textConsoleFontSize;
         private System.Windows.Forms.TextBox textConsoleFont;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelConsoleSize;
         private System.Windows.Forms.TextBox textChannelFont;
         private System.Windows.Forms.Button buttonChannelFont;
         private System.Windows.Forms.TextBox textChannelFontSize;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label labelChannelSize;
+        private System.Windows.Forms.Label labelPrivateSize;
         private System.Windows.Forms.TextBox textQueryFontSize;
         private System.Windows.Forms.TextBox textQueryFont;
         private System.Windows.Forms.Button buttonQueryFont;
         private System.Windows.Forms.TabPage tabServer;
         private System.Windows.Forms.TextBox textDefaultNick;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label labelDefaultNickName;
         private System.Windows.Forms.Button buttonNickListFont;
         private System.Windows.Forms.TextBox textNickListFontSize;
-        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label labelNickListSize;
         private System.Windows.Forms.TextBox textNickListFont;
         private System.Windows.Forms.TextBox textInputFontSize;
         private System.Windows.Forms.TextBox textServerListFontSize;
-        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label labelServerListSize;
         private System.Windows.Forms.TextBox textServerListFont;
         private System.Windows.Forms.Button buttonInputFont;
         private System.Windows.Forms.Button buttonServerListFont;
         private System.Windows.Forms.TextBox textInputFont;
-        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label labelInputBoxSize;
         private System.Windows.Forms.CheckBox checkIdentServer;
         private System.Windows.Forms.TabPage tabLogging;
         private System.Windows.Forms.CheckBox checkLogConsole;
@@ -1039,17 +1167,29 @@ namespace IceChat
         private System.Windows.Forms.CheckBox checkDisableQueries;
         private System.Windows.Forms.CheckBox checkNewQueryForegound;
         private System.Windows.Forms.CheckBox checkWhoisNewQuery;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label labelChooseSound;
         private System.Windows.Forms.ListBox listBoxSounds;
         private System.Windows.Forms.Button buttonChooseSound;
         private System.Windows.Forms.TextBox textSound;
-        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label labelSoundFile;
         private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.CheckBox checkShowUnreadLine;
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Button buttonBrowseLogs;
         private System.Windows.Forms.ComboBox comboLogFormat;
-        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label labelLoggingFormat;
+        private System.Windows.Forms.TabPage tabDCC;
+        private System.Windows.Forms.TextBox textDCCChatTimeout;
+        private System.Windows.Forms.Label labelDCCChat;
+        private System.Windows.Forms.Label labelDCCTimeOut;
+        private System.Windows.Forms.CheckBox checkIgnoreDCCChat;
+        private System.Windows.Forms.CheckBox checkAutoDCCChat;
+        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.Label labelDCCPortHigh;
+        private System.Windows.Forms.Label labelDCCPortLow;
+        private System.Windows.Forms.TextBox textDCCPortHigh;
+        private System.Windows.Forms.TextBox textDCCPortLow;
+        private System.Windows.Forms.Label labelPortRange;
     }
 }

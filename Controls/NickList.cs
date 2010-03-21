@@ -122,11 +122,15 @@ namespace IceChat
                 for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                     nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
+
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/query " + nick);
+
+                /*
                 if (!FormMain.Instance.TabMain.WindowExists(currentWindow.Connection, nick, IceTabPage.WindowType.Query))
                     FormMain.Instance.AddWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query);
                 else
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
-
+                */
             }
         }
 
@@ -462,6 +466,11 @@ namespace IceChat
                 this.currentWindow = page;
                 UpdateHeader("Channels(" + page.TotalChannels + ")");
             }
+            else if (page.WindowStyle == IceTabPage.WindowType.DCCChat)
+            {
+                this.currentWindow = page;
+                UpdateHeader("DCC Chat:" + page.TabCaption);
+            }
             else if (page.WindowStyle == IceTabPage.WindowType.Debug)
             {
                 this.currentWindow = page;
@@ -691,7 +700,6 @@ namespace IceChat
             }
             FormMain.Instance.FocusInputBox();
         }
-
 
     }
 }

@@ -72,6 +72,9 @@ namespace IceChat
 
         internal event ChannelListDelegate ChannelList;
 
+        internal event DCCChatDelegate DCCChat;
+        internal event DCCFileDelegate DCCFile;
+
         internal event RawServerIncomingDataDelegate RawServerIncomingData;
         internal event RawServerOutgoingDataDelegate RawServerOutgoingData;
 
@@ -239,25 +242,28 @@ namespace IceChat
                             msg = JoinString(ircData, 4, true) + " " + ircData[3];
                             ServerMessage(this, msg);                            
                             break;
-                        case "219":
+                        case "219": //end of stats
                             ServerMessage(this, JoinString(ircData, 4, true));
                             break;
-                        case "221":
+                        case "221": //:port80b.se.quakenet.org 221 Snerf2 +i
+                            ServerMessage(this, RemoveColon(ircData[0]) + " sets mode for " + ircData[2] + " " + ircData[3]);                            
                             break;
                         
-                        case "250":
-                        case "251":
-                        case "255":
+                        case "251": //there are x users on x servers
+                        case "255": //I have x users and x servers
                             ServerMessage(this, JoinString(ircData, 3, true));
                             break;
 
-                        case "252":
-                        case "253":
-                        case "254":
+                        case "250": //highest connection count
+                        case "252": //operators online
+                        case "253": //unknown connections
+                        case "254": //channels formed
+                            msg = "There are " + ircData[3] + " " + JoinString(ircData, 4, true);
+                            ServerMessage(this, msg);
                             break;
 
-                        case "265":
-                        case "266":
+                        case "265": //current local users / max
+                        case "266": //current global users / max
                             msg = JoinString(ircData, 3, true);
                             ServerMessage(this, msg);
                             break;
@@ -288,7 +294,7 @@ namespace IceChat
                                     UserHostReply(this, h);
                             }
                             break;
-                        case "311":     //whois information
+                        case "311":     //whois information username address
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                             {
                                 this.UserInfoWindow.HostName(ircData[4] + "@" + ircData[5]);
@@ -299,21 +305,21 @@ namespace IceChat
                             WhoisData(this, ircData[3], msg);
                             IALUserData(this, nick, host, "");
                             break;
-                        case "312":     //whois information
+                        case "312":     //whois information server info
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                                 return;
                             msg = "using " + ircData[4] + " (" + JoinString(ircData, 5, true) + ")";
                             WhoisData(this, ircData[3], msg);
                             break;
-                        case "301":     //whois information
-                        case "307":     //whois information
-                        case "313":     //whois information
+                        case "301":     //whois information nick away
+                        case "307":     //whois information nick ips
+                        case "313":     //whois information is an IRC operator
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                                 return;
                             msg = JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
                             break;
-                        case "317":     //whois information
+                        case "317":     //whois information signon time
                             DateTime date1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date1 = date1.AddSeconds(Convert.ToDouble(ircData[5]));
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
@@ -325,13 +331,13 @@ namespace IceChat
                             msg = GetDuration(Convert.ToInt32(ircData[4])) + " " + JoinString(ircData, 6, true) + " " + date1.ToShortTimeString() + " " + date1.ToShortDateString();
                             WhoisData(this, ircData[3], msg);
                             break;
-                        case "318":     //whois information
+                        case "318":     //whois information end of whois
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                                 return;
                             msg = JoinString(ircData, 4, false);
                             WhoisData(this, ircData[3], msg);
                             break;
-                        case "319":     //whois information 
+                        case "319":     //whois information channels
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                             {
                                 string[] chans = JoinString(ircData, 4, true).Split(' ');
@@ -388,7 +394,6 @@ namespace IceChat
                             channel = ircData[3];
                             msg = "Channel modes for " + channel + " are :" + JoinString(ircData, 4, false);
                             ChannelMode(this, channel, "", channel, JoinString(ircData, 4, false));
-
                             GenericChannelMessage(this, channel, msg);
                             break;
                         case "328":     //channel url
@@ -403,13 +408,15 @@ namespace IceChat
                             msg = "Channel Created on: " + date.ToShortTimeString() + " " + date.ToShortDateString();
                             GenericChannelMessage(this, channel, msg);
                             break;
+                        case "331":     //no topic is set
+                            channel = ircData[3];
+                            GenericChannelMessage(this, channel, "No Topic Set");
+                            break;
                         case "332":     //channel topic
-                            //mediatraffic2.fi.quakenet.org 332 Snerf #icechat :Official IceChat Support Channel
                             channel = ircData[3];
                             ChannelTopic(this, channel, "", "", JoinString(ircData, 4, true));
                             break;
                         case "333":     //channel time
-                            //mediatraffic2.fi.quakenet.org 333 Snerf #icechat IceBot 1234725840    
                             channel = ircData[3];
                             nick = ircData[4];
                             DateTime date2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -451,7 +458,6 @@ namespace IceChat
                             }
                             break;
                         case "352": //who reply
-                            //:stockholm.se.quakenet.org 352 Snerf2009 #icechat2009 Ice2009 IceChat.users.quakenet.org *.quakenet.org Snerf2009 H@x :0 The Chat Cool People Use
                             channel = ircData[3];                           
                             t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
@@ -558,6 +564,12 @@ namespace IceChat
                                 }
                             }
 
+                            // Nickserv password
+                            if (serverSetting.NickservPassword != null && serverSetting.NickservPassword.Length > 0)
+                            {
+                                OutGoingCommand(this, "/msg NickServ identify " + serverSetting.NickservPassword);
+                            }
+
                             if (serverSetting.RejoinChannels)
                             {
                                 //rejoin any channels that are open
@@ -632,7 +644,7 @@ namespace IceChat
                                 if (msg[0] == (char)1)
                                 {
                                     //drop the 1st and last CTCP Character
-                                    msg = msg.Substring(1, msg.Length - 2);
+                                    msg = msg.Trim(new char[] { (char)1 });
                                     //check for action
                                     switch (msg.Split(' ')[0].ToUpper())
                                     {
@@ -651,7 +663,28 @@ namespace IceChat
                                             CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
                                             break;
                                         default:
-                                            UserNotice(this, nick, msg);
+                                            //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
+                                            if (msg.ToUpper().StartsWith("DCC SEND"))
+                                            {
+                                                msg = msg.Substring(8);
+                                                //string fileName = ircData[4];
+                                                //string ip = ircData[5];
+                                                //string port = ircData[6];
+                                                //string fileSize = ircData[7].TrimEnd(new char[] { (char)1 });
+                                                //System.Diagnostics.Debug.WriteLine("DCC SEND Port:" + port + ":IP:" + ip);
+                                                System.Diagnostics.Debug.WriteLine("PRIVMSG DCC SEND:" + msg);
+                                                //DCC SEND: !Jc!-News(2010-03-11)-OS.zip 3179314244 1026 95867
+                                                //:ToTe!~imanol@iMaNoL.users.undernet.org PRIVMSG Snerf_ :DCC SEND ToTe-default(2010-03-16)-OS.zip 3383003574 1026 99482
+
+                                            }
+                                            else if (msg.ToUpper().StartsWith("DCC CHAT"))
+                                            {
+                                                string ip = ircData[6];
+                                                string port = ircData[7].TrimEnd(new char[] { (char)1 });
+                                                DCCChat(this, nick, host, port, ip);
+                                            }
+                                            else
+                                                UserNotice(this, nick, msg);
                                             break;
                                     }
                                 }
@@ -683,14 +716,14 @@ namespace IceChat
                                             CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
                                             break;
                                         default:
-                                            if (msg.Substring(7).ToUpper() == "ACTION ")
+                                            System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
+                                            if (msg.ToUpper().StartsWith("ACTION "))
                                             {
                                                 msg = msg.Substring(7);
                                                 ChannelAction(this, channel, nick, host, msg);
                                                 IALUserData(this, nick, host, channel);
                                             }
                                             else
-                                            //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
                                             {
                                                 ChannelNotice(this, nick, host,(char)32,channel, msg);
                                                 IALUserData(this, nick, host, channel);
@@ -738,7 +771,19 @@ namespace IceChat
                                 }
                                 else
                                 {
-                                    UserNotice(this, nick, msg);
+                                    //System.Diagnostics.Debug.WriteLine("NOTICE:" + msg);
+                                    if (msg.ToUpper().StartsWith("DCC SEND"))
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("NOTICE DCC SEND:" + nick + ":" + msg);
+                                        UserNotice(this, nick, msg);
+                                    }
+                                    else if (msg.ToUpper().StartsWith("DCC CHAT"))
+                                    {
+                                        if (!FormMain.Instance.IceChatOptions.DCCChatIgnore)
+                                            UserNotice(this, nick, msg);
+                                    }
+                                    else
+                                        UserNotice(this, nick, msg);
                                 }
                             }
                             break;
@@ -748,6 +793,13 @@ namespace IceChat
 
                             if (channel == serverSetting.NickName)
                             {
+                                if (host.IndexOf('@') > -1 && this.serverSetting.LocalIP == null)
+                                {
+                                    host = host.Substring(host.IndexOf('@') + 1);
+                                    System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
+                                    foreach (System.Net.IPAddress address in addresslist)
+                                        this.serverSetting.LocalIP = address;
+                                }
                                 //user mode
                                 tempValue = JoinString(ircData, 3, true);
                                 UserMode(this, channel, tempValue);
@@ -850,15 +902,28 @@ namespace IceChat
                             break;
 
                         //errors
+                        case "404": //can not send to channel
+                        case "467": //channel key already set
+                        case "468": //only servers can change mode
+                        case "482": //not a channel operator
+                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            ServerError(this, msg);
+                            break;
                         case "401": //no such nick
+                        case "402": //no such server
+                        case "403": //no such channel
+                        case "405": //joined too many channels
+                        case "407": //no message delivered
+                        case "411": //no recipient given
                         case "412": //no text to send
                         case "421": //unknown command
+                        case "431": //no nickname given
                         case "472": //unknown char to me (channel mode)
                             ServerError(this, JoinString(ircData, 3, false));
                             break;
                         case "473":     //can not join channel invite only
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            ServerMessage(this, msg);
+                            ServerError(this, msg);
                             break;
                         case "474": //Cannot join channel (+b)
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
@@ -879,7 +944,7 @@ namespace IceChat
                             }
 
                             break;
-                        case "513":
+                        case "513": //if you can not connect, type /quote PONG ...
                             ServerError(this, JoinString(ircData, 3, true));                            
                             break;
                         

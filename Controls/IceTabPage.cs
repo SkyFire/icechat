@@ -30,6 +30,9 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
 
 namespace IceChat
 {
@@ -59,6 +62,7 @@ namespace IceChat
         private delegate void ChangeTextDelegate(string text);
         private delegate TextWindow CurrentWindowDelegate();
         private delegate void AddChannelListDelegate(string channel, int users, string topic);
+        private delegate void AddDccChatDelegate(string message);
 
         private Panel panelTopic;
         //private int ImageIndex;
@@ -74,12 +78,19 @@ namespace IceChat
 
         private bool DisableConsoleSelectChangedEvent = false;
 
+        private TcpClient dccChatSocket;
+        private TcpListener dccChatSocketListener;
+        private Thread dccThread;
+        private Thread listenThread;
+        private System.Timers.Timer dccTimeOutTimer;
+
         public enum WindowType
         {
             Console = 1,
             Channel = 2,
             Query = 3,
             ChannelList = 4,
+            DCCChat = 5,
             Debug = 99
         }
 
@@ -113,6 +124,11 @@ namespace IceChat
             {
                 InitializeChannelList();
             }
+            else if (windowType == WindowType.DCCChat)
+            {
+                InitializeChannel();
+                panelTopic.Visible = false;
+            }
             else if (windowType == WindowType.Debug)
             {
                 InitializeChannel();
@@ -125,7 +141,7 @@ namespace IceChat
 
             nicks = new Hashtable();
             channelModes = new Hashtable();
-
+            
             lastMessageType = FormMain.ServerMessageType.Default;
         }
 
@@ -134,6 +150,21 @@ namespace IceChat
             //this will dispose the TextWindow, making it close the log file
             if (this.windowType == WindowType.Channel || this.windowType == WindowType.Query)
                 textWindow.Dispose();
+
+            if (this.windowType == WindowType.DCCChat)
+            {
+                if (dccChatSocket != null)
+                    dccChatSocket.Close();
+                
+                if (dccThread != null)
+                    dccThread.Abort();
+
+                if (listenThread != null)
+                    listenThread.Abort();
+
+                if (dccChatSocketListener != null)
+                    dccChatSocketListener.Stop();
+            }
         }
 
         /// <summary>
@@ -389,6 +420,167 @@ namespace IceChat
             }
         }
 
+        internal void RequestDCCChat()
+        {
+            //send out a dcc chat request
+            string localIP = IPAddressToLong(this.connection.ServerSetting.LocalIP);
+            Random port = new Random();
+            int p = port.Next(FormMain.Instance.IceChatOptions.DCCPortLower, FormMain.Instance.IceChatOptions.DCCPortUpper);
+
+            dccChatSocketListener = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
+            listenThread = new Thread(new ThreadStart(ListenForConnection));
+            listenThread.Start();
+
+            //connection.SendData("NOTICE " + _tabCaption + " :DCC CHAT (" + this.connection.ServerSetting.LocalIP.ToString() + ")");            
+            connection.SendData("PRIVMSG " + _tabCaption + " :DCC CHAT chat " + localIP + " " + p.ToString() + "");
+            dccTimeOutTimer = new System.Timers.Timer();
+            dccTimeOutTimer.Interval = 1000 * FormMain.Instance.IceChatOptions.DCCChatTimeOut;
+            dccTimeOutTimer.Elapsed += new System.Timers.ElapsedEventHandler(dccTimeOutTimer_Elapsed);
+            dccTimeOutTimer.Start();
+        }
+
+        private void dccTimeOutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            string msg = FormMain.Instance.GetMessageFormat("DCC Chat Timeout");
+            msg = msg.Replace("$nick", _tabCaption);
+            textWindow.AppendText(msg, 1);
+
+            dccTimeOutTimer.Stop();
+            dccChatSocketListener.Stop();
+            listenThread.Abort();
+        }
+
+        private void ListenForConnection()
+        {
+            this.dccChatSocketListener.Start();
+            bool keepListening = true;
+            
+            while (keepListening)
+            {
+                dccChatSocket = dccChatSocketListener.AcceptTcpClient();
+                dccChatSocketListener.Stop();
+                
+                string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
+                msg = msg.Replace("$nick", _tabCaption);
+                textWindow.AppendText(msg, 1);
+
+                dccThread = new Thread(new ThreadStart(GetDCCChatData));
+                dccThread.Start();
+                keepListening = false;
+            }
+        }
+
+        internal void StartDCCChat(string nick, string ip, string port)
+        {
+            dccChatSocket = new TcpClient();
+            IPAddress ipAddr = LongToIPAddress(ip);
+            IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(port));
+            try
+            {
+                dccChatSocket.Connect(ep);
+                if (dccChatSocket.Connected)
+                {
+                    string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
+                    msg = msg.Replace("$nick", nick).Replace("$ip", ip).Replace("$port", port);
+                    textWindow.AppendText(msg, 1);
+
+                    dccThread = new Thread(new ThreadStart(GetDCCChatData));
+                    dccThread.Start();
+                }
+            }
+            catch (SocketException se)
+            {
+                textWindow.AppendText(se.Message, 4);
+            }
+        }
+
+        internal void SendDCCChatData(string message)
+        {
+            if (dccChatSocket != null)
+            {
+                if (dccChatSocket.Connected)
+                {
+                    NetworkStream ns = dccChatSocket.GetStream();
+                    ASCIIEncoding encoder = new ASCIIEncoding();
+                    byte[] buffer = encoder.GetBytes(message + "\n");
+                    ns.Write(buffer, 0, buffer.Length);
+                    ns.Flush();
+                }
+            }
+        }
+
+        private void GetDCCChatData()
+        {
+            while (true)
+            {
+                int buffSize = 0;
+                byte[] buffer = new byte[8192];
+                NetworkStream ns = dccChatSocket.GetStream();
+                buffSize = dccChatSocket.ReceiveBufferSize;
+                int bytesRead = ns.Read(buffer, 0, buffSize);
+                Decoder d = Encoding.GetEncoding(this.connection.ServerSetting.Encoding).GetDecoder();
+                char[] chars = new char[buffSize];
+                int charLen = d.GetChars(buffer, 0, buffSize, chars, 0);
+                System.String strData = new System.String(chars);
+                if (bytesRead == 0)
+                {
+                    //we have a disconnection
+                    break;
+                }
+                AddDccMessage(strData);
+            }
+            
+            string msg = FormMain.Instance.GetMessageFormat("DCC Chat Disconnect");
+            msg = msg.Replace("$nick", _tabCaption);
+            textWindow.AppendText(msg, 1);
+            dccChatSocket.Close();
+            dccThread.Abort();
+        }
+
+        private void AddDccMessage(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                AddDccChatDelegate a = new AddDccChatDelegate(AddDccMessage);
+                this.Invoke(a, new object[] { message });
+            }
+            else
+            {
+                string[] lines = message.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in lines)
+                {
+                    if (line[0] != (char)0)
+                    {
+                        string msg = FormMain.Instance.GetMessageFormat("DCC Chat Message");
+                        msg = msg.Replace("$nick", _tabCaption);
+                        msg = msg.Replace("$message", line);
+                        textWindow.AppendText(msg, 1);
+                    }
+                }
+            }
+        }
+
+        private string IPAddressToLong(IPAddress ip)
+        {
+            //ip.Address.Equals(
+            return NetworkUnsignedLong(ip.Address).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private IPAddress LongToIPAddress(string longIP)
+        {
+            byte[] quads = BitConverter.GetBytes(long.Parse(longIP, System.Globalization.CultureInfo.InvariantCulture));
+            return IPAddress.Parse(quads[3] + "." + quads[2] + "." + quads[1] + "." + quads[0]);
+        }
+
+        private long NetworkUnsignedLong(long hostOrderLong)
+        {
+            long networkLong = IPAddress.HostToNetworkOrder(hostOrderLong);
+            //Network order has the octets in reverse order starting with byte 7
+            //To get the correct string simply shift them down 4 bytes
+            //and zero out the first 4 bytes.
+            return (networkLong >> 32) & 0x00000000ffffffff;
+        }
+
         /// <summary>
         /// Return the Connection for the Current Selected in the Console Tab Control
         /// </summary>
@@ -423,27 +615,29 @@ namespace IceChat
                 windowType = value;
                 if (windowType == WindowType.Console)
                 {
-                    //this.ImageIndex = 0;
+                    //nada
                 }
                 else if (windowType == WindowType.Channel)
                 {
                     panelTopic.Visible = true;
-                    //this.ImageIndex = 1;
                     textWindow.IRCBackColor = FormMain.Instance.IceChatColors.ChannelBackColor;
                     textTopic.IRCBackColor = FormMain.Instance.IceChatColors.ChannelBackColor;
                 }
                 else if (windowType == WindowType.Query)
                 {
-                    //this.ImageIndex = 2;
                     textWindow.IRCBackColor = FormMain.Instance.IceChatColors.QueryBackColor;
                 }
                 else if (windowType == WindowType.ChannelList)
                 {
                     //nada
                 }
+                else if (windowType == WindowType.DCCChat)
+                {
+                    textWindow.IRCBackColor = FormMain.Instance.IceChatColors.QueryBackColor;
+                }
                 else if (windowType == WindowType.Debug)
                 {
-                    //this.ImageIndex = 4;
+                    //nada
                 }
 
             }
@@ -630,6 +824,8 @@ namespace IceChat
 
         private void OnTabConsoleSelectedIndexChanged(object sender, EventArgs e)
         {
+            ((TextWindow)(consoleTab.SelectedTab.Controls[0])).resetUnreadMarker(); 
+            
             if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0 && !DisableConsoleSelectChangedEvent)
             {
                 FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;

@@ -138,6 +138,13 @@ namespace IceChat
             checkWhoisNewQuery.Checked = iceChatOptions.WhoisNewQuery;
             checkShowUnreadLine.Checked = iceChatOptions.ShowUnreadLine;
 
+            //dcc settings
+            checkAutoDCCChat.Checked = iceChatOptions.DCCChatAutoAccept;
+            checkIgnoreDCCChat.Checked = iceChatOptions.DCCChatIgnore;
+            textDCCChatTimeout.Text = iceChatOptions.DCCChatTimeOut.ToString();
+            textDCCPortLow.Text = iceChatOptions.DCCPortLower.ToString();
+            textDCCPortHigh.Text = iceChatOptions.DCCPortUpper.ToString();
+
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
@@ -236,7 +243,14 @@ namespace IceChat
             
             //icechatFonts.FontSettings[6].FontName = textChannelBarFont.Text;
             //icechatFonts.FontSettings[6].FontSize = float.Parse(textChannelBarFontSize.Text);
-            
+
+            //dcc settings
+            iceChatOptions.DCCChatAutoAccept = checkAutoDCCChat.Checked;
+            iceChatOptions.DCCChatIgnore = checkIgnoreDCCChat.Checked;
+            iceChatOptions.DCCChatTimeOut = Convert.ToInt32(textDCCChatTimeout.Text);
+            iceChatOptions.DCCPortLower = Convert.ToInt32(textDCCPortLow.Text);
+            iceChatOptions.DCCPortUpper = Convert.ToInt32(textDCCPortHigh.Text);
+
             //save the emoticons
             iceChatEmoticons.listEmoticons.Clear();
             //re-add them all back in

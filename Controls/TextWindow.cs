@@ -327,7 +327,7 @@ namespace IceChat
 
         private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            unreadReset = true;
+            resetUnreadMarker();
 
             //get the current character the mouse is over. 
             startHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
@@ -632,6 +632,11 @@ namespace IceChat
             }
         }
 
+        public void resetUnreadMarker()
+        {
+            unreadReset = true;
+        }
+        
         /*
         internal void SetLogFile(string logFolder)
         {

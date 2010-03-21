@@ -113,10 +113,7 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-            {
-                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.ChannelList)
-                    FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
-            }
+                FormMain.Instance.TabMain.GetTabPage("Console").CurrentConsoleWindow().ScrollWindowPage(scrollUp);
 
         }
 
@@ -257,6 +254,11 @@ namespace IceChat
                 this.SelectionStart = this.Text.Length;
 
             }
+            else if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Query || FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.DCCChat)
+            {
+                this.Text += FormMain.Instance.CurrentWindow.TabCaption;
+                this.SelectionStart = this.Text.Length;
+            }
         }
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -296,15 +298,24 @@ namespace IceChat
                 }
                 else if (e.KeyCode == Keys.Tab)
                 {
-                    System.Diagnostics.Debug.WriteLine("ctrl tab not yet handled");
+                    int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);                    
+                    FormMain.Instance.ServerTree.Invalidate();
+                    return;
                 }
                 else if (e.KeyCode == Keys.PageUp)
                 {
-                    System.Diagnostics.Debug.WriteLine("ctrl pageup not yet handled");
+                    int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
+                    FormMain.Instance.ServerTree.Invalidate();
+                    return;
                 }
                 else if (e.KeyCode == Keys.PageDown)
                 {
-                    System.Diagnostics.Debug.WriteLine("ctrl pagedown not yet handled");
+                    int prevIndex = FormMain.Instance.TabMain.SelectedIndex == 0 ? FormMain.Instance.TabMain.TabCount - 1 : FormMain.Instance.TabMain.SelectedIndex - 1;
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex]);
+                    FormMain.Instance.ServerTree.Invalidate();
+                    return;
                 }
 
 			}

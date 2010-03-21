@@ -48,9 +48,8 @@ namespace IceChat
         private ArrayList commandQueue;
         private ArrayList ircTimers;
 
-
-        private const int bytesperlong = 4; // 32 / 8
-        private const int bitsperbyte = 8;
+        //private const int bytesperlong = 4; // 32 / 8
+        //private const int bitsperbyte = 8;
 
         public IRCConnection(ServerSetting ss)
         {
@@ -153,8 +152,8 @@ namespace IceChat
         {
             Socket client = (Socket)ar.AsyncState;
             client.EndDisconnect(ar);
-            
-            string msg = GetMessageFormat("Server Disconnect");
+
+            string msg = FormMain.Instance.GetMessageFormat("Server Disconnect");
             msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
             
             foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
@@ -293,7 +292,7 @@ namespace IceChat
                 ForceDisconnect();
             }
         }
-        
+        /*
         private bool SetKeepAlive(Socket sock, ulong time, ulong interval)
         {
             try
@@ -332,6 +331,7 @@ namespace IceChat
             }
             return true;
         }
+        */
         /// <summary>
         /// Function for sending RAW IRC Data to the Server Connection
         /// </summary>
@@ -505,7 +505,7 @@ namespace IceChat
                         
                         if (ServerMessage != null)
                         {
-                            string msg = GetMessageFormat("Server Connect");
+                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
                             msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
                             serverSetting.ServerIP = address.ToString();
                             ServerMessage(this, msg);
@@ -540,7 +540,7 @@ namespace IceChat
                 //reconnect
                 if (ServerMessage != null)
                 {
-                    string msg = GetMessageFormat("Server Reconnect");
+                    string msg = FormMain.Instance.GetMessageFormat("Server Reconnect");
                     msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
                     ServerMessage(this, msg);
                 }
@@ -565,20 +565,6 @@ namespace IceChat
         
         #endregion
 
-        /// <summary>
-        /// Get the proper message formatting for the particular message type
-        /// </summary>
-        private string GetMessageFormat(string MessageName)
-        {
-            foreach (ServerMessageFormatItem msg in FormMain.Instance.MessageFormats.MessageSettings)
-            {
-                if (msg.MessageName.ToLower() == MessageName.ToLower())
-                {
-                    return msg.FormattedMessage;
-                }
-            }
-            return null;
-        }
 
         #region Timer Events
 

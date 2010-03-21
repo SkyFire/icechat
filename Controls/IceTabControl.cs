@@ -43,9 +43,9 @@ namespace IceChat
         private Dictionary<int, Rectangle> m_TabSizeRects = new Dictionary<int, Rectangle>();
         private Dictionary<int, Rectangle> m_TabTextRects = new Dictionary<int, Rectangle>();
 
-        //MyTabPages(inherited from Panel) of this TabControl
+        //IceTabPage(inherited from Panel) of this TabControl
         private List<IceTabPage> m_lTabPages = new List<IceTabPage>();
-
+        
         //tabs' height
         private int m_TabRowHeight = 30;
         
@@ -153,6 +153,9 @@ namespace IceChat
 
         internal void SelectTab(IceTabPage page)
         {
+            if (CurrentTab!=null && CurrentTab.TextWindow!=null)
+                CurrentTab.TextWindow.resetUnreadMarker();
+
             for (int i = 0; i < m_lTabPages.Count; i++)
             {
                 if (m_lTabPages[i] == page)
@@ -641,6 +644,7 @@ namespace IceChat
                     g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, m_fontTab, br, tabTextArea, stringFormat);
                 }
 
+                g.DrawString((nIndex + 1).ToString(), new Font("Arial", 8.0F), br, recBounds);
             }            
             catch (Exception e) 
             { 
@@ -715,7 +719,7 @@ namespace IceChat
                     recTextArea.Width = textWidth + 1;
                     recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
 
-                    if (totalWidth>0 && (totalWidth + recBounds.Width) > (this.Width - 20))
+                    if (totalWidth > 0 && ((totalWidth + recBounds.Width) > (this.Width - 30)))
                     {
                         m_TotalTabRows++;
                         totalWidth = 0;
@@ -899,13 +903,15 @@ namespace IceChat
             FormMain.Instance.FocusInputBox();
         }
 
-        private void SwapTabPages(IceTabPage tp1, IceTabPage tp2)
+        private void SwapTabPages(IceTabPage drag, IceTabPage hover)
         {
-            int Index1 = this.TabPages.IndexOf(tp1);
-            int Index2 = this.TabPages.IndexOf(tp2);
-
-            this.TabPages[Index1] = tp2;
-            this.TabPages[Index2] = tp1;
+            int Index1 = this.TabPages.IndexOf(drag);
+            int Index2 = this.TabPages.IndexOf(hover);
+            
+            if (Index1 == Index2) return;
+                       
+            this.TabPages.Remove(drag);
+            this.TabPages.Insert(Index2, drag);
         }
        
         private IceTabPage HoverTab(Point pClickLocation)

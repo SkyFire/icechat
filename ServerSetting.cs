@@ -100,6 +100,10 @@ namespace IceChat
         public string Password
         { get; set; }
 
+        [XmlElement("NickservPassword")]
+        public string NickservPassword
+        { get; set; }
+
         [XmlElement("AltNickName")]
         public string AltNickName
         { get; set; }
@@ -246,7 +250,9 @@ namespace IceChat
         public DateTime ConnectedTime
         { get; set; }
 
-    
+        [XmlIgnore()]
+        public System.Net.IPAddress LocalIP
+        { get; set; }
     }
     
     public class InternalAddressList

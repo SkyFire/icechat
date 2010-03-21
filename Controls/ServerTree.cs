@@ -248,7 +248,7 @@ namespace IceChat
 
                 selectedServerID = 0;
 
-                System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
+                //System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
 
                 Invalidate();
                 object findNode = FindNodeValue(selectedNodeIndex);
@@ -295,19 +295,19 @@ namespace IceChat
 
         internal void SelectTab(object selectedNode, bool RefreshMainTab)
         {
-            System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
+            //System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
             
             if (selectedNode.GetType() == typeof(ServerSetting))
             {
-                System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
+                //System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
                 
                 //this is a console tab
                 int node = FindServerNodeMatch(selectedNode);
-                System.Diagnostics.Debug.WriteLine("find node:" + node);
+                //System.Diagnostics.Debug.WriteLine("find node:" + node);
 
                 SelectNodeByIndex(node, RefreshMainTab);
                 
-                System.Diagnostics.Debug.WriteLine("select tab server setting 2");
+                //System.Diagnostics.Debug.WriteLine("select tab server setting 2");
             }
             else if (selectedNode.GetType() == typeof(IceTabPage))
             {
@@ -505,6 +505,8 @@ namespace IceChat
                                     {
                                         caption = caption.Replace("$chan", ((IceTabPage)findNode).TabCaption);
                                         command = command.Replace("$chan", ((IceTabPage)findNode).TabCaption);
+                                        caption = caption.Replace("$1", ((IceTabPage)findNode).TabCaption);
+                                        command = command.Replace("$1", ((IceTabPage)findNode).TabCaption);
                                     }
                                 }
 
@@ -514,6 +516,8 @@ namespace IceChat
                                     {
                                         caption = caption.Replace("$nick", ((IceTabPage)findNode).TabCaption);
                                         command = command.Replace("$nick", ((IceTabPage)findNode).TabCaption);
+                                        caption = caption.Replace("$1", ((IceTabPage)findNode).TabCaption);
+                                        command = command.Replace("$1", ((IceTabPage)findNode).TabCaption);
                                     }
                                 }
 
@@ -650,7 +654,7 @@ namespace IceChat
                     if (value.GetType() == typeof(IceTabPage))
                     {
                         x = 16;
-                        if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query)
+                        if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
                         {
                             if (nodeCount == selectedNodeIndex)
                                 selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
@@ -764,6 +768,29 @@ namespace IceChat
                             }
                         }
                     }
+
+                    //add dcc chat windows
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.Connection != null)
+                        {
+                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.DCCChat)
+                            {
+                                //get the color
+                                int colorQ = 0;
+                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                else
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                nodeCount++;
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":5:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                            }
+                        }
+                    }
+
                 }
             }
             catch (Exception e)

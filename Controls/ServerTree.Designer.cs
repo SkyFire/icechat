@@ -47,6 +47,7 @@
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forceDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemBlank = new System.Windows.Forms.ToolStripSeparator();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openLogFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +56,6 @@
             this.closeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silenceUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemBlank = new System.Windows.Forms.ToolStripSeparator();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
@@ -152,6 +152,7 @@
             this.imageListServers.Images.SetKeyName(2, "refresh.png");
             this.imageListServers.Images.SetKeyName(3, "window.png");
             this.imageListServers.Images.SetKeyName(4, "query.png");
+            this.imageListServers.Images.SetKeyName(5, "query.png");
             // 
             // contextMenuChannel
             // 
@@ -240,6 +241,11 @@
             this.forceDisconnectToolStripMenuItem.Text = "Force Disconnect";
             this.forceDisconnectToolStripMenuItem.Click += new System.EventHandler(this.forceDisconnectToolStripMenuItem_Click);
             // 
+            // toolStripMenuItemBlank
+            // 
+            this.toolStripMenuItemBlank.Name = "toolStripMenuItemBlank";
+            this.toolStripMenuItemBlank.Size = new System.Drawing.Size(162, 6);
+            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Image = global::IceChat.Properties.Resources.quickconnect;
@@ -304,11 +310,6 @@
             this.silenceUserToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.silenceUserToolStripMenuItem.Text = "Silence User";
             this.silenceUserToolStripMenuItem.Click += new System.EventHandler(this.silenceUserToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItemBlank
-            // 
-            this.toolStripMenuItemBlank.Name = "toolStripMenuItemBlank";
-            this.toolStripMenuItemBlank.Size = new System.Drawing.Size(162, 6);
             // 
             // ServerTree
             // 

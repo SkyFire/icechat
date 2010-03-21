@@ -255,6 +255,9 @@ namespace IceChat
 
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
+        private int _dccChatTimeOut = 60;
+        private int _dccPortLower = 5000;
+        private int _dccPortUpper = 10000;
 
         private string _language = "English";
 
@@ -410,6 +413,36 @@ namespace IceChat
             get { return this._language; }
             set { this._language = value; }
         }
+
+        [XmlElement("DCCChatAutoAccept")]
+        public bool DCCChatAutoAccept
+        { get; set; }
+
+        [XmlElement("DCCChatIgnore")]
+        public bool DCCChatIgnore
+        { get; set; }
+
+        [XmlElement("DCCChatTimeOut")]
+        public int DCCChatTimeOut
+        {
+            get { return this._dccChatTimeOut; }
+            set { this._dccChatTimeOut = value; }
+        }
+
+        [XmlElement("DCCPortLower")]
+        public int DCCPortLower
+        {
+            get { return this._dccPortLower; }
+            set { this._dccPortLower = value; }
+        }
+
+        [XmlElement("DCCPortUpper")]
+        public int DCCPortUpper
+        {
+            get { return this._dccPortUpper; }
+            set { this._dccPortUpper = value; }
+        }
+
     }
     
     [XmlRoot("IceChatMessageFormat")]

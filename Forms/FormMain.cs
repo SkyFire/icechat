@@ -71,7 +71,7 @@ namespace IceChat
         private IceChatEmoticon iceChatEmoticons;
         private IceChatLanguage iceChatLanguage;
 
-        private System.Threading.Mutex mutex;
+        //private System.Threading.Mutex mutex;
 
         private ArrayList loadedPlugins;
 
@@ -193,7 +193,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 13 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 21 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -747,6 +747,7 @@ namespace IceChat
                 }
             }
         }
+
         /// <summary>
         /// Gets a Tab Window
         /// </summary>
@@ -871,7 +872,8 @@ namespace IceChat
             c.GenericChannelMessage += new GenericChannelMessageDelegate(OnGenericChannelMessage);
             c.ServerNotice += new ServerNoticeDelegate(OnServerNotice);
             c.ChannelList += new ChannelListDelegate(OnChannelList);
-
+            c.DCCChat += new DCCChatDelegate(OnDCCChat);
+            c.DCCFile += new DCCFileDelegate(OnDCCFile);
             c.UserHostReply += new UserHostReplyDelegate(OnUserHostReply);
             c.IALUserData += new IALUserDataDelegate(OnIALUserData);
             c.IALUserChange += new IALUserChangeDelegate(OnIALUserChange);
@@ -950,7 +952,7 @@ namespace IceChat
                 
                 //find the last window index for this connection
                 int index = 0;
-                if (page.WindowStyle == IceTabPage.WindowType.Channel || page.WindowStyle == IceTabPage.WindowType.Query)
+                if (page.WindowStyle == IceTabPage.WindowType.Channel || page.WindowStyle == IceTabPage.WindowType.Query || page.WindowStyle == IceTabPage.WindowType.DCCChat)
                 {
                     for (int i = 1; i < mainTabControl.TabPages.Count; i++)
                     {
@@ -1021,7 +1023,7 @@ namespace IceChat
             mainTabControl.Invalidate();
         }
 
-        private string GetMessageFormat(string MessageName)
+        internal string GetMessageFormat(string MessageName)
         {
             foreach (ServerMessageFormatItem msg in iceChatMessages.MessageSettings)
             {
@@ -1041,10 +1043,10 @@ namespace IceChat
         /// <param name="e"></param>
         private void TabSelectedIndexChanged(object sender, TabEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("tab select:");
+            //System.Diagnostics.Debug.WriteLine("tab select:");
             if (mainTabControl.CurrentTab.WindowStyle != IceTabPage.WindowType.Console)
             {
-                System.Diagnostics.Debug.WriteLine("TabSelected:" + mainTabControl.CurrentTab.TabCaption);
+                //System.Diagnostics.Debug.WriteLine("TabSelected:" + mainTabControl.CurrentTab.TabCaption);
                 if (mainTabControl.CurrentTab != null)
                 {
                     IceTabPage t = mainTabControl.CurrentTab;
@@ -1055,7 +1057,9 @@ namespace IceChat
                         StatusText(t.Connection.ServerSetting.NickName + " in channel " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}");
                     else if (CurrentWindowType == IceTabPage.WindowType.Query)
                         StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
-
+                    else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
+                        StatusText(t.Connection.ServerSetting.NickName + " in DCC chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
+                    
                     CurrentWindow.LastMessageType = ServerMessageType.Default;
                     t = null;
                     
@@ -1082,8 +1086,6 @@ namespace IceChat
                 else
                 {
                     inputPanel.CurrentConnection = null;
-                    //if(!e.IsHandled)
-                    //   serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
                     StatusText("Welcome to IceChat 2009");
                 }
             }
@@ -1120,6 +1122,10 @@ namespace IceChat
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
             else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.ChannelList)
+            {
+                mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
+            }
+            else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.DCCChat)
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
@@ -1374,6 +1380,27 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/close":
+                            if (connection != null && data.Length > 0)
+                            {
+                                //check if it is a query window
+                                IceTabPage q = GetWindow(connection, data, IceTabPage.WindowType.Query);
+                                if (q != null)
+                                {
+                                    RemoveWindow(connection, q.TabCaption);
+                                }
+                                else if (CurrentWindowType == IceTabPage.WindowType.Query)
+                                {
+                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                }
+                            }
+                            else if (connection != null)
+                            {
+                                //check if current window is channel
+                                if (CurrentWindowType == IceTabPage.WindowType.Query)
+                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                            }
+                            break;
                         case "/ctcp":
                             if (connection != null && data.IndexOf(' ') > 0)
                             {
@@ -1388,6 +1415,52 @@ namespace IceChat
                                 CurrentWindowMessage(connection, msg, 7, true);
                                 SendData(connection, "PRIVMSG " + nick + " " + ctcp.ToUpper() + "");
                             }
+                            break;
+                        case "/dcc":
+                            if (connection != null && data.IndexOf(' ') > 0)
+                            {
+                                //get the type of dcc
+                                string dccType = data.Substring(0, data.IndexOf(' ')).ToUpper();
+                                //get who it is being sent to
+                                string nick = data.Substring(data.IndexOf(' ') + 1);
+
+                                switch (dccType)
+                                {
+                                    case "CHAT":
+                                        //start a dcc chat
+                                        if (nick.IndexOf(' ') == -1)    //make sure no space in the nick name
+                                        {
+                                            //check if we already have a dcc chat open with this person
+                                            if (!mainTabControl.WindowExists(connection, nick, IceTabPage.WindowType.DCCChat))
+                                            {
+                                                //create a new window
+                                                AddWindow(connection, nick, IceTabPage.WindowType.DCCChat);
+                                                IceTabPage t = GetWindow(connection, nick, IceTabPage.WindowType.DCCChat);
+                                                if (t != null)
+                                                {
+                                                    t.RequestDCCChat();
+                                                    string msg = GetMessageFormat("DCC Chat Outgoing");
+                                                    msg = msg.Replace("$nick", nick);
+                                                    t.TextWindow.AppendText(msg, 1);
+                                                    t.TextWindow.ScrollToBottom();
+                                                }
+                                            }
+                                            else
+                                                mainTabControl.SelectTab(GetWindow(connection, nick, IceTabPage.WindowType.DCCChat));
+
+                                        }
+                                        break;
+                                    case "SEND":
+                                        if (nick.IndexOf(' ') > 0)
+                                        {
+                                            //more to it, maybe a file to send
+
+                                        }
+                                        break;
+
+                                }
+
+                            }                            
                             break;
                         case "/describe":   //me command for a specific channel
                             if (connection != null && data.IndexOf(' ') > 0)
@@ -1577,14 +1650,7 @@ namespace IceChat
 
                                     msg = color + "*" + nick + "* " + data.Substring(data.IndexOf(' ') + 1); ;
                                 }
-
-                                if (CurrentWindowType == IceTabPage.WindowType.Channel || CurrentWindowType == IceTabPage.WindowType.Query)
-                                    CurrentWindow.TextWindow.AppendText(msg, 1);
-                                else if (CurrentWindowType == IceTabPage.WindowType.Console)
-                                {
-                                    mainTabControl.GetTabPage("Console").CurrentConsoleWindow().AppendText(msg, 1);
-                                }
-
+                                CurrentWindowMessage(connection, msg, 1, true);
                             }
                             break;
                         case "/nick":
@@ -1669,6 +1735,15 @@ namespace IceChat
                         case "/run":
                             if (data.Length > 0)
                                 System.Diagnostics.Process.Start(data);
+                            break;
+                        case "/query":
+                            if (connection != null && data.Length > 0)
+                            {
+                                if (!mainTabControl.WindowExists(connection, data, IceTabPage.WindowType.Query))
+                                    AddWindow(connection, data, IceTabPage.WindowType.Query);
+                                
+                                mainTabControl.SelectTab(GetWindow(connection, data, IceTabPage.WindowType.Query));
+                            }
                             break;
                         case "/quit":
                             if (connection != null)
@@ -1974,6 +2049,15 @@ namespace IceChat
                                 CurrentWindow.LastMessageType = ServerMessageType.Message;
 
                             }
+                            else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
+                            {
+                                CurrentWindow.SendDCCChatData(data);
+
+                                string msg = GetMessageFormat("Self DCC Chat Message");
+                                msg = msg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName).Replace("$message", data);
+
+                                CurrentWindow.TextWindow.AppendText(msg, 1);
+                            }
                             else if (CurrentWindowType == IceTabPage.WindowType.Console)
                             {
                                 WindowMessage(connection, "Console", data, 4, true);
@@ -2114,7 +2198,13 @@ namespace IceChat
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
-
+                    case "$localip":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.LocalIP.ToString());
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
+                    
                     //identifiers that do not require a connection                                
                     case "$sp":
                         data = data.Replace(m.Value, Environment.OSVersion.ServicePack.ToString());
@@ -2156,6 +2246,9 @@ namespace IceChat
                         break;
                     case "$tickcount":
                         data = data.Replace(m.Value, System.Environment.TickCount.ToString());
+                        break;
+                    case "$totalwindows":
+                        data = data.Replace(m.Value, mainTabControl.TabCount.ToString());
                         break;
                     case "$uptime":
                         System.Diagnostics.PerformanceCounter pc = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
@@ -2747,7 +2840,7 @@ namespace IceChat
                 args = args.Substring(0, args.Length - 4);
                 
                 //System.Diagnostics.Debug.WriteLine(args);
-                if (args.ToUpper().Substring(0,7) != "IPLUGIN")
+                if (!args.ToUpper().StartsWith("IPLUGIN"))
                 {
                     Type ObjType = null;
                     try

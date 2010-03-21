@@ -46,12 +46,12 @@ namespace IceChat
         private void LoadDefaultMessageSettings()
         {
             IceChatMessageFormat oldMessage = new IceChatMessageFormat();
-            oldMessage.MessageSettings = new ServerMessageFormatItem[44];
+            oldMessage.MessageSettings = new ServerMessageFormatItem[48];
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
 
-            iceChatMessages.MessageSettings = new ServerMessageFormatItem[44];
+            iceChatMessages.MessageSettings = new ServerMessageFormatItem[48];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
             {
@@ -230,16 +230,31 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[43] = oldMessage.MessageSettings[43];
 
+            if (oldMessage.MessageSettings[44] == null || oldMessage.MessageSettings[44].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[44] = NewMessageFormat("DCC Chat Connect", "&#x3;1* DCC Chat Connection Established with $nick");
+            else
+                iceChatMessages.MessageSettings[44] = oldMessage.MessageSettings[44];
+            
+            if (oldMessage.MessageSettings[45] == null || oldMessage.MessageSettings[45].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[45] = NewMessageFormat("DCC Chat Disconnect", "&#x3;1* DCC Chat Disconnected from $nick");
+            else
+                iceChatMessages.MessageSettings[45] = oldMessage.MessageSettings[45];
+
             //still do customize these messages
             iceChatMessages.MessageSettings[4] = NewMessageFormat("Ctcp Reply", "&#x3;12[$nick $ctcp Reply] : $reply");
             iceChatMessages.MessageSettings[5] = NewMessageFormat("Ctcp Send", "&#x3;10--> [$nick] $ctcp");
             iceChatMessages.MessageSettings[6] = NewMessageFormat("Ctcp Request", "&#x3;7[$nick] $ctcp");
+            
             iceChatMessages.MessageSettings[29] = NewMessageFormat("DCC Chat Action", "&#x3;5* $nick $message");
             iceChatMessages.MessageSettings[30] = NewMessageFormat("Self DCC Chat Action", "&#x3;5* $nick $message");
             iceChatMessages.MessageSettings[31] = NewMessageFormat("DCC Chat Message", "&#x3;1<$nick> $message");
             iceChatMessages.MessageSettings[32] = NewMessageFormat("Self DCC Chat Message", "&#x3;4<$nick> $message");
+            
             iceChatMessages.MessageSettings[33] = NewMessageFormat("DCC Chat Request", "&#x3;4* $nick ($host) is requesting a DCC Chat");
             iceChatMessages.MessageSettings[34] = NewMessageFormat("DCC File Send", "&#x3;4* $nick ($host) is trying to send you a file ($file) [$filesize bytes]");
+            
+            iceChatMessages.MessageSettings[46] = NewMessageFormat("DCC Chat Outgoing", "&#x3;1* DCC Chat Requested with $nick");
+            iceChatMessages.MessageSettings[47] = NewMessageFormat("DCC Chat Timeout", "&#x3;1* DCC Chat with $nick timed out");
 
             SaveMessageFormat();
 
@@ -349,7 +364,7 @@ namespace IceChat
                 iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatMessages.MessageSettings.Length != 44)
+                if (iceChatMessages.MessageSettings.Length != 48)
                     LoadDefaultMessageSettings();
             }
             else

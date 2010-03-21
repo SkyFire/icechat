@@ -609,6 +609,14 @@ namespace IceChat
             AddMsgIdent("Self DCC Chat Action", "$host - your hostname");
             AddMsgIdent("Self DCC Chat Action", "$message - the action performed");
 
+            AddMsgIdent("DCC Chat Request", "$nick - nickname who performed request");
+            AddMsgIdent("DCC Chat Request", "$host- nickname host");
+
+            AddMsgIdent("DCC Chat Outgoing", "$nick - who you want to chat with");
+            AddMsgIdent("DCC Chat Connect", "$nick - who you are chatting with");
+            AddMsgIdent("DCC Chat Disconnect", "$nick - who you are chatting with");
+            AddMsgIdent("DCC Chat Timeout", "$nick - who you want to chat with");
+
         }
 
         #endregion
@@ -743,6 +751,8 @@ namespace IceChat
                 textFormattedBasic.IRCBackColor = iceChatColors.ChannelBackColor;
             else if (type == "Private")
                 textFormattedBasic.IRCBackColor = iceChatColors.QueryBackColor;
+            else if (type == "DCC")
+                textFormattedBasic.IRCBackColor = iceChatColors.QueryBackColor;
             else if (type == "Self")
             {
                 type = e.Node.Text.Split(' ').GetValue(1).ToString();
@@ -796,6 +806,8 @@ namespace IceChat
             else if (type == "Channel")
                 textFormattedText.IRCBackColor = iceChatColors.ChannelBackColor;
             else if (type == "Private")
+                textFormattedText.IRCBackColor = iceChatColors.QueryBackColor;
+            else if (type == "DCC")
                 textFormattedText.IRCBackColor = iceChatColors.QueryBackColor;
             else if (type == "Self")
             {

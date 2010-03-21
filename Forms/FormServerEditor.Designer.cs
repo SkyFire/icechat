@@ -35,28 +35,31 @@
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
             this.textAwayNick = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
+            this.labelAwayNickName = new System.Windows.Forms.Label();
             this.textAltNickName = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.labelAltNickName = new System.Windows.Forms.Label();
             this.textDisplayName = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labelDisplayName = new System.Windows.Forms.Label();
             this.textQuitMessage = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.labelQuitMessage = new System.Windows.Forms.Label();
+            this.labelFullName = new System.Windows.Forms.Label();
             this.textFullName = new System.Windows.Forms.TextBox();
             this.textIdentName = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.labelIdentName = new System.Windows.Forms.Label();
             this.textServerPort = new System.Windows.Forms.TextBox();
             this.textServername = new System.Windows.Forms.TextBox();
             this.textNickName = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelServerPort = new System.Windows.Forms.Label();
+            this.labelServerName = new System.Windows.Forms.Label();
+            this.labelNickName = new System.Windows.Forms.Label();
             this.tabPageExtra = new System.Windows.Forms.TabPage();
-            this.label12 = new System.Windows.Forms.Label();
+            this.checkAutoStart = new System.Windows.Forms.CheckBox();
+            this.labelServerPassword = new System.Windows.Forms.Label();
             this.textServerPassword = new System.Windows.Forms.TextBox();
+            this.textNickservPassword = new System.Windows.Forms.TextBox();
+            this.labelNickservPassword = new System.Windows.Forms.Label();
             this.checkDisableCTCP = new System.Windows.Forms.CheckBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.labelEncoding = new System.Windows.Forms.Label();
             this.comboEncoding = new System.Windows.Forms.ComboBox();
             this.checkRejoinChannel = new System.Windows.Forms.CheckBox();
             this.checkPingPong = new System.Windows.Forms.CheckBox();
@@ -64,31 +67,30 @@
             this.checkModeI = new System.Windows.Forms.CheckBox();
             this.tabPageAutoJoin = new System.Windows.Forms.TabPage();
             this.checkAutoJoinDelay = new System.Windows.Forms.CheckBox();
-            this.buttonEdit = new System.Windows.Forms.Button();
+            this.buttonEditAutoJoin = new System.Windows.Forms.Button();
             this.listChannel = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.checkAutoJoin = new System.Windows.Forms.CheckBox();
-            this.buttonRemove = new System.Windows.Forms.Button();
-            this.buttonAdd = new System.Windows.Forms.Button();
+            this.buttonRemoveAutoJoin = new System.Windows.Forms.Button();
+            this.buttonAddAutoJoin = new System.Windows.Forms.Button();
             this.textChannel = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labelChannel = new System.Windows.Forms.Label();
             this.tabPageAutoPerform = new System.Windows.Forms.TabPage();
             this.textAutoPerform = new System.Windows.Forms.TextBox();
             this.checkAutoPerform = new System.Windows.Forms.CheckBox();
             this.tabPageIgnore = new System.Windows.Forms.TabPage();
-            this.labelNote = new System.Windows.Forms.Label();
+            this.labelIgnoreNote = new System.Windows.Forms.Label();
             this.listIgnore = new System.Windows.Forms.ListView();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.checkIgnore = new System.Windows.Forms.CheckBox();
             this.textIgnore = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
+            this.labelNickHost = new System.Windows.Forms.Label();
             this.buttonEditIgnore = new System.Windows.Forms.Button();
             this.buttonRemoveIgnore = new System.Windows.Forms.Button();
             this.buttonAddIgnore = new System.Windows.Forms.Button();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.checkAutoStart = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -147,23 +149,23 @@
             // 
             this.tabPageMain.BackColor = System.Drawing.Color.Transparent;
             this.tabPageMain.Controls.Add(this.textAwayNick);
-            this.tabPageMain.Controls.Add(this.label11);
+            this.tabPageMain.Controls.Add(this.labelAwayNickName);
             this.tabPageMain.Controls.Add(this.textAltNickName);
-            this.tabPageMain.Controls.Add(this.label9);
+            this.tabPageMain.Controls.Add(this.labelAltNickName);
             this.tabPageMain.Controls.Add(this.textDisplayName);
-            this.tabPageMain.Controls.Add(this.label5);
+            this.tabPageMain.Controls.Add(this.labelDisplayName);
             this.tabPageMain.Controls.Add(this.textQuitMessage);
-            this.tabPageMain.Controls.Add(this.label8);
-            this.tabPageMain.Controls.Add(this.label7);
+            this.tabPageMain.Controls.Add(this.labelQuitMessage);
+            this.tabPageMain.Controls.Add(this.labelFullName);
             this.tabPageMain.Controls.Add(this.textFullName);
             this.tabPageMain.Controls.Add(this.textIdentName);
-            this.tabPageMain.Controls.Add(this.label6);
+            this.tabPageMain.Controls.Add(this.labelIdentName);
             this.tabPageMain.Controls.Add(this.textServerPort);
             this.tabPageMain.Controls.Add(this.textServername);
             this.tabPageMain.Controls.Add(this.textNickName);
-            this.tabPageMain.Controls.Add(this.label3);
-            this.tabPageMain.Controls.Add(this.label2);
-            this.tabPageMain.Controls.Add(this.label1);
+            this.tabPageMain.Controls.Add(this.labelServerPort);
+            this.tabPageMain.Controls.Add(this.labelServerName);
+            this.tabPageMain.Controls.Add(this.labelNickName);
             this.tabPageMain.ImageIndex = 0;
             this.tabPageMain.Location = new System.Drawing.Point(4, 25);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(0);
@@ -181,14 +183,14 @@
             this.textAwayNick.Size = new System.Drawing.Size(150, 23);
             this.textAwayNick.TabIndex = 50;
             // 
-            // label11
+            // labelAwayNickName
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(333, 103);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(117, 16);
-            this.label11.TabIndex = 49;
-            this.label11.Text = "Away Nick Name";
+            this.labelAwayNickName.AutoSize = true;
+            this.labelAwayNickName.Location = new System.Drawing.Point(333, 103);
+            this.labelAwayNickName.Name = "labelAwayNickName";
+            this.labelAwayNickName.Size = new System.Drawing.Size(117, 16);
+            this.labelAwayNickName.TabIndex = 49;
+            this.labelAwayNickName.Text = "Away Nick Name";
             // 
             // textAltNickName
             // 
@@ -198,14 +200,14 @@
             this.textAltNickName.Size = new System.Drawing.Size(150, 23);
             this.textAltNickName.TabIndex = 48;
             // 
-            // label9
+            // labelAltNickName
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(351, 72);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(99, 16);
-            this.label9.TabIndex = 47;
-            this.label9.Text = "Alt Nick Name";
+            this.labelAltNickName.AutoSize = true;
+            this.labelAltNickName.Location = new System.Drawing.Point(351, 72);
+            this.labelAltNickName.Name = "labelAltNickName";
+            this.labelAltNickName.Size = new System.Drawing.Size(99, 16);
+            this.labelAltNickName.TabIndex = 47;
+            this.labelAltNickName.Text = "Alt Nick Name";
             // 
             // textDisplayName
             // 
@@ -215,14 +217,14 @@
             this.textDisplayName.Size = new System.Drawing.Size(150, 23);
             this.textDisplayName.TabIndex = 2;
             // 
-            // label5
+            // labelDisplayName
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 36);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 16);
-            this.label5.TabIndex = 46;
-            this.label5.Text = "Display Name";
+            this.labelDisplayName.AutoSize = true;
+            this.labelDisplayName.Location = new System.Drawing.Point(15, 36);
+            this.labelDisplayName.Name = "labelDisplayName";
+            this.labelDisplayName.Size = new System.Drawing.Size(95, 16);
+            this.labelDisplayName.TabIndex = 46;
+            this.labelDisplayName.Text = "Display Name";
             // 
             // textQuitMessage
             // 
@@ -232,23 +234,23 @@
             this.textQuitMessage.Size = new System.Drawing.Size(228, 23);
             this.textQuitMessage.TabIndex = 6;
             // 
-            // label8
+            // labelQuitMessage
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(15, 162);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(97, 16);
-            this.label8.TabIndex = 45;
-            this.label8.Text = "Quit Message";
+            this.labelQuitMessage.AutoSize = true;
+            this.labelQuitMessage.Location = new System.Drawing.Point(15, 162);
+            this.labelQuitMessage.Name = "labelQuitMessage";
+            this.labelQuitMessage.Size = new System.Drawing.Size(97, 16);
+            this.labelQuitMessage.TabIndex = 45;
+            this.labelQuitMessage.Text = "Quit Message";
             // 
-            // label7
+            // labelFullName
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 131);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(71, 16);
-            this.label7.TabIndex = 43;
-            this.label7.Text = "Full Name";
+            this.labelFullName.AutoSize = true;
+            this.labelFullName.Location = new System.Drawing.Point(15, 131);
+            this.labelFullName.Name = "labelFullName";
+            this.labelFullName.Size = new System.Drawing.Size(71, 16);
+            this.labelFullName.TabIndex = 43;
+            this.labelFullName.Text = "Full Name";
             // 
             // textFullName
             // 
@@ -266,14 +268,14 @@
             this.textIdentName.Size = new System.Drawing.Size(150, 23);
             this.textIdentName.TabIndex = 4;
             // 
-            // label6
+            // labelIdentName
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 102);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(84, 16);
-            this.label6.TabIndex = 41;
-            this.label6.Text = "Ident Name";
+            this.labelIdentName.AutoSize = true;
+            this.labelIdentName.Location = new System.Drawing.Point(15, 102);
+            this.labelIdentName.Name = "labelIdentName";
+            this.labelIdentName.Size = new System.Drawing.Size(84, 16);
+            this.labelIdentName.TabIndex = 41;
+            this.labelIdentName.Text = "Ident Name";
             // 
             // textServerPort
             // 
@@ -299,43 +301,45 @@
             this.textNickName.Size = new System.Drawing.Size(150, 23);
             this.textNickName.TabIndex = 3;
             // 
-            // label3
+            // labelServerPort
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(367, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 16);
-            this.label3.TabIndex = 39;
-            this.label3.Text = "Server Port";
+            this.labelServerPort.AutoSize = true;
+            this.labelServerPort.Location = new System.Drawing.Point(367, 7);
+            this.labelServerPort.Name = "labelServerPort";
+            this.labelServerPort.Size = new System.Drawing.Size(83, 16);
+            this.labelServerPort.TabIndex = 39;
+            this.labelServerPort.Text = "Server Port";
             // 
-            // label2
+            // labelServerName
             // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Red;
-            this.label2.Location = new System.Drawing.Point(15, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(92, 16);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "Server Name";
+            this.labelServerName.AutoSize = true;
+            this.labelServerName.ForeColor = System.Drawing.Color.Red;
+            this.labelServerName.Location = new System.Drawing.Point(15, 7);
+            this.labelServerName.Name = "labelServerName";
+            this.labelServerName.Size = new System.Drawing.Size(92, 16);
+            this.labelServerName.TabIndex = 38;
+            this.labelServerName.Text = "Server Name";
             // 
-            // label1
+            // labelNickName
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(15, 68);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 16);
-            this.label1.TabIndex = 36;
-            this.label1.Text = "Nick Name";
+            this.labelNickName.AutoSize = true;
+            this.labelNickName.ForeColor = System.Drawing.Color.Red;
+            this.labelNickName.Location = new System.Drawing.Point(15, 68);
+            this.labelNickName.Name = "labelNickName";
+            this.labelNickName.Size = new System.Drawing.Size(76, 16);
+            this.labelNickName.TabIndex = 36;
+            this.labelNickName.Text = "Nick Name";
             // 
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.Color.Transparent;
             this.tabPageExtra.Controls.Add(this.checkAutoStart);
-            this.tabPageExtra.Controls.Add(this.label12);
+            this.tabPageExtra.Controls.Add(this.labelServerPassword);
             this.tabPageExtra.Controls.Add(this.textServerPassword);
+            this.tabPageExtra.Controls.Add(this.textNickservPassword);
+            this.tabPageExtra.Controls.Add(this.labelNickservPassword);
             this.tabPageExtra.Controls.Add(this.checkDisableCTCP);
-            this.tabPageExtra.Controls.Add(this.label10);
+            this.tabPageExtra.Controls.Add(this.labelEncoding);
             this.tabPageExtra.Controls.Add(this.comboEncoding);
             this.tabPageExtra.Controls.Add(this.checkRejoinChannel);
             this.tabPageExtra.Controls.Add(this.checkPingPong);
@@ -350,14 +354,24 @@
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
             // 
-            // label12
+            // checkAutoStart
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(272, 12);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(118, 16);
-            this.label12.TabIndex = 45;
-            this.label12.Text = "Server Password";
+            this.checkAutoStart.AutoSize = true;
+            this.checkAutoStart.Location = new System.Drawing.Point(15, 141);
+            this.checkAutoStart.Name = "checkAutoStart";
+            this.checkAutoStart.Size = new System.Drawing.Size(158, 20);
+            this.checkAutoStart.TabIndex = 46;
+            this.checkAutoStart.Text = "Connect on Startup";
+            this.checkAutoStart.UseVisualStyleBackColor = true;
+            // 
+            // labelServerPassword
+            // 
+            this.labelServerPassword.AutoSize = true;
+            this.labelServerPassword.Location = new System.Drawing.Point(272, 12);
+            this.labelServerPassword.Name = "labelServerPassword";
+            this.labelServerPassword.Size = new System.Drawing.Size(118, 16);
+            this.labelServerPassword.TabIndex = 45;
+            this.labelServerPassword.Text = "Server Password";
             // 
             // textServerPassword
             // 
@@ -366,6 +380,23 @@
             this.textServerPassword.Name = "textServerPassword";
             this.textServerPassword.Size = new System.Drawing.Size(143, 23);
             this.textServerPassword.TabIndex = 44;
+            // 
+            // textNickservPassword
+            // 
+            this.textNickservPassword.Location = new System.Drawing.Point(412, 34);
+            this.textNickservPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textNickservPassword.Name = "textNickservPassword";
+            this.textNickservPassword.Size = new System.Drawing.Size(143, 23);
+            this.textNickservPassword.TabIndex = 47;
+            // 
+            // labelNickservPassword
+            // 
+            this.labelNickservPassword.AutoSize = true;
+            this.labelNickservPassword.Location = new System.Drawing.Point(272, 38);
+            this.labelNickservPassword.Name = "labelNickservPassword";
+            this.labelNickservPassword.Size = new System.Drawing.Size(130, 16);
+            this.labelNickservPassword.TabIndex = 46;
+            this.labelNickservPassword.Text = "Nickserv Password";
             // 
             // checkDisableCTCP
             // 
@@ -377,14 +408,14 @@
             this.checkDisableCTCP.Text = "Disable CTCP Replies";
             this.checkDisableCTCP.UseVisualStyleBackColor = true;
             // 
-            // label10
+            // labelEncoding
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 170);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(67, 16);
-            this.label10.TabIndex = 5;
-            this.label10.Text = "Encoding";
+            this.labelEncoding.AutoSize = true;
+            this.labelEncoding.Location = new System.Drawing.Point(12, 170);
+            this.labelEncoding.Name = "labelEncoding";
+            this.labelEncoding.Size = new System.Drawing.Size(67, 16);
+            this.labelEncoding.TabIndex = 5;
+            this.labelEncoding.Text = "Encoding";
             // 
             // comboEncoding
             // 
@@ -439,13 +470,13 @@
             // 
             this.tabPageAutoJoin.BackColor = System.Drawing.Color.Transparent;
             this.tabPageAutoJoin.Controls.Add(this.checkAutoJoinDelay);
-            this.tabPageAutoJoin.Controls.Add(this.buttonEdit);
+            this.tabPageAutoJoin.Controls.Add(this.buttonEditAutoJoin);
             this.tabPageAutoJoin.Controls.Add(this.listChannel);
             this.tabPageAutoJoin.Controls.Add(this.checkAutoJoin);
-            this.tabPageAutoJoin.Controls.Add(this.buttonRemove);
-            this.tabPageAutoJoin.Controls.Add(this.buttonAdd);
+            this.tabPageAutoJoin.Controls.Add(this.buttonRemoveAutoJoin);
+            this.tabPageAutoJoin.Controls.Add(this.buttonAddAutoJoin);
             this.tabPageAutoJoin.Controls.Add(this.textChannel);
-            this.tabPageAutoJoin.Controls.Add(this.label4);
+            this.tabPageAutoJoin.Controls.Add(this.labelChannel);
             this.tabPageAutoJoin.ImageIndex = 2;
             this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 25);
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -465,16 +496,16 @@
             this.checkAutoJoinDelay.Text = "Enable AutoJoin Delay (5 seconds)";
             this.checkAutoJoinDelay.UseVisualStyleBackColor = true;
             // 
-            // buttonEdit
+            // buttonEditAutoJoin
             // 
-            this.buttonEdit.Location = new System.Drawing.Point(362, 74);
-            this.buttonEdit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(87, 27);
-            this.buttonEdit.TabIndex = 33;
-            this.buttonEdit.Text = "Edit";
-            this.buttonEdit.UseVisualStyleBackColor = true;
-            this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+            this.buttonEditAutoJoin.Location = new System.Drawing.Point(362, 74);
+            this.buttonEditAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonEditAutoJoin.Name = "buttonEditAutoJoin";
+            this.buttonEditAutoJoin.Size = new System.Drawing.Size(87, 27);
+            this.buttonEditAutoJoin.TabIndex = 33;
+            this.buttonEditAutoJoin.Text = "Edit";
+            this.buttonEditAutoJoin.UseVisualStyleBackColor = true;
+            this.buttonEditAutoJoin.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
             // listChannel
             // 
@@ -509,27 +540,27 @@
             this.checkAutoJoin.Text = "Enable AutoJoin";
             this.checkAutoJoin.UseVisualStyleBackColor = true;
             // 
-            // buttonRemove
+            // buttonRemoveAutoJoin
             // 
-            this.buttonRemove.Location = new System.Drawing.Point(362, 39);
-            this.buttonRemove.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(87, 27);
-            this.buttonRemove.TabIndex = 30;
-            this.buttonRemove.Text = "Remove";
-            this.buttonRemove.UseVisualStyleBackColor = true;
-            this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+            this.buttonRemoveAutoJoin.Location = new System.Drawing.Point(362, 39);
+            this.buttonRemoveAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonRemoveAutoJoin.Name = "buttonRemoveAutoJoin";
+            this.buttonRemoveAutoJoin.Size = new System.Drawing.Size(87, 27);
+            this.buttonRemoveAutoJoin.TabIndex = 30;
+            this.buttonRemoveAutoJoin.Text = "Remove";
+            this.buttonRemoveAutoJoin.UseVisualStyleBackColor = true;
+            this.buttonRemoveAutoJoin.Click += new System.EventHandler(this.buttonRemove_Click);
             // 
-            // buttonAdd
+            // buttonAddAutoJoin
             // 
-            this.buttonAdd.Location = new System.Drawing.Point(362, 6);
-            this.buttonAdd.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(87, 27);
-            this.buttonAdd.TabIndex = 29;
-            this.buttonAdd.Text = "Add";
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+            this.buttonAddAutoJoin.Location = new System.Drawing.Point(362, 6);
+            this.buttonAddAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonAddAutoJoin.Name = "buttonAddAutoJoin";
+            this.buttonAddAutoJoin.Size = new System.Drawing.Size(87, 27);
+            this.buttonAddAutoJoin.TabIndex = 29;
+            this.buttonAddAutoJoin.Text = "Add";
+            this.buttonAddAutoJoin.UseVisualStyleBackColor = true;
+            this.buttonAddAutoJoin.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
             // textChannel
             // 
@@ -540,14 +571,14 @@
             this.textChannel.TabIndex = 26;
             this.textChannel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textChannel_KeyDown);
             // 
-            // label4
+            // labelChannel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 16);
-            this.label4.TabIndex = 27;
-            this.label4.Text = "Channel";
+            this.labelChannel.AutoSize = true;
+            this.labelChannel.Location = new System.Drawing.Point(8, 11);
+            this.labelChannel.Name = "labelChannel";
+            this.labelChannel.Size = new System.Drawing.Size(60, 16);
+            this.labelChannel.TabIndex = 27;
+            this.labelChannel.Text = "Channel";
             // 
             // tabPageAutoPerform
             // 
@@ -586,11 +617,11 @@
             // 
             // tabPageIgnore
             // 
-            this.tabPageIgnore.Controls.Add(this.labelNote);
+            this.tabPageIgnore.Controls.Add(this.labelIgnoreNote);
             this.tabPageIgnore.Controls.Add(this.listIgnore);
             this.tabPageIgnore.Controls.Add(this.checkIgnore);
             this.tabPageIgnore.Controls.Add(this.textIgnore);
-            this.tabPageIgnore.Controls.Add(this.label13);
+            this.tabPageIgnore.Controls.Add(this.labelNickHost);
             this.tabPageIgnore.Controls.Add(this.buttonEditIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonRemoveIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
@@ -601,13 +632,13 @@
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
             // 
-            // labelNote
+            // labelIgnoreNote
             // 
-            this.labelNote.Location = new System.Drawing.Point(362, 114);
-            this.labelNote.Name = "labelNote";
-            this.labelNote.Size = new System.Drawing.Size(252, 62);
-            this.labelNote.TabIndex = 41;
-            this.labelNote.Text = "Note: For wildcards, use the . character for nick names";
+            this.labelIgnoreNote.Location = new System.Drawing.Point(362, 114);
+            this.labelIgnoreNote.Name = "labelIgnoreNote";
+            this.labelIgnoreNote.Size = new System.Drawing.Size(252, 62);
+            this.labelIgnoreNote.TabIndex = 41;
+            this.labelIgnoreNote.Text = "Note: For wildcards, use the . character for nick names";
             // 
             // listIgnore
             // 
@@ -644,14 +675,14 @@
             this.textIgnore.Size = new System.Drawing.Size(278, 23);
             this.textIgnore.TabIndex = 37;
             // 
-            // label13
+            // labelNickHost
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(8, 9);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(71, 16);
-            this.label13.TabIndex = 38;
-            this.label13.Text = "Nick/Host";
+            this.labelNickHost.AutoSize = true;
+            this.labelNickHost.Location = new System.Drawing.Point(8, 9);
+            this.labelNickHost.Name = "labelNickHost";
+            this.labelNickHost.Size = new System.Drawing.Size(71, 16);
+            this.labelNickHost.TabIndex = 38;
+            this.labelNickHost.Text = "Nick/Host";
             // 
             // buttonEditIgnore
             // 
@@ -707,16 +738,6 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // checkAutoStart
-            // 
-            this.checkAutoStart.AutoSize = true;
-            this.checkAutoStart.Location = new System.Drawing.Point(15, 141);
-            this.checkAutoStart.Name = "checkAutoStart";
-            this.checkAutoStart.Size = new System.Drawing.Size(158, 20);
-            this.checkAutoStart.TabIndex = 46;
-            this.checkAutoStart.Text = "Connect on Startup";
-            this.checkAutoStart.UseVisualStyleBackColor = true;
-            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -758,26 +779,26 @@
         private System.Windows.Forms.TabControl tabControlSettings;
         private System.Windows.Forms.TabPage tabPageMain;
         private System.Windows.Forms.TextBox textQuitMessage;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelQuitMessage;
+        private System.Windows.Forms.Label labelFullName;
         private System.Windows.Forms.TextBox textFullName;
         private System.Windows.Forms.TextBox textIdentName;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelIdentName;
         private System.Windows.Forms.TextBox textServerPort;
         private System.Windows.Forms.TextBox textServername;
         private System.Windows.Forms.TextBox textNickName;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelServerPort;
+        private System.Windows.Forms.Label labelServerName;
+        private System.Windows.Forms.Label labelNickName;
         private System.Windows.Forms.TabPage tabPageAutoJoin;
         private System.Windows.Forms.TextBox textChannel;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelChannel;
         private System.Windows.Forms.TabPage tabPageAutoPerform;
         private System.Windows.Forms.TextBox textAutoPerform;
-        private System.Windows.Forms.Button buttonAdd;
-        private System.Windows.Forms.Button buttonRemove;
+        private System.Windows.Forms.Button buttonAddAutoJoin;
+        private System.Windows.Forms.Button buttonRemoveAutoJoin;
         private System.Windows.Forms.TextBox textDisplayName;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelDisplayName;
         private System.Windows.Forms.CheckBox checkAutoJoin;
         private System.Windows.Forms.CheckBox checkAutoPerform;
         private System.Windows.Forms.ListView listChannel;
@@ -788,29 +809,31 @@
         private System.Windows.Forms.CheckBox checkMOTD;
         private System.Windows.Forms.CheckBox checkModeI;
         private System.Windows.Forms.TextBox textAltNickName;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label labelAltNickName;
         private System.Windows.Forms.CheckBox checkRejoinChannel;
         private System.Windows.Forms.ComboBox comboEncoding;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button buttonEdit;
+        private System.Windows.Forms.Label labelEncoding;
+        private System.Windows.Forms.Button buttonEditAutoJoin;
         private System.Windows.Forms.Button buttonRemoveServer;
         private System.Windows.Forms.TextBox textAwayNick;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label labelAwayNickName;
         private System.Windows.Forms.CheckBox checkDisableCTCP;
-        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label labelServerPassword;
         private System.Windows.Forms.TextBox textServerPassword;
         private System.Windows.Forms.CheckBox checkAutoJoinDelay;
         private System.Windows.Forms.ImageList imageListEditor;
+        private System.Windows.Forms.TextBox textNickservPassword;
+        private System.Windows.Forms.Label labelNickservPassword;
         private System.Windows.Forms.TabPage tabPageIgnore;
         private System.Windows.Forms.ListView listIgnore;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.CheckBox checkIgnore;
         private System.Windows.Forms.TextBox textIgnore;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label labelNickHost;
         private System.Windows.Forms.Button buttonEditIgnore;
         private System.Windows.Forms.Button buttonRemoveIgnore;
         private System.Windows.Forms.Button buttonAddIgnore;
-        private System.Windows.Forms.Label labelNote;
+        private System.Windows.Forms.Label labelIgnoreNote;
         private System.Windows.Forms.CheckBox checkAutoStart;
     }
 }
