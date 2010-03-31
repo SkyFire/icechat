@@ -63,6 +63,7 @@ namespace IceChat
         private delegate TextWindow CurrentWindowDelegate();
         private delegate void AddChannelListDelegate(string channel, int users, string topic);
         private delegate void AddDccChatDelegate(string message);
+        private delegate void ClearChannelListDelegate();
 
         private Panel panelTopic;
         //private int ImageIndex;
@@ -562,7 +563,6 @@ namespace IceChat
 
         private string IPAddressToLong(IPAddress ip)
         {
-            //ip.Address.Equals(
             return NetworkUnsignedLong(ip.Address).ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
@@ -733,10 +733,14 @@ namespace IceChat
                         lastMessageType = FormMain.ServerMessageType.Default;
                         return;
                     }
-
-                    lastMessageType = value;
-                    FormMain.Instance.TabMain.Invalidate();
-                    FormMain.Instance.ServerTree.Invalidate();
+                    
+                    // do not change if already a New Message
+                    if (lastMessageType != FormMain.ServerMessageType.Message)
+                    {
+                        lastMessageType = value;
+                        FormMain.Instance.TabMain.Invalidate();
+                        FormMain.Instance.ServerTree.Invalidate();
+                    }
                 }
             }
         }
@@ -757,6 +761,17 @@ namespace IceChat
         internal int TotalChannels
         {
             get { return this.channelList.Items.Count; }
+        }
+
+        internal void ClearChannelList()
+        {
+            if (this.InvokeRequired)
+            {
+                ClearChannelListDelegate c = new ClearChannelListDelegate(ClearChannelList);
+                this.Invoke(c, new object[] { });
+            } 
+            else
+                this.channelList.Items.Clear();
         }
 
         private void UpdateText(string text)
@@ -784,8 +799,10 @@ namespace IceChat
             {
                 channelTopic = topic;
                 textTopic.ClearTextWindow();
-                //get the topic color                
-                textTopic.AppendText(topic, 1);
+                string msgt = FormMain.Instance.GetMessageFormat("Channel Topic Text");
+                msgt = msgt.Replace("$channel", this.TabCaption);
+                msgt = msgt.Replace("$topic", topic);
+                textTopic.AppendText(msgt, 1);
             }
         }
 
@@ -813,6 +830,7 @@ namespace IceChat
         public string TabCaption
         {
             get { return _tabCaption; }
+            set { this._tabCaption = value; }
         }
 
         internal void SelectConsoleTab(ConsoleTab c)

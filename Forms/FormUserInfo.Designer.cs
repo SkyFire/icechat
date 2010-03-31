@@ -129,46 +129,46 @@
             // 
             // textNick
             // 
-            this.textNick.Location = new System.Drawing.Point(130, 6);
+            this.textNick.Location = new System.Drawing.Point(114, 6);
             this.textNick.Name = "textNick";
-            this.textNick.Size = new System.Drawing.Size(206, 23);
+            this.textNick.Size = new System.Drawing.Size(222, 23);
             this.textNick.TabIndex = 11;
             // 
             // textHost
             // 
-            this.textHost.Location = new System.Drawing.Point(130, 35);
+            this.textHost.Location = new System.Drawing.Point(114, 35);
             this.textHost.Name = "textHost";
-            this.textHost.Size = new System.Drawing.Size(206, 23);
+            this.textHost.Size = new System.Drawing.Size(222, 23);
             this.textHost.TabIndex = 12;
             // 
             // textFullName
             // 
-            this.textFullName.Location = new System.Drawing.Point(130, 64);
+            this.textFullName.Location = new System.Drawing.Point(114, 64);
             this.textFullName.Name = "textFullName";
-            this.textFullName.Size = new System.Drawing.Size(206, 23);
+            this.textFullName.Size = new System.Drawing.Size(222, 23);
             this.textFullName.TabIndex = 13;
             // 
             // textIdleTime
             // 
-            this.textIdleTime.Location = new System.Drawing.Point(130, 93);
+            this.textIdleTime.Location = new System.Drawing.Point(114, 93);
             this.textIdleTime.Name = "textIdleTime";
-            this.textIdleTime.Size = new System.Drawing.Size(206, 23);
+            this.textIdleTime.Size = new System.Drawing.Size(222, 23);
             this.textIdleTime.TabIndex = 14;
             // 
             // textClient
             // 
-            this.textClient.Location = new System.Drawing.Point(130, 122);
+            this.textClient.Location = new System.Drawing.Point(114, 122);
             this.textClient.Name = "textClient";
             this.textClient.ReadOnly = true;
-            this.textClient.Size = new System.Drawing.Size(206, 23);
+            this.textClient.Size = new System.Drawing.Size(222, 23);
             this.textClient.TabIndex = 15;
             this.textClient.Text = "<not available>";
             // 
             // textLogonTime
             // 
-            this.textLogonTime.Location = new System.Drawing.Point(130, 151);
+            this.textLogonTime.Location = new System.Drawing.Point(114, 151);
             this.textLogonTime.Name = "textLogonTime";
-            this.textLogonTime.Size = new System.Drawing.Size(206, 23);
+            this.textLogonTime.Size = new System.Drawing.Size(222, 23);
             this.textLogonTime.TabIndex = 16;
             // 
             // FormUserInfo

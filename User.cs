@@ -32,9 +32,9 @@ namespace IceChat
     {
         private string nickName;
         private IRCConnection connection;
-
-        //public string Host = "";
+        
         public bool[] Level;
+        public int nickColor;
 
         public int CompareTo(object obj)
         {
@@ -100,26 +100,7 @@ namespace IceChat
             nickName = nick;
 
         }
-        /*
-        public User(string nick, string host, IRCConnection connection)
-        {
-            this.connection = connection;
-            //this.Host = host;
 
-            Level = new bool[connection.ServerSetting.StatusModes[0].Length];
-
-            for (int i = 0; i < this.Level.Length; i++)
-            {
-                if (nick.StartsWith(connection.ServerSetting.StatusModes[1][i].ToString()))
-                {
-                    this.Level[i] = true;
-                    nick = nick.Substring(1);
-                }
-            }
-            nickName = nick;
-
-        }
-        */
         public override string ToString()
         {
             for (int i = 0; i < this.Level.Length; i++)

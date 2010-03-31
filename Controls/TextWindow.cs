@@ -169,7 +169,7 @@ namespace IceChat
                 line = vScrollBar.Value - line;
             }
 
-            linkedWord = ReturnWord(line, e.Location.X);
+            linkedWord = ReturnWord(line, e.Location.X).Trim();
             
             if (linkedWord.Length > 0)
             {                
@@ -179,6 +179,43 @@ namespace IceChat
                     this.Cursor = Cursors.Hand;
                 else
                     this.Cursor = Cursors.Default;
+
+                if (this.Parent.GetType() == typeof(IceTabPage) && this.Cursor != Cursors.Hand)
+                {
+                    IceTabPage t = (IceTabPage)this.Parent;
+                    if (t.WindowStyle != IceTabPage.WindowType.Debug)
+                    {
+                        //check if we are over a channel name
+                        if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, linkedWord[0]) != -1)
+                            this.Cursor = Cursors.Hand;
+
+                        //check if over a nick name
+                        if (t.WindowStyle == IceTabPage.WindowType.Channel && this.Cursor != Cursors.Hand)
+                        {
+                            foreach (User u in t.Nicks.Values)
+                            {
+                                if (u.NickName == linkedWord)
+                                {
+                                    this.Cursor = Cursors.Hand;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                }
+                else if (this.Parent.GetType() == typeof(ConsoleTab) && this.Cursor != Cursors.Hand)
+                {
+                    ConsoleTab c = (ConsoleTab)this.Parent;
+                    if (c.Connection != null)
+                    {
+                        //check if we are over a channel name
+                        if (c.Connection.IsFullyConnected)
+                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, linkedWord[0]) != -1)
+                                this.Cursor = Cursors.Hand;
+                    }
+                }
+
             }
             else
             {
@@ -344,7 +381,19 @@ namespace IceChat
             {
                 IceTabPage t = (IceTabPage)this.Parent;
                 if (t.WindowStyle == IceTabPage.WindowType.Channel)
-                    popupType = "Channel";
+                {
+                    //check if over a nick name
+                    foreach (User u in t.Nicks.Values)
+                    {
+                        if (u.NickName == linkedWord)
+                        {
+                            popupType = "NickList";
+                            break;
+                        }
+                    }
+                    if (popupType.Length == 0)
+                        popupType = "Channel";
+                }
                 if (t.WindowStyle == IceTabPage.WindowType.Query)
                     popupType = "Query";
 
@@ -416,6 +465,13 @@ namespace IceChat
                                     caption = caption.Replace("$nick", windowName);
                                     command = command.Replace("$nick", windowName);
                                 }
+                                else if (popupType == "NickList")
+                                {
+                                    caption = caption.Replace("$nick", linkedWord);
+                                    command = command.Replace("$nick", linkedWord);
+                                    caption = caption.Replace("$chan", windowName);
+                                    command = command.Replace("$chan", windowName);
+                                }
                                 else if (popupType == "Console")
                                 {
                                     caption = caption.Replace("$server", windowName);
@@ -429,7 +485,10 @@ namespace IceChat
                                     t = new ToolStripMenuItem(caption);
 
                                     //parse out the command/$identifiers                            
-                                    command = command.Replace("$1", windowName);
+                                    if (popupType == "NickList")
+                                        command = command.Replace("$1", linkedWord);
+                                    else
+                                        command = command.Replace("$1", windowName);
 
                                     t.Click += new EventHandler(OnPopupMenuClick);
                                     t.Tag = command;
@@ -501,14 +560,30 @@ namespace IceChat
                     return;
                 }                
                 
-                //check if it is a channel
                 if (this.Parent.GetType() == typeof(IceTabPage))
                 {
                     IceTabPage t = (IceTabPage)this.Parent;
+                    //check if it is a channel
                     if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
                     {
                         FormMain.Instance.ParseOutGoingCommand(t.Connection, "/join " + clickedWord);
                         return;
+                    }
+
+                    //check if it is a nickname in the current channel
+                    if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                    {
+                        if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                        {
+                            foreach (User u in t.Nicks.Values)
+                            {
+                                if (u.NickName == clickedWord)
+                                {
+                                    FormMain.Instance.ParseOutGoingCommand(t.Connection, "/query " + clickedWord);                                    
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 
@@ -517,15 +592,17 @@ namespace IceChat
                     ConsoleTab c = (ConsoleTab)this.Parent;
                     if (c.Connection != null)
                     {
-                        if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
+                        //check if it is a channel
+                        if (c.Connection.IsFullyConnected)
                         {
-                            FormMain.Instance.ParseOutGoingCommand(c.Connection, "/join " + clickedWord);
-                            return;
+                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
+                            {
+                                FormMain.Instance.ParseOutGoingCommand(c.Connection, "/join " + clickedWord);
+                                return;
+                            }
                         }
                     }
                 }
-
-                //check if it is a nickname in the current channel
 
             }
             if (this.Parent.GetType() == typeof(ConsoleTab))
@@ -537,7 +614,8 @@ namespace IceChat
             else if (this.Parent.GetType() == typeof(IceTabPage))
             {
                 IceTabPage t = (IceTabPage)this.Parent;
-                FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
+                if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                    FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
             }
         }
 
@@ -637,75 +715,6 @@ namespace IceChat
             unreadReset = true;
         }
         
-        /*
-        internal void SetLogFile(string logFolder)
-        {
-
-            if (!System.IO.File.Exists(logFolder))
-                System.IO.Directory.CreateDirectory(logFolder);
-
-            string date = "-" + System.DateTime.Today.ToString("yyyy-MM-dd");
-
-            //get the type
-            if (this.Parent.GetType() == typeof(IceTabPage))
-            {
-                //get the name of the channel
-                IceTabPage t = (IceTabPage)this.Parent;
-                if (t.WindowStyle == IceTabPage.WindowType.Channel)
-                {
-                    if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel"))
-                        System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel");
-
-                    if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                    {
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                    }
-                    else
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Channel" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-
-                }
-                else if (t.WindowStyle == IceTabPage.WindowType.Query)
-                {
-                    if (!System.IO.File.Exists(logFolder + System.IO.Path.DirectorySeparatorChar + "Query"))
-                        System.IO.Directory.CreateDirectory(logFolder + System.IO.Path.DirectorySeparatorChar + "Query");
-                    if (FormMain.Instance.IceChatOptions.SeperateLogs)
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + date + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                    else
-                        logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Query" + System.IO.Path.DirectorySeparatorChar + t.TabCaption + ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                }
-                else if (t.WindowStyle == IceTabPage.WindowType.Debug)
-                {
-                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "debug.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                }
-                
-            }
-            else if (this.Parent.GetType() == typeof(ConsoleTab))
-            {
-                if (FormMain.Instance.IceChatOptions.SeperateLogs)                                
-                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console" + date +  ".log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                else
-                    logFile = new System.IO.FileStream(logFolder + System.IO.Path.DirectorySeparatorChar + "Console.log", System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-            }
-        }
-
-        internal void CloseLogFile()
-        {
-            return;
-            
-            if (logFile != null)
-            {
-                try
-                {
-                    logFile.Flush();
-                    logFile.Close();
-                    logFile.Dispose();
-                }
-                catch
-                {
-                }
-            }
-        }
-        */
         internal bool ShowTimeStamp
         {
             get { return showTimeStamp; }
@@ -764,7 +773,6 @@ namespace IceChat
                 
                 totalLines++;
 
-                //emoticons not being parsed as of yet
                 newLine = ParseEmoticons(newLine);
 
                 if (singleLine) totalLines = 1;
@@ -792,8 +800,6 @@ namespace IceChat
 
                     totalLines = MaxTextLines - 50;
 
-                    //System.Diagnostics.Debug.WriteLine("Reset1:" + totalLines + ":" + totalDisplayLines);
-
                     if (this.Height != 0)
                     {
                         totalDisplayLines = FormatLines(totalLines, 1, 0);
@@ -802,7 +808,6 @@ namespace IceChat
                     }
 
                     totalLines++;
-                    //System.Diagnostics.Debug.WriteLine("Reset2:" + totalLines + ":" + totalDisplayLines);
                 }
 
                 //add line numbers for temp measure
@@ -847,6 +852,35 @@ namespace IceChat
                 FormMain.Instance.WriteErrorFile("AppendText Error:" + e.Message, e.StackTrace);
             }
         }
+
+        internal int SearchText(string data, int start)
+        {
+            int totalChars = 0;
+            System.Diagnostics.Debug.WriteLine(totalLines + ":" + start);
+            for (int i = 1; i <= totalLines; i++)
+            {
+                string line = StripAllCodes(textLines[i].line);
+                if ((line.Length + totalChars) > start)
+                {
+                    int x = line.IndexOf(data);
+                    if (x > -1)
+                    {
+                        //we have a match
+                        //now check to make sure it is past the start position
+                        if (x > (totalChars + start))
+                        {
+
+                        }
+                        System.Diagnostics.Debug.WriteLine("match:" + (x + totalChars));
+                    }
+                }
+                //System.Diagnostics.Debug.WriteLine(textLines[i].line.IndexOf(data));
+                totalChars += line.Length;
+            }
+            return -1;
+        }
+  
+
         /// <summary>
         /// Used to scroll the Text Window a Page at a Time
         /// </summary>

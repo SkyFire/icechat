@@ -77,6 +77,14 @@ namespace IceChat
         private int _statusbarBack = 20;
         private int _statusbarFore = 1;
 
+        private bool _randomizeNickColors = false;
+        private bool _newMessageEnabled = true;
+        private bool _channelJoinEnabled = true;
+        private bool _channelPartEnabled = true;
+        private bool _serverQuitEnabled = true;
+        private bool _serverMessageEnabled = true;
+        private bool _otherMessageEnabled = true;
+
         [XmlElement("ConsoleBackColor")]
         public int ConsoleBackColor
         { get { return _consoleBack; }  set { _consoleBack = value; } }
@@ -225,6 +233,34 @@ namespace IceChat
         [XmlElement("PanelHeaderForeColor")]
         public int PanelHeaderForeColor
         { get { return _panelHeaderForeColor; } set { _panelHeaderForeColor = value; } }
+
+        [XmlElement("RandomizeNickColors")]
+        public bool RandomizeNickColors
+        { get { return this._randomizeNickColors; } set { this._randomizeNickColors = value; } }
+
+        [XmlElement("NewMessageColorChange")]
+        public bool NewMessageColorChange
+        { get { return this._newMessageEnabled; } set { this._newMessageEnabled = value; } }
+
+        [XmlElement("ChannelJoinColorChange")]
+        public bool ChannelJoinColorChange
+        { get { return this._channelJoinEnabled; } set { this._channelJoinEnabled = value; } }
+
+        [XmlElement("ChannePartColorChange")]
+        public bool ChannelPartColorChange
+        { get { return this._channelPartEnabled; } set { this._channelPartEnabled = value; } }
+
+        [XmlElement("ServerQuitColorChange")]
+        public bool ServerQuitColorChange
+        { get { return this._serverQuitEnabled; } set { this._serverQuitEnabled = value; } }
+
+        [XmlElement("ServerMessageColorChange")]
+        public bool ServerMessageColorChange
+        { get { return this._serverMessageEnabled; } set { this._serverMessageEnabled = value; } }
+
+        [XmlElement("OtherMessageColorChange")]
+        public bool OtherMessageColorChange
+        { get { return this._otherMessageEnabled; } set { this._otherMessageEnabled = value; } }
 
     }
     

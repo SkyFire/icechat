@@ -52,7 +52,10 @@ namespace IceChat
         private string headerCaption = "";
         private ToolTip toolTip;
         private int toolTipNode = -1;
-        
+
+        private bool docked = false;
+        private int oldDockWidth = 0;
+
         private List<KeyValuePair<string,object>> serverNodes;
 
         internal event NewServerConnectionDelegate NewServerConnection;
@@ -163,7 +166,30 @@ namespace IceChat
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
             if (e.Y <= headerHeight)
+            {
+                if (!docked)
+                {
+                    if (e.X > (this.Width - 26))
+                    {
+                        oldDockWidth = ((Panel)this.Parent).Width;
+                        FormMain.Instance.tabPanelRight.Visible = false;
+                        docked = true;
+                        panelButtons.Visible = false;
+                        ((Panel)this.Parent).Width = 20;
+                    }
+                }
+                else
+                {
+                    if (e.X < 20)
+                    {
+                        FormMain.Instance.tabPanelRight.Visible = true;
+                        docked = false;
+                        panelButtons.Visible = true;
+                        ((Panel)this.Parent).Width = oldDockWidth;
+                    }
+                }
                 return;
+            }
 
             Graphics g = this.CreateGraphics();
             
@@ -594,100 +620,120 @@ namespace IceChat
                 g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.ServerListBackColor]);
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-                Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
-                Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
-                g.FillRectangle(l, headerR);
-
-                StringFormat sf = new StringFormat();
-                sf.Alignment = StringAlignment.Center;
                 Font headerFont = new Font("Verdana", 10);
-                Rectangle centered = headerR;
-                centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
-                g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-
-                //draw each individual server
-                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
-
-                int currentY = listR.Y;
-                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
-
-                BuildServerNodes();
-
-                int nodeCount = 0;
-
-                //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
-
-                foreach (KeyValuePair<string, object> de in serverNodes)
+                if (!docked)
                 {
-                    //get the object type for this node
-                    string node = (string)de.Key;
-                    string[] nodes = node.Split(':');
+                    Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+                    Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+                    g.FillRectangle(l, headerR);
 
-                    object value = de.Value;
+                    StringFormat sf = new StringFormat();
+                    sf.Alignment = StringAlignment.Center;
+                    Rectangle centered = headerR;
+                    centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
-                    int x = 0;
-                    Brush b;
-                    nodeCount++;
-                    if (nodeCount <= topIndex)
-                        continue;
-                    
-                    if (nodeCount == selectedNodeIndex)
+                    g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
+                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
+
+                    //draw each individual server
+                    Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
+
+                    int currentY = listR.Y;
+                    int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+
+                    BuildServerNodes();
+
+                    int nodeCount = 0;
+
+                    //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
+
+                    foreach (KeyValuePair<string, object> de in serverNodes)
                     {
-                        g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
-                        b = new SolidBrush(SystemColors.HighlightText);
-                    }
-                    else
-                        b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
+                        //get the object type for this node
+                        string node = (string)de.Key;
+                        string[] nodes = node.Split(':');
 
-                    if (value.GetType() == typeof(ServerSetting))
-                    {
+                        object value = de.Value;
+
+                        int x = 0;
+                        Brush b;
+                        nodeCount++;
+                        if (nodeCount <= topIndex)
+                            continue;
+
                         if (nodeCount == selectedNodeIndex)
                         {
-                            selectedServerID = ((ServerSetting)value).ID;
+                            g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
+                            b = new SolidBrush(SystemColors.HighlightText);
                         }
+                        else
+                            b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
 
-                        x = 0;
-                    }
-
-                    if (value.GetType() == typeof(IceTabPage))
-                    {
-                        x = 16;
-                        if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
+                        if (value.GetType() == typeof(ServerSetting))
                         {
                             if (nodeCount == selectedNodeIndex)
-                                selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
+                            {
+                                selectedServerID = ((ServerSetting)value).ID;
+                            }
+
+                            x = 0;
                         }
+
+                        if (value.GetType() == typeof(IceTabPage))
+                        {
+                            x = 16;
+                            if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
+                            {
+                                if (nodeCount == selectedNodeIndex)
+                                    selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
+                            }
+                        }
+                        g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
+
+                        g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
+
+                        b.Dispose();
+
+                        if (currentY >= listR.Height + listR.Y)
+                        {
+                            vScrollBar.Maximum = serverNodes.Count - ((listR.Height - lineSize) / lineSize);
+                            break;
+                        }
+
+                        currentY += lineSize;
                     }
-                    g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
 
-                    g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
+                    if (currentY > listR.Height || vScrollBar.Value > 0)
+                        vScrollBar.Visible = true;
+                    else
+                        vScrollBar.Visible = false;
 
-                    b.Dispose();
+                    l.Dispose();
+                    sf.Dispose();
 
-                    if (currentY >= listR.Height + listR.Y)
-                    {
-                        vScrollBar.Maximum = serverNodes.Count - ((listR.Height - lineSize) / lineSize);
-                        break;
-                    }
-
-                    currentY += lineSize;
                 }
-                
-                if (currentY > listR.Height || vScrollBar.Value > 0)
-                    vScrollBar.Visible = true;
                 else
-                    vScrollBar.Visible = false;
-
-
+                {
+                    Rectangle headerR = new Rectangle(0, 0, this.Width, this.Height);
+                    Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 30);
+                    g.FillRectangle(l, headerR);
+                    Matrix x = new Matrix();
+                    x.Rotate(270);
+                    g.Transform = x;
+                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(-24, 0, 16, 16));
+                    x.Rotate(180);
+                    g.Transform = x;
+                    g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), 30, -20);
+                    
+                    l.Dispose();
+                    
+                }
                 //paint the buffer onto the usercontrol
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
 
                 buffer.Dispose();
                 headerFont.Dispose();
-                l.Dispose();
-                sf.Dispose();
                 g.Dispose();
             }
             catch (Exception ee)
@@ -884,6 +930,11 @@ namespace IceChat
             {
                 return serversCollection;
             }
+        }
+
+        internal bool Docked
+        {
+            get { return docked; }
         }
 
         #region Server Tree Buttons

@@ -41,6 +41,8 @@ namespace IceChat
 
         private ListViewItem listMoveItem = null;
 
+        private System.Media.SoundPlayer player;
+        
 
         public delegate void SaveOptionsDelegate();
         public event SaveOptionsDelegate SaveOptions;
@@ -155,6 +157,8 @@ namespace IceChat
             comboBoxLanguage.SelectedItem = FormMain.Instance.IceChatCurrentLanguageFile;
 
             ApplyLanguage();
+
+            player = new System.Media.SoundPlayer();
         }
 
         private void ApplyLanguage()
@@ -425,9 +429,8 @@ namespace IceChat
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            if (textSound.Text != "<none>" || textSound.Text != "")
-            {
-                System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+            if (textSound.Text != "<none>" || textSound.Text.Length > 0)
+            {                
                 player.SoundLocation = @textSound.Text;
                 player.Play();
             }

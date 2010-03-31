@@ -1,4 +1,23 @@
-Build Alpha 12 _ March 21 2010
+Build Alpha 12.1 - March 30 2010
+* Fix Nick Name Change for Tabs/Server List for Queries
+* Fix for running Channel List Multiple Times, clears list now
+* Fix for Scrolling Mouse while in Channel List
+* Fix parsing of incoming Data, problems with Null Characters
+* Added a Pong Checker / Reconnect Timer, at 15 minutes
+* Added Random Nick List Colors
+* Added Option to Log in Colored Text (keeps colors intact)
+* Added ability to change channel modes from Channel Info Window
+* Added ability to double click on channel names in channels/console
+* Added ability to double click on nicks in channels to open query
+* Added hovering over channel names in channels/console changes to hand cursor
+* Added hovering over nicks in channels changes to hand cursor
+* Added right click of nicks in channel brings up NickList popup menu
+* Added ability to Dock right and left panel to side
+* Added more $identifiers
+* Started with Search for Text Feature (F3 Key) (Not Complete)
+
+
+Build Alpha 12 - March 21 2010
 * Fix Tab swapping, properly move tabs around now, with short-cut keys as well
 * Added /query command
 * added /close command

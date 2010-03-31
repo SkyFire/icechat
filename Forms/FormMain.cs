@@ -193,7 +193,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 21 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 30 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -222,6 +222,7 @@ namespace IceChat
             statusStripMain.Visible = iceChatOptions.ShowStatusBar;
             inputPanel.ShowColorPicker = iceChatOptions.ShowColorPicker;
             inputPanel.ShowEmoticonPicker = iceChatOptions.ShowEmoticonPicker;
+            inputPanel.ShowSearchPanel = false;
 
             LoadAliases();
             LoadPopups();
@@ -407,7 +408,9 @@ namespace IceChat
                 {
                     iceChatOptions.WindowLocation = this.Location;
                     iceChatOptions.WindowSize = this.Size;
-                    iceChatOptions.RightPanelWidth = panelRight.Width;
+                    if (!nickList.Docked)
+                        iceChatOptions.RightPanelWidth = panelRight.Width;
+                    
                     iceChatOptions.LeftPanelWidth = panelLeft.Width;
                 }
 
@@ -871,6 +874,7 @@ namespace IceChat
             c.CtcpMessage += new CtcpMessageDelegate(OnCtcpMessage);
             c.GenericChannelMessage += new GenericChannelMessageDelegate(OnGenericChannelMessage);
             c.ServerNotice += new ServerNoticeDelegate(OnServerNotice);
+            c.ChannelListStart += new ChannelListStartDelegate(OnChannelListStart);
             c.ChannelList += new ChannelListDelegate(OnChannelList);
             c.DCCChat += new DCCChatDelegate(OnDCCChat);
             c.DCCFile += new DCCFileDelegate(OnDCCFile);
@@ -1235,6 +1239,7 @@ namespace IceChat
                                         //check if mode (e) exists for Exception List
                                         if (connection.ServerSetting.ChannelModeParams.Contains("e"))
                                             SendData(connection, "MODE " + t.TabCaption + " +e");
+                                        SendData(connection, "TOPIC :" + t.TabCaption);
                                         fci.ShowDialog(this);
                                     }
                                 }
@@ -1248,6 +1253,7 @@ namespace IceChat
                                         //check if mode (e) exists for Exception List
                                         if (connection.ServerSetting.ChannelModeParams.Contains("e"))
                                             SendData(connection, "MODE " + CurrentWindow.TabCaption + " +e");
+                                        SendData(connection, "TOPIC :" + CurrentWindow.TabCaption);
                                         fci.ShowDialog(this);
                                     }
                                 }
@@ -2145,15 +2151,39 @@ namespace IceChat
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
+                    case "$altnick":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.AltNickName);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
                     case "$ident":
                         if (connection != null)
                             data = data.Replace(m.Value, connection.ServerSetting.IdentName);
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
+                    case "$host":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.LocalHost);
+                        else
+                            data = data.Replace(m.Value, "$null");                            
+                        break;
+                    case "$fullhost":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.NickName + "!" + connection.ServerSetting.LocalHost);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;                    
                     case "$fullname":
                         if (connection != null)
                             data = data.Replace(m.Value, connection.ServerSetting.FullName);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
+                    case "$ip":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.LocalIP.ToString());
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
@@ -2166,6 +2196,12 @@ namespace IceChat
                     case "$port":
                         if (connection != null)
                             data = data.Replace(m.Value, connection.ServerSetting.ServerPort);
+                        else
+                            data = data.Replace(m.Value, "$null");
+                        break;
+                    case "$quitmessage":
+                        if (connection != null)
+                            data = data.Replace(m.Value, connection.ServerSetting.QuitMessage);
                         else
                             data = data.Replace(m.Value, "$null");
                         break;
@@ -2213,7 +2249,7 @@ namespace IceChat
                         data = data.Replace(m.Value, Environment.OSVersion.ToString());
                         break;
                     case "$icepath":
-                    case "$icechatdir":
+                    case "$icechatexedir":
                         data = data.Replace(m.Value, Directory.GetCurrentDirectory());
                         break;
                     case "$aliasfile":
@@ -2228,10 +2264,19 @@ namespace IceChat
                     case "$icechatver":
                         data = data.Replace(m.Value, Settings.Default.Version);
                         break;
-                    case "$icechat":
+                    case "$version":
                         data = data.Replace(m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version);
                         break;
-                    case "$logpath":
+                    case "$icechat":
+                        data = data.Replace(m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net");
+                        break;                    
+                    case "$icechatdir":
+                        data = data.Replace(m.Value, this.currentFolder);
+                        break;
+                    case "$icechathandle":
+                        data = data.Replace(m.Value, this.Handle.ToString());
+                        break;
+                    case "$logdir":
                         data = data.Replace(m.Value, logsFolder);
                         break;
                     case "$randquit":

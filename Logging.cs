@@ -28,7 +28,7 @@ namespace IceChat
 
             string fileExtension = null;
 
-            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
+            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text" || FormMain.Instance.IceChatOptions.LogFormat == "Colored Text")
                 fileExtension = ".log";
             else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
                 fileExtension = ".html";
@@ -75,7 +75,7 @@ namespace IceChat
             string fileName = _tabPage.TabCaption;
             string fileExtension = null;
 
-            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
+            if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text" || FormMain.Instance.IceChatOptions.LogFormat == "Colored Text")
                 fileExtension = ".log";
             else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
                 fileExtension = ".html";
@@ -151,6 +151,10 @@ namespace IceChat
                 if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
                 {
                     message = StripCodes(message);
+                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
+                }
+                else if (FormMain.Instance.IceChatOptions.LogFormat == "Colored Text")
+                {
                     logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
                 }
                 else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")

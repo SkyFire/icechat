@@ -69,6 +69,7 @@ namespace IceChat
     public delegate void WhoisDataDelegate(IRCConnection connection, string nick, string data);
     public delegate void CtcpMessageDelegate(IRCConnection connection, string nick, string ctcp);
 
+    public delegate void ChannelListStartDelegate(IRCConnection connection);
     public delegate void ChannelListDelegate(IRCConnection connection, string channel, string users, string topic);
     public delegate void ChannelInviteDelegate(IRCConnection connection, string channel, string nick, string host);
 

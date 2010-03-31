@@ -87,6 +87,11 @@ namespace IceChat
             this.labelChannelFont = new System.Windows.Forms.Label();
             this.labelConsoleFont = new System.Windows.Forms.Label();
             this.tabDCC = new System.Windows.Forms.TabPage();
+            this.labelDCCPortHigh = new System.Windows.Forms.Label();
+            this.labelDCCPortLow = new System.Windows.Forms.Label();
+            this.textDCCPortHigh = new System.Windows.Forms.TextBox();
+            this.textDCCPortLow = new System.Windows.Forms.TextBox();
+            this.labelPortRange = new System.Windows.Forms.Label();
             this.textDCCChatTimeout = new System.Windows.Forms.TextBox();
             this.labelDCCChat = new System.Windows.Forms.Label();
             this.labelDCCTimeOut = new System.Windows.Forms.Label();
@@ -116,11 +121,6 @@ namespace IceChat
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.labelPortRange = new System.Windows.Forms.Label();
-            this.textDCCPortLow = new System.Windows.Forms.TextBox();
-            this.textDCCPortHigh = new System.Windows.Forms.TextBox();
-            this.labelDCCPortLow = new System.Windows.Forms.Label();
-            this.labelDCCPortHigh = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -361,6 +361,7 @@ namespace IceChat
             this.comboLogFormat.FormattingEnabled = true;
             this.comboLogFormat.Items.AddRange(new object[] {
             "Plain Text",
+            "Colored Text",
             "HTML"});
             this.comboLogFormat.Location = new System.Drawing.Point(345, 9);
             this.comboLogFormat.Name = "comboLogFormat";
@@ -741,6 +742,47 @@ namespace IceChat
             this.tabDCC.Text = "DCC";
             this.tabDCC.UseVisualStyleBackColor = true;
             // 
+            // labelDCCPortHigh
+            // 
+            this.labelDCCPortHigh.AutoSize = true;
+            this.labelDCCPortHigh.Location = new System.Drawing.Point(306, 183);
+            this.labelDCCPortHigh.Name = "labelDCCPortHigh";
+            this.labelDCCPortHigh.Size = new System.Drawing.Size(95, 16);
+            this.labelDCCPortHigh.TabIndex = 52;
+            this.labelDCCPortHigh.Text = "Highest Port:";
+            // 
+            // labelDCCPortLow
+            // 
+            this.labelDCCPortLow.AutoSize = true;
+            this.labelDCCPortLow.Location = new System.Drawing.Point(306, 158);
+            this.labelDCCPortLow.Name = "labelDCCPortLow";
+            this.labelDCCPortLow.Size = new System.Drawing.Size(93, 16);
+            this.labelDCCPortLow.TabIndex = 51;
+            this.labelDCCPortLow.Text = "Lowest Port:";
+            // 
+            // textDCCPortHigh
+            // 
+            this.textDCCPortHigh.Location = new System.Drawing.Point(429, 180);
+            this.textDCCPortHigh.Name = "textDCCPortHigh";
+            this.textDCCPortHigh.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortHigh.TabIndex = 50;
+            // 
+            // textDCCPortLow
+            // 
+            this.textDCCPortLow.Location = new System.Drawing.Point(429, 151);
+            this.textDCCPortLow.Name = "textDCCPortLow";
+            this.textDCCPortLow.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortLow.TabIndex = 49;
+            // 
+            // labelPortRange
+            // 
+            this.labelPortRange.AutoSize = true;
+            this.labelPortRange.Location = new System.Drawing.Point(306, 129);
+            this.labelPortRange.Name = "labelPortRange";
+            this.labelPortRange.Size = new System.Drawing.Size(112, 16);
+            this.labelPortRange.TabIndex = 48;
+            this.labelPortRange.Text = "DCC Port Range";
+            // 
             // textDCCChatTimeout
             // 
             this.textDCCChatTimeout.Location = new System.Drawing.Point(401, 35);
@@ -1018,47 +1060,6 @@ namespace IceChat
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // labelPortRange
-            // 
-            this.labelPortRange.AutoSize = true;
-            this.labelPortRange.Location = new System.Drawing.Point(306, 129);
-            this.labelPortRange.Name = "labelPortRange";
-            this.labelPortRange.Size = new System.Drawing.Size(112, 16);
-            this.labelPortRange.TabIndex = 48;
-            this.labelPortRange.Text = "DCC Port Range";
-            // 
-            // textDCCPortLow
-            // 
-            this.textDCCPortLow.Location = new System.Drawing.Point(429, 151);
-            this.textDCCPortLow.Name = "textDCCPortLow";
-            this.textDCCPortLow.Size = new System.Drawing.Size(100, 23);
-            this.textDCCPortLow.TabIndex = 49;
-            // 
-            // textDCCPortHigh
-            // 
-            this.textDCCPortHigh.Location = new System.Drawing.Point(429, 180);
-            this.textDCCPortHigh.Name = "textDCCPortHigh";
-            this.textDCCPortHigh.Size = new System.Drawing.Size(100, 23);
-            this.textDCCPortHigh.TabIndex = 50;
-            // 
-            // labelDCCPortLow
-            // 
-            this.labelDCCPortLow.AutoSize = true;
-            this.labelDCCPortLow.Location = new System.Drawing.Point(306, 158);
-            this.labelDCCPortLow.Name = "labelDCCPortLow";
-            this.labelDCCPortLow.Size = new System.Drawing.Size(93, 16);
-            this.labelDCCPortLow.TabIndex = 51;
-            this.labelDCCPortLow.Text = "Lowest Port:";
-            // 
-            // labelDCCPortHigh
-            // 
-            this.labelDCCPortHigh.AutoSize = true;
-            this.labelDCCPortHigh.Location = new System.Drawing.Point(306, 183);
-            this.labelDCCPortHigh.Name = "labelDCCPortHigh";
-            this.labelDCCPortHigh.Size = new System.Drawing.Size(95, 16);
-            this.labelDCCPortHigh.TabIndex = 52;
-            this.labelDCCPortHigh.Text = "Highest Port:";
             // 
             // FormSettings
             // 

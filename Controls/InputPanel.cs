@@ -20,8 +20,8 @@ namespace IceChat
         {
             InitializeComponent();
             textInput.OnCommand += new IceInputBox.SendCommand(textInput_OnCommand);
+            textSearch.KeyDown += new KeyEventHandler(textSearch_KeyDown);
         }
-
 
         internal void ApplyLanguage()
         {
@@ -42,6 +42,20 @@ namespace IceChat
             {
                 currentConnection = value;
             }
+        }
+
+        internal bool ShowSearchPanel
+        {
+            get { return this.panelSearch.Visible; }
+            set 
+            { 
+                if (value)
+                    this.Height = 56;
+                else
+                    this.Height = 26;
+
+                this.panelSearch.Visible = value;
+            }            
         }
 
         internal bool ShowEmoticonPicker
@@ -127,6 +141,36 @@ namespace IceChat
             fc.Left = FormMain.Instance.Left + 10;
             fc.ShowDialog(this);
             FormMain.Instance.FocusInputBox();
+        }
+
+        private void textSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                //perform the search
+                if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
+                {
+                    //find the current console tab
+                    FormMain.Instance.CurrentWindow.CurrentConsoleWindow().SearchText(textSearch.Text, 12);
+                }
+                else if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel || FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Query)
+                {
+                    //do a search for the current window
+                    IceTabPage searchTab = FormMain.Instance.CurrentWindow;
+                    searchTab.TextWindow.SearchText(textSearch.Text, 0);
+
+                }
+            }
+        }
+
+        private void buttonNext_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonPrevious_Click(object sender, EventArgs e)
+        {
+
         }
 
     }

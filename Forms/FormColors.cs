@@ -214,6 +214,8 @@ namespace IceChat
             this.pictureStatusFore.BackColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
             this.pictureStatusFore.Tag = iceChatColors.StatusbarForeColor;
 
+            this.checkRandomNickColors.Checked = iceChatColors.RandomizeNickColors;
+
             messageIdentifiers = new Hashtable();
             AddMessageIdentifiers();
 
@@ -1074,6 +1076,8 @@ namespace IceChat
 
             iceChatColors.StatusbarBackColor = (int)pictureStatusBar.Tag;
             iceChatColors.StatusbarForeColor = (int)pictureStatusFore.Tag;
+
+            iceChatColors.RandomizeNickColors = checkRandomNickColors.Checked;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)

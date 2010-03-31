@@ -70,6 +70,7 @@ namespace IceChat
     
         internal event ServerNoticeDelegate ServerNotice;
 
+        internal event ChannelListStartDelegate ChannelListStart;
         internal event ChannelListDelegate ChannelList;
 
         internal event DCCChatDelegate DCCChat;
@@ -109,6 +110,9 @@ namespace IceChat
                     if (data.Substring(0, 4) == "PING")
                     {
                         SendData("PONG " + ircData[1]);
+
+                        pongTimer.Stop();
+                        pongTimer.Start();
 
                         if (serverSetting.ShowPingPong)
                             ServerMessage(this, "Ping? Pong!");
@@ -380,6 +384,7 @@ namespace IceChat
                             break;
                         
                         case "321":     //start channel list
+                            ChannelListStart(this);
                             break;
 
                         case "322":     //channel list
@@ -388,6 +393,7 @@ namespace IceChat
                             break;
 
                         case "323": //end channel list
+                            ServerMessage(this, "End of Channel List");
                             break;
 
                         case "324":     //channel modes
@@ -410,10 +416,18 @@ namespace IceChat
                             break;
                         case "331":     //no topic is set
                             channel = ircData[3];
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
+                            if (t != null)
+                                if (t.HasChannelInfo)
+                                    break;
                             GenericChannelMessage(this, channel, "No Topic Set");
                             break;
                         case "332":     //channel topic
                             channel = ircData[3];
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
+                            if (t != null)
+                                if (t.HasChannelInfo)
+                                    break;
                             ChannelTopic(this, channel, "", "", JoinString(ircData, 4, true));
                             break;
                         case "333":     //channel time
@@ -421,6 +435,16 @@ namespace IceChat
                             nick = ircData[4];
                             DateTime date2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date2 = date2.AddSeconds(Convert.ToDouble(ircData[5]));
+
+                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
+                            if (t != null)
+                            {
+                                if (t.HasChannelInfo)
+                                {
+                                    t.ChannelInfoForm.ChannelTopicSetBy(nick, date2.ToShortTimeString() + " " + date2.ToShortDateString());
+                                    break;
+                                }
+                            }                            
                             msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
                             GenericChannelMessage(this, channel, msg);
                             break;
@@ -795,10 +819,12 @@ namespace IceChat
                             {
                                 if (host.IndexOf('@') > -1 && this.serverSetting.LocalIP == null)
                                 {
+                                    this.serverSetting.LocalHost = host;
                                     host = host.Substring(host.IndexOf('@') + 1);
                                     System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
                                     foreach (System.Net.IPAddress address in addresslist)
                                         this.serverSetting.LocalIP = address;
+
                                 }
                                 //user mode
                                 tempValue = JoinString(ircData, 3, true);

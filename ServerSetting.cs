@@ -75,6 +75,7 @@ namespace IceChat
         private bool _setModeI = true;
         private bool _showPingPong = false;
         private bool _autoJoinDelay = false;
+        private int _pongTimerMinutes = 15;
 
         [XmlAttribute("ServerID")]
         public int ID
@@ -183,6 +184,10 @@ namespace IceChat
         public bool IgnoreListEnable
         { get; set; }
 
+        [XmlElement("PongTimerMinutes")]
+        public int PongTimerMinutes
+        { get { return this._pongTimerMinutes; } set { this._pongTimerMinutes = value; } }
+
         //these are all temporary server settings, not saved to the XML file
 
         [XmlIgnore()]
@@ -252,6 +257,10 @@ namespace IceChat
 
         [XmlIgnore()]
         public System.Net.IPAddress LocalIP
+        { get; set; }
+        
+        [XmlIgnore()]
+        public string LocalHost
         { get; set; }
     }
     

@@ -48,6 +48,9 @@ namespace IceChat
         private ArrayList commandQueue;
         private ArrayList ircTimers;
 
+        private System.Timers.Timer pongTimer;
+
+
         //private const int bytesperlong = 4; // 32 / 8
         //private const int bitsperbyte = 8;
 
@@ -56,9 +59,12 @@ namespace IceChat
             dataBuffer = "";
             commandQueue = new ArrayList();
             serverSetting = ss;
-            reconnectTimer = new System.Timers.Timer(30000);
-            reconnectTimer.Enabled = true;
+            reconnectTimer = new System.Timers.Timer(30000);            
             reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnReconnectTimerElapsed);
+            
+            pongTimer = new System.Timers.Timer(60000 * serverSetting.PongTimerMinutes);    //15 minutes
+            pongTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnPongTimerElapsed);
+            
             ircTimers = new ArrayList();
         }
 
@@ -74,7 +80,7 @@ namespace IceChat
             {
             }
 
-            reconnectTimer.Enabled = false;
+            reconnectTimer.Stop();
             reconnectTimer.Dispose();
         }
 
@@ -83,6 +89,25 @@ namespace IceChat
             if (attemptReconnect)
                 ConnectSocket();
         }
+
+        private void OnPongTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                //pong has not received, re-connect server
+                ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting:" + e.SignalTime);
+                //ForceDisconnect();
+                //attemptReconnect = true;
+                //pongTimer.Stop();
+                //reconnectTimer.Start();                
+            
+            }
+            catch(SocketException ee)
+            {
+                System.Diagnostics.Debug.WriteLine(ee.Message + ":" + ee.StackTrace);
+            }
+        }
+
 
         #region Public Properties and Methods
 
@@ -274,6 +299,8 @@ namespace IceChat
                 if (ServerMessage != null)
                     ServerMessage(this, "Sending User Registration Information");
 
+                this.pongTimer.Start();
+
             }
             catch (SocketException se)
             {
@@ -418,9 +445,13 @@ namespace IceChat
                     char[] chars = new char[size];
                     int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
                     System.String strData = new System.String(chars);
-                    strData = strData.Replace("\r", "");
+                    
+                    if (strData.Length != charLen)  //removes any trailing null characters
+                        strData = strData.Substring(0, charLen);
 
-                    if (!strData.EndsWith("\n") && strData[strData.Length - 1] != (char)0)
+                    strData = strData.Replace("\r", string.Empty);
+                    
+                    if (!strData.EndsWith("\n"))
                     {
                         //create a buffer
                         dataBuffer += strData;
@@ -431,7 +462,7 @@ namespace IceChat
                     if (dataBuffer.Length > 0)
                     {
                         strData = dataBuffer + strData;
-                        dataBuffer = "";
+                        dataBuffer = string.Empty;
                     }
 
                     //split into lines and stuff
@@ -465,14 +496,12 @@ namespace IceChat
             catch (SocketException se)
             {
                 ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
-
                 disconnectError = true;
                 ForceDisconnect();
             }
             catch (Exception e)
             {
                 ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
-
                 disconnectError = true;
                 ForceDisconnect(); 
             }     

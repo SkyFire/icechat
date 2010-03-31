@@ -197,12 +197,22 @@ namespace IceChat
             string msg = GetMessageFormat("Server MOTD");
             msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
-            //((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection,msg, 1, false);
-            //((ConsoleTabWindow)tabMain.TabPages[0]).LastMessageType = ServerMessageType.ServerMessage;
 
             mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
             mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
 
+        }
+
+        /// <summary>
+        /// Clear the Channel List Window if it is Already Open
+        /// </summary>
+        /// <param name="connection"></param>
+        private void OnChannelListStart(IRCConnection connection)
+        {
+            IceTabPage t = GetWindow(connection, "Channels", IceTabPage.WindowType.ChannelList);
+            if (t != null)
+                t.ClearChannelList();
+            
         }
 
         /// <summary>
@@ -401,30 +411,33 @@ namespace IceChat
                 if (msg.Contains("$color") && t.NickExists(nick))
                 {
                     User u = t.GetNick(nick);
-
-                    for (int i = 0; i < u.Level.Length; i++)
+                    if (iceChatColors.RandomizeNickColors)
+                        msg = msg.Replace("$color", ((char)3).ToString() + u.nickColor);
+                    else
                     {
-                        if (u.Level[i])
+                        for (int i = 0; i < u.Level.Length; i++)
                         {
-                            if (connection.ServerSetting.StatusModes[0][i] == 'q')
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
-                            else if (connection.ServerSetting.StatusModes[0][i] == 'a')
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor);
-                            else if (connection.ServerSetting.StatusModes[0][i] == 'o')
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor);
-                            else if (connection.ServerSetting.StatusModes[0][i] == 'h')
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor);
-                            else if (connection.ServerSetting.StatusModes[0][i] == 'v')
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor);
-                            else
-                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                            if (u.Level[i])
+                            {
+                                if (connection.ServerSetting.StatusModes[0][i] == 'q')
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                else if (connection.ServerSetting.StatusModes[0][i] == 'a')
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor);
+                                else if (connection.ServerSetting.StatusModes[0][i] == 'o')
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor);
+                                else if (connection.ServerSetting.StatusModes[0][i] == 'h')
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor);
+                                else if (connection.ServerSetting.StatusModes[0][i] == 'v')
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor);
+                                else
+                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
 
-                            break;
+                                break;
+                            }
                         }
+                        if (msg.Contains("$color"))
+                            msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor);
                     }
-
-                    if (msg.Contains("$color"))
-                        msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor);
 
                 }
 
@@ -766,29 +779,36 @@ namespace IceChat
                         }
                         else if (t.WindowStyle == IceTabPage.WindowType.Query)
                         {
-
-                            if (t.TabCaption == newnick)
+                            if (t.TabCaption == oldnick)
                             {
-                                string msg = GetMessageFormat("Nick Change");
-                                msg = msg.Replace("$nick", oldnick);
-                                msg = msg.Replace("$newnick", newnick);
-                                msg = msg.Replace("$host", host);
+                                t.TabCaption = newnick;
 
                                 if (connection.ServerSetting.NickName == newnick)
                                 {
+                                    string msg = GetMessageFormat("Self Nick Change");
+                                    msg = msg.Replace("$nick", oldnick).Replace("$newnick", newnick).Replace("$host", host); ;
                                     t.TextWindow.AppendText(msg, 1);
-                                    if ((inputPanel.CurrentConnection == connection) && (CurrentWindowType == IceTabPage.WindowType.Query))
-                                    {
-                                        if (CurrentWindow == t)
-                                            StatusText(t.Connection.ServerSetting.NickName + " in " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}");
-                                    }
                                 }
                                 else
+                                {
+                                    string msg = GetMessageFormat("Channel Nick Change");
+                                    msg = msg.Replace("$nick", oldnick);
+                                    msg = msg.Replace("$newnick", newnick);
+                                    msg = msg.Replace("$host", host);
                                     t.TextWindow.AppendText(msg, 1);
+                                }
+
+                                if ((inputPanel.CurrentConnection == connection) && (CurrentWindowType == IceTabPage.WindowType.Query))
+                                {
+                                    if (CurrentWindow == t)
+                                        StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + t.Connection.ServerSetting.RealServerName + "}");
+                                }
 
                                 if ((nickList.CurrentWindow.TabCaption == newnick) && (nickList.CurrentWindow.Connection == t.Connection))
                                     nickList.RefreshList(t);
 
+                                this.serverTree.Invalidate();
+                                this.mainTabControl.Invalidate();
                             }
                         }
 
@@ -814,11 +834,7 @@ namespace IceChat
             if (t != null)
             {
 
-                //t.ChannelTopic = topic;
-                string msgt = GetMessageFormat("Channel Topic Text");
-                msgt = msgt.Replace("$channel", channel);
-                msgt = msgt.Replace("$topic", topic);
-                t.ChannelTopic = msgt;
+                t.ChannelTopic = topic;
 
                 if (nick.Length > 0)
                 {
@@ -831,6 +847,9 @@ namespace IceChat
                 }
                 else
                 {
+                    string msgt = GetMessageFormat("Channel Topic Text");
+                    msgt = msgt.Replace("$channel", channel);
+                    msgt = msgt.Replace("$topic", topic);
                     t.TextWindow.AppendText(msgt, 1);
                 }
 
@@ -1147,9 +1166,5 @@ namespace IceChat
         {
             //throw new NotImplementedException();
         }
-
-
-
-    
     }
 }

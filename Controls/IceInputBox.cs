@@ -102,7 +102,8 @@ namespace IceChat
                 this.Invoke(s, new object[] { scrollUp });
             }
             else
-                FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
+                if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.ChannelList)
+                    FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
         }
 
         private void ScrollConsoleWindowPage(bool scrollUp)
@@ -281,6 +282,11 @@ namespace IceChat
 					base.SelectedText = ((char)31).ToString();
 					e.Handled=true;
 				}
+                else if (e.KeyCode == Keys.D)
+                {
+                    FormMain.Instance.debugWindowToolStripMenuItem.PerformClick();
+                    e.Handled = true;                
+                }
                 else if (e.KeyCode == Keys.S)
                 {
                     FormMain.Instance.iceChatEditorToolStripMenuItem.PerformClick();
@@ -299,7 +305,7 @@ namespace IceChat
                 else if (e.KeyCode == Keys.Tab)
                 {
                     int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
-                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);                    
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
                     FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
@@ -407,8 +413,15 @@ namespace IceChat
                 }
             }
 
+            if (e.KeyCode == Keys.F3)
+            {
+                e.Handled = true;
+                //show or hide the search panel
+                ((InputPanel)this.Parent).ShowSearchPanel = !((InputPanel)this.Parent).ShowSearchPanel;
+                return;
+            }
 
-			if (e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape)
 			{
 				e.Handled=true;				
 				base.Text = "";
