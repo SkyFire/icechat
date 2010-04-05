@@ -95,7 +95,11 @@ namespace IceChat
             try
             {
                 //pong has not received, re-connect server
-                ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting:" + e.SignalTime);
+                //disable for the time being
+                //ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
+                //send a ping to the server
+                //SendData("PING :" + this.serverSetting.RealServerName);
+                
                 //ForceDisconnect();
                 //attemptReconnect = true;
                 //pongTimer.Stop();
@@ -629,7 +633,6 @@ namespace IceChat
         
         #endregion
     }
-
 
     #region Socket Packet Class
 

@@ -317,6 +317,7 @@ namespace IceChat
                             break;
                         case "301":     //whois information nick away
                         case "307":     //whois information nick ips
+                        case "310":     //whois is available for help
                         case "313":     //whois information is an IRC operator
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick == ircData[3])
                                 return;
@@ -486,7 +487,6 @@ namespace IceChat
                             t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
-                                //t.UpdateNick(ircData[7], ircData[4] + "@" + ircData[5]);
                                 IALUserData(this, ircData[7], ircData[4] + "@" + ircData[5], channel);
                             }
                             break;
@@ -740,7 +740,7 @@ namespace IceChat
                                             CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
                                             break;
                                         default:
-                                            System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
+                                            //System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
                                             if (msg.ToUpper().StartsWith("ACTION "))
                                             {
                                                 msg = msg.Substring(7);

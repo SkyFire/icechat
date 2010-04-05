@@ -1073,11 +1073,14 @@ namespace IceChat
                 nick = nick.Replace(connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
             InternalAddressList ial = new InternalAddressList(nick, host, channel);
-
             if (!connection.ServerSetting.IAL.ContainsKey(nick))
+            {
                 connection.ServerSetting.IAL.Add(nick, ial);
+                //System.Diagnostics.Debug.WriteLine("add ial " + nick);
+            }
             else
             {
+                //System.Diagnostics.Debug.WriteLine("update ial " + nick);
                 ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
                 ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
             }

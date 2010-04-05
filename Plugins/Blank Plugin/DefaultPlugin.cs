@@ -11,6 +11,7 @@ namespace IceChatPlugin
 
         private Form m_MainForm;
         private MenuStrip m_MenuStrip;
+        private string currentFolder;
         
         //all the events get declared here
         public event OutGoingCommandHandler OnCommand;
@@ -53,6 +54,12 @@ namespace IceChatPlugin
         {
             get { return m_MainForm; }
             set { m_MainForm = value; }
+        }
+
+        public string CurrentFolder
+        {
+            get { return currentFolder; }
+            set { currentFolder = value; }
         }
 
         public MenuStrip MainMenuStrip

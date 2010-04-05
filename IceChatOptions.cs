@@ -284,6 +284,9 @@ namespace IceChat
         private bool _showEmoticonPicker = true;
         private bool _showColorPicker = true;
         private bool _showStatusBar = true;
+        private bool _showServerTree = true;
+        private bool _showNickList = true;
+        private bool _showToolBar = true;
         private bool _disableQueries = false;
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
@@ -413,6 +416,27 @@ namespace IceChat
         {
             get { return this._showStatusBar; }
             set { this._showStatusBar = value; }
+        }
+
+        [XmlElement("ShowToolBar")]
+        public bool ShowToolBar
+        {
+            get { return this._showToolBar; }
+            set { this._showToolBar = value; }
+        }
+
+        [XmlElement("ShowServerTree")]
+        public bool ShowServerTree
+        {
+            get { return this._showServerTree; }
+            set { this._showServerTree = value; }
+        }
+
+        [XmlElement("ShowNickList")]
+        public bool ShowNickList
+        {
+            get { return this._showNickList; }
+            set { this._showNickList = value; }
         }
 
         [XmlElement("DisableQueries")]

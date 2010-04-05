@@ -196,6 +196,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "NickList";
             this.Size = new System.Drawing.Size(200, 338);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
             this.panelButtons.ResumeLayout(false);
             this.contextMenuNickList.ResumeLayout(false);
             this.ResumeLayout(false);

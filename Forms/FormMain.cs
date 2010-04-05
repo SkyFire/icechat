@@ -56,6 +56,7 @@ namespace IceChat
         private string highlitesFile;
         private string currentFolder;
         private string logsFolder;
+        private string pluginsFolder;
         private string emoticonsFile;
         private List<LanguageItem> languageFiles;
         private LanguageItem currentLanguageFile;
@@ -104,21 +105,43 @@ namespace IceChat
         public FormMain(string[] args)
         {
             FormMain.Instance = this;
-            /*
+            bool forceCurrentFolder = false;
+
             if (args.Length > 0)
             {
-                foreach(string arg in args)
-                    System.Diagnostics.Debug.WriteLine("args:" + arg);
+                string prevArg = "";
+                foreach (string arg in args)
+                {
+                    if (prevArg.Length == 0)
+                        prevArg = arg;
+                    else
+                    {
+                        switch (prevArg.ToLower())
+                        {
+                            case "-profile":
+                                currentFolder = arg;
+                                //check if the folder exists, ir not, create it
+                                if (!Directory.Exists(currentFolder))
+                                    Directory.CreateDirectory(currentFolder);
+                                forceCurrentFolder = true;
+                                //System.Diagnostics.Debug.WriteLine(arg);
+                                break;
+                        }
+                        
+                        prevArg = "";
+                    }
+                }
             }
-            */
-            //mutex = new System.Threading.Mutex(true, "IceChatIRCMutex");
+            
+            //mutex = new System.Threading.Mutex(true, "IceChatMutex");
 
             #region Settings Files 
             
             //check if the xml settings files exist in current folder
-            currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (currentFolder == null)
+                currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            if (!File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml"))
+            if (!File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatServer.xml") && !forceCurrentFolder)
             {
                 if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "IceChat Networks" + Path.DirectorySeparatorChar + "IceChat"))
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "IceChat Networks" + Path.DirectorySeparatorChar + "IceChat");
@@ -139,7 +162,11 @@ namespace IceChat
             emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
 
             logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
+            pluginsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
 
+            if (!Directory.Exists(pluginsFolder))
+                Directory.CreateDirectory(pluginsFolder);
+            
             #endregion
 
             languageFiles = new List<LanguageItem>();
@@ -179,21 +206,34 @@ namespace IceChat
             }
             LoadLanguage(); // The language class MUST be loaded before any GUI component is created
 
-
             //check if we have any servers/settings saved, if not, load firstrun
             if (!File.Exists(serversFile))
             {
                 FormFirstRun firstRun = new FormFirstRun(currentFolder);
                 firstRun.ShowDialog(this);
             }
-
+            
             InitializeComponent();
+
+            serverListToolStripMenuItem.Checked = iceChatOptions.ShowServerTree;
+            panelLeft.Visible = serverListToolStripMenuItem.Checked;
+            splitterLeft.Visible = serverListToolStripMenuItem.Checked;
+
+            nickListToolStripMenuItem.Checked = iceChatOptions.ShowNickList;
+            panelRight.Visible = nickListToolStripMenuItem.Checked;
+            splitterRight.Visible = nickListToolStripMenuItem.Checked;
+
+            statusBarToolStripMenuItem.Checked = iceChatOptions.ShowStatusBar;
+            statusStripMain.Visible = statusBarToolStripMenuItem.Checked;
+
+            toolBarToolStripMenuItem.Checked = iceChatOptions.ShowToolBar;
+            toolStripMain.Visible = toolBarToolStripMenuItem.Checked;
 
             serverTree = new ServerTree();
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - March 30 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 5 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -209,12 +249,20 @@ namespace IceChat
                 iceChatOptions.TimeStamp += " ";
 
             if (iceChatOptions.SaveWindowPosition)
-            {                
+            {
                 if (iceChatOptions.WindowSize != null)
                 {
                     if (iceChatOptions.WindowSize.Width != 0)
                         this.Size = iceChatOptions.WindowSize;
+                    else
+                    {
+                        Rectangle r = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+                        this.Width = r.Width /4 *3;
+                        this.Height = r.Height /4 *3;
+                    }
                 }
+                else
+                    System.Diagnostics.Debug.WriteLine("no window size");
                 if (iceChatOptions.WindowLocation != null)
                     this.Location = iceChatOptions.WindowLocation;
             }
@@ -292,7 +340,8 @@ namespace IceChat
                 if (s.AutoStart)
                     NewServerConnection(s);
             }
-
+            
+            WindowMessage(null, "Console", "Current Data Folder: " + currentFolder, 4, true);
         }
 
         #region load language file
@@ -410,8 +459,8 @@ namespace IceChat
                     iceChatOptions.WindowSize = this.Size;
                     if (!nickList.Docked)
                         iceChatOptions.RightPanelWidth = panelRight.Width;
-                    
-                    iceChatOptions.LeftPanelWidth = panelLeft.Width;
+                    if (!serverTree.Docked)
+                        iceChatOptions.LeftPanelWidth = panelLeft.Width;
                 }
 
                 SaveOptions();
@@ -2242,6 +2291,9 @@ namespace IceChat
                         break;
                     
                     //identifiers that do not require a connection                                
+                    case "$appdata":
+                        data = data.Replace(m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
+                        break;
                     case "$sp":
                         data = data.Replace(m.Value, Environment.OSVersion.ServicePack.ToString());
                         break;
@@ -2694,22 +2746,28 @@ namespace IceChat
 
         private void serverListToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            splitterLeft.Visible = serverListToolStripMenuItem.Checked;
             panelLeft.Visible = serverListToolStripMenuItem.Checked;
+            iceChatOptions.ShowServerTree = serverListToolStripMenuItem.Checked;
         }
 
         private void nickListToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            splitterRight.Visible = nickListToolStripMenuItem.Checked;
             panelRight.Visible = nickListToolStripMenuItem.Checked;
+            iceChatOptions.ShowNickList = nickListToolStripMenuItem.Checked;
         }
 
         private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             statusStripMain.Visible = statusBarToolStripMenuItem.Checked;
+            iceChatOptions.ShowStatusBar = statusBarToolStripMenuItem.Checked;
         }
 
         private void toolBarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toolStripMain.Visible = toolBarToolStripMenuItem.Checked;
+            iceChatOptions.ShowToolBar = toolBarToolStripMenuItem.Checked;
         }
 
         private void codePlexPageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2875,7 +2933,7 @@ namespace IceChat
         
         private void LoadPlugins()
         {
-            string[] pluginFiles = Directory.GetFiles(currentFolder, "*.DLL");
+            string[] pluginFiles = Directory.GetFiles(pluginsFolder , "*.DLL");
             
             for (int i = 0; i < pluginFiles.Length; i++)
             {
@@ -2918,6 +2976,7 @@ namespace IceChat
                             
                             ipi.MainForm = this;
                             ipi.MainMenuStrip = this.MainMenuStrip;
+                            ipi.CurrentFolder = currentFolder;
 
                             WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
                             

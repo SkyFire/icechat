@@ -33,8 +33,8 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Panel panelRight;
-        private System.Windows.Forms.Splitter splitterLeft;
-        private System.Windows.Forms.Splitter splitterRight;
+        internal System.Windows.Forms.Splitter splitterLeft;
+        internal System.Windows.Forms.Splitter splitterRight;
         private ServerTree serverTree;
         public System.Windows.Forms.ToolStripMenuItem iceChatColorsToolStripMenuItem;
         private System.Windows.Forms.Panel panelLeft;

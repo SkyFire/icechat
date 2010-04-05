@@ -50,7 +50,7 @@ namespace IceChat
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
-
+            
             iceChatMessages.MessageSettings = new ServerMessageFormatItem[48];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
@@ -186,7 +186,7 @@ namespace IceChat
                 iceChatMessages.MessageSettings[28] = oldMessage.MessageSettings[28];
 
             if (oldMessage.MessageSettings[35] == null || oldMessage.MessageSettings[35].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[35] = NewMessageFormat("Channel Topic Change", "&#x3;3* Topic is: $topic");
+                iceChatMessages.MessageSettings[35] = NewMessageFormat("Channel Topic Change", "&#x3;3* $nick changes topic to: $topic");
             else
                 iceChatMessages.MessageSettings[35] = oldMessage.MessageSettings[35];
 

@@ -39,18 +39,7 @@ namespace IceChatPlugin
             m_Name = "HighLite Plugin";
             m_Author = "Snerf";
             m_Version = "1.0";
-
-            currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml"))
-                highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
-            else
-                highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
-
-            LoadHighLites();
-            
         }
-
 
         public string Name
         {
@@ -73,6 +62,12 @@ namespace IceChatPlugin
             set { m_MainForm = value; }
         }
 
+        public string CurrentFolder
+        {
+            get { return currentFolder; }
+            set { currentFolder = value; }
+        }
+
         public MenuStrip MainMenuStrip
         {
             get { return m_MenuStrip; }
@@ -91,6 +86,12 @@ namespace IceChatPlugin
 
         public void Initialize()
         {
+            highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
+            //currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            //if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml"))
+            //else
+            //    highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
+            LoadHighLites();
 
         }
 

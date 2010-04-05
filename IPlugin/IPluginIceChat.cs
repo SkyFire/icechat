@@ -20,6 +20,7 @@ namespace IceChatPlugin
 
         //sets the MainForm for IceChat
         Form MainForm { get; set; }
+        string CurrentFolder { get; set; }
         void ShowInfo();
         MenuStrip MainMenuStrip { get; set; }
 

@@ -1,3 +1,12 @@
+Build Alpha 12.2 - April 5 2010
+* Added -profile parameter to allow change of data folder
+* Minor Update to the Nicklist/Server List Text Fonts, less fuzzy
+* First Run Wizard window can now be closed
+* Fix for docking panels, remove splitters
+* Plugins now loaded from the Plugins folder in the Data Folder
+* Update Plugins to pass CurrentFolder
+ 
+
 Build Alpha 12.1 - March 30 2010
 * Fix Nick Name Change for Tabs/Server List for Queries
 * Fix for running Channel List Multiple Times, clears list now

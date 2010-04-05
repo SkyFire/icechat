@@ -32,7 +32,7 @@ namespace IceChat
         {
             InitializeComponent();
 
-            this.FormClosing += new FormClosingEventHandler(FormFirstRun_FormClosing);
+            //this.FormClosing += new FormClosingEventHandler(FormFirstRun_FormClosing);
 
             _nickName = "Default";
             _currentFolder = currentFolder;

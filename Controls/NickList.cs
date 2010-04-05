@@ -49,8 +49,8 @@ namespace IceChat
         private int selectedIndex = -1;
         private string headerCaption = "";
 
-        //private ToolTip toolTip;
-        //private int toolTipNode = -1;
+        private ToolTip toolTip;
+        private int toolTipNode = -1;
         private bool docked = false;
         private int oldDockWidth = 0;
 
@@ -77,7 +77,8 @@ namespace IceChat
 
             this.UpdateStyles();
 
-            //toolTip = new ToolTip();
+            toolTip = new ToolTip();
+            toolTip.AutoPopDelay = 3000;
 
             popupMenu = new ContextMenuStrip();
         }
@@ -143,6 +144,7 @@ namespace IceChat
                     {
                         oldDockWidth = ((Panel)this.Parent).Width;
                         FormMain.Instance.tabPanelRight.Visible = false;
+                        FormMain.Instance.splitterRight.Visible = false;
                         docked = true;
                         panelButtons.Visible = false;
                         ((Panel)this.Parent).Width = 20;
@@ -150,6 +152,7 @@ namespace IceChat
                     else
                     {
                         FormMain.Instance.tabPanelRight.Visible = true;
+                        FormMain.Instance.splitterRight.Visible = true;
                         docked = false;
                         panelButtons.Visible = true;
                         ((Panel)this.Parent).Width = oldDockWidth;
@@ -261,7 +264,6 @@ namespace IceChat
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            /*
             if (e.Y <= headerHeight)
                 return;
 
@@ -274,24 +276,36 @@ namespace IceChat
                 int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + topIndex;
 
                 if (nickNumber < currentWindow.Nicks.Count)
-                {                                      
+                {
                     if (toolTipNode != nickNumber)
                     {
-                        User u = currentWindow.GetNick(sortedNicks[nickNumber].ToString());
-                        toolTip.ToolTipTitle = "User Information";
+                        //User u = currentWindow.GetNick(sortedNicks[nickNumber].ToString());                        
+                        string nick = sortedNicks[nickNumber].ToString();
+                        for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                            nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                        InternalAddressList u = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[nick]);
                         
-                        if (u.Host.Length > 0)
-                            toolTip.SetToolTip(this,u.ToString() + "\r\n" + u.Host);
-                        else
-                            toolTip.SetToolTip(this,u.ToString());
+                        toolTip.ToolTipTitle = "User Information";
+                        if (u != null)
+                        {
+                            if (u.Host != null)
+                                toolTip.SetToolTip(this, u.Nick + "\r\n" + u.Host);
+                            else
+                                toolTip.SetToolTip(this, u.Nick);
+                        }
                         
                         toolTipNode = nickNumber;
                     }
                 }
                 else
+                {
+                    toolTipNode = -1;
                     toolTip.RemoveAll();
+                }
+                g.Dispose();
             }
-            */
+            
         }
 
         private void OnPopupMenuClick(object sender, EventArgs e)
@@ -312,8 +326,15 @@ namespace IceChat
 
                 //draw the header
                 g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.NickListBackColor]);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                g.InterpolationMode = InterpolationMode.Low;
+                g.SmoothingMode = SmoothingMode.HighSpeed;
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+                
                 Font headerFont = new Font("Verdana", 10);
 
                 if (!docked)

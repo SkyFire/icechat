@@ -338,8 +338,9 @@ namespace IceChat
                 if (p.PopupType == PopupType && p.Menu.Length > 0)
                 {
                     //add a break
-                    mainMenu.Items.Add(new ToolStripSeparator());
-
+                    ToolStripItem sep = new ToolStripSeparator();
+                    mainMenu.Items.Add(sep);
+                    
                     string[] menuItems = p.Menu;
 
                     //build the menu
@@ -412,11 +413,14 @@ namespace IceChat
                                 t.Click += new EventHandler(OnPopupExtraMenuClick);
                                 t.Tag = command;
                             }
-
+                            System.Diagnostics.Debug.WriteLine(mainMenu.Items[subMenu].GetType().ToString());
                             if (menuDepth == 0)
                                 subMenu = mainMenu.Items.Add(t);
                             else
-                                ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+                            {
+                                if (mainMenu.Items[subMenu].GetType() == typeof(ToolStripMenuItem))
+                                    ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+                            }                           
 
                             t = null;
                         }

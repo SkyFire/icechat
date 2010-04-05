@@ -95,10 +95,11 @@ namespace IceChat
             }
 
             toolTip = new ToolTip();
+            toolTip.AutoPopDelay = 3000;
             //toolTip.AutoPopDelay = 5000;
             //toolTip.InitialDelay = 2000;
             //toolTip.ReshowDelay = 2000;
-            toolTip.IsBalloon = true;
+            //toolTip.IsBalloon = true;
             Invalidate();
         }
 
@@ -172,7 +173,7 @@ namespace IceChat
                     if (e.X > (this.Width - 26))
                     {
                         oldDockWidth = ((Panel)this.Parent).Width;
-                        FormMain.Instance.tabPanelRight.Visible = false;
+                        FormMain.Instance.splitterLeft.Visible = false;
                         docked = true;
                         panelButtons.Visible = false;
                         ((Panel)this.Parent).Width = 20;
@@ -182,8 +183,8 @@ namespace IceChat
                 {
                     if (e.X < 20)
                     {
-                        FormMain.Instance.tabPanelRight.Visible = true;
                         docked = false;
+                        FormMain.Instance.splitterLeft.Visible = true;
                         panelButtons.Visible = true;
                         ((Panel)this.Parent).Width = oldDockWidth;
                     }
@@ -618,8 +619,15 @@ namespace IceChat
 
                 //draw the header
                 g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.ServerListBackColor]);
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                g.InterpolationMode = InterpolationMode.Low;
+                g.SmoothingMode = SmoothingMode.HighSpeed;
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+
                 Font headerFont = new Font("Verdana", 10);
 
                 if (!docked)
@@ -896,20 +904,6 @@ namespace IceChat
             {
                 //create default server settings
                 servers = new IceChatServers();
-                ServerSetting s = new ServerSetting();
-                
-                s.ID = 1;
-                s.ServerName = "irc.quakenet.org";
-
-                Random partNick = new Random();
-                s.NickName = "Guest09_" + partNick.Next(100, 999).ToString();
-                s.AltNickName = s.NickName + "_";
-                s.AutoJoinChannels = new string[] { "#IceChat2009" };
-                s.AutoJoinEnable = true;
-                servers.AddServer(s);
-
-                FormMain.Instance.IceChatOptions.DefaultNick = s.NickName;
-
                 SaveServers(servers);
             }
             return servers;

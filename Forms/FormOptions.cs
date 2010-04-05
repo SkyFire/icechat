@@ -380,7 +380,7 @@ namespace IceChat
         {
             //add a new emoticon
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons";            
+            ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons";            
             ofd.Filter = "Images (*.png)|*.png";
             //ofd.Multiselect = true;
             ofd.RestoreDirectory = true;
