@@ -370,13 +370,15 @@
     <None Include="Icons\previous.svg.png" />
     <None Include="Icons\next.svg.png" />
     <None Include="Icons\Smile.png" />
-    <None Include="Resources\Image1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="IPlugin\IPluginIceChat.csproj">
       <Project>{EC8820CA-B2C2-416B-8A59-2416AA349C4C}</Project>
       <Name>IPluginIceChat</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

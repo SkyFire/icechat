@@ -35,7 +35,6 @@
             this.buttonDisconnect = new System.Windows.Forms.Button();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.vScrollBar = new System.Windows.Forms.VScrollBar();
-            this.imageListServers = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuChannel = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,13 +140,6 @@
             this.vScrollBar.Size = new System.Drawing.Size(17, 266);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Visible = false;
-            // 
-            // imageListServers
-            // 
-            this.imageListServers.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageListServers.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageListServers.TransparentColor = System.Drawing.Color.Transparent;
-
             // 
             // contextMenuChannel
             // 
@@ -335,7 +327,6 @@
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.VScrollBar vScrollBar;
-        private System.Windows.Forms.ImageList imageListServers;
         private System.Windows.Forms.ContextMenuStrip contextMenuChannel;
         private System.Windows.Forms.ToolStripMenuItem clearWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeChannelToolStripMenuItem;

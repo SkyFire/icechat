@@ -64,12 +64,12 @@ namespace IceChat
         {
             InitializeComponent();
 
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.disconected, System.Drawing.Color.Transparent);
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.connected, System.Drawing.Color.Transparent);
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.refresh, System.Drawing.Color.Transparent);
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.window, System.Drawing.Color.Transparent);
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
-            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.disconected, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.connected, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.refresh, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.window, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
+            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
 
             headerCaption = "Favorite Servers";
             
@@ -704,7 +704,28 @@ namespace IceChat
                                     selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
                             }
                         }
-                        g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
+                        switch (nodes[1])
+                        {
+                            case "0":   //disconnected
+                                g.DrawImage(global::IceChat.Properties.Resources.disconected, x, currentY,16,16);
+                                break;
+                            case "1":   //connecting
+                                g.DrawImage(global::IceChat.Properties.Resources.refresh, x, currentY, 16, 16);
+                                break;
+                            case "2":   //connected
+                                g.DrawImage(global::IceChat.Properties.Resources.connected, x, currentY, 16, 16);
+                                break;
+                            case "3":   //channel
+                                g.DrawImage(global::IceChat.Properties.Resources.window, x, currentY, 16, 16);
+                                break;
+                            case "4":   //query
+                            case "5":   //dcc chat
+                                g.DrawImage(global::IceChat.Properties.Resources.query, x, currentY, 16, 16);
+                                break;
+                        
+                        }
+
+                        //g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
 
                         g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
 
