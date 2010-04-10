@@ -347,6 +347,7 @@
     <None Include="Icons\color.png" />
     <None Include="Icons\CloseButton.png" />
     <Content Include="icechat2009.ico" />
+    <None Include="Icons\window.png" />
     <None Include="Icons\query.png" />
     <None Include="Icons\pin.png" />
     <None Include="Icons\codeplex.ico" />

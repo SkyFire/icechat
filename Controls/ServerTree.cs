@@ -64,6 +64,13 @@ namespace IceChat
         {
             InitializeComponent();
 
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.disconected, System.Drawing.Color.Transparent);
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.connected, System.Drawing.Color.Transparent);
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.refresh, System.Drawing.Color.Transparent);
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.window, System.Drawing.Color.Transparent);
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
+            this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
+
             headerCaption = "Favorite Servers";
             
             this.MouseUp += new MouseEventHandler(OnMouseUp);

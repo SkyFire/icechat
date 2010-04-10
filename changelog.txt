@@ -1,3 +1,6 @@
+Build Alpha 12.4
+
+
 Build Alpha 12.3 - April 10 2010
 * Fixed UnHandledException log now in Logs folder
 * Fixed Double Click in Text Window only works with Left Button

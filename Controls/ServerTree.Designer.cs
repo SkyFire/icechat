@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTree));
             this.panelButtons = new System.Windows.Forms.Panel();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
@@ -145,14 +144,10 @@
             // 
             // imageListServers
             // 
-            this.imageListServers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListServers.ImageStream")));
+            this.imageListServers.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageListServers.ImageSize = new System.Drawing.Size(16, 16);
             this.imageListServers.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListServers.Images.SetKeyName(0, "disconected.png");
-            this.imageListServers.Images.SetKeyName(1, "connected.png");
-            this.imageListServers.Images.SetKeyName(2, "refresh.png");
-            this.imageListServers.Images.SetKeyName(3, "window.png");
-            this.imageListServers.Images.SetKeyName(4, "query.png");
-            this.imageListServers.Images.SetKeyName(5, "query.png");
+
             // 
             // contextMenuChannel
             // 
