@@ -40,11 +40,11 @@ namespace IceChat
         
         #region Private Variables
 
-        private int totalLines;
-        private int totalDisplayLines;
+        private int _totalLines;
+        private int _totaldisplayLines;
 
-        private int showMaxLines;
-        private int lineSize;
+        private int _showMaxLines;
+        private int _lineSize;
 
         private const char colorChar = (char)3;
         private const char underlineChar = (char)31;
@@ -57,29 +57,29 @@ namespace IceChat
         private const char urlStart = '\xFF0B';
         private const char urlEnd = '\xFF0C';
 
-        private DisplayLine[] displayLines;
-        private TextLine[] textLines;
+        private DisplayLine[] _displayLines;
+        private TextLine[] _textLines;
 
-        private int backColor = 0;
-        private int foreColor;
+        private int _backColor = 0;
+        private int _foreColor;
 
-        private bool showTimeStamp = true;
-        private bool singleLine = false;
-        private bool noColorMode = false;
-        private bool noEmoticons = false;
+        private bool _showTimeStamp = true;
+        private bool _singleLine = false;
+        private bool _noColorMode = false;
+        private bool _noEmoticons = false;
 
-        private ContextMenuStrip popupMenu;
-        private string linkedWord = "";
+        private ContextMenuStrip _popupMenu;
+        private string _linkedWord = "";
         
-        //private string wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[a-z0-9-]+\.[a-z0-9\/:@=.+?,#%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
+        //private string _wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[a-z0-9-]+\.[a-z0-9\/:@=.+?,#%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
 
         //works but no www.
-        private string wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
-        private string emotMatch = "";
-        private int startHighLine = -1;
-        private int startHighChar;
-        private int curHighLine;
-        private int curHighChar;
+        private string _wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+        private string _emotMatch = "";
+        private int _startHighLine = -1;
+        private int _startHighChar;
+        private int _curHighLine;
+        private int _curHighChar;
 
         #endregion
 
@@ -106,21 +106,24 @@ namespace IceChat
 
         private delegate void ScrollValueDelegate(int value);
 
-        private readonly int MaxTextLines = 500;
+        private readonly int _maxTextLines = 500;
 
-        private Logging logClass;
+        private Logging _logClass;
 
-        private int unreadMarker;  // Unread marker
-        private bool unreadReset; // Unread marker 
+        private int _unreadMarker;  // Unread marker
+        private bool _unreadReset; // Unread marker 
 
-        private bool reformatLines;
+        private bool _reformatLines;
+
+        private Bitmap _backgroundImage = null;
+        private string _backgroundImageFile;
 
         public TextWindow()
         {
             InitializeComponent();
 
-            displayLines = new DisplayLine[MaxTextLines * 4];
-            textLines = new TextLine[MaxTextLines];
+            _displayLines = new DisplayLine[_maxTextLines * 4];
+            _textLines = new TextLine[_maxTextLines];
 
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
@@ -145,13 +148,13 @@ namespace IceChat
                 {
                     foreach (EmoticonItem emot in FormMain.Instance.IceChatEmoticons.listEmoticons)
                     {
-                        emotMatch += emot.Trigger + ((char)0);
+                        _emotMatch += emot.Trigger + ((char)0);
                     }
-                    emotMatch = emotMatch.Substring(0, emotMatch.Length - 1);
+                    _emotMatch = _emotMatch.Substring(0, _emotMatch.Length - 1);
                 }
             }
              
-            popupMenu = new ContextMenuStrip();
+            _popupMenu = new ContextMenuStrip();
             
         }
 
@@ -163,18 +166,18 @@ namespace IceChat
             if (!SingleLine)
             {
                 // Get the line count from the bottom... 
-                line = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
+                line = ((this.Height + (_lineSize / 2)) - e.Y) / _lineSize;
 
                 // Then, convert it to count from the top. 
                 line = vScrollBar.Value - line;
             }
 
-            linkedWord = ReturnWord(line, e.Location.X).Trim();
+            _linkedWord = ReturnWord(line, e.Location.X).Trim();
             
-            if (linkedWord.Length > 0)
+            if (_linkedWord.Length > 0)
             {                
-                Regex re = new Regex(wwwMatch);
-                MatchCollection matches = re.Matches(linkedWord);
+                Regex re = new Regex(_wwwMatch);
+                MatchCollection matches = re.Matches(_linkedWord);
                 if (matches.Count > 0)
                     this.Cursor = Cursors.Hand;
                 else
@@ -186,7 +189,7 @@ namespace IceChat
                     if (t.WindowStyle != IceTabPage.WindowType.Debug)
                     {
                         //check if we are over a channel name
-                        if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, linkedWord[0]) != -1)
+                        if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, _linkedWord[0]) != -1)
                             this.Cursor = Cursors.Hand;
 
                         //check if over a nick name
@@ -194,7 +197,7 @@ namespace IceChat
                         {
                             foreach (User u in t.Nicks.Values)
                             {
-                                if (u.NickName == linkedWord)
+                                if (u.NickName == _linkedWord)
                                 {
                                     this.Cursor = Cursors.Hand;
                                     return;
@@ -211,7 +214,7 @@ namespace IceChat
                     {
                         //check if we are over a channel name
                         if (c.Connection.IsFullyConnected)
-                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, linkedWord[0]) != -1)
+                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, _linkedWord[0]) != -1)
                                 this.Cursor = Cursors.Hand;
                     }
                 }
@@ -223,19 +226,19 @@ namespace IceChat
             }
 
             //get the current character the mouse is over. 
-            curHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
-            curHighLine = totalDisplayLines - curHighLine;
-            curHighLine = (curHighLine - (totalDisplayLines - vScrollBar.Value));            
-            curHighChar = ReturnChar(line, e.Location.X);
+            _curHighLine = ((this.Height + (_lineSize / 2)) - e.Y) / _lineSize;
+            _curHighLine = _totaldisplayLines - _curHighLine;
+            _curHighLine = (_curHighLine - (_totaldisplayLines - vScrollBar.Value));            
+            _curHighChar = ReturnChar(line, e.Location.X);
             
-            if (startHighLine!=-1)
+            if (_startHighLine!=-1)
                 Invalidate();
 
         }
 
         private string ReturnWord(int lineNumber, int x)
         {
-            if (lineNumber < totalDisplayLines && lineNumber >= 0)
+            if (lineNumber < _totaldisplayLines && lineNumber >= 0)
             {
                 Graphics g = this.CreateGraphics();
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
@@ -244,7 +247,7 @@ namespace IceChat
                 StringFormat sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
-                string line = StripAllCodes(displayLines[lineNumber].line);
+                string line = StripAllCodes(_displayLines[lineNumber].line);
 
                 int width = (int)g.MeasureString(line, this.Font, 0, sf).Width;
 
@@ -259,10 +262,10 @@ namespace IceChat
                     if (lookWidth >= x && foundSpace)
                     {
                         //System.Diagnostics.Debug.WriteLine(line.Substring(space, i - space));
-                        if (displayLines[lineNumber].previous && lineNumber > 0 && space == 0)
+                        if (_displayLines[lineNumber].previous && lineNumber > 0 && space == 0)
                         {
                             // this line wraps from the previous one. 
-                            string prevline = StripAllCodes(displayLines[lineNumber-1].line);
+                            string prevline = StripAllCodes(_displayLines[lineNumber-1].line);
                             int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
                             return ReturnWord(lineNumber - 1, prevwidth);
                         }                         
@@ -284,10 +287,10 @@ namespace IceChat
 
                     lookWidth += g.MeasureString(line[i].ToString(), this.Font, 0, sf).Width;
                 }
-                if (displayLines[lineNumber].previous && lineNumber>0 && space==0)
+                if (_displayLines[lineNumber].previous && lineNumber>0 && space==0)
                 {
                     // this line wraps from the previous one. 
-                    string prevline = StripAllCodes(displayLines[lineNumber-1].line);
+                    string prevline = StripAllCodes(_displayLines[lineNumber-1].line);
                     if (prevline[prevline.Length - 1] != ' ')
                     {
                         int prevwidth = (int)g.MeasureString(prevline, this.Font, 0, sf).Width;
@@ -298,18 +301,18 @@ namespace IceChat
                 if (!foundSpace && space<line.Length)                
                 {
                     //wrap to the next line
-                    if (lineNumber < totalDisplayLines)
+                    if (lineNumber < _totaldisplayLines)
                     {
                         string extra = "";
-                        int currentLine = displayLines[lineNumber].textLine;
+                        int currentLine = _displayLines[lineNumber].textLine;
 
-                        while (lineNumber < totalDisplayLines)
+                        while (lineNumber < _totaldisplayLines)
                         {
                             lineNumber++;
-                            if (displayLines[lineNumber].textLine != currentLine)
+                            if (_displayLines[lineNumber].textLine != currentLine)
                                 break;
 
-                            extra += StripAllCodes(displayLines[lineNumber].line);
+                            extra += StripAllCodes(_displayLines[lineNumber].line);
                             if (extra.IndexOf(' ') > -1)
                             {
                                 extra = extra.Substring(0, extra.IndexOf(' '));
@@ -330,7 +333,7 @@ namespace IceChat
 
         private int ReturnChar(int lineNumber, int x)
         {
-            if (lineNumber < totalDisplayLines && lineNumber >= 0)
+            if (lineNumber < _totaldisplayLines && lineNumber >= 0)
             {
                 Graphics g = this.CreateGraphics();
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
@@ -339,7 +342,7 @@ namespace IceChat
                 StringFormat sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
-                string line = StripAllCodes(displayLines[lineNumber].line);
+                string line = StripAllCodes(_displayLines[lineNumber].line);
 
                 int width = (int)g.MeasureString(line, this.Font, 0, sf).Width;
 
@@ -367,11 +370,11 @@ namespace IceChat
             resetUnreadMarker();
 
             //get the current character the mouse is over. 
-            startHighLine = ((this.Height + (lineSize / 2)) - e.Y) / lineSize;
-            startHighLine = totalDisplayLines - startHighLine;
-            startHighLine = (startHighLine - (totalDisplayLines - vScrollBar.Value));
+            _startHighLine = ((this.Height + (_lineSize / 2)) - e.Y) / _lineSize;
+            _startHighLine = _totaldisplayLines - _startHighLine;
+            _startHighLine = (_startHighLine - (_totaldisplayLines - vScrollBar.Value));
             
-            startHighChar = ReturnChar(startHighLine, e.Location.X);
+            _startHighChar = ReturnChar(_startHighLine, e.Location.X);
 
             //what kind of a popupmenu do we want?
             string popupType = "";
@@ -385,7 +388,7 @@ namespace IceChat
                     //check if over a nick name
                     foreach (User u in t.Nicks.Values)
                     {
-                        if (u.NickName == linkedWord)
+                        if (u.NickName == _linkedWord)
                         {
                             popupType = "NickList";
                             break;
@@ -426,7 +429,7 @@ namespace IceChat
                         ToolStripItem t;
                         int subMenu = 0;
 
-                        popupMenu.Items.Clear();
+                        _popupMenu.Items.Clear();
 
                         foreach (string menu in menuItems)
                         {
@@ -467,8 +470,8 @@ namespace IceChat
                                 }
                                 else if (popupType == "NickList")
                                 {
-                                    caption = caption.Replace("$nick", linkedWord);
-                                    command = command.Replace("$nick", linkedWord);
+                                    caption = caption.Replace("$nick", _linkedWord);
+                                    command = command.Replace("$nick", _linkedWord);
                                     caption = caption.Replace("$chan", windowName);
                                     command = command.Replace("$chan", windowName);
                                 }
@@ -486,7 +489,7 @@ namespace IceChat
 
                                     //parse out the command/$identifiers                            
                                     if (popupType == "NickList")
-                                        command = command.Replace("$1", linkedWord);
+                                        command = command.Replace("$1", _linkedWord);
                                     else
                                         command = command.Replace("$1", windowName);
 
@@ -495,15 +498,15 @@ namespace IceChat
                                 }
 
                                 if (menuDepth == 0)
-                                    subMenu = popupMenu.Items.Add(t);
+                                    subMenu = _popupMenu.Items.Add(t);
                                 else
-                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+                                    ((ToolStripMenuItem)_popupMenu.Items[subMenu]).DropDownItems.Add(t);
 
                                 t = null;
                             }
                         }
 
-                        popupMenu.Show(this, e.Location);
+                        _popupMenu.Show(this, e.Location);
                     }
                 }
 
@@ -530,106 +533,131 @@ namespace IceChat
         }
         private void OnDoubleClick(object sender, EventArgs e)
         {
-            //first need to see what word we double clicked, if not, run a command
-            if (linkedWord.Length > 0)
+            MouseEventArgs me = e as MouseEventArgs;
+            
+            if (me.Button == MouseButtons.Left)
             {
-                //check if it is a URL
-                Regex re = new Regex(wwwMatch);
-                MatchCollection matches = re.Matches(linkedWord);
-                String clickedWord = linkedWord;
-                if (matches.Count > 0)
+                //first need to see what word we double clicked, if not, run a command
+                if (_linkedWord.Length > 0)
                 {
-                    clickedWord = matches[0].ToString();
-                }
-                if (matches.Count > 0 && !clickedWord.StartsWith("irc://"))
-                {
-                    try
+                    //check if it is a URL
+                    Regex re = new Regex(_wwwMatch);
+                    MatchCollection matches = re.Matches(_linkedWord);
+                    String clickedWord = _linkedWord;
+                    if (matches.Count > 0)
                     {
-                        System.Diagnostics.Process.Start(clickedWord);
+                        clickedWord = matches[0].ToString();
                     }
-                    catch (Win32Exception)
+                    if (matches.Count > 0 && !clickedWord.StartsWith("irc://"))
                     {
-                    }
-                    return;
-                }
-                
-                //check if it is a irc:// link
-                if (clickedWord.StartsWith("irc://"))
-                {
-                    FormMain.Instance.ParseOutGoingCommand(null, "/server " + clickedWord.Substring(6).TrimEnd());
-                    return;
-                }                
-                
-                if (this.Parent.GetType() == typeof(IceTabPage))
-                {
-                    IceTabPage t = (IceTabPage)this.Parent;
-                    //check if it is a channel
-                    if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
-                    {
-                        FormMain.Instance.ParseOutGoingCommand(t.Connection, "/join " + clickedWord);
+                        try
+                        {
+                            System.Diagnostics.Process.Start(clickedWord);
+                        }
+                        catch (Win32Exception)
+                        {
+                        }
                         return;
                     }
 
-                    //check if it is a nickname in the current channel
-                    if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                    //check if it is a irc:// link
+                    if (clickedWord.StartsWith("irc://"))
                     {
+                        FormMain.Instance.ParseOutGoingCommand(null, "/server " + clickedWord.Substring(6).TrimEnd());
+                        return;
+                    }
+
+                    if (this.Parent.GetType() == typeof(IceTabPage))
+                    {
+                        IceTabPage t = (IceTabPage)this.Parent;
+                        //check if it is a channel
+                        if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
+                        {
+                            FormMain.Instance.ParseOutGoingCommand(t.Connection, "/join " + clickedWord);
+                            return;
+                        }
+
+                        //check if it is a nickname in the current channel
                         if (t.WindowStyle == IceTabPage.WindowType.Channel)
                         {
-                            foreach (User u in t.Nicks.Values)
+                            if (t.WindowStyle == IceTabPage.WindowType.Channel)
                             {
-                                if (u.NickName == clickedWord)
+                                foreach (User u in t.Nicks.Values)
                                 {
-                                    FormMain.Instance.ParseOutGoingCommand(t.Connection, "/query " + clickedWord);                                    
-                                    break;
+                                    if (u.NickName == clickedWord)
+                                    {
+                                        FormMain.Instance.ParseOutGoingCommand(t.Connection, "/query " + clickedWord);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (this.Parent.GetType() == typeof(ConsoleTab))
+                    {
+                        ConsoleTab c = (ConsoleTab)this.Parent;
+                        if (c.Connection != null)
+                        {
+                            //check if it is a channel
+                            if (c.Connection.IsFullyConnected)
+                            {
+                                if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
+                                {
+                                    FormMain.Instance.ParseOutGoingCommand(c.Connection, "/join " + clickedWord);
+                                    return;
                                 }
                             }
                         }
                     }
                 }
-                
                 if (this.Parent.GetType() == typeof(ConsoleTab))
                 {
+                    //console
                     ConsoleTab c = (ConsoleTab)this.Parent;
-                    if (c.Connection != null)
-                    {
-                        //check if it is a channel
-                        if (c.Connection.IsFullyConnected)
-                        {
-                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, clickedWord[0]) != -1)
-                            {
-                                FormMain.Instance.ParseOutGoingCommand(c.Connection, "/join " + clickedWord);
-                                return;
-                            }
-                        }
-                    }
+                    FormMain.Instance.ParseOutGoingCommand(c.Connection, "/lusers");
                 }
-
-            }
-            if (this.Parent.GetType() == typeof(ConsoleTab))
-            {
-                //console
-                ConsoleTab c = (ConsoleTab)this.Parent;
-                FormMain.Instance.ParseOutGoingCommand(c.Connection, "/lusers");
-            }
-            else if (this.Parent.GetType() == typeof(IceTabPage))
-            {
-                IceTabPage t = (IceTabPage)this.Parent;
-                if (t.WindowStyle == IceTabPage.WindowType.Channel)
-                    FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
+                else if (this.Parent.GetType() == typeof(IceTabPage))
+                {
+                    IceTabPage t = (IceTabPage)this.Parent;
+                    if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                        FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
+                }
             }
         }
 
         #region Public Properties
 
+        internal string BackGroundImage
+        {
+            get
+            {
+                return _backgroundImageFile;
+            }
+            set 
+            {
+                if (value.Length > 0)
+                    this._backgroundImage = new Bitmap(value);
+                else
+                    this._backgroundImage = null;                
+                
+                this._backgroundImageFile = value;
+                Invalidate();
+            }
+        }
+
+
+            
+
         internal int IRCBackColor
         {
             get
             {
-                return backColor;
+                return _backColor;
             }
             set 
             {
-                backColor = value;
+                _backColor = value;
                 Invalidate();
             }
         }
@@ -638,24 +666,24 @@ namespace IceChat
         {
             get
             {
-                return foreColor;
+                return _foreColor;
             }
             set
             {
-                foreColor = value;
+                _foreColor = value;
                 Invalidate();
             }
         }
 
-        public bool SingleLine
+        internal bool SingleLine
         {
             get
             {
-                return singleLine;
+                return _singleLine;
             }
             set
             {
-                singleLine = value;
+                _singleLine = value;
                 vScrollBar.Visible = !value;
                 Invalidate();
             }
@@ -665,18 +693,18 @@ namespace IceChat
         {
             get
             {
-                return noColorMode;
+                return _noColorMode;
             }
             set
             {
-                noColorMode = value;
+                _noColorMode = value;
             }
         }
 
         internal bool NoEmoticons
         {
-            get { return noEmoticons; }
-            set { noEmoticons = value; }
+            get { return _noEmoticons; }
+            set { _noEmoticons = value; }
         }
 
         #endregion
@@ -686,11 +714,11 @@ namespace IceChat
         internal void ClearTextWindow()
         {
             //clear the text window of all its lines
-            displayLines.Initialize();
-            textLines.Initialize();
+            _displayLines.Initialize();
+            _textLines.Initialize();
 
-            totalLines = 0;
-            totalDisplayLines = 0;
+            _totalLines = 0;
+            _totaldisplayLines = 0;
 
             Invalidate();
         }
@@ -701,24 +729,24 @@ namespace IceChat
             {
                 //get the proper object
                 IceTabPage t = (IceTabPage)this.Parent;
-                logClass = new Logging(t);
+                _logClass = new Logging(t);
             }
             else if (this.Parent.GetType() == typeof(ConsoleTab))
             {
                 ConsoleTab c = (ConsoleTab)this.Parent;
-                logClass = new Logging(c);
+                _logClass = new Logging(c);
             }
         }
 
         public void resetUnreadMarker()
         {
-            unreadReset = true;
+            _unreadReset = true;
         }
         
         internal bool ShowTimeStamp
         {
-            get { return showTimeStamp; }
-            set { showTimeStamp = value; }
+            get { return _showTimeStamp; }
+            set { _showTimeStamp = value; }
         }
         
         internal void AppendText(string newLine, int color)
@@ -730,12 +758,12 @@ namespace IceChat
                 if (newLine.Length == 0)
                     return;
 
-                if (unreadReset)
+                if (_unreadReset)
                 {
-                    unreadMarker = 0;
-                    unreadReset = false;
+                    _unreadMarker = 0;
+                    _unreadReset = false;
                 }
-                ++unreadMarker;
+                ++_unreadMarker;
 
                 newLine = newLine.Replace("\n", " ");
                 newLine = newLine.Replace("&#x3;", colorChar.ToString());
@@ -745,105 +773,105 @@ namespace IceChat
                 if (newLine[0] == colorChar)
                 {
                     if (Char.IsNumber(newLine[1]) && Char.IsNumber(newLine[2]))
-                        foreColor = Convert.ToInt32(newLine[1].ToString() + newLine[2].ToString());
+                        _foreColor = Convert.ToInt32(newLine[1].ToString() + newLine[2].ToString());
                     else if (Char.IsNumber(newLine[1]) && !Char.IsNumber(newLine[2]))
-                        foreColor = Convert.ToInt32(newLine[1].ToString());
+                        _foreColor = Convert.ToInt32(newLine[1].ToString());
 
-                    //check of foreColor is less then 32     
-                    if (foreColor > 31)
+                    //check of _foreColor is less then 32     
+                    if (_foreColor > 31)
                     {
-                        foreColor = foreColor - 32;
-                        if (foreColor > 31)
-                            foreColor = foreColor - 32;
+                        _foreColor = _foreColor - 32;
+                        if (_foreColor > 31)
+                            _foreColor = _foreColor - 32;
                     }
                 }
                 else
-                    foreColor = color;
+                    _foreColor = color;
 
-                if (!singleLine && showTimeStamp)
+                if (!_singleLine && _showTimeStamp)
                     newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
 
-                if (noColorMode)
+                if (_noColorMode)
                     newLine = StripCodes(newLine);
                 else
                     newLine = RedefineColorCodes(newLine);
 
-                if (logClass != null)
-                    logClass.WriteLogFile(newLine);
+                if (_logClass != null)
+                    _logClass.WriteLogFile(newLine);
                 
-                totalLines++;
+                _totalLines++;
 
                 newLine = ParseEmoticons(newLine);
 
-                if (singleLine) totalLines = 1;
+                if (_singleLine) _totalLines = 1;
 
                 //check if 500 lines, and trim if so
-                if (totalLines >= (MaxTextLines - 5))
+                if (_totalLines >= (_maxTextLines - 5))
                 {
-                    //System.Diagnostics.Debug.WriteLine("Reset Lines back to " + MaxTextLines + ":" + totalLines);
+                    //System.Diagnostics.Debug.WriteLine("Reset Lines back to " + Max_textLines + ":" + totalLines);
                     int x = 1;
-                    for (int i = totalLines - (MaxTextLines - 50); i <= totalLines - 1; i++)
+                    for (int i = _totalLines - (_maxTextLines - 50); i <= _totalLines - 1; i++)
                     {
-                        textLines[x].totalLines = textLines[i].totalLines;
-                        textLines[x].width = textLines[i].width;
-                        textLines[x].line = textLines[i].line;
-                        textLines[x].textColor = textLines[i].textColor;
+                        _textLines[x].totalLines = _textLines[i].totalLines;
+                        _textLines[x].width = _textLines[i].width;
+                        _textLines[x].line = _textLines[i].line;
+                        _textLines[x].textColor = _textLines[i].textColor;
                         x++;
                     }
 
-                    for (int i = (MaxTextLines - 49); i < MaxTextLines; i++)
+                    for (int i = (_maxTextLines - 49); i < _maxTextLines; i++)
                     {
-                        textLines[i].totalLines = 0;
-                        textLines[i].line = "";
-                        textLines[i].width = 0;
+                        _textLines[i].totalLines = 0;
+                        _textLines[i].line = "";
+                        _textLines[i].width = 0;
                     }
 
-                    totalLines = MaxTextLines - 50;
+                    _totalLines = _maxTextLines - 50;
 
                     if (this.Height != 0)
                     {
-                        totalDisplayLines = FormatLines(totalLines, 1, 0);
-                        UpdateScrollBar(totalDisplayLines);
+                        _totaldisplayLines = FormatLines(_totalLines, 1, 0);
+                        UpdateScrollBar(_totaldisplayLines);
                         Invalidate();
                     }
 
-                    totalLines++;
+                    _totalLines++;
                 }
 
                 //add line numbers for temp measure
-                //newLine = totalLines.ToString() + ":" + newLine; 
+                //newLine = _totalLines.ToString() + ":" + newLine; 
 
-                textLines[totalLines].line = newLine;
+                _textLines[_totalLines].line = newLine;
 
                 Graphics g = this.CreateGraphics();
                 //properly measure for bold characters needed
                 StringFormat sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-                textLines[totalLines].width = (int)g.MeasureString(StripCodes(newLine), this.Font, 0, sf).Width;
+                _textLines[_totalLines].width = (int)g.MeasureString(StripCodes(newLine), this.Font, 0, sf).Width;
 
                 g.Dispose();
 
-                textLines[totalLines].textColor = foreColor;
+                _textLines[_totalLines].textColor = _foreColor;
 
-                int addedLines = FormatLines(totalLines, totalLines, totalDisplayLines);
-                addedLines -= totalDisplayLines;
+                int addedLines = FormatLines(_totalLines, _totalLines, _totaldisplayLines);
+                addedLines -= _totaldisplayLines;
 
-                textLines[totalLines].totalLines = addedLines;
+                _textLines[_totalLines].totalLines = addedLines;
 
-                for (int i = totalDisplayLines + 1; i < totalDisplayLines + addedLines; i++)
-                    displayLines[i].textLine = totalLines;
+                for (int i = _totaldisplayLines + 1; i < _totaldisplayLines + addedLines; i++)
+                    _displayLines[i].textLine = _totalLines;
 
-                totalDisplayLines += addedLines;
+                _totaldisplayLines += addedLines;
 
-                if (singleLine)
+                if (_singleLine)
                 {
-                    totalLines = 1;
-                    totalDisplayLines = 1;
-                    displayLines[1].textLine = 1;
-                    textLines[1].totalLines = 1;
+                    _totalLines = 1;
+                    _totaldisplayLines = 1;
+                    _displayLines[1].textLine = 1;
+                    _textLines[1].totalLines = 1;
                 }
 
-                UpdateScrollBar(totalDisplayLines);
+                UpdateScrollBar(_totaldisplayLines);
 
                 Invalidate();
             }
@@ -856,10 +884,10 @@ namespace IceChat
         internal int SearchText(string data, int start)
         {
             int totalChars = 0;
-            System.Diagnostics.Debug.WriteLine(totalLines + ":" + start);
-            for (int i = 1; i <= totalLines; i++)
+            System.Diagnostics.Debug.WriteLine(_totalLines + ":" + start);
+            for (int i = 1; i <= _totalLines; i++)
             {
-                string line = StripAllCodes(textLines[i].line);
+                string line = StripAllCodes(_textLines[i].line);
                 if ((line.Length + totalChars) > start)
                 {
                     int x = line.IndexOf(data);
@@ -874,7 +902,7 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("match:" + (x + totalChars));
                     }
                 }
-                //System.Diagnostics.Debug.WriteLine(textLines[i].line.IndexOf(data));
+                //System.Diagnostics.Debug.WriteLine(_textLines[i].line.IndexOf(data));
                 totalChars += line.Length;
             }
             return -1;
@@ -955,34 +983,41 @@ namespace IceChat
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            if (startHighLine > -1 && curHighLine > -1)
+            if (_startHighLine > -1 && _curHighLine > -1)
             {
-                if (curHighLine < startHighLine || (curHighLine == startHighLine && curHighChar < startHighChar))
+                if (_curHighLine < _startHighLine || (_curHighLine == _startHighLine && _curHighChar < _startHighChar))
                 {
-                    int sw = startHighLine;
-                    startHighLine = curHighLine;
-                    curHighLine = sw;
-                    sw = startHighChar;
-                    startHighChar = curHighChar;
-                    curHighChar = sw;
+                    int sw = _startHighLine;
+                    _startHighLine = _curHighLine;
+                    _curHighLine = sw;
+                    sw = _startHighChar;
+                    _startHighChar = _curHighChar;
+                    _curHighChar = sw;
                 }
 
                 StringBuilder buildString = new StringBuilder();
-                int tl = displayLines[startHighLine].textLine;
-                for (int curLine = startHighLine; curLine <= curHighLine; ++curLine)
+                int tl = _displayLines[_startHighLine].textLine;
+                for (int curLine = _startHighLine; curLine <= _curHighLine; ++curLine)
                 {
-                    if (tl != displayLines[curLine].textLine)
+                    if (tl != _displayLines[curLine].textLine)
                     {
                         buildString.Append("\r\n");
-                        tl = displayLines[curLine].textLine;
+                        tl = _displayLines[curLine].textLine;
                     }
-                    StringBuilder s = new StringBuilder(StripAllCodes(displayLines[curLine].line));
+                    StringBuilder s = new StringBuilder(StripAllCodes(_displayLines[curLine].line));
 
                     /* Filter out non-text */
-                    if (curLine == curHighLine)
-                        s = s.Remove(curHighChar, s.Length - curHighChar);
-                    if (curLine == startHighLine)
-                        s = s.Remove(0, startHighChar);
+                    System.Diagnostics.Debug.WriteLine("Lines:" + curLine + ":" + _curHighLine + ":" + _startHighLine);
+                    if (curLine == _curHighLine)
+                    {
+                        System.Diagnostics.Debug.WriteLine(s.Length + ":" + _curHighChar + ":" + _startHighChar);
+                        if (s.Length >= _curHighChar)
+                            s = s.Remove(_curHighChar, s.Length - _curHighChar);                    
+                    }
+                    if (curLine == _startHighLine)
+                        s = s.Remove(0, _startHighChar);
+                    
+                    System.Diagnostics.Debug.WriteLine(s.ToString());
 
                     buildString.Append(s);
                 }
@@ -993,10 +1028,10 @@ namespace IceChat
             }
 
             // Supress highlighting
-            startHighLine = -1;
-            if (curHighLine != -1)
+            _startHighLine = -1;
+            if (_curHighLine != -1)
             {
-                curHighLine = -1;
+                _curHighLine = -1;
                 Invalidate();
             }
 
@@ -1007,10 +1042,10 @@ namespace IceChat
         {
             LoadTextSizes();
 
-            displayLines.Initialize();
+            _displayLines.Initialize();
 
-            totalDisplayLines = FormatLines(totalLines, 1, 0);
-            UpdateScrollBar(totalDisplayLines);
+            _totaldisplayLines = FormatLines(_totalLines, 1, 0);
+            UpdateScrollBar(_totaldisplayLines);
 
             Invalidate();
 
@@ -1018,12 +1053,12 @@ namespace IceChat
 
         private void OnResize(object sender, System.EventArgs e)
         {
-            if (this.Height == 0 || totalLines == 0)
+            if (this.Height == 0 || _totalLines == 0)
                 return;
 
-            displayLines.Initialize();
+            _displayLines.Initialize();
 
-            reformatLines = true;
+            _reformatLines = true;
             
             Invalidate();
 
@@ -1038,8 +1073,8 @@ namespace IceChat
         /// <returns></returns>
         private void UpdateScrollBar(int newValue)
         {
-            showMaxLines = (this.Height / lineSize) + 1;
-            //totalDisplayLines = FormatLines(totalLines, 1, 0);
+            _showMaxLines = (this.Height / _lineSize) + 1;
+            //_totaldisplayLines = FormatLines(_totalLines, 1, 0);
             if (this.InvokeRequired)
             {
                 ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBar);
@@ -1047,14 +1082,14 @@ namespace IceChat
             }
             else
             {
-                if (showMaxLines < totalDisplayLines)
+                if (_showMaxLines < _totaldisplayLines)
                 {
-                    vScrollBar.LargeChange = showMaxLines;
+                    vScrollBar.LargeChange = _showMaxLines;
                     vScrollBar.Enabled = true;
                 }
                 else
                 {
-                    vScrollBar.LargeChange = totalDisplayLines;
+                    vScrollBar.LargeChange = _totaldisplayLines;
                     vScrollBar.Enabled = false;
                 }
                 
@@ -1070,7 +1105,7 @@ namespace IceChat
 
         internal void ScrollToBottom()
         {
-            vScrollBar.Value = totalDisplayLines;
+            vScrollBar.Value = _totaldisplayLines;
         }
 
         private void OnScroll(object sender, EventArgs e)
@@ -1090,11 +1125,11 @@ namespace IceChat
 		
         private string ParseEmoticons(string line)
         {
-            if (FormMain.Instance.IceChatOptions.ShowEmoticons && !noEmoticons)
+            if (FormMain.Instance.IceChatOptions.ShowEmoticons && !_noEmoticons)
             {
-                if (emotMatch.Length > 0)
+                if (_emotMatch.Length > 0)
                 {
-                    string[] eachEmot = emotMatch.Split((char)0);
+                    string[] eachEmot = _emotMatch.Split((char)0);
                     for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
                     {
                         line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
@@ -1149,15 +1184,13 @@ namespace IceChat
                     if (currentBackColor > -1)
                         sLine.Insert(m.Index, newColorChar.ToString() + fc.ToString("00") + currentBackColor.ToString("00"));
                     else
-                        //sLine.Insert(m.Index, newColorChar.ToString() + fc.ToString("00") + backColor.ToString("00"));
                         sLine.Insert(m.Index, newColorChar.ToString() + fc.ToString("00") + "99");
 
                 }
                 else if (Regex.Match(m.Value, ParseColorChar).Success)
                 {
                     currentBackColor = -1;
-                    //sLine.Insert(m.Index, newColorChar.ToString() + foreColor.ToString("00") + backColor.ToString("00"));
-                    sLine.Insert(m.Index, newColorChar.ToString() + foreColor.ToString("00") + "99");
+                    sLine.Insert(m.Index, newColorChar.ToString() + _foreColor.ToString("00") + "99");
                 }
                 m = ParseIRCCodes.Match(sLine.ToString(), sLine.Length - oldLen);
             }
@@ -1181,7 +1214,7 @@ namespace IceChat
             if (displayWidth <= 0)
                 return 0;
             
-            if (totalLines == 0)
+            if (_totalLines == 0)
                 return 0;
 
             string lastColor="";
@@ -1199,30 +1232,30 @@ namespace IceChat
             for (int currentLine = endLine; currentLine <= startLine ; currentLine++)
             {
                 lastColor = "";
-                displayLines[line].previous = false;
-                displayLines[line].wrapped = false;
+                _displayLines[line].previous = false;
+                _displayLines[line].wrapped = false;
 
-                //System.Diagnostics.Debug.WriteLine("checking:" + currentLine + ":" + startLine + ":" + line + ":" + textLines[currentLine].width + ":" + displayWidth);
+                //System.Diagnostics.Debug.WriteLine("checking:" + currentLine + ":" + startLine + ":" + line + ":" + _textLines[currentLine].width + ":" + displayWidth);
                 //check of the line width is the same or less then the display width            
-                if (textLines[currentLine].width <= displayWidth)
+                if (_textLines[currentLine].width <= displayWidth)
                 {
                     try
                     {
                         //System.Diagnostics.Debug.WriteLine("fits 1 line");
-                        displayLines[line].line = textLines[currentLine].line;
-                        displayLines[line].textLine = currentLine;
-                        displayLines[line].textColor = textLines[currentLine].textColor;
+                        _displayLines[line].line = _textLines[currentLine].line;
+                        _displayLines[line].textLine = currentLine;
+                        _displayLines[line].textColor = _textLines[currentLine].textColor;
                         line++;
                     } 
                     catch (Exception e)
                     {
-                        FormMain.Instance.WriteErrorFile("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length, e.StackTrace);
+                        FormMain.Instance.WriteErrorFile("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + _textLines.Length, e.StackTrace);
                     }
                 }
                 else
                 {
                     lineSplit = false;
-                    string curLine = textLines[currentLine].line;
+                    string curLine = _textLines[currentLine].line;
                     
                     StringBuilder buildString = new StringBuilder();
                     
@@ -1253,13 +1286,13 @@ namespace IceChat
                                     if ((int)g.MeasureString(StripAllCodes(buildString.ToString()),this.Font, 0, sf).Width > displayWidth)
                                     {
                                         if (lineSplit)
-                                            displayLines[line].line = lastColor + buildString;
+                                            _displayLines[line].line = lastColor + buildString;
                                         else
-                                            displayLines[line].line = buildString.ToString();
+                                            _displayLines[line].line = buildString.ToString();
 
-                                        displayLines[line].textLine = currentLine;
-                                        displayLines[line].wrapped = true;
-                                        displayLines[line].textColor = textLines[currentLine].textColor;
+                                        _displayLines[line].textLine = currentLine;
+                                        _displayLines[line].wrapped = true;
+                                        _displayLines[line].textColor = _textLines[currentLine].textColor;
 
                                         lineSplit = true;
                                         if (nextColor.Length != 0)
@@ -1268,7 +1301,7 @@ namespace IceChat
                                             nextColor = "";
                                         }
                                         line++;
-                                        displayLines[line].previous = true;
+                                        _displayLines[line].previous = true;
                                         buildString = null;
                                         buildString = new StringBuilder();
                                         buildString.Append(ch[0]);
@@ -1282,19 +1315,19 @@ namespace IceChat
                     catch(Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine("Line:" + curLine.Length + ":" + curLine);
-                        FormMain.Instance.WriteErrorFile("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + textLines.Length, e.StackTrace);
+                        FormMain.Instance.WriteErrorFile("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + _textLines.Length, e.StackTrace);
                     }
                     
                     //get the remainder
                     if (lineSplit)                    
-                        displayLines[line].line = lastColor + buildString.ToString();
+                        _displayLines[line].line = lastColor + buildString.ToString();
                     else
-                        displayLines[line].line = buildString.ToString();
+                        _displayLines[line].line = buildString.ToString();
 
                     buildString = null;
 
-                    displayLines[line].textLine = currentLine;
-                    displayLines[line].textColor = textLines[currentLine].textColor;
+                    _displayLines[line].textLine = currentLine;
+                    _displayLines[line].textColor = _textLines[currentLine].textColor;
                     line++;
                 }
             }
@@ -1316,11 +1349,11 @@ namespace IceChat
         /// </summary>
         private void OnDisplayText(PaintEventArgs e)
         {
-            if (reformatLines)
+            if (_reformatLines)
             {
-                totalDisplayLines = FormatLines(totalLines, 1, 0);
-                UpdateScrollBar(totalDisplayLines);
-                reformatLines = false;
+                _totaldisplayLines = FormatLines(_totalLines, 1, 0);
+                UpdateScrollBar(_totaldisplayLines);
+                _reformatLines = false;
             }
 
             try
@@ -1340,18 +1373,20 @@ namespace IceChat
                 //Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
                 Bitmap buffer = new Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 Graphics g = Graphics.FromImage(buffer);
-                //g.Clear(IrcColor.colors[backColor]);
-                g.FillRectangle(new SolidBrush(IrcColor.colors[backColor]), displayRect);
+                //g.Clear(IrcColor.colors[_backColor]);
                 
-                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                if (_backgroundImage != null)
+                    g.DrawImage((Image)_backgroundImage, displayRect);
+                else
+                    g.FillRectangle(new SolidBrush(IrcColor.colors[_backColor]), displayRect);
+                
                 g.InterpolationMode = InterpolationMode.Low;
                 g.SmoothingMode = SmoothingMode.HighSpeed;
                 g.PixelOffsetMode = PixelOffsetMode.None;
                 g.CompositingQuality = CompositingQuality.HighSpeed;
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
 
-                if (totalLines == 0)
+                if (_totalLines == 0)
                 {
                     e.Graphics.DrawImageUnscaled(buffer, 0, 0);
                     buffer.Dispose();
@@ -1361,18 +1396,18 @@ namespace IceChat
 
                 int val = vScrollBar.Value;
 
-                LinesToDraw = (showMaxLines > val ? val : showMaxLines);
+                LinesToDraw = (_showMaxLines > val ? val : _showMaxLines);
                 
                 curLine = val - LinesToDraw;
 
-                if (singleLine)
+                if (_singleLine)
                 {
                     startY = 0;
                     LinesToDraw = 1;
                     curLine = 0;
                 }
                 else
-                    startY = this.Height - (lineSize * LinesToDraw) - (lineSize / 2);
+                    startY = this.Height - (_lineSize * LinesToDraw) - (_lineSize / 2);
 
                 StringFormat sf = StringFormat.GenericTypographic;
                 sf.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
@@ -1385,12 +1420,12 @@ namespace IceChat
                 int redline = -1;
                 if (FormMain.Instance.IceChatOptions.ShowUnreadLine)
                 {
-                    for (int i = totalDisplayLines - 1, j = 0; i >= 0; --i)
+                    for (int i = _totaldisplayLines - 1, j = 0; i >= 0; --i)
                     {
-                        if (!displayLines[i].previous)
+                        if (!_displayLines[i].previous)
                         {
                             ++j;
-                            if (j >= unreadMarker)
+                            if (j >= _unreadMarker)
                             {
                                 redline = i;
                                 break;
@@ -1413,11 +1448,11 @@ namespace IceChat
                     
                     lineCounter++;
 
-                    curForeColor = displayLines[curLine].textColor;
+                    curForeColor = _displayLines[curLine].textColor;
                     StringBuilder line = new StringBuilder();
 
-                    line.Append(displayLines[curLine].line);
-                    curBackColor = backColor;
+                    line.Append(_displayLines[curLine].line);
+                    curBackColor = _backColor;
 
                     //check if in a url
                     if (!isInUrl)
@@ -1444,14 +1479,14 @@ namespace IceChat
                                         //select the emoticon here
                                         Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + ((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).EmoticonImage);
 
-                                        if (curBackColor != backColor)
+                                        if (curBackColor != _backColor)
                                         {
                                             textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
-                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                             g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                         }
 
-                                        g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width, startY, lineSize, lineSize);
+                                        g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width, startY, _lineSize, _lineSize);
 
                                         g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
 
@@ -1466,10 +1501,10 @@ namespace IceChat
                                     }
                                     break;
                                 case urlStart:
-                                    if (curBackColor != backColor)
+                                    if (curBackColor != _backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), this.Font, 0, sf).Width + 1;
-                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                         g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                     }
                                     g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1489,10 +1524,10 @@ namespace IceChat
                                     break;
 
                                 case urlEnd:
-                                    if (curBackColor != backColor)
+                                    if (curBackColor != _backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                         g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                     }
                                     g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1511,10 +1546,10 @@ namespace IceChat
                                     isInUrl = false;
                                     break;
                                 case underlineChar:
-                                    if (curBackColor != backColor)
+                                    if (curBackColor != _backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                         g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                     }
                                     g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1534,10 +1569,10 @@ namespace IceChat
                                     break;
                                 case newColorChar:
                                     //draw whats previously in the string
-                                    if (curBackColor != backColor)
+                                    if (curBackColor != _backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                         g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                     }
                                     g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1558,9 +1593,9 @@ namespace IceChat
 
                                         //check to make sure that FC and BC are in range 0-31
                                         if (curForeColor > 31)
-                                            curForeColor = displayLines[curLine].textColor;
+                                            curForeColor = _displayLines[curLine].textColor;
                                         if (curBackColor > 31)
-                                            curBackColor = backColor;
+                                            curBackColor = _backColor;
                                     }
 
                                     //remove the color codes from the string
@@ -1569,17 +1604,17 @@ namespace IceChat
                                     break;
 
                                 default:
-                                    if (startHighLine >= 0 &&
-                                        ((curLine >= startHighLine && curLine <= curHighLine) ||
-                                        (curLine <= startHighLine && curLine >= curHighLine)))
+                                    if (_startHighLine >= 0 &&
+                                        ((curLine >= _startHighLine && curLine <= _curHighLine) ||
+                                        (curLine <= _startHighLine && curLine >= _curHighLine)))
                                     {
-                                        if ((curLine > startHighLine && curLine < curHighLine) ||
-                                            (curLine == startHighLine && j >= startHighChar && (curLine <= curHighLine && j < curHighChar || curLine < curHighLine)) ||
-                                            (curLine == curHighLine && j < curHighChar && (curLine >= startHighLine && j >= startHighChar || curLine > startHighLine)))
+                                        if ((curLine > _startHighLine && curLine < _curHighLine) ||
+                                            (curLine == _startHighLine && j >= _startHighChar && (curLine <= _curHighLine && j < _curHighChar || curLine < _curHighLine)) ||
+                                            (curLine == _curHighLine && j < _curHighChar && (curLine >= _startHighLine && j >= _startHighChar || curLine > _startHighLine)))
                                             highlight = true;
-                                        else if ((curLine < startHighLine && curLine > curHighLine) ||
-                                            (curLine == startHighLine && j < startHighChar && (curLine >= curHighLine && j >= curHighChar || curLine > curHighLine)) ||
-                                            (curLine == curHighLine && j >= curHighChar && (curLine <= startHighLine && j < startHighChar || curLine < startHighLine)))
+                                        else if ((curLine < _startHighLine && curLine > _curHighLine) ||
+                                            (curLine == _startHighLine && j < _startHighChar && (curLine >= _curHighLine && j >= _curHighChar || curLine > _curHighLine)) ||
+                                            (curLine == _curHighLine && j >= _curHighChar && (curLine <= _startHighLine && j < _startHighChar || curLine < _startHighLine)))
                                             highlight = true;
                                         else
                                             highlight = false;
@@ -1594,10 +1629,10 @@ namespace IceChat
                                         oldHighlight = highlight;
 
                                         //draw whats previously in the string                                
-                                        if (curBackColor != backColor)
+                                        if (curBackColor != _backColor)
                                         {
                                             textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                                             g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                         }
                                         g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, sf);
@@ -1617,8 +1652,8 @@ namespace IceChat
                                         }
                                         else
                                         {
-                                            curForeColor = displayLines[curLine].textColor;
-                                            curBackColor = backColor;
+                                            curForeColor = _displayLines[curLine].textColor;
+                                            curBackColor = _backColor;
                                         }
 
                                     }
@@ -1636,10 +1671,10 @@ namespace IceChat
                     if (i == line.Length && line.Length > 0)
                     {
 
-                        if (curBackColor != backColor)
+                        if (curBackColor != _backColor)
                         {
                             textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
-                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, lineSize + 1);
+                            Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
                             g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                         }
 
@@ -1647,7 +1682,7 @@ namespace IceChat
 
                     }
 
-                    startY += lineSize;
+                    startY += _lineSize;
                     startX = 0;
                     curLine++;
                     buildString = null;
@@ -1693,10 +1728,10 @@ namespace IceChat
         {
             Graphics g = this.CreateGraphics();
             
-            lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+            _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             
-            showMaxLines = (this.Height / lineSize) + 1;
-            vScrollBar.LargeChange = showMaxLines;
+            _showMaxLines = (this.Height / _lineSize) + 1;
+            vScrollBar.LargeChange = _showMaxLines;
 
             g.Dispose();
 
@@ -1705,7 +1740,7 @@ namespace IceChat
 
         private string ParseUrl(string data)
         {            
-            Regex re = new Regex(wwwMatch);
+            Regex re = new Regex(_wwwMatch);
             MatchCollection matches = re.Matches(data);
             foreach (Match m in matches)
             {

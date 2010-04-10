@@ -166,9 +166,9 @@ namespace IceChat
                 //do the math
                 Graphics g = this.CreateGraphics();
 
-                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
                 //find the nickname number, add 1 to it to make it a non-zero value
-                int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + topIndex;
+                int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + topIndex;
 
                 if (nickNumber < currentWindow.Nicks.Count)
                     selectedIndex = nickNumber;
@@ -271,9 +271,9 @@ namespace IceChat
             {
                 Graphics g = this.CreateGraphics();
 
-                int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
                 //find the nickname number, add 1 to it to make it a non-zero value
-                int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + topIndex;
+                int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + topIndex;
 
                 if (nickNumber < currentWindow.Nicks.Count)
                 {
@@ -364,7 +364,7 @@ namespace IceChat
                         sortedNicks.Sort();
 
                         int currentY = listR.Y;
-                        int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                        int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
                         string host = "";
 
                         int randColor = -1;
@@ -430,7 +430,7 @@ namespace IceChat
                             //check if selected, if so, draw the selector bar
                             if (i == selectedIndex)
                             {
-                                g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
+                                g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
                                 b = null;
                                 b = new SolidBrush(SystemColors.HighlightText);
                             }
@@ -444,10 +444,10 @@ namespace IceChat
                                 if (host.Length > 0)
                                     g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                             }
-                            currentY += lineSize;
+                            currentY += _lineSize;
                             if (currentY >= listR.Height + listR.Y)
                             {
-                                vScrollBar.Maximum = sortedNicks.Count - ((listR.Height - lineSize) / lineSize);
+                                vScrollBar.Maximum = sortedNicks.Count - ((listR.Height - _lineSize) / _lineSize);
                                 break;
                             }
                         }

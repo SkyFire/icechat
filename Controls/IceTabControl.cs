@@ -37,40 +37,40 @@ namespace IceChat
     {
 
         //Tab font which affect the cards' height and width
-        private Font m_fontTab = new Font("Verdana", 10F);
+        private Font _tabFont = new Font("Verdana", 10F);
 
         //Tabs Area Rectangle grouped by the tab selectindex
-        private Dictionary<int, Rectangle> m_TabSizeRects = new Dictionary<int, Rectangle>();
-        private Dictionary<int, Rectangle> m_TabTextRects = new Dictionary<int, Rectangle>();
+        private Dictionary<int, Rectangle> _tabSizeRects = new Dictionary<int, Rectangle>();
+        private Dictionary<int, Rectangle> _tabTextRects = new Dictionary<int, Rectangle>();
 
         //IceTabPage(inherited from Panel) of this TabControl
-        private List<IceTabPage> m_lTabPages = new List<IceTabPage>();
+        private List<IceTabPage> _TabPages = new List<IceTabPage>();
         
         //tabs' height
-        private int m_TabRowHeight = 30;
+        private int _TabRowHeight = 30;
         
         //how many rows of tabs to display
-        private int m_TotalTabRows = 1;
+        private int _TotalTabRows = 1;
 
         //TabControl's selectedIndex
-        private int m_SelectedIndex = -1;
-        private int m_PreviousSelectedIndex = 0;
+        private int _selectedIndex = -1;
+        private int _previousSelectedIndex = 0;
 
         //TabControl's hoveredIndex
-        private int m_iHoveredIndex = -1;
+        private int _hoveredIndex = -1;
 
         //starting position of dragging
-        private Point DragStartPosition = Point.Empty;
+        private Point _dragStartPosition = Point.Empty;
         
         //which tab will be dragged
-        private IceTabPage drag_Tab;
+        private IceTabPage _dragTab;
 
-        private int m_TabStartXPos = 0;
+        private int _tabStartXPos = 0;
 
         //for the popupmenu
-        private ContextMenuStrip popupMenu;
+        private ContextMenuStrip _popupMenu;
 
-        private Panel m_pnlCloseButton;
+        private Panel pnlCloseButton;
 
         //public event System.EventHandler SelectedIndexChanged;
         public delegate void TabEventHandler(object sender, TabEventArgs e);
@@ -89,8 +89,8 @@ namespace IceChat
             InitializeComponent();
             InitializeCustom();
 
-            popupMenu = ConsolePopupMenu();
-            popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+            _popupMenu = ConsolePopupMenu();
+            _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
 
         }
 
@@ -98,7 +98,7 @@ namespace IceChat
         {
             get
             {
-                return this.m_lTabPages;
+                return this._TabPages;
             }
         }
 
@@ -106,10 +106,8 @@ namespace IceChat
         {
             set 
             {
-                //System.Diagnostics.Debug.WriteLine(m_SelectedIndex + ":" + value);
-                //if (m_SelectedIndex != value)
-                this.m_PreviousSelectedIndex = m_SelectedIndex;
-                this.m_SelectedIndex = value;
+                this._previousSelectedIndex = _selectedIndex;
+                this._selectedIndex = value;
                                         
                 if (this.SelectedIndexChanged != null)
                 {
@@ -120,7 +118,7 @@ namespace IceChat
             }
             get
             {
-                return this.m_SelectedIndex;
+                return this._selectedIndex;
             }
         }
 
@@ -128,7 +126,7 @@ namespace IceChat
         {
             get 
             {
-                return this.m_lTabPages.Count;
+                return this._TabPages.Count;
             }
         }
 
@@ -136,7 +134,7 @@ namespace IceChat
         {
             set 
             {
-                this.m_fontTab = value;
+                this._tabFont = value;
             }
         }
 
@@ -144,10 +142,10 @@ namespace IceChat
         {
             get
             {
-                //System.Diagnostics.Debug.WriteLine("Current Tab:" + m_SelectedIndex + ":" + m_lTabPages.Count);
-                if (m_SelectedIndex == -1) m_SelectedIndex = 0;
-                if (m_SelectedIndex > (m_lTabPages.Count - 1)) m_SelectedIndex = 0;
-                return m_lTabPages[m_SelectedIndex];
+                //System.Diagnostics.Debug.WriteLine("Current Tab:" + _selectedIndex + ":" + _TabPages.Count);
+                if (_selectedIndex == -1) _selectedIndex = 0;
+                if (_selectedIndex > (_TabPages.Count - 1)) _selectedIndex = 0;
+                return _TabPages[_selectedIndex];
             }
         }
 
@@ -156,9 +154,9 @@ namespace IceChat
             if (CurrentTab!=null && CurrentTab.TextWindow!=null)
                 CurrentTab.TextWindow.resetUnreadMarker();
 
-            for (int i = 0; i < m_lTabPages.Count; i++)
+            for (int i = 0; i < _TabPages.Count; i++)
             {
-                if (m_lTabPages[i] == page)
+                if (_TabPages[i] == page)
                 {
                     SelectedIndex = i;
                     Invalidate();
@@ -178,10 +176,10 @@ namespace IceChat
         
         internal IceTabPage GetTabPage(string sCaption)
         {
-            for (int i = 0; i < m_lTabPages.Count; i++)
+            for (int i = 0; i < _TabPages.Count; i++)
             {
-                if (m_lTabPages[i].TabCaption.Equals(sCaption))
-                    return m_lTabPages[i];
+                if (_TabPages[i].TabCaption.Equals(sCaption))
+                    return _TabPages[i];
             }
             return null;
         }
@@ -204,8 +202,8 @@ namespace IceChat
 
         internal IceTabPage GetTabPage(int iTabIndex)
         {
-            if (iTabIndex < m_lTabPages.Count)
-                return m_lTabPages[iTabIndex];
+            if (iTabIndex < _TabPages.Count)
+                return _TabPages[iTabIndex];
             return null;
         }
 
@@ -218,32 +216,32 @@ namespace IceChat
             //this.ControlAdded += new ControlEventHandler(OnControlAdded);
             this.ControlRemoved += new ControlEventHandler(OnControlRemoved);
             
-            this.m_pnlCloseButton = new Panel();
-            this.m_pnlCloseButton.BackColor = SystemColors.Control;
-            this.m_pnlCloseButton.Size = new Size(21, 21);
-            this.m_pnlCloseButton.MouseDown += new MouseEventHandler(m_pnlCloseButton_MouseDown);
-            this.m_pnlCloseButton.MouseHover += new EventHandler(m_pnlCloseButton_MouseHover);
-            this.m_pnlCloseButton.MouseLeave += new EventHandler(m_pnlCloseButton_MouseLeave);
-            this.m_pnlCloseButton.Paint += new PaintEventHandler(m_pnlCloseButton_Paint);
-            this.m_pnlCloseButton.Dock = DockStyle.Right;
+            this.pnlCloseButton = new Panel();
+            this.pnlCloseButton.BackColor = SystemColors.Control;
+            this.pnlCloseButton.Size = new Size(21, 21);
+            this.pnlCloseButton.MouseDown += new MouseEventHandler(pnlCloseButton_MouseDown);
+            this.pnlCloseButton.MouseHover += new EventHandler(pnlCloseButton_MouseHover);
+            this.pnlCloseButton.MouseLeave += new EventHandler(pnlCloseButton_MouseLeave);
+            this.pnlCloseButton.Paint += new PaintEventHandler(pnlCloseButton_Paint);
+            this.pnlCloseButton.Dock = DockStyle.Right;
 
-            this.Controls.Add(m_pnlCloseButton);
+            this.Controls.Add(pnlCloseButton);
 
             this.AutoSize = false;
 
         }
 
-        private void m_pnlCloseButton_Paint(object sender, PaintEventArgs e)
+        private void pnlCloseButton_Paint(object sender, PaintEventArgs e)
         {
             DrawCloseButton();
         }
 
-        private void m_pnlCloseButton_MouseLeave(object sender, EventArgs e)
+        private void pnlCloseButton_MouseLeave(object sender, EventArgs e)
         {
             DrawCloseButton();
         }
 
-        private void m_pnlCloseButton_MouseHover(object sender, EventArgs e)
+        private void pnlCloseButton_MouseHover(object sender, EventArgs e)
         {
             DrawCloseButtonHover();
         }
@@ -255,7 +253,7 @@ namespace IceChat
 
             string command = e.ClickedItem.Tag.ToString();
 
-            if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
+            if (GetTabPage(_selectedIndex).TabCaption == "Console")
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
@@ -264,7 +262,7 @@ namespace IceChat
             else
             {
                 
-                IceTabPage t = FormMain.Instance.TabMain.TabPages[m_SelectedIndex];
+                IceTabPage t = FormMain.Instance.TabMain.TabPages[_selectedIndex];
                 if (t != null)
                 {
                     command = command.Replace("$1", t.TabCaption);
@@ -281,7 +279,6 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Clear All", "/clear all console", global::IceChat.Properties.Resources.clear));
             menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add(NewMenuItem("Quit Server", "/quit", global::IceChat.Properties.Resources.disconected));
-
             //add the console popup menu
             AddPopupMenu("Console", menu);
             return menu;
@@ -377,9 +374,9 @@ namespace IceChat
                         {
                             //parse out $identifiers
                             IceTabPage tw = null;
-                            if (GetTabPage(m_SelectedIndex).TabCaption != "Console")
+                            if (GetTabPage(_selectedIndex).TabCaption != "Console")
                             {
-                                tw = GetTabPage(m_SelectedIndex);
+                                tw = GetTabPage(_selectedIndex);
                             }
 
                             if (p.PopupType == "Channel")
@@ -435,7 +432,7 @@ namespace IceChat
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
+            if (GetTabPage(_selectedIndex).TabCaption == "Console")
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
@@ -444,7 +441,7 @@ namespace IceChat
             else
             {
 
-                IceTabPage t = GetTabPage(m_SelectedIndex);
+                IceTabPage t = GetTabPage(_selectedIndex);
                 if (t != null)
                 {
                     command = command.Replace("$1", t.TabCaption);
@@ -453,12 +450,11 @@ namespace IceChat
             }
         }
 
-        private void m_pnlCloseButton_MouseDown(object sender, MouseEventArgs e)
+        private void pnlCloseButton_MouseDown(object sender, MouseEventArgs e)
         {
-            IceTabPage current = GetTabPage(m_SelectedIndex);
+            IceTabPage current = GetTabPage(_selectedIndex);
             if (current != null)
             {
-                //System.Diagnostics.Debug.WriteLine("close tab:" + current.TabCaption);
                 if (this.OnTabClosed != null)
                     OnTabClosed(SelectedIndex);
             }
@@ -477,32 +473,32 @@ namespace IceChat
             try
             {
                 this.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.TabbarBackColor];
-                this.m_pnlCloseButton.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.TabbarBackColor];
+                this.pnlCloseButton.BackColor = IrcColor.colors[FormMain.Instance.IceChatColors.TabbarBackColor];
 
-                if (this.m_lTabPages.Count == 0) return;
+                if (this._TabPages.Count == 0) return;
 
-                if (this.m_lTabPages.Count != 0 && m_SelectedIndex == -1)
+                if (this._TabPages.Count != 0 && _selectedIndex == -1)
                     SelectedIndex = 0;
 
-                if (this.m_SelectedIndex > (m_lTabPages.Count - 1))
+                if (this._selectedIndex > (_TabPages.Count - 1))
                     SelectedIndex = 0;
 
                 CalculateTabSizes(g);                
 
                 Region rsaved = g.Clip;
-                for (int i = 0; i < m_lTabPages.Count; i++)
+                for (int i = 0; i < _TabPages.Count; i++)
                 {
-                    m_lTabPages[i].Location = new Point(m_TabStartXPos, ((m_TabRowHeight + 7) * m_TotalTabRows));
-                    if (!this.Controls.Contains(m_lTabPages[i]))
-                        this.Controls.Add(m_lTabPages[i]);
+                    _TabPages[i].Location = new Point(_tabStartXPos, ((_TabRowHeight + 7) * _TotalTabRows));
+                    if (!this.Controls.Contains(_TabPages[i]))
+                        this.Controls.Add(_TabPages[i]);
 
-                    DrawTab(g, m_lTabPages[i], i);
+                    DrawTab(g, _TabPages[i], i);
                 }
 
                 g.Clip = rsaved;
 
-                if (GetTabPage(m_SelectedIndex) != null)
-                    GetTabPage(m_SelectedIndex).BringToFront();
+                if (GetTabPage(_selectedIndex) != null)
+                    GetTabPage(_selectedIndex).BringToFront();
 
                 DrawCloseButton();
             }
@@ -518,14 +514,14 @@ namespace IceChat
         {
             try
             {
-                Rectangle recBounds = m_TabSizeRects[nIndex];
-                Rectangle tabTextArea = m_TabTextRects[nIndex];
+                Rectangle recBounds = _tabSizeRects[nIndex];
+                Rectangle tabTextArea = _tabTextRects[nIndex];
 
                 Brush br;
                 Point[] pt;
 
-                bool bSelected = (this.m_SelectedIndex == nIndex);
-                bool bHovered = (this.m_iHoveredIndex == nIndex);
+                bool bSelected = (this._selectedIndex == nIndex);
+                bool bHovered = (this._hoveredIndex == nIndex);
 
                 if (bSelected)
                     br = new LinearGradientBrush(recBounds, IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG1], IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrentBG2], 90);
@@ -638,14 +634,14 @@ namespace IceChat
                 if (tabPage.TabCaption != "Console")
                 {
                     if (tabPage.WindowStyle != IceTabPage.WindowType.ChannelList)
-                        g.DrawString(tabPage.TabCaption, m_fontTab, br, tabTextArea, stringFormat);
+                        g.DrawString(tabPage.TabCaption, _tabFont, br, tabTextArea, stringFormat);
                     else
-                        g.DrawString(tabPage.TabCaption + "(" + tabPage.TotalChannels + ")", m_fontTab, br, tabTextArea, stringFormat);
+                        g.DrawString(tabPage.TabCaption + "(" + tabPage.TotalChannels + ")", _tabFont, br, tabTextArea, stringFormat);
 
                 }
                 else
                 {
-                    g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, m_fontTab, br, tabTextArea, stringFormat);
+                    g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, _tabFont, br, tabTextArea, stringFormat);
                 }
 
                 g.DrawString((nIndex + 1).ToString(), new Font("Arial", 8.0F), br, recBounds);
@@ -659,14 +655,14 @@ namespace IceChat
 
         internal void DrawCloseButton()
         {
-            Graphics g = m_pnlCloseButton.CreateGraphics();
+            Graphics g = pnlCloseButton.CreateGraphics();
 
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
 
             Rectangle m_CloseButton = new Rectangle(0, 0, 20, 20);
-            g.FillRectangle(new SolidBrush(m_pnlCloseButton.BackColor), m_CloseButton);
+            g.FillRectangle(new SolidBrush(pnlCloseButton.BackColor), m_CloseButton);
             g.DrawString("X", this.Font, new SolidBrush(Color.Black), m_CloseButton, stringFormat);
 
             g.Dispose();
@@ -674,7 +670,7 @@ namespace IceChat
 
         internal void DrawCloseButtonHover()
         {
-            Graphics g = m_pnlCloseButton.CreateGraphics();
+            Graphics g = pnlCloseButton.CreateGraphics();
 
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
@@ -692,43 +688,43 @@ namespace IceChat
         {
             try
             {
-                m_TabSizeRects.Clear();
-                m_TabTextRects.Clear();
+                _tabSizeRects.Clear();
+                _tabTextRects.Clear();
 
-                m_TotalTabRows = 1;
+                _TotalTabRows = 1;
 
                 int totalWidth = 0;
-                int xPos = m_TabStartXPos;
+                int xPos = _tabStartXPos;
                 int yPos = 0;
 
-                m_TabRowHeight = (int)g.MeasureString("0", m_fontTab).Height + 4;
-                if ((m_TabRowHeight / 2) * 2 == m_TabRowHeight)
-                    m_TabRowHeight++;
+                _TabRowHeight = (int)g.MeasureString("0", _tabFont).Height + 4;
+                if ((_TabRowHeight / 2) * 2 == _TabRowHeight)
+                    _TabRowHeight++;
 
-                for (int i = 0; i < m_lTabPages.Count; i++)
+                for (int i = 0; i < _TabPages.Count; i++)
                 {
 
                     Rectangle recBounds = new Rectangle();
                     Rectangle recTextArea = new Rectangle();
 
                     //caclulate the width of the text
-                    int textWidth = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Width;
-                    if (m_lTabPages[i].WindowStyle == IceTabPage.WindowType.ChannelList)
+                    int textWidth = (int)g.MeasureString(_TabPages[i].TabCaption, _tabFont).Width;
+                    if (_TabPages[i].WindowStyle == IceTabPage.WindowType.ChannelList)
                     {
-                        textWidth += (int)g.MeasureString(" (" + m_lTabPages[i].TotalChannels + ") ", m_fontTab).Width;
+                        textWidth += (int)g.MeasureString(" (" + _TabPages[i].TotalChannels + ") ", _tabFont).Width;
                     }
                     recBounds.Width = textWidth + 26;
-                    recBounds.Height = m_TabRowHeight + 5;
+                    recBounds.Height = _TabRowHeight + 5;
 
                     recTextArea.Width = textWidth + 1;
-                    recTextArea.Height = (int)g.MeasureString(m_lTabPages[i].TabCaption, m_fontTab).Height + 10;
+                    recTextArea.Height = (int)g.MeasureString(_TabPages[i].TabCaption, _tabFont).Height + 10;
 
                     if (totalWidth > 0 && ((totalWidth + recBounds.Width) > (this.Width - 30)))
                     {
-                        m_TotalTabRows++;
+                        _TotalTabRows++;
                         totalWidth = 0;
-                        xPos = m_TabStartXPos;
-                        yPos = yPos + m_TabRowHeight + 5;
+                        xPos = _tabStartXPos;
+                        yPos = yPos + _TabRowHeight + 5;
                     }
 
                     recBounds.X = xPos;
@@ -737,18 +733,18 @@ namespace IceChat
                     recTextArea.X = xPos + 21;  //add area for image and a little extra
                     recTextArea.Y = yPos;
 
-                    m_TabSizeRects.Add(i, recBounds);
-                    m_TabTextRects.Add(i, recTextArea);
+                    _tabSizeRects.Add(i, recBounds);
+                    _tabTextRects.Add(i, recTextArea);
 
                     xPos = xPos + recBounds.Width;
                     totalWidth = totalWidth + recBounds.Width;
 
 
                 }
-                for (int i = 0; i < m_lTabPages.Count; i++)
+                for (int i = 0; i < _TabPages.Count; i++)
                 {
-                    m_lTabPages[i].Width = this.Width;
-                    m_lTabPages[i].Height = this.Height - ((m_TabRowHeight + 7) * m_TotalTabRows);
+                    _TabPages[i].Width = this.Width;
+                    _TabPages[i].Height = this.Height - ((_TabRowHeight + 7) * _TotalTabRows);
                 }
             }
             catch (Exception e)
@@ -777,7 +773,7 @@ namespace IceChat
                 if (page.WindowStyle == IceTabPage.WindowType.Debug)
                     page.IconImg = this.ImageList.Images[3];
 
-                m_lTabPages.Add((IceTabPage)e.Control);
+                _TabPages.Add((IceTabPage)e.Control);
 
                 Invalidate();
             }
@@ -788,9 +784,9 @@ namespace IceChat
         {
             if (e.Control is IceTabPage) 
             {                
-                m_lTabPages.Remove((IceTabPage)e.Control);
+                _TabPages.Remove((IceTabPage)e.Control);
                 ((IceTabPage)e.Control).Dispose();
-                SelectedIndex = m_PreviousSelectedIndex;
+                SelectedIndex = _previousSelectedIndex;
                 
                 Invalidate();
                 FormMain.Instance.ServerTree.Invalidate();
@@ -799,56 +795,56 @@ namespace IceChat
 
         private void OnMouseMove(object sender, MouseEventArgs e) 
         {
-            if (m_TabSizeRects.Count == 0)
+            if (_tabSizeRects.Count == 0)
                 return;
 
             if (e.Button == MouseButtons.Left)
             {
-                Rectangle r = new Rectangle(DragStartPosition, Size.Empty);
+                Rectangle r = new Rectangle(_dragStartPosition, Size.Empty);
 
                 r.Inflate(SystemInformation.DragSize);
 
-                if (drag_Tab != null)
+                if (_dragTab != null)
                 {
                     if (!r.Contains(e.X, e.Y))
                     {
                         IceTabPage hover_Tab = HoverTab(e.Location);
                         if (hover_Tab != null)
                         {
-                            SwapTabPages(drag_Tab, hover_Tab);
-                            drag_Tab = setSelectedByClickLocation(e.Location);
+                            SwapTabPages(_dragTab, hover_Tab);
+                            _dragTab = setSelectedByClickLocation(e.Location);
                             Invalidate();
                         }
                     }
                 }
 
-                DragStartPosition = Point.Empty;
+                _dragStartPosition = Point.Empty;
                 return;
             }
 
 
-            if (e.Y < m_TabSizeRects[0].Y + 3 || e.Y > m_TabSizeRects[m_TabSizeRects.Count-1].Y + m_TabSizeRects[0].Height) 
+            if (e.Y < _tabSizeRects[0].Y + 3 || e.Y > _tabSizeRects[_tabSizeRects.Count-1].Y + _tabSizeRects[0].Height) 
             {
-                m_iHoveredIndex = -1;
+                _hoveredIndex = -1;
                 Invalidate();
                 return;
             }
 
 
-            int iHoveredIndexBeforeClick = m_iHoveredIndex;
+            int iHoveredIndexBeforeClick = _hoveredIndex;
 
-            for (int i = 0; i < m_TabSizeRects.Count; i++) 
+            for (int i = 0; i < _tabSizeRects.Count; i++) 
             {
-                Rectangle rectTab = m_TabSizeRects[i];
+                Rectangle rectTab = _tabSizeRects[i];
                 if ((e.X > rectTab.X && e.X < (rectTab.X + rectTab.Width)) && (e.Y > rectTab.Y && e.Y < (rectTab.Y + rectTab.Height))) 
                 {
-                    if (this.m_iHoveredIndex != i) 
-                        this.m_iHoveredIndex = i;
+                    if (this._hoveredIndex != i) 
+                        this._hoveredIndex = i;
                     break;
                 }
             }
 
-            if (m_iHoveredIndex == iHoveredIndexBeforeClick)
+            if (_hoveredIndex == iHoveredIndexBeforeClick)
                 return;
 
             Invalidate();
@@ -857,14 +853,26 @@ namespace IceChat
 
         private void OnMouseLeave(object sender, EventArgs e)
         {
-            m_iHoveredIndex = -1;
+            _hoveredIndex = -1;
             Invalidate();
         }
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            DragStartPosition = new Point(e.X, e.Y);
-            drag_Tab = setSelectedByClickLocation(e.Location);
+            if (e.Button == MouseButtons.Left)
+            {
+                _dragStartPosition = new Point(e.X, e.Y);
+                _dragTab = setSelectedByClickLocation(e.Location);
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                IceTabPage current = GetTabPage(_selectedIndex);
+                if (current != null)
+                {
+                    if (this.OnTabClosed != null)
+                        OnTabClosed(SelectedIndex);
+                }
+            }
         }
         
         private void OnMouseUp(object sender, MouseEventArgs e)
@@ -872,38 +880,38 @@ namespace IceChat
             if (e.Button == MouseButtons.Right)
             {
                 //show the proper popup menu according to what kind of tab
-                if (GetTabPage(m_SelectedIndex).TabCaption == "Console")
+                if (GetTabPage(_selectedIndex).TabCaption == "Console")
                 {
                     //console tab
-                    popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                    popupMenu.Items.Clear();
-                    popupMenu = ConsolePopupMenu();
-                    popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                    popupMenu.Show(this, e.Location);
+                    _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                    _popupMenu.Items.Clear();
+                    _popupMenu = ConsolePopupMenu();
+                    _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                    _popupMenu.Show(this, e.Location);
                 }
                 else
                 {
                     
-                    if (GetTabPage(m_SelectedIndex).WindowStyle == IceTabPage.WindowType.Channel)
+                    if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Channel)
                     {
-                        popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                        popupMenu.Items.Clear();
-                        popupMenu = ChannelPopupMenu();
-                        popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                        popupMenu.Show(this, e.Location);
+                        _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Items.Clear();
+                        _popupMenu = ChannelPopupMenu();
+                        _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Show(this, e.Location);
                     }
-                    else if (GetTabPage(m_SelectedIndex).WindowStyle == IceTabPage.WindowType.Query)
+                    else if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Query)
                     {
-                        popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                        popupMenu.Items.Clear();
-                        popupMenu = QueryPopupMenu();
-                        popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
-                        popupMenu.Show(this, e.Location);
+                        _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Items.Clear();
+                        _popupMenu = QueryPopupMenu();
+                        _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Show(this, e.Location);
                     }
                 }
             }
             
-            drag_Tab = null;
+            _dragTab = null;
             FormMain.Instance.FocusInputBox();
         }
 
@@ -920,9 +928,9 @@ namespace IceChat
        
         private IceTabPage HoverTab(Point pClickLocation)
         {
-            for (int i = 0; i < m_TabSizeRects.Count; i++)
+            for (int i = 0; i < _tabSizeRects.Count; i++)
             {
-                Rectangle rectTab = m_TabSizeRects[i];
+                Rectangle rectTab = _tabSizeRects[i];
                 if ((pClickLocation.X > rectTab.X && pClickLocation.X < rectTab.X + rectTab.Width) && (pClickLocation.Y > rectTab.Y && pClickLocation.Y < rectTab.Bottom))
                     return GetTabPage(i);
             }
@@ -932,22 +940,22 @@ namespace IceChat
 
         private IceTabPage setSelectedByClickLocation(Point pClickLocation) 
         {
-            if (m_TabSizeRects.Count == 0) return null;
+            if (_tabSizeRects.Count == 0) return null;
             
-            for (int i = 0; i < m_TabSizeRects.Count; i++) 
+            for (int i = 0; i < _tabSizeRects.Count; i++) 
             {
-                Rectangle rectTab = m_TabSizeRects[i];
+                Rectangle rectTab = _tabSizeRects[i];
                 if ((pClickLocation.X > rectTab.X && pClickLocation.X < rectTab.X + rectTab.Width) && (pClickLocation.Y > rectTab.Y && pClickLocation.Y < rectTab.Bottom)  ) 
                 {
-                    if (this.m_SelectedIndex != i) 
-                        this.m_SelectedIndex = i;
+                    if (this._selectedIndex != i) 
+                        this._selectedIndex = i;
                     break;
                 }
             }
 
-            if (GetTabPage(m_SelectedIndex) != null)
+            if (GetTabPage(_selectedIndex) != null)
             {
-                GetTabPage(m_SelectedIndex).BringToFront();
+                GetTabPage(_selectedIndex).BringToFront();
                 if (this.SelectedIndexChanged != null)
                 {
                     TabEventArgs e = new TabEventArgs();
@@ -957,7 +965,7 @@ namespace IceChat
 
             Invalidate();
 
-            return GetTabPage(m_SelectedIndex);
+            return GetTabPage(_selectedIndex);
         }
 
     }

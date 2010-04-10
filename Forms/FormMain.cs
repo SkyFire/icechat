@@ -294,6 +294,7 @@ namespace IceChat
             nickList.Dock = DockStyle.Fill;
             nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName,iceChatFonts.FontSettings[3].FontSize);
 
+
             panelRight.Controls.Add(channelList);
             panelRight.Controls.Add(nickList);
             panelRight.Controls.Add(panelRightBottom);
@@ -1265,46 +1266,32 @@ namespace IceChat
                     {
                         case "/makeexception":
                             throw new Exception("IceChat 2009 Test Exception Error");
-                        case "/userinfo":
-                            if (connection != null && data.Length > 0)
+                        case "/bg": //change background image for a window(s)
+                            if (data.Length > 0)
                             {
-                                FormUserInfo fui = new FormUserInfo(connection);
-                                //find the user
-                                fui.NickName(data);
-                                fui.ShowDialog(this);
-                            }
-                            break;
+                                //bg windowtype imagefile
+                                //if imagefile is blank, erase background image
+                                string window = data.Split(' ')[0];
+                                string file = "";
+                                if (data.IndexOf(' ') > -1)
+                                    file = data.Substring(window.Length + 1);
 
-                        case "/chaninfo":
-                            if (connection != null)
-                            {
-                                if (data.Length > 0)
+                                switch (window.ToLower())
                                 {
-                                    IceTabPage t = GetWindow(connection, data, IceTabPage.WindowType.Channel);
-                                    if (t != null)
-                                    {
-                                        FormChannelInfo fci = new FormChannelInfo(t);
-                                        SendData(connection, "MODE " + t.TabCaption + " +b");
-                                        //check if mode (e) exists for Exception List
-                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
-                                            SendData(connection, "MODE " + t.TabCaption + " +e");
-                                        SendData(connection, "TOPIC :" + t.TabCaption);
-                                        fci.ShowDialog(this);
-                                    }
-                                }
-                                else
-                                {
-                                    //check if current window is channel
-                                    if (CurrentWindowType == IceTabPage.WindowType.Channel)
-                                    {
-                                        FormChannelInfo fci = new FormChannelInfo(CurrentWindow);
-                                        SendData(connection, "MODE " + CurrentWindow.TabCaption + " +b");
-                                        //check if mode (e) exists for Exception List
-                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
-                                            SendData(connection, "MODE " + CurrentWindow.TabCaption + " +e");
-                                        SendData(connection, "TOPIC :" + CurrentWindow.TabCaption);
-                                        fci.ShowDialog(this);
-                                    }
+                                    case "console":
+                                        if (CurrentWindowType == IceTabPage.WindowType.Console)
+                                        {
+                                            if (file.IndexOf(System.IO.Path.DirectorySeparatorChar) > -1)
+                                                mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = file;
+                                            else
+                                            {
+                                                if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures" + System.IO.Path.DirectorySeparatorChar + file))
+                                                    mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = (currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures" + System.IO.Path.DirectorySeparatorChar + file);
+                                                else
+                                                    mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = "";
+                                            }
+                                        }
+                                        break;
                                 }
                             }
                             break;
@@ -1396,6 +1383,39 @@ namespace IceChat
                                 ParseOutGoingCommand(connection, "/mode " + channel + " +b " + host);
                             }
                             break;
+                        case "/chaninfo":
+                            if (connection != null)
+                            {
+                                if (data.Length > 0)
+                                {
+                                    IceTabPage t = GetWindow(connection, data, IceTabPage.WindowType.Channel);
+                                    if (t != null)
+                                    {
+                                        FormChannelInfo fci = new FormChannelInfo(t);
+                                        SendData(connection, "MODE " + t.TabCaption + " +b");
+                                        //check if mode (e) exists for Exception List
+                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                            SendData(connection, "MODE " + t.TabCaption + " +e");
+                                        SendData(connection, "TOPIC :" + t.TabCaption);
+                                        fci.ShowDialog(this);
+                                    }
+                                }
+                                else
+                                {
+                                    //check if current window is channel
+                                    if (CurrentWindowType == IceTabPage.WindowType.Channel)
+                                    {
+                                        FormChannelInfo fci = new FormChannelInfo(CurrentWindow);
+                                        SendData(connection, "MODE " + CurrentWindow.TabCaption + " +b");
+                                        //check if mode (e) exists for Exception List
+                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                            SendData(connection, "MODE " + CurrentWindow.TabCaption + " +e");
+                                        SendData(connection, "TOPIC :" + CurrentWindow.TabCaption);
+                                        fci.ShowDialog(this);
+                                    }
+                                }
+                            }
+                            break;
                         case "/clear":
                             if (data.Length == 0)
                             {
@@ -1405,7 +1425,6 @@ namespace IceChat
                                 {
                                     //find the current console tab window
                                     mainTabControl.GetTabPage("Console").CurrentConsoleWindow().ClearTextWindow();
-
                                 }
                             }
                             else
@@ -1583,6 +1602,10 @@ namespace IceChat
                                     mainTabControl.GetTabPage("Console").CurrentConsoleWindow().AppendText(msg, 1);
                                 }
                             }
+                            break;
+                        case "/forcequit":
+                            if (connection != null)
+                                connection.ForceDisconnect();
                             break;
                         case "/google":
                             if (data.Length > 0)
@@ -1787,10 +1810,6 @@ namespace IceChat
                                 }
                             }
                             break;
-                        case "/run":
-                            if (data.Length > 0)
-                                System.Diagnostics.Process.Start(data);
-                            break;
                         case "/query":
                             if (connection != null && data.Length > 0)
                             {
@@ -1826,9 +1845,9 @@ namespace IceChat
                                 }
                             }
                             break;
-                        case "/forcequit":
-                            if (connection != null)
-                                connection.ForceDisconnect();
+                        case "/run":
+                            if (data.Length > 0)
+                                System.Diagnostics.Process.Start(data);
                             break;
                         case "/say":
                             if (connection != null && data.Length > 0)
@@ -2013,6 +2032,15 @@ namespace IceChat
                                             SendData(connection, "TOPIC " + CurrentWindow.TabCaption + " :" + data);
                                     }
                                 }
+                            }
+                            break;
+                        case "/userinfo":
+                            if (connection != null && data.Length > 0)
+                            {
+                                FormUserInfo fui = new FormUserInfo(connection);
+                                //find the user
+                                fui.NickName(data);
+                                fui.ShowDialog(this);
                             }
                             break;
                         case "/version":

@@ -194,9 +194,9 @@ namespace IceChat
 
             Graphics g = this.CreateGraphics();
             
-            int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+            int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
-            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1 + topIndex;
+            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1 + topIndex;
             
             g.Dispose();
 
@@ -211,9 +211,9 @@ namespace IceChat
 
             Graphics g = this.CreateGraphics();
 
-            int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+            int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
-            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / lineSize) + 1;
+            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1;
 
             if (nodeNumber <= serverNodes.Count)
             {
@@ -648,7 +648,7 @@ namespace IceChat
                     Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
 
                     int currentY = listR.Y;
-                    int lineSize = Convert.ToInt32(this.Font.GetHeight(g));
+                    int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
 
                     BuildServerNodes();
 
@@ -672,7 +672,7 @@ namespace IceChat
 
                         if (nodeCount == selectedNodeIndex)
                         {
-                            g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, lineSize);
+                            g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
                             b = new SolidBrush(SystemColors.HighlightText);
                         }
                         else
@@ -705,11 +705,11 @@ namespace IceChat
 
                         if (currentY >= listR.Height + listR.Y)
                         {
-                            vScrollBar.Maximum = serverNodes.Count - ((listR.Height - lineSize) / lineSize);
+                            vScrollBar.Maximum = serverNodes.Count - ((listR.Height - _lineSize) / _lineSize);
                             break;
                         }
 
-                        currentY += lineSize;
+                        currentY += _lineSize;
                     }
 
                     if (currentY > listR.Height || vScrollBar.Value > 0)

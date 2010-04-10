@@ -96,9 +96,9 @@ namespace IceChat
             {
                 //pong has not received, re-connect server
                 //disable for the time being
-                //ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
+                ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
                 //send a ping to the server
-                //SendData("PING :" + this.serverSetting.RealServerName);
+                SendData("PING :" + this.serverSetting.RealServerName);
                 
                 //ForceDisconnect();
                 //attemptReconnect = true;

@@ -1,3 +1,11 @@
+Build Alpha 12.3 - April 10 2010
+* Fixed UnHandledException log now in Logs folder
+* Fixed Double Click in Text Window only works with Left Button
+* Added Middle Mouse button closes Tabs
+* Start renaming private variables with _ in front
+* Fix for Mono/Linux for missing query.png file for ServerTree
+
+
 Build Alpha 12.2 - April 5 2010
 * Added -profile parameter to allow change of data folder
 * Minor Update to the Nicklist/Server List Text Fonts, less fuzzy
