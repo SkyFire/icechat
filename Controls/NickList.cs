@@ -160,7 +160,17 @@ namespace IceChat
                 }
                 return;
             }
-            
+
+            if (docked)
+            {
+                FormMain.Instance.tabPanelRight.Visible = true;
+                FormMain.Instance.splitterRight.Visible = true;
+                docked = false;
+                panelButtons.Visible = true;
+                ((Panel)this.Parent).Width = oldDockWidth;
+                return;
+            }
+
             if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //do the math

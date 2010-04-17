@@ -36,6 +36,7 @@
             this.labelName = new System.Windows.Forms.Label();
             this.labelAuthor = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
+            this.buttonReLoad = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -71,7 +72,7 @@
             // buttonClose
             // 
             this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonClose.Location = new System.Drawing.Point(188, 110);
+            this.buttonClose.Location = new System.Drawing.Point(202, 110);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 6;
@@ -114,11 +115,23 @@
             this.labelVersion.Size = new System.Drawing.Size(0, 16);
             this.labelVersion.TabIndex = 10;
             // 
+            // buttonReLoad
+            // 
+            this.buttonReLoad.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonReLoad.Location = new System.Drawing.Point(104, 110);
+            this.buttonReLoad.Name = "buttonReLoad";
+            this.buttonReLoad.Size = new System.Drawing.Size(75, 23);
+            this.buttonReLoad.TabIndex = 11;
+            this.buttonReLoad.Text = "Re-Load";
+            this.buttonReLoad.UseVisualStyleBackColor = true;
+            this.buttonReLoad.Click += new System.EventHandler(this.buttonReLoad_Click);
+            // 
             // FormPluginInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(275, 140);
+            this.ClientSize = new System.Drawing.Size(289, 140);
+            this.Controls.Add(this.buttonReLoad);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelAuthor);
             this.Controls.Add(this.labelName);
@@ -152,5 +165,6 @@
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Label labelAuthor;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.Button buttonReLoad;
     }
 }

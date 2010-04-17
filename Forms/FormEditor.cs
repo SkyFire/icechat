@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
+using System.Reflection;
 
 namespace IceChat
 {
@@ -24,10 +25,15 @@ namespace IceChat
         private string currentScript;
         private ToolStripMenuItem currentPopupMenu;
 
+        private IceChatScript.IceChatScript icechatScript;
+
         public FormEditor()
         {            
             InitializeComponent();
 
+            icechatScript = new IceChatScript.IceChatScript();
+            icechatScript.OutGoingCommand += new IceChatScript.IceChatScript.OutGoingCommandDelegate(icechatScript_OutGoingCommand);
+            
             popupTypeToolStripMenuItem.Visible = false;
 
             tabControlEditor.SelectedIndexChanged += new EventHandler(tabControlEditor_SelectedIndexChanged);
@@ -52,6 +58,33 @@ namespace IceChat
             currentPopup = "NickList";
             currentPopupMenu = nickListToolStripMenuItem;
 
+            try
+            {
+
+                if (FormMain.Instance.IceChatOptions.ScriptFiles != null)
+                {
+                    foreach (string script in FormMain.Instance.IceChatOptions.ScriptFiles)
+                    {
+                        ToolStripMenuItem t = new ToolStripMenuItem(System.IO.Path.GetFileName(script));
+                        t.Tag = script;
+                        scriptsToolStripMenuItem.DropDownItems.Add(t);
+                    }
+                    if (scriptsToolStripMenuItem.DropDownItems.Count > 0)
+                    {
+                        StreamReader stream = new StreamReader(scriptsToolStripMenuItem.DropDownItems[0].Tag.ToString());
+                        textScripts.Text = stream.ReadToEnd();
+                        stream.Close();
+                        stream.Dispose();
+                        stream = null;
+                        ((ToolStripMenuItem)scriptsToolStripMenuItem.DropDownItems[0]).Checked = true;
+                    }
+                }
+            }
+            catch(FileNotFoundException fe)
+            {
+                FormMain.Instance.WriteErrorFile(fe.Message, fe.StackTrace);
+            }
+            
             ApplyLanguage();
         }
 
@@ -217,33 +250,67 @@ namespace IceChat
             System.CodeDom.Compiler.CodeDomProvider cp = System.CodeDom.Compiler.CodeDomProvider.CreateProvider("CSharp");            
             string[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
             
-            System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);
+            System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);            
+            par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatScript.dll");
             
-            par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IPluginIceChat.dll");
             par.GenerateExecutable = false;
-            par.GenerateInMemory = true;
-            par.OutputAssembly = Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "test_script.dll";
-            
+            par.GenerateInMemory = false;
+            par.CompilerOptions = "/target:library";
+            par.OutputAssembly = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "test_script.dll";
+            par.MainClass = "IceChatScript";
+
             System.CodeDom.Compiler.CompilerResults err = cp.CompileAssemblyFromSource(par, textScripts.Text);
             if (err.Errors.Count > 0)
             {
                 foreach (System.CodeDom.Compiler.CompilerError ce in err.Errors)
                 {
                     System.Diagnostics.Debug.WriteLine("Error:" + ce.ToString());
-                    FormMain.Instance.WindowMessage(null, "Console", "Error:" + ce.ToString(), 4, true);
+                    FormMain.Instance.WindowMessage(null, "Console", "Error:" + ce.ErrorNumber + ":" + ce.ToString(), 4, true);
                 }
                 return;
             }
 
-            System.Reflection.Module module = err.CompiledAssembly.GetModules()[0];
-            Type mt = null;
-            System.Reflection.MethodInfo mi = null;
+            //System.Reflection.Module module = err.CompiledAssembly.GetModules()[0];
+            //Type mt = null;
+            //System.Reflection.MethodInfo mi = null;
+            //System.Reflection.Assembly a =             
+
+            Assembly a = err.CompiledAssembly;
+            object o = a.CreateInstance("IceChatScript.Script");
+            EventInfo ei = o.GetType().GetEvent("OutGoingCommand");
+            Type t = ei.EventHandlerType;
+            Delegate handler = Delegate.CreateDelegate(t, this, "SendCommand");
             
+            ei.AddEventHandler(o, handler);
+            
+            MethodInfo info = o.GetType().GetMethod("OnText");
+            if (info != null)
+                info.Invoke(o, new object[] { "this is a test message", "#icechat2009", "Snerf", "icechat@icechat.net", new object() });
+
+
+            /*
             if (module != null)
-                mt = module.GetType("IceChatScript.IceChatScript");
+                mt = module.GetType("IceChatScript.Test");
             else
                 System.Diagnostics.Debug.WriteLine("fail module");
 
+            if (mt != null)
+                mi = mt.GetMethod("OnTest");
+            else
+                System.Diagnostics.Debug.WriteLine("fail methodinfo OnTest");
+
+            if (mi != null)
+            {
+                System.Diagnostics.Debug.WriteLine("this far");
+                
+                mi.Invoke(mt, new object[] { "this is a test message","#icechat2009","Snerf","icechat@icechat.net", new object() });
+            }
+            else
+                System.Diagnostics.Debug.WriteLine("Invoke Failed");
+            */
+
+
+            /*
             if (mt != null)
                 mi = mt.GetMethod("Main");
             else
@@ -256,9 +323,13 @@ namespace IceChat
             }
             else
                 System.Diagnostics.Debug.WriteLine("Invoke Failed");
+            */
+        }
+        public void SendCommand(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("send command:" + command);
 
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             textScripts.AppendText("using System.Windows.Forms;" + Environment.NewLine);
@@ -273,7 +344,7 @@ namespace IceChat
             textScripts.AppendText("    }" + Environment.NewLine);
             textScripts.AppendText("   }" + Environment.NewLine);
             textScripts.AppendText("}");
-
+            
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -299,7 +370,7 @@ namespace IceChat
                     fd.AddExtension = true;
                     fd.AutoUpgradeEnabled = true;
                     fd.Title = "Where do you want to save the file?";
-                    fd.InitialDirectory = Application.StartupPath;
+                    fd.InitialDirectory = FormMain.Instance.CurrentFolder;
                     if (fd.ShowDialog() == DialogResult.OK)
                     {
                         StreamWriter stream = new StreamWriter(fd.FileName);
@@ -327,7 +398,7 @@ namespace IceChat
                 fd.AddExtension = true;
                 fd.AutoUpgradeEnabled = true;
                 fd.Title = "Where do you want to save the file?";
-                fd.InitialDirectory = Application.StartupPath;
+                fd.InitialDirectory = FormMain.Instance.CurrentFolder;
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
                     StreamWriter stream = new StreamWriter(fd.FileName);
@@ -355,7 +426,7 @@ namespace IceChat
                 fd.AutoUpgradeEnabled = true;
                 fd.Filter = "Script file (*.cs)|*.cs";
                 fd.Title = "Which file do you want to open?";
-                fd.InitialDirectory = Application.StartupPath;
+                fd.InitialDirectory = FormMain.Instance.CurrentFolder;
                 
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
@@ -365,6 +436,14 @@ namespace IceChat
                     stream.Close();
                     stream.Dispose();
                     stream = null;
+                    
+                    ToolStripMenuItem t = new ToolStripMenuItem(System.IO.Path.GetFileName(fd.FileName));
+                    t.Tag = fd.FileName;
+                    scriptsToolStripMenuItem.DropDownItems.Add(t);
+                    FormMain.Instance.IceChatOptions.ScriptFiles = new string[scriptsToolStripMenuItem.DropDownItems.Count];
+                    for (int i = 0; i < scriptsToolStripMenuItem.DropDownItems.Count; i++)
+                        FormMain.Instance.IceChatOptions.ScriptFiles[i] = scriptsToolStripMenuItem.DropDownItems[i].Tag.ToString();
+
                 }
 
                 fd.Dispose();
@@ -381,6 +460,11 @@ namespace IceChat
                 stream.Close();
             }
             */
+        }
+
+        private void icechatScript_OutGoingCommand(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("out:" + command);
         }
 
 
@@ -462,6 +546,28 @@ namespace IceChat
             LoadPopups(queryPopup);
         }
 
+        private void unloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //unload the currently checked script
+            FormMain.Instance.IceChatOptions.ScriptFiles = new string[scriptsToolStripMenuItem.DropDownItems.Count - 1];
+            int count = 0;
+            ToolStripMenuItem t = null;
+            for (int i = 0; i < scriptsToolStripMenuItem.DropDownItems.Count; i++)
+            {
+                if (!((ToolStripMenuItem)scriptsToolStripMenuItem.DropDownItems[i]).Checked)
+                {
+                    FormMain.Instance.IceChatOptions.ScriptFiles[count] = scriptsToolStripMenuItem.DropDownItems[i].Tag.ToString();
+                    count++;
+                }
+                else
+                    t = (ToolStripMenuItem)scriptsToolStripMenuItem.DropDownItems[i];
 
+            }
+            if (t != null)
+            {
+                scriptsToolStripMenuItem.DropDownItems.Remove(t);
+                textScripts.Text = "";
+            }
+        }
     }
 }

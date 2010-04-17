@@ -67,7 +67,7 @@ namespace IceChat
         //set the default values (only for specific settings)
         private string _serverPort = "6667";
         private string _displayName = "";
-        private string _identName = "Ice2009";
+        private string _identName = "IceChat09";
         private string _fullName = "The Chat Cool People Use";
         private string _realServerName = "";
         private string _quitMessage = "$randquit";
@@ -75,7 +75,7 @@ namespace IceChat
         private bool _setModeI = true;
         private bool _showPingPong = false;
         private bool _autoJoinDelay = false;
-        private int _pongTimerMinutes = 15;
+        private int _pongTimerMinutes = 30;
 
         [XmlAttribute("ServerID")]
         public int ID
@@ -187,6 +187,10 @@ namespace IceChat
         [XmlElement("PongTimerMinutes")]
         public int PongTimerMinutes
         { get { return this._pongTimerMinutes; } set { this._pongTimerMinutes = value; } }
+
+        [XmlElement("UseSSL")]
+        public bool UseSSL
+        { get; set; }
 
         //these are all temporary server settings, not saved to the XML file
 

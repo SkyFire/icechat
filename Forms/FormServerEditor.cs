@@ -122,6 +122,7 @@ namespace IceChat
             this.textServerPassword.Text = serverSetting.Password;
             this.textNickservPassword.Text = serverSetting.NickservPassword;
             this.checkAutoStart.Checked = serverSetting.AutoStart;
+            this.checkUseSSL.Checked = serverSetting.UseSSL;
 
             if (serverSetting.AutoJoinChannels != null)
             {
@@ -129,12 +130,38 @@ namespace IceChat
                 {
                     if (!chan.StartsWith(";"))
                     {
-                        ListViewItem lvi = new ListViewItem(chan);
-                        lvi.Checked = true;
-                        listChannel.Items.Add(lvi);
+                        if (chan.IndexOf(' ') > -1)
+                        {
+                            string channel = chan.Substring(0, chan.IndexOf(' '));
+                            string key = chan.Substring(chan.IndexOf(' ') + 1);
+                            ListViewItem lvi = new ListViewItem(channel);
+                            lvi.SubItems.Add(key);
+                            lvi.Checked = true;
+                            listChannel.Items.Add(lvi);
+                        }
+                        else
+                        {
+                            ListViewItem lvi = new ListViewItem(chan);
+                            lvi.Checked = true;
+                            listChannel.Items.Add(lvi);
+                        }
                     }
                     else
-                        listChannel.Items.Add(chan.Substring(1));
+                    {
+                        if (chan.IndexOf(' ') > -1)
+                        {
+                            string channel = chan.Substring(1, chan.IndexOf(' '));
+                            string key = chan.Substring(chan.IndexOf(' ') + 1);
+                            ListViewItem lvi = new ListViewItem(channel);
+                            lvi.SubItems.Add(key);
+                            listChannel.Items.Add(lvi);
+                        }
+                        else
+                        {
+                            ListViewItem lvi = new ListViewItem(chan.Substring(1));
+                            listChannel.Items.Add(lvi);
+                        }
+                    }
                 }
             }
 
@@ -217,9 +244,19 @@ namespace IceChat
             for (int i = 0; i < listChannel.Items.Count; i++)
             {
                 if (listChannel.Items[i].Checked == false)
-                    serverSetting.AutoJoinChannels[i] = ";" + listChannel.Items[i].Text;
+                {
+                    if (listChannel.Items[i].SubItems.Count > 1)
+                        serverSetting.AutoJoinChannels[i] = ";" + listChannel.Items[i].Text + " " + listChannel.Items[i].SubItems[1].Text;
+                    else
+                        serverSetting.AutoJoinChannels[i] = ";" + listChannel.Items[i].Text;
+                }
                 else
-                    serverSetting.AutoJoinChannels[i] = listChannel.Items[i].Text;
+                {
+                    if (listChannel.Items[i].SubItems.Count > 1)
+                        serverSetting.AutoJoinChannels[i] = listChannel.Items[i].Text + " " + listChannel.Items[i].SubItems[1].Text;
+                    else
+                        serverSetting.AutoJoinChannels[i] = listChannel.Items[i].Text;
+                }
             }
             
             serverSetting.IgnoreList = new string[listIgnore.Items.Count];
@@ -240,6 +277,7 @@ namespace IceChat
             serverSetting.RejoinChannels = checkRejoinChannel.Checked;
             serverSetting.DisableCTCP = checkDisableCTCP.Checked;
             serverSetting.AutoStart = checkAutoStart.Checked;
+            serverSetting.UseSSL = checkUseSSL.Checked;
             serverSetting.Encoding = comboEncoding.Text;
 
             if (newServer == true)
@@ -270,8 +308,27 @@ namespace IceChat
         {
             if (textChannel.Text.Length > 0)
             {
-                ListViewItem lvi = new ListViewItem(textChannel.Text);
-                lvi.Checked = true;
+                ListViewItem lvi = null;
+                if (textChannel.Text.IndexOf(" ") > -1)
+                {
+                    string channel = textChannel.Text.Substring(0, textChannel.Text.IndexOf(' '));
+                    string key = textChannel.Text.Substring(textChannel.Text.IndexOf(' ') + 1);
+                    lvi = new ListViewItem(channel);
+                    lvi.SubItems.Add(key);
+                }
+                else if (textChannel.Text.IndexOf(":") > -1)
+                {
+                    string channel = textChannel.Text.Substring(0, textChannel.Text.IndexOf(':'));
+                    string key = textChannel.Text.Substring(textChannel.Text.IndexOf(':') + 1);
+                    lvi = new ListViewItem(channel);
+                    lvi.SubItems.Add(key);
+                }
+                else
+                {
+                    lvi = new ListViewItem(textChannel.Text);
+                }
+                
+                lvi.Checked = true;                
                 listChannel.Items.Add(lvi);
                 textChannel.Text = "";
                 textChannel.Focus();

@@ -376,6 +376,10 @@
       <Project>{EC8820CA-B2C2-416B-8A59-2416AA349C4C}</Project>
       <Name>IPluginIceChat</Name>
     </ProjectReference>
+    <ProjectReference Include="Scripting\IceChatScript.csproj">
+      <Project>{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}</Project>
+      <Name>IceChatScript</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

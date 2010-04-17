@@ -199,6 +199,15 @@ namespace IceChat
                 return;
             }
 
+            if (docked)
+            {
+                docked = false;
+                FormMain.Instance.splitterLeft.Visible = true;
+                panelButtons.Visible = true;
+                ((Panel)this.Parent).Width = oldDockWidth;
+                return;
+            }
+
             Graphics g = this.CreateGraphics();
             
             int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
@@ -626,8 +635,6 @@ namespace IceChat
 
                 //draw the header
                 g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.ServerListBackColor]);
-                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                 g.InterpolationMode = InterpolationMode.Low;
                 g.SmoothingMode = SmoothingMode.HighSpeed;
@@ -649,7 +656,7 @@ namespace IceChat
                     centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
                     g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
+                    g.DrawImageUnscaled(IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
 
                     //draw each individual server
                     Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
@@ -707,20 +714,20 @@ namespace IceChat
                         switch (nodes[1])
                         {
                             case "0":   //disconnected
-                                g.DrawImage(global::IceChat.Properties.Resources.disconected, x, currentY,16,16);
+                                g.DrawImage(IceChat.Properties.Resources.disconected, x, currentY, 16, 16);
                                 break;
-                            case "1":   //connecting
-                                g.DrawImage(global::IceChat.Properties.Resources.refresh, x, currentY, 16, 16);
+                            case "1":   //connected
+                                g.DrawImage(IceChat.Properties.Resources.connected, x, currentY, 16, 16);
                                 break;
-                            case "2":   //connected
-                                g.DrawImage(global::IceChat.Properties.Resources.connected, x, currentY, 16, 16);
+                            case "2":   //connecting
+                                g.DrawImage(IceChat.Properties.Resources.refresh, x, currentY, 16, 16);
                                 break;
                             case "3":   //channel
-                                g.DrawImage(global::IceChat.Properties.Resources.window, x, currentY, 16, 16);
+                                g.DrawImage(IceChat.Properties.Resources.window, x, currentY, 16, 16);
                                 break;
                             case "4":   //query
                             case "5":   //dcc chat
-                                g.DrawImage(global::IceChat.Properties.Resources.query, x, currentY, 16, 16);
+                                g.DrawImage(IceChat.Properties.Resources.query, x, currentY, 16, 16);
                                 break;
                         
                         }

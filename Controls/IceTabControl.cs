@@ -192,7 +192,7 @@ namespace IceChat
                 {
                     if (t.WindowStyle == windowType)
                     {
-                        if (t.TabCaption == windowName)
+                        if (t.TabCaption.ToLower() == windowName.ToLower())
                             return true;
                     }
                 }
@@ -859,19 +859,23 @@ namespace IceChat
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            _dragStartPosition = new Point(e.X, e.Y);
+            _dragTab = setSelectedByClickLocation(e.Location);
+            
+            if (e.Button == MouseButtons.Middle)
             {
-                _dragStartPosition = new Point(e.X, e.Y);
-                _dragTab = setSelectedByClickLocation(e.Location);
-            }
-            else if (e.Button == MouseButtons.Middle)
-            {
+                if (_dragTab != null)
+                {
+                    
+                }
+                /*    
                 IceTabPage current = GetTabPage(_selectedIndex);
                 if (current != null)
                 {
                     if (this.OnTabClosed != null)
                         OnTabClosed(SelectedIndex);
                 }
+                */
             }
         }
         

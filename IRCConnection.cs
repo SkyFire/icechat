@@ -28,6 +28,7 @@ using System.Collections;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+using System.Net.Security;
 using System.Text.RegularExpressions;
 
 namespace IceChat
@@ -49,10 +50,15 @@ namespace IceChat
         private ArrayList ircTimers;
 
         private System.Timers.Timer pongTimer;
-
-
+        
+        private int whichAddressinList = 1;
+        private int whichAddressCurrent = 1;
+        private int totalAddressinDNS = 0;
         //private const int bytesperlong = 4; // 32 / 8
         //private const int bitsperbyte = 8;
+        
+        //private SslStream sslStream;
+        //private NetworkStream socketStream;
 
         public IRCConnection(ServerSetting ss)
         {
@@ -87,7 +93,10 @@ namespace IceChat
         private void OnReconnectTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             if (attemptReconnect)
+            {
+                whichAddressinList++;
                 ConnectSocket();
+            }
         }
 
         private void OnPongTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -99,11 +108,10 @@ namespace IceChat
                 ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
                 //send a ping to the server
                 SendData("PING :" + this.serverSetting.RealServerName);
-                
                 //ForceDisconnect();
                 //attemptReconnect = true;
                 //pongTimer.Stop();
-                //reconnectTimer.Start();                
+                //reconnectTimer.Start();            
             
             }
             catch(SocketException ee)
@@ -183,8 +191,13 @@ namespace IceChat
             client.EndDisconnect(ar);
 
             string msg = FormMain.Instance.GetMessageFormat("Server Disconnect");
-            msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-            
+            msg = msg.Replace("$serverip", serverSetting.ServerIP);
+            msg = msg.Replace("$port", serverSetting.ServerPort);
+            if (serverSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", serverSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", serverSetting.ServerName);
+
             foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
             {
                 if (t.WindowStyle == IceTabPage.WindowType.Channel || t.WindowStyle == IceTabPage.WindowType.Query)
@@ -220,6 +233,9 @@ namespace IceChat
 
             serverSetting.IAL.Clear();
             serverSetting.Away = false;
+            serverSetting.RealServerName = "";
+
+            pongTimer.Stop();
 
             //disable and remove all timers
             foreach (object key in ircTimers)
@@ -296,15 +312,14 @@ namespace IceChat
 
                 //send the USER / NICK stuff
                 SendData("NICK " + serverSetting.NickName);
-
-                //string ServerName = IPAddress.Parse(((IPEndPoint)serverSocket.RemoteEndPoint).Address.ToString()).ToString();
                 SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+
+                whichAddressinList = whichAddressCurrent;
 
                 if (ServerMessage != null)
                     ServerMessage(this, "Sending User Registration Information");
 
                 this.pongTimer.Start();
-
             }
             catch (SocketException se)
             {
@@ -417,6 +432,7 @@ namespace IceChat
         private void OnSendData(IAsyncResult ar)
         {
             Socket handler = (Socket)ar.AsyncState;
+            
             try
             {
                 int bytesSent = handler.EndSend(ar);
@@ -520,11 +536,17 @@ namespace IceChat
             disconnectError = false;
 
             IPHostEntry hostEntry = null;
-
+            
             try
             {
                 // Get host related information.
                 hostEntry = Dns.GetHostEntry(serverSetting.ServerName);
+
+                whichAddressCurrent = 1;
+                totalAddressinDNS = hostEntry.AddressList.Length;
+
+                if (whichAddressinList > totalAddressinDNS)
+                    whichAddressinList = 1;
 
                 // Loop through the AddressList to obtain the supported AddressFamily. This is to avoid
                 // an exception that occurs when the host IP Address is not compatible with the address family
@@ -533,26 +555,43 @@ namespace IceChat
                 {
                     try
                     {
-                        IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
-                        Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                        
-                        if (ServerMessage != null)
+                        if (whichAddressCurrent == whichAddressinList)
                         {
-                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                            msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                            serverSetting.ServerIP = address.ToString();
-                            ServerMessage(this, msg);
-                        }
+                            IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
+                            Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                        tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
-                        serverSocket = tempSocket;
-                        
-                        break;
+                            if (ServerMessage != null)
+                            {
+                                string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                                msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                                serverSetting.ServerIP = address.ToString();
+                                ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
+                            }
+
+                            serverSocket = tempSocket;
+                            /*
+                            if (serverSetting.UseSSL)
+                            {
+                                socketStream = new NetworkStream(serverSocket);
+                                sslStream = new SslStream(socketStream);                                
+                            }
+                            */
+                            tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
+
+                            break;
+                        }
+                        whichAddressCurrent++;
+                        if (whichAddressCurrent > hostEntry.AddressList.Length)
+                            whichAddressCurrent = 1;
                     }
                     catch (Exception e)
                     {
                         if (ServerError != null)
                             ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
+
+                        whichAddressCurrent++;
+                        if (whichAddressCurrent > hostEntry.AddressList.Length)
+                            whichAddressCurrent = 1;
 
                         disconnectError = true;
                         if (serverSocket != null)
@@ -560,6 +599,11 @@ namespace IceChat
                             ForceDisconnect();
                         }
 
+                    }
+                    finally
+                    {
+                        if (whichAddressCurrent > hostEntry.AddressList.Length)
+                            whichAddressCurrent = 1;
                     }
                 }
             }

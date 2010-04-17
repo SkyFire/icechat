@@ -459,6 +459,7 @@ namespace IceChat
             // 
             // toolStripSettings
             // 
+            this.toolStripSettings.BackColor = System.Drawing.Color.Transparent;
             this.toolStripSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSettings.Image")));
             this.toolStripSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSettings.Name = "toolStripSettings";
@@ -468,6 +469,7 @@ namespace IceChat
             // 
             // toolStripColors
             // 
+            this.toolStripColors.BackColor = System.Drawing.Color.Transparent;
             this.toolStripColors.Image = ((System.Drawing.Image)(resources.GetObject("toolStripColors.Image")));
             this.toolStripColors.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripColors.Name = "toolStripColors";
@@ -477,6 +479,7 @@ namespace IceChat
             // 
             // toolStripEditor
             // 
+            this.toolStripEditor.BackColor = System.Drawing.Color.Transparent;
             this.toolStripEditor.Image = ((System.Drawing.Image)(resources.GetObject("toolStripEditor.Image")));
             this.toolStripEditor.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripEditor.Name = "toolStripEditor";
@@ -486,6 +489,7 @@ namespace IceChat
             // 
             // toolStripAway
             // 
+            this.toolStripAway.BackColor = System.Drawing.Color.Transparent;
             this.toolStripAway.Image = ((System.Drawing.Image)(resources.GetObject("toolStripAway.Image")));
             this.toolStripAway.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripAway.Name = "toolStripAway";

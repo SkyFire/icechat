@@ -502,7 +502,11 @@ namespace IceChat
             get { return this._dccPortUpper; }
             set { this._dccPortUpper = value; }
         }
-
+        
+        [XmlArray("ScriptFiles")]
+        [XmlArrayItem("Item")]
+        public string[] ScriptFiles
+        { get; set; }
     }
     
     [XmlRoot("IceChatMessageFormat")]

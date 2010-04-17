@@ -30,7 +30,7 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
+//using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace IceChat
@@ -173,7 +173,9 @@ namespace IceChat
             }
 
             _linkedWord = ReturnWord(line, e.Location.X).Trim();
-            
+
+            //System.Diagnostics.Debug.WriteLine(_linkedWord+ ":" + StripString(_linkedWord));
+
             if (_linkedWord.Length > 0)
             {                
                 Regex re = new Regex(_wwwMatch);
@@ -192,12 +194,20 @@ namespace IceChat
                         if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, _linkedWord[0]) != -1)
                             this.Cursor = Cursors.Hand;
 
+                        string _linkedWordNick = StripString(_linkedWord);
+
                         //check if over a nick name
                         if (t.WindowStyle == IceTabPage.WindowType.Channel && this.Cursor != Cursors.Hand)
                         {
                             foreach (User u in t.Nicks.Values)
                             {
-                                if (u.NickName == _linkedWord)
+                                //System.Diagnostics.Debug.WriteLine(u.NickName + ":" + u.ToString() + ":" + _linkedWord);
+                                if (u.NickName == _linkedWordNick)
+                                {
+                                    this.Cursor = Cursors.Hand;
+                                    return;
+                                }
+                                else if (u.NickName == _linkedWord)
                                 {
                                     this.Cursor = Cursors.Hand;
                                     return;
@@ -205,7 +215,6 @@ namespace IceChat
                             }
                         }
                     }
-
                 }
                 else if (this.Parent.GetType() == typeof(ConsoleTab) && this.Cursor != Cursors.Hand)
                 {
@@ -379,7 +388,8 @@ namespace IceChat
             //what kind of a popupmenu do we want?
             string popupType = "";
             string windowName = "";
-            
+            string _linkedWordNick = StripString(_linkedWord);
+
             if (this.Parent.GetType() == typeof(IceTabPage))
             {
                 IceTabPage t = (IceTabPage)this.Parent;
@@ -388,9 +398,15 @@ namespace IceChat
                     //check if over a nick name
                     foreach (User u in t.Nicks.Values)
                     {
-                        if (u.NickName == _linkedWord)
+                        if (u.NickName == _linkedWordNick)
                         {
                             popupType = "NickList";
+                            break;
+                        }
+                        else if (u.NickName == _linkedWord)
+                        {
+                            popupType = "NickList";
+                            _linkedWordNick = _linkedWord;
                             break;
                         }
                     }
@@ -415,7 +431,7 @@ namespace IceChat
                         windowName = c.Connection.ServerSetting.ServerName;
                 }
             }
-
+            
             if (e.Button == System.Windows.Forms.MouseButtons.Right && popupType.Length > 0)
             {
                 //show the popup menu
@@ -470,8 +486,8 @@ namespace IceChat
                                 }
                                 else if (popupType == "NickList")
                                 {
-                                    caption = caption.Replace("$nick", _linkedWord);
-                                    command = command.Replace("$nick", _linkedWord);
+                                    caption = caption.Replace("$nick", _linkedWordNick);
+                                    command = command.Replace("$nick", _linkedWordNick);
                                     caption = caption.Replace("$chan", windowName);
                                     command = command.Replace("$chan", windowName);
                                 }
@@ -489,7 +505,7 @@ namespace IceChat
 
                                     //parse out the command/$identifiers                            
                                     if (popupType == "NickList")
-                                        command = command.Replace("$1", _linkedWord);
+                                        command = command.Replace("$1", _linkedWordNick);
                                     else
                                         command = command.Replace("$1", windowName);
 
@@ -577,6 +593,8 @@ namespace IceChat
                             return;
                         }
 
+                        string clickedWordNick = StripString(clickedWord);
+                        
                         //check if it is a nickname in the current channel
                         if (t.WindowStyle == IceTabPage.WindowType.Channel)
                         {
@@ -584,7 +602,12 @@ namespace IceChat
                             {
                                 foreach (User u in t.Nicks.Values)
                                 {
-                                    if (u.NickName == clickedWord)
+                                    if (u.NickName == clickedWordNick)
+                                    {
+                                        FormMain.Instance.ParseOutGoingCommand(t.Connection, "/query " + clickedWordNick);
+                                        break;
+                                    }
+                                    else if (u.NickName == clickedWord)
                                     {
                                         FormMain.Instance.ParseOutGoingCommand(t.Connection, "/query " + clickedWord);
                                         break;
@@ -645,9 +668,6 @@ namespace IceChat
                 Invalidate();
             }
         }
-
-
-            
 
         internal int IRCBackColor
         {
@@ -738,7 +758,7 @@ namespace IceChat
             }
         }
 
-        public void resetUnreadMarker()
+        internal void resetUnreadMarker()
         {
             _unreadReset = true;
         }
@@ -748,7 +768,7 @@ namespace IceChat
             get { return _showTimeStamp; }
             set { _showTimeStamp = value; }
         }
-        
+
         internal void AppendText(string newLine, int color)
         {
             try
@@ -977,6 +997,13 @@ namespace IceChat
             }
         }
 
+        private string StripString(string targetString)
+        {
+            //strip all non-alpha numeric chars from string (for nicknames)
+            //only allow chars that are allowed in nicks
+            return Regex.Replace(targetString, @"[^A-Za-z0-9_-|\[\]\\\/`\^{}]", "");
+        }
+        
         #endregion
         
         #region TextWindow Events
@@ -1007,18 +1034,14 @@ namespace IceChat
                     StringBuilder s = new StringBuilder(StripAllCodes(_displayLines[curLine].line));
 
                     /* Filter out non-text */
-                    System.Diagnostics.Debug.WriteLine("Lines:" + curLine + ":" + _curHighLine + ":" + _startHighLine);
                     if (curLine == _curHighLine)
                     {
-                        System.Diagnostics.Debug.WriteLine(s.Length + ":" + _curHighChar + ":" + _startHighChar);
                         if (s.Length >= _curHighChar)
                             s = s.Remove(_curHighChar, s.Length - _curHighChar);                    
                     }
                     if (curLine == _startHighLine)
                         s = s.Remove(0, _startHighChar);
                     
-                    System.Diagnostics.Debug.WriteLine(s.ToString());
-
                     buildString.Append(s);
                 }
 
@@ -1105,7 +1128,8 @@ namespace IceChat
 
         internal void ScrollToBottom()
         {
-            vScrollBar.Value = _totaldisplayLines;
+            if (_totaldisplayLines > 0)
+                vScrollBar.Value = _totaldisplayLines;
         }
 
         private void OnScroll(object sender, EventArgs e)

@@ -1,5 +1,14 @@
-Build Alpha 12.4
-
+Build Alpha 12.4 - April 17 2010
+* Added IceChatScript.dll , needs to be added in same folder with EXE and IPluginIceChat.dll
+* Added Self Notice in Colors, when using /notice command
+* Added ability to Unload/Reload and load New Plugins with out a restart
+* Added /loadplugin, /unloadplugin and /reloadplugin commands, just pass the DLL name
+* Added Pictures folder created in data folder
+* Added when server re-connects, goes through DNS of server address
+* Fixed /query command if a message was also included
+* Fixed hovering over a nickname in a channel, strips alpha numeric chars
+* Fixed issues with server events, checking nicknames no longer case-sensative
+* Fixed clicking on Docked Side Panel - now undocks the Panel
 
 Build Alpha 12.3 - April 10 2010
 * Fixed UnHandledException log now in Logs folder

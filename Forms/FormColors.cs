@@ -524,6 +524,9 @@ namespace IceChat
             AddMsgIdent("Self Nick Change", "$host - your hostname");
             AddMsgIdent("Self Nick Change", "$newnick - your new nick name");
 
+            AddMsgIdent("Self Notice", "$nick - who you are sending notice to");
+            AddMsgIdent("Self Notice", "$message - the notice message");
+
             AddMsgIdent("Private Message", "$nick - nickname who messaged");
             AddMsgIdent("Private Message", "$host - hostname of nick");
             AddMsgIdent("Private Message", "$message - channel message");

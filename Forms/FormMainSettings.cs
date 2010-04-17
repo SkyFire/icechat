@@ -46,12 +46,12 @@ namespace IceChat
         private void LoadDefaultMessageSettings()
         {
             IceChatMessageFormat oldMessage = new IceChatMessageFormat();
-            oldMessage.MessageSettings = new ServerMessageFormatItem[48];
+            oldMessage.MessageSettings = new ServerMessageFormatItem[49];
 
             if (iceChatMessages.MessageSettings != null)
                 iceChatMessages.MessageSettings.CopyTo(oldMessage.MessageSettings, 0);
             
-            iceChatMessages.MessageSettings = new ServerMessageFormatItem[48];
+            iceChatMessages.MessageSettings = new ServerMessageFormatItem[49];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
             {
@@ -240,6 +240,11 @@ namespace IceChat
             else
                 iceChatMessages.MessageSettings[45] = oldMessage.MessageSettings[45];
 
+            if (oldMessage.MessageSettings[48] == null || oldMessage.MessageSettings[13].FormattedMessage.Length == 0)
+                iceChatMessages.MessageSettings[48] = NewMessageFormat("Self Notice", "&#x3;1--> $nick - $message");
+            else
+                iceChatMessages.MessageSettings[48] = oldMessage.MessageSettings[48];
+
             //still do customize these messages
             iceChatMessages.MessageSettings[4] = NewMessageFormat("Ctcp Reply", "&#x3;12[$nick $ctcp Reply] : $reply");
             iceChatMessages.MessageSettings[5] = NewMessageFormat("Ctcp Send", "&#x3;10--> [$nick] $ctcp");
@@ -364,7 +369,7 @@ namespace IceChat
                 iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatMessages.MessageSettings.Length != 48)
+                if (iceChatMessages.MessageSettings.Length != 49)
                     LoadDefaultMessageSettings();
             }
             else

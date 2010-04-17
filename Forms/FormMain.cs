@@ -105,6 +105,7 @@ namespace IceChat
         public FormMain(string[] args)
         {
             FormMain.Instance = this;
+
             bool forceCurrentFolder = false;
 
             if (args.Length > 0)
@@ -166,7 +167,10 @@ namespace IceChat
 
             if (!Directory.Exists(pluginsFolder))
                 Directory.CreateDirectory(pluginsFolder);
-            
+
+            if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures"))
+                Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures");
+
             #endregion
 
             languageFiles = new List<LanguageItem>();
@@ -233,7 +237,7 @@ namespace IceChat
             
             panelLeft.Controls.Add(serverTree);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 5 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 17 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -440,6 +444,9 @@ namespace IceChat
                 identServer.Stop();
                 identServer = null;
             }
+            
+            for (int i = 0; i < loadedPlugins.Count; i++)
+                loadedPlugins.RemoveAt(i);
 
             //disconnect all the servers
             foreach (IRCConnection c in serverTree.ServerConnections.Values)
@@ -1262,10 +1269,11 @@ namespace IceChat
                         }
                     }
 
-                    switch (command)
+                    switch (command.ToLower())
                     {
                         case "/makeexception":
                             throw new Exception("IceChat 2009 Test Exception Error");
+                        
                         case "/bg": //change background image for a window(s)
                             if (data.Length > 0)
                             {
@@ -1295,6 +1303,163 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/unloadplugin":
+                            if (data.Length > 0)
+                            {
+                                //get the plugin name, and look for it in the menu items
+                                ToolStripMenuItem menuItem = null;
+                                foreach (ToolStripMenuItem t in pluginsToolStripMenuItem.DropDownItems)
+                                    if (t.ToolTipText.ToLower() == data.ToLower())
+                                        menuItem = t;
+                                
+                                if (menuItem != null)
+                                {
+                                    //match
+                                    IPluginIceChat plugin = (IPluginIceChat)menuItem.Tag;
+
+                                    plugin.OnCommand -= new OutGoingCommandHandler(Plugin_OnCommand);
+                                    loadedPlugins.Remove(plugin);
+                                    menuItem.Click -= new EventHandler(OnPluginMenuItemClick);
+                                    pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
+                                    WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
+                                    plugin.Dispose();
+                                }
+                            }
+                            break;                        
+                        case "/loadplugin":
+                            if (data.Length > 0)
+                            {
+                                Type ObjType = null;
+                                Assembly ass = null;
+
+                                try
+                                {
+                                    //reload the plugin
+                                    ass = Assembly.LoadFile(pluginsFolder + System.IO.Path.DirectorySeparatorChar + data);
+
+                                    //System.Diagnostics.Debug.WriteLine(ass.ToString());
+                                    if (ass != null)
+                                    {
+                                        ObjType = ass.GetType("IceChatPlugin.Plugin");
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("assembly is null");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    WriteErrorFile("ReLoadPlugins Cast:" + ex.Message, ex.StackTrace);
+                                }
+                                try
+                                {
+                                    // OK Lets create the object as we have the Report Type
+                                    if (ObjType != null)
+                                    {
+                                        IPluginIceChat ipi = (IPluginIceChat)Activator.CreateInstance(ObjType);
+
+                                        ipi.MainForm = this;
+                                        ipi.MainMenuStrip = this.MainMenuStrip;
+                                        ipi.CurrentFolder = currentFolder;
+
+                                        WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
+
+                                        ToolStripMenuItem t = new ToolStripMenuItem(ipi.Name);
+                                        t.Tag = ipi;
+                                        t.ToolTipText = data;
+                                        t.Click += new EventHandler(OnPluginMenuItemClick);
+                                        pluginsToolStripMenuItem.DropDownItems.Add(t);
+
+                                        ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
+                                        ipi.Initialize();
+                                        loadedPlugins.Add(ipi);
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("obj type is null:" + data);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    WriteErrorFile("LoadPlugins" + ex.Message, ex.StackTrace);
+                                }
+                            }                            
+                            break;
+                        case "/reloadplugin":
+                            if (data.Length > 0)
+                            {
+                                //get the plugin name, and look for it in the menu items
+                                ToolStripMenuItem menuItem = null;
+                                foreach (ToolStripMenuItem t in pluginsToolStripMenuItem.DropDownItems)
+                                    if (t.ToolTipText.ToLower() == data.ToLower())
+                                        menuItem = t;
+
+                                if (menuItem != null)
+                                {
+                                    //match
+                                                                       
+                                    IPluginIceChat plugin = (IPluginIceChat)menuItem.Tag;
+
+                                    plugin.OnCommand -= new OutGoingCommandHandler(Plugin_OnCommand);
+                                    loadedPlugins.Remove(plugin);
+                                    plugin.Dispose();
+
+                                    Type ObjType = null;
+                                    Assembly ass = null;
+
+                                    try
+                                    {
+                                        //reload the plugin
+                                        ass = Assembly.LoadFile(pluginsFolder + System.IO.Path.DirectorySeparatorChar + menuItem.ToolTipText);
+
+                                        //System.Diagnostics.Debug.WriteLine(ass.ToString());
+                                        if (ass != null)
+                                        {
+                                            ObjType = ass.GetType("IceChatPlugin.Plugin");
+                                        }
+                                        else
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("assembly is null");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        WriteErrorFile("ReLoadPlugins Cast:" + ex.Message, ex.StackTrace);
+                                    }
+                                    try
+                                    {
+                                        // OK Lets create the object as we have the Report Type
+                                        if (ObjType != null)
+                                        {
+                                            //System.Diagnostics.Debug.WriteLine("create instance of " + args);
+
+                                            IPluginIceChat ipi = (IPluginIceChat)Activator.CreateInstance(ObjType);
+
+                                            ipi.MainForm = this;
+                                            ipi.MainMenuStrip = this.MainMenuStrip;
+                                            ipi.CurrentFolder = currentFolder;
+
+                                            WindowMessage(null, "Console", "Re-Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
+
+                                            menuItem.Tag = ipi;
+
+                                            ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
+                                            ipi.Initialize();
+                                            loadedPlugins.Add(ipi);
+                                        }
+                                        else
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("obj type is null:" + menuItem.ToolTipText);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        WriteErrorFile("ReLoadPlugins" + ex.Message, ex.StackTrace);
+                                    }
+                                }
+                            }
+                            break;                        
+                        
                         case "/ame":    //me command for all channels
                             if (connection != null && data.Length > 0)
                             {
@@ -1741,6 +1906,11 @@ namespace IceChat
                                 string nick = data.Substring(0, data.IndexOf(' '));
                                 string msg = data.Substring(data.IndexOf(' ') + 1);
                                 SendData(connection, "NOTICE " + nick + " :" + msg);
+
+                                string nmsg = GetMessageFormat("Self Notice");
+                                nmsg = nmsg.Replace("$nick", nick).Replace("$message", msg);
+                                
+                                CurrentWindowMessage(connection, nmsg, 1, true);
                             }
                             break;
                         case "/part":
@@ -1813,10 +1983,33 @@ namespace IceChat
                         case "/query":
                             if (connection != null && data.Length > 0)
                             {
-                                if (!mainTabControl.WindowExists(connection, data, IceTabPage.WindowType.Query))
-                                    AddWindow(connection, data, IceTabPage.WindowType.Query);
+                                string nick = "";
+                                string msg = "";
                                 
-                                mainTabControl.SelectTab(GetWindow(connection, data, IceTabPage.WindowType.Query));
+                                if (data.IndexOf(" ") > 0)
+                                {
+                                    //check if there is a message added
+                                    nick = data.Substring(0, data.IndexOf(' '));
+                                    msg = data.Substring(data.IndexOf(' ') + 1);
+                                }
+                                else
+                                    nick = data;
+
+                                if (!mainTabControl.WindowExists(connection, nick, IceTabPage.WindowType.Query))
+                                    AddWindow(connection, nick, IceTabPage.WindowType.Query);
+                                
+                                mainTabControl.SelectTab(GetWindow(connection, nick, IceTabPage.WindowType.Query));
+
+                                if (msg.Length > 0)
+                                {
+                                    SendData(connection, "PRIVMSG " + nick + " :" + msg);
+
+                                    string nmsg = GetMessageFormat("Self Private Message");
+                                    nmsg = nmsg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName).Replace("$message", msg);
+                                    
+                                    CurrentWindow.TextWindow.AppendText(nmsg, 1);
+                                    CurrentWindow.LastMessageType = ServerMessageType.Message;
+                                }
                             }
                             break;
                         case "/quit":
@@ -2179,6 +2372,10 @@ namespace IceChat
             }              
                         
             ParseOutGoingCommand(inputPanel.CurrentConnection, args.Extra);
+            if (CurrentWindowType == IceTabPage.WindowType.Console)
+                mainTabControl.CurrentTab.CurrentConsoleWindow().ScrollToBottom();
+            else
+                CurrentWindow.TextWindow.ScrollToBottom();
         }
 
         #endregion
@@ -2961,7 +3158,7 @@ namespace IceChat
         
         private void LoadPlugins()
         {
-            string[] pluginFiles = Directory.GetFiles(pluginsFolder , "*.DLL");
+            string[] pluginFiles = Directory.GetFiles(pluginsFolder, "*.DLL");
             
             for (int i = 0; i < pluginFiles.Length; i++)
             {
@@ -3005,12 +3202,13 @@ namespace IceChat
                             ipi.MainForm = this;
                             ipi.MainMenuStrip = this.MainMenuStrip;
                             ipi.CurrentFolder = currentFolder;
-
+                            
                             WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
                             
                             //add the menu items
                             ToolStripMenuItem t = new ToolStripMenuItem(ipi.Name);
                             t.Tag = ipi;
+                            t.ToolTipText = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
                             t.Click += new EventHandler(OnPluginMenuItemClick);
                             pluginsToolStripMenuItem.DropDownItems.Add(t);
 
@@ -3025,7 +3223,7 @@ namespace IceChat
                     }
                     catch (Exception ex)
                     {
-                        WriteErrorFile("LoadPlugins Assign:" + ex.Message, ex.StackTrace);
+                        WriteErrorFile("LoadPlugins:" + ex.Message, ex.StackTrace);
                     }
                 }
             }
@@ -3041,25 +3239,27 @@ namespace IceChat
 
         }
 
-        internal void UnloadPlugin(IPluginIceChat plugin, ToolStripMenuItem menuItem)
+        internal void UnloadPlugin(ToolStripMenuItem menuItem)
         {
-            plugin.Dispose();
-            //unload specified plugin
-            loadedPlugins.Remove(plugin);
-            pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
-            WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
+            ParseOutGoingCommand(null, "/unloadplugin " + menuItem.ToolTipText);
+        }
 
+        internal void ReloadPlugin(ToolStripMenuItem menuItem)
+        {
+            ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
         }
 
         internal void WriteErrorFile(string message, string stackTrace)
         {
             System.Diagnostics.Debug.WriteLine(message + ":" + stackTrace);
+            
+            WindowMessage(null, "Console", "Error:: " + message + ":" + stackTrace, 4, true);
+            
             if (errorFile != null)
             {
                 errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + message + ":" + stackTrace);
                 errorFile.Flush();
             }
         }
-
     }
 }

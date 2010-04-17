@@ -115,7 +115,10 @@ namespace IceChat
         private void OnUserNotice(IRCConnection connection, string nick, string message)
         {
             string msg = GetMessageFormat("User Notice");
-            msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$message", message);
             CurrentWindowMessage(connection, msg, 1, false);
@@ -152,7 +155,10 @@ namespace IceChat
         private void OnServerNotice(IRCConnection connection, string message)
         {
             string msg = GetMessageFormat("Server Notice");
-            msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
             //((ConsoleTabWindow)tabMain.TabPages[0]).AddText(connection, msg, 1, false);
 
@@ -179,7 +185,10 @@ namespace IceChat
         {
             //goes to the console
             string msg = GetMessageFormat("Server Message");
-            msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
 
             mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
@@ -195,7 +204,10 @@ namespace IceChat
         private void OnServerMOTD(IRCConnection connection, string message)
         {
             string msg = GetMessageFormat("Server MOTD");
-            msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$message", message);
 
             mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
@@ -250,7 +262,10 @@ namespace IceChat
                 {
                     //goes to the console                        
                     string error = GetMessageFormat("Server Error");
-                    error = error.Replace("$server", connection.ServerSetting.ServerName);
+                    if (connection.ServerSetting.RealServerName.Length > 0)
+                        error = msg.Replace("$server", connection.ServerSetting.RealServerName);
+                    else
+                        error = msg.Replace("$server", connection.ServerSetting.ServerName);
                     error = error.Replace("$message", msg);
 
                     mainTabControl.GetTabPage("Console").AddText(connection, error, 4, false);
@@ -312,6 +327,7 @@ namespace IceChat
                 msg = msg.Replace("$nick", nick).Replace("$host", host);
                 msg = msg.Replace("$message", message);
 
+
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
                 args.Connection = connection;
 
@@ -321,6 +337,10 @@ namespace IceChat
                 }
 
                 t.TextWindow.AppendText(args.Message, 1);
+                
+                //make the tabcaption proper case
+                if (t.TabCaption != nick)
+                    t.TabCaption = nick;
 
                 t.LastMessageType = ServerMessageType.Action;
             }
@@ -355,6 +375,10 @@ namespace IceChat
                 }
                 
                 t.TextWindow.AppendText(msg, 1);
+
+                //make the tabcaption proper case
+                if (t.TabCaption != nick)
+                    t.TabCaption = nick;
 
                 t.LastMessageType = ServerMessageType.Message;
             }
@@ -866,7 +890,10 @@ namespace IceChat
         private void OnUserMode(IRCConnection connection, string nick, string mode)
         {
             string msg = GetMessageFormat("Server Mode");
-            msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
             msg = msg.Replace("$mode", mode);
             msg = msg.Replace("$nick", nick);
 

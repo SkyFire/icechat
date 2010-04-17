@@ -54,7 +54,8 @@ namespace IceChat
             "Depression is merely anger without enthusiasm",
             "Always try to be modest, and be proud about it!",
             "If you think nobody cares, try missing a few payments",
-            "Hard work pays off in the future, laziness pays off now" };
+            "Hard work pays off in the future, laziness pays off now",
+            "For Sale: Intergalactic Proton Powered Electrical Tentacled Advertising Droid"};
 
     }
 }
