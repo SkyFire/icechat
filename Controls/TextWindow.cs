@@ -182,10 +182,7 @@ namespace IceChat
                 MatchCollection matches = re.Matches(_linkedWord);
                 if (matches.Count > 0)
                     this.Cursor = Cursors.Hand;
-                else
-                    this.Cursor = Cursors.Default;
-
-                if (this.Parent.GetType() == typeof(IceTabPage) && this.Cursor != Cursors.Hand)
+                else if (this.Parent.GetType() == typeof(IceTabPage) && this.Cursor != Cursors.Hand)
                 {
                     IceTabPage t = (IceTabPage)this.Parent;
                     if (t.WindowStyle != IceTabPage.WindowType.Debug)
@@ -897,7 +894,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("AppendText Error:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"AppendText", e);
             }
         }
 
@@ -959,7 +956,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("ScrollWindowPage:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection, "ScrollWindowPage", e);
             }
 
         }
@@ -993,7 +990,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("ScrollWindow:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection, "ScrollWindow", e);
             }
         }
 
@@ -1273,7 +1270,7 @@ namespace IceChat
                     } 
                     catch (Exception e)
                     {
-                        FormMain.Instance.WriteErrorFile("FormatLines Error1:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + _textLines.Length, e.StackTrace);
+                        FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection, "FormatLines Error1:", e);
                     }
                 }
                 else
@@ -1339,7 +1336,7 @@ namespace IceChat
                     catch(Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine("Line:" + curLine.Length + ":" + curLine);
-                        FormMain.Instance.WriteErrorFile("FormatLines Error2:" + startLine + ":" + endLine + ":" + ii + ":" + currentLine + ":" + _textLines.Length, e.StackTrace);
+                        FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"FormatLines Error2:",e);
                     }
                     
                     //get the remainder
@@ -1722,7 +1719,7 @@ namespace IceChat
             }
             catch(Exception ee)
             {
-                FormMain.Instance.WriteErrorFile("TextWindow OnDisplayText Error:" + ee.Message, ee.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"TextWindow OnDisplayText", ee);
             }
 
         }

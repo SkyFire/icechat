@@ -114,10 +114,6 @@ namespace IceChat
             checkSeperateLogs.Checked = iceChatOptions.SeperateLogs;
             comboLogFormat.Text = iceChatOptions.LogFormat;
 
-            textDefaultNick.Text = iceChatOptions.DefaultNick;
-            checkIdentServer.Checked = iceChatOptions.IdentServer;
-            checkServerReconnect.Checked = iceChatOptions.ReconnectServer;
-
             if (iceChatEmoticons != null)
             {
                 //load in the emoticons
@@ -207,9 +203,6 @@ namespace IceChat
 
             iceChatOptions.SaveWindowPosition = checkSaveWindowPosition.Checked;
             iceChatOptions.TimeStamp = textTimeStamp.Text;
-            iceChatOptions.DefaultNick = textDefaultNick.Text;
-            iceChatOptions.IdentServer = checkIdentServer.Checked;
-            iceChatOptions.ReconnectServer = checkServerReconnect.Checked;
             iceChatOptions.LogConsole = checkLogConsole.Checked;
             iceChatOptions.LogChannel = checkLogChannel.Checked;
             iceChatOptions.LogQuery = checkLogQuery.Checked;

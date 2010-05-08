@@ -299,6 +299,9 @@ namespace IceChat
         private int _dccPortUpper = 10000;
 
         private string _language = "English";
+        private string _identName = "IceChat09";
+        private string _fullName = "The Chat Cool People Use";
+        private string _quitMessage = "$randquit";
 
         [XmlElement("TimeStamp")]
         public string TimeStamp
@@ -339,6 +342,27 @@ namespace IceChat
         [XmlElement("DefaultNick")]
         public string DefaultNick
         { get; set; }
+
+        [XmlElement("DefaultIdent")]
+        public string DefaultIdent
+        {
+            get { return this._identName; }
+            set { this._identName = value; }
+        }
+
+        [XmlElement("DefaultFullName")]
+        public string DefaultFullName
+        {
+            get { return this._fullName; }
+            set { this._fullName = value; }
+        }
+
+        [XmlElement("DefaultQuitMessage")]
+        public string DefaultQuitMessage
+        {
+            get { return this._quitMessage; }
+            set { this._quitMessage = value; }
+        }
 
         [XmlElement("IdentServer")]
         public bool IdentServer
@@ -601,6 +625,7 @@ namespace IceChat
         { get; set; }        
 
     }
+
     public class IceChatPopupMenus
     {
         [XmlArray("Popups")]
@@ -644,4 +669,34 @@ namespace IceChat
 
     }
 
+    public class IceChatBuddyList
+    {
+        [XmlArray("BuddyList")]
+        [XmlArrayItem("Item", typeof(BuddyListItem))]
+        public ArrayList listBuddies;
+        public IceChatBuddyList()
+        {
+            listBuddies = new ArrayList();
+        }
+        public void AddBuddy(BuddyListItem item)
+        {
+            listBuddies.Add(item);
+        }
+    }
+
+    public class BuddyListItem
+    {
+        [XmlAttribute("BuddyName")]
+        public string BuddyName
+        { get; set; }
+
+        [XmlAttribute("Network")]
+        public string Network
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool Connected
+        { get; set; }
+
+    }
 }

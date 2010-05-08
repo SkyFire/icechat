@@ -92,6 +92,8 @@ namespace IceChat
             Query = 3,
             ChannelList = 4,
             DCCChat = 5,
+            DCCFile = 6,
+            Window = 7,
             Debug = 99
         }
 
@@ -104,13 +106,9 @@ namespace IceChat
             if (windowType == WindowType.Channel)
             {
                 InitializeChannel();
-
                 textTopic.NoEmoticons = true;
                 textTopic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-
                 this.textTopic.AppendText("Topic:", 3);                
-                //this.textWindow.AppendText(sCaption, 4);
-
             }
             else if (windowType == WindowType.Query)
             {
@@ -129,6 +127,12 @@ namespace IceChat
             {
                 InitializeChannel();
                 panelTopic.Visible = false;
+            }
+            else if (windowType == WindowType.Window)
+            {
+                InitializeChannel();
+                panelTopic.Visible = false;
+                textWindow.NoEmoticons = true;
             }
             else if (windowType == WindowType.Debug)
             {
@@ -274,7 +278,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("IceTabPage UpdateChannelMode Error:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"IceTabPage UpdateChannelMode", e);
             }
         }
 
@@ -315,7 +319,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("IceTabPage UpdateChannelMode2 Error:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"IceTabPage UpdateChannelMode2", e);
             }
         }
 
@@ -635,6 +639,10 @@ namespace IceChat
                 {
                     textWindow.IRCBackColor = FormMain.Instance.IceChatColors.QueryBackColor;
                 }
+                else if (windowType == WindowType.Window)
+                {
+                    //nada
+                }
                 else if (windowType == WindowType.Debug)
                 {
                     //nada
@@ -946,7 +954,7 @@ namespace IceChat
             }
             if (e.Index != 0 && e.Index == consoleTab.SelectedIndex)
             {
-                System.Drawing.Image icon = new Bitmap(Properties.Resources.CloseButton);
+                System.Drawing.Image icon = StaticMethods.LoadResourceImage("CloseButton.png");
                 e.Graphics.DrawImage(icon, bounds.Right - 20, bounds.Top + 4, 12, 12);
                 icon.Dispose();
             }

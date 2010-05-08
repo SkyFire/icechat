@@ -53,6 +53,7 @@
             this.labelServerName = new System.Windows.Forms.Label();
             this.labelNickName = new System.Windows.Forms.Label();
             this.tabPageExtra = new System.Windows.Forms.TabPage();
+            this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.checkAutoStart = new System.Windows.Forms.CheckBox();
             this.labelServerPassword = new System.Windows.Forms.Label();
             this.textServerPassword = new System.Windows.Forms.TextBox();
@@ -89,24 +90,48 @@
             this.buttonEditIgnore = new System.Windows.Forms.Button();
             this.buttonRemoveIgnore = new System.Windows.Forms.Button();
             this.buttonAddIgnore = new System.Windows.Forms.Button();
+            this.tabPageProxy = new System.Windows.Forms.TabPage();
+            this.textProxyPass = new System.Windows.Forms.TextBox();
+            this.labelProxyPass = new System.Windows.Forms.Label();
+            this.textProxyUser = new System.Windows.Forms.TextBox();
+            this.labelProxyUser = new System.Windows.Forms.Label();
+            this.radioSocksHTTP = new System.Windows.Forms.RadioButton();
+            this.radioSocks4 = new System.Windows.Forms.RadioButton();
+            this.radioSocks5 = new System.Windows.Forms.RadioButton();
+            this.textProxyPort = new System.Windows.Forms.TextBox();
+            this.labelProxyPort = new System.Windows.Forms.Label();
+            this.textProxyIP = new System.Windows.Forms.TextBox();
+            this.labelProxyIP = new System.Windows.Forms.Label();
+            this.checkUseProxy = new System.Windows.Forms.CheckBox();
+            this.tabPageDefault = new System.Windows.Forms.TabPage();
+            this.textDefaultQuitMessage = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textDefaultFullName = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textDefaultIdent = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkServerReconnect = new System.Windows.Forms.CheckBox();
+            this.checkIdentServer = new System.Windows.Forms.CheckBox();
+            this.textDefaultNick = new System.Windows.Forms.TextBox();
+            this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
             this.tabPageAutoJoin.SuspendLayout();
             this.tabPageAutoPerform.SuspendLayout();
             this.tabPageIgnore.SuspendLayout();
+            this.tabPageProxy.SuspendLayout();
+            this.tabPageDefault.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(525, 245);
+            this.buttonCancel.Location = new System.Drawing.Point(609, 245);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -118,9 +143,8 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(416, 246);
+            this.buttonSave.Location = new System.Drawing.Point(500, 246);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 31);
@@ -137,13 +161,15 @@
             this.tabControlSettings.Controls.Add(this.tabPageAutoJoin);
             this.tabControlSettings.Controls.Add(this.tabPageAutoPerform);
             this.tabControlSettings.Controls.Add(this.tabPageIgnore);
+            this.tabControlSettings.Controls.Add(this.tabPageProxy);
+            this.tabControlSettings.Controls.Add(this.tabPageDefault);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlSettings.ImageList = this.imageListEditor;
             this.tabControlSettings.Location = new System.Drawing.Point(0, 0);
             this.tabControlSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
-            this.tabControlSettings.Size = new System.Drawing.Size(625, 237);
+            this.tabControlSettings.Size = new System.Drawing.Size(709, 237);
             this.tabControlSettings.TabIndex = 36;
             // 
             // tabPageMain
@@ -171,7 +197,7 @@
             this.tabPageMain.Location = new System.Drawing.Point(4, 25);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageMain.Name = "tabPageMain";
-            this.tabPageMain.Size = new System.Drawing.Size(617, 208);
+            this.tabPageMain.Size = new System.Drawing.Size(701, 208);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
@@ -351,10 +377,20 @@
             this.tabPageExtra.Location = new System.Drawing.Point(4, 25);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageExtra.Size = new System.Drawing.Size(617, 208);
+            this.tabPageExtra.Size = new System.Drawing.Size(701, 208);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
+            // 
+            // checkUseSSL
+            // 
+            this.checkUseSSL.AutoSize = true;
+            this.checkUseSSL.Location = new System.Drawing.Point(275, 63);
+            this.checkUseSSL.Name = "checkUseSSL";
+            this.checkUseSSL.Size = new System.Drawing.Size(242, 20);
+            this.checkUseSSL.TabIndex = 48;
+            this.checkUseSSL.Text = "Connect with SSL (Not Working)";
+            this.checkUseSSL.UseVisualStyleBackColor = true;
             // 
             // checkAutoStart
             // 
@@ -484,7 +520,7 @@
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
             this.tabPageAutoJoin.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoJoin.Size = new System.Drawing.Size(617, 208);
+            this.tabPageAutoJoin.Size = new System.Drawing.Size(701, 208);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
             this.tabPageAutoJoin.UseVisualStyleBackColor = true;
@@ -591,7 +627,7 @@
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
             this.tabPageAutoPerform.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoPerform.Size = new System.Drawing.Size(617, 208);
+            this.tabPageAutoPerform.Size = new System.Drawing.Size(701, 208);
             this.tabPageAutoPerform.TabIndex = 2;
             this.tabPageAutoPerform.Text = "AutoPerform";
             this.tabPageAutoPerform.UseVisualStyleBackColor = true;
@@ -603,7 +639,7 @@
             this.textAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAutoPerform.Multiline = true;
             this.textAutoPerform.Name = "textAutoPerform";
-            this.textAutoPerform.Size = new System.Drawing.Size(611, 180);
+            this.textAutoPerform.Size = new System.Drawing.Size(695, 180);
             this.textAutoPerform.TabIndex = 28;
             // 
             // checkAutoPerform
@@ -612,7 +648,7 @@
             this.checkAutoPerform.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.checkAutoPerform.Location = new System.Drawing.Point(3, 184);
             this.checkAutoPerform.Name = "checkAutoPerform";
-            this.checkAutoPerform.Size = new System.Drawing.Size(611, 20);
+            this.checkAutoPerform.Size = new System.Drawing.Size(695, 20);
             this.checkAutoPerform.TabIndex = 29;
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
@@ -629,7 +665,7 @@
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
             this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
             this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(617, 208);
+            this.tabPageIgnore.Size = new System.Drawing.Size(701, 208);
             this.tabPageIgnore.TabIndex = 4;
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
@@ -719,6 +755,255 @@
             this.buttonAddIgnore.UseVisualStyleBackColor = true;
             this.buttonAddIgnore.Click += new System.EventHandler(this.buttonAddIgnore_Click);
             // 
+            // tabPageProxy
+            // 
+            this.tabPageProxy.Controls.Add(this.textProxyPass);
+            this.tabPageProxy.Controls.Add(this.labelProxyPass);
+            this.tabPageProxy.Controls.Add(this.textProxyUser);
+            this.tabPageProxy.Controls.Add(this.labelProxyUser);
+            this.tabPageProxy.Controls.Add(this.radioSocksHTTP);
+            this.tabPageProxy.Controls.Add(this.radioSocks4);
+            this.tabPageProxy.Controls.Add(this.radioSocks5);
+            this.tabPageProxy.Controls.Add(this.textProxyPort);
+            this.tabPageProxy.Controls.Add(this.labelProxyPort);
+            this.tabPageProxy.Controls.Add(this.textProxyIP);
+            this.tabPageProxy.Controls.Add(this.labelProxyIP);
+            this.tabPageProxy.Controls.Add(this.checkUseProxy);
+            this.tabPageProxy.Location = new System.Drawing.Point(4, 25);
+            this.tabPageProxy.Name = "tabPageProxy";
+            this.tabPageProxy.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageProxy.Size = new System.Drawing.Size(701, 208);
+            this.tabPageProxy.TabIndex = 6;
+            this.tabPageProxy.Text = "Proxy";
+            this.tabPageProxy.UseVisualStyleBackColor = true;
+            // 
+            // textProxyPass
+            // 
+            this.textProxyPass.Location = new System.Drawing.Point(413, 73);
+            this.textProxyPass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textProxyPass.Name = "textProxyPass";
+            this.textProxyPass.Size = new System.Drawing.Size(150, 23);
+            this.textProxyPass.TabIndex = 56;
+            // 
+            // labelProxyPass
+            // 
+            this.labelProxyPass.AutoSize = true;
+            this.labelProxyPass.Location = new System.Drawing.Point(297, 76);
+            this.labelProxyPass.Name = "labelProxyPass";
+            this.labelProxyPass.Size = new System.Drawing.Size(111, 16);
+            this.labelProxyPass.TabIndex = 57;
+            this.labelProxyPass.Text = "Proxy Password";
+            // 
+            // textProxyUser
+            // 
+            this.textProxyUser.Location = new System.Drawing.Point(413, 42);
+            this.textProxyUser.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textProxyUser.Name = "textProxyUser";
+            this.textProxyUser.Size = new System.Drawing.Size(150, 23);
+            this.textProxyUser.TabIndex = 54;
+            // 
+            // labelProxyUser
+            // 
+            this.labelProxyUser.AutoSize = true;
+            this.labelProxyUser.Location = new System.Drawing.Point(297, 45);
+            this.labelProxyUser.Name = "labelProxyUser";
+            this.labelProxyUser.Size = new System.Drawing.Size(78, 16);
+            this.labelProxyUser.TabIndex = 55;
+            this.labelProxyUser.Text = "Proxy User";
+            // 
+            // radioSocksHTTP
+            // 
+            this.radioSocksHTTP.AutoSize = true;
+            this.radioSocksHTTP.Enabled = false;
+            this.radioSocksHTTP.Location = new System.Drawing.Point(15, 161);
+            this.radioSocksHTTP.Name = "radioSocksHTTP";
+            this.radioSocksHTTP.Size = new System.Drawing.Size(61, 20);
+            this.radioSocksHTTP.TabIndex = 53;
+            this.radioSocksHTTP.TabStop = true;
+            this.radioSocksHTTP.Text = "HTTP";
+            this.radioSocksHTTP.UseVisualStyleBackColor = true;
+            this.radioSocksHTTP.Visible = false;
+            // 
+            // radioSocks4
+            // 
+            this.radioSocks4.AutoSize = true;
+            this.radioSocks4.Enabled = false;
+            this.radioSocks4.Location = new System.Drawing.Point(15, 135);
+            this.radioSocks4.Name = "radioSocks4";
+            this.radioSocks4.Size = new System.Drawing.Size(86, 20);
+            this.radioSocks4.TabIndex = 52;
+            this.radioSocks4.TabStop = true;
+            this.radioSocks4.Text = "Socks v4";
+            this.radioSocks4.UseVisualStyleBackColor = true;
+            this.radioSocks4.Visible = false;
+            // 
+            // radioSocks5
+            // 
+            this.radioSocks5.AutoSize = true;
+            this.radioSocks5.Location = new System.Drawing.Point(15, 109);
+            this.radioSocks5.Name = "radioSocks5";
+            this.radioSocks5.Size = new System.Drawing.Size(86, 20);
+            this.radioSocks5.TabIndex = 51;
+            this.radioSocks5.TabStop = true;
+            this.radioSocks5.Text = "Socks v5";
+            this.radioSocks5.UseVisualStyleBackColor = true;
+            // 
+            // textProxyPort
+            // 
+            this.textProxyPort.Location = new System.Drawing.Point(128, 73);
+            this.textProxyPort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textProxyPort.Name = "textProxyPort";
+            this.textProxyPort.Size = new System.Drawing.Size(150, 23);
+            this.textProxyPort.TabIndex = 49;
+            // 
+            // labelProxyPort
+            // 
+            this.labelProxyPort.AutoSize = true;
+            this.labelProxyPort.Location = new System.Drawing.Point(12, 76);
+            this.labelProxyPort.Name = "labelProxyPort";
+            this.labelProxyPort.Size = new System.Drawing.Size(76, 16);
+            this.labelProxyPort.TabIndex = 50;
+            this.labelProxyPort.Text = "Proxy Port";
+            // 
+            // textProxyIP
+            // 
+            this.textProxyIP.Location = new System.Drawing.Point(128, 42);
+            this.textProxyIP.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textProxyIP.Name = "textProxyIP";
+            this.textProxyIP.Size = new System.Drawing.Size(150, 23);
+            this.textProxyIP.TabIndex = 47;
+            // 
+            // labelProxyIP
+            // 
+            this.labelProxyIP.AutoSize = true;
+            this.labelProxyIP.Location = new System.Drawing.Point(12, 45);
+            this.labelProxyIP.Name = "labelProxyIP";
+            this.labelProxyIP.Size = new System.Drawing.Size(110, 16);
+            this.labelProxyIP.TabIndex = 48;
+            this.labelProxyIP.Text = "Proxy Server IP";
+            // 
+            // checkUseProxy
+            // 
+            this.checkUseProxy.AutoSize = true;
+            this.checkUseProxy.Location = new System.Drawing.Point(15, 11);
+            this.checkUseProxy.Name = "checkUseProxy";
+            this.checkUseProxy.Size = new System.Drawing.Size(190, 20);
+            this.checkUseProxy.TabIndex = 1;
+            this.checkUseProxy.Text = "Enable Proxy Connection";
+            this.checkUseProxy.UseVisualStyleBackColor = true;
+            // 
+            // tabPageDefault
+            // 
+            this.tabPageDefault.Controls.Add(this.textDefaultQuitMessage);
+            this.tabPageDefault.Controls.Add(this.label3);
+            this.tabPageDefault.Controls.Add(this.textDefaultFullName);
+            this.tabPageDefault.Controls.Add(this.label2);
+            this.tabPageDefault.Controls.Add(this.textDefaultIdent);
+            this.tabPageDefault.Controls.Add(this.label1);
+            this.tabPageDefault.Controls.Add(this.checkServerReconnect);
+            this.tabPageDefault.Controls.Add(this.checkIdentServer);
+            this.tabPageDefault.Controls.Add(this.textDefaultNick);
+            this.tabPageDefault.Controls.Add(this.labelDefaultNickName);
+            this.tabPageDefault.Location = new System.Drawing.Point(4, 25);
+            this.tabPageDefault.Name = "tabPageDefault";
+            this.tabPageDefault.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDefault.Size = new System.Drawing.Size(701, 208);
+            this.tabPageDefault.TabIndex = 5;
+            this.tabPageDefault.Text = "Default";
+            this.tabPageDefault.UseVisualStyleBackColor = true;
+            // 
+            // textDefaultQuitMessage
+            // 
+            this.textDefaultQuitMessage.Location = new System.Drawing.Point(119, 85);
+            this.textDefaultQuitMessage.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textDefaultQuitMessage.Name = "textDefaultQuitMessage";
+            this.textDefaultQuitMessage.Size = new System.Drawing.Size(228, 23);
+            this.textDefaultQuitMessage.TabIndex = 53;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.ForeColor = System.Drawing.Color.Black;
+            this.label3.Location = new System.Drawing.Point(15, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 16);
+            this.label3.TabIndex = 54;
+            this.label3.Text = "Quit Message";
+            // 
+            // textDefaultFullName
+            // 
+            this.textDefaultFullName.Location = new System.Drawing.Point(119, 58);
+            this.textDefaultFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textDefaultFullName.Name = "textDefaultFullName";
+            this.textDefaultFullName.Size = new System.Drawing.Size(228, 23);
+            this.textDefaultFullName.TabIndex = 51;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Black;
+            this.label2.Location = new System.Drawing.Point(15, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(71, 16);
+            this.label2.TabIndex = 52;
+            this.label2.Text = "Full Name";
+            // 
+            // textDefaultIdent
+            // 
+            this.textDefaultIdent.Location = new System.Drawing.Point(119, 31);
+            this.textDefaultIdent.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textDefaultIdent.Name = "textDefaultIdent";
+            this.textDefaultIdent.Size = new System.Drawing.Size(150, 23);
+            this.textDefaultIdent.TabIndex = 49;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Black;
+            this.label1.Location = new System.Drawing.Point(15, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 16);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "Ident";
+            // 
+            // checkServerReconnect
+            // 
+            this.checkServerReconnect.AutoSize = true;
+            this.checkServerReconnect.Location = new System.Drawing.Point(18, 156);
+            this.checkServerReconnect.Name = "checkServerReconnect";
+            this.checkServerReconnect.Size = new System.Drawing.Size(209, 20);
+            this.checkServerReconnect.TabIndex = 48;
+            this.checkServerReconnect.Text = "Reconnect Servers on Error";
+            this.checkServerReconnect.UseVisualStyleBackColor = true;
+            // 
+            // checkIdentServer
+            // 
+            this.checkIdentServer.AutoSize = true;
+            this.checkIdentServer.Location = new System.Drawing.Point(18, 130);
+            this.checkIdentServer.Name = "checkIdentServer";
+            this.checkIdentServer.Size = new System.Drawing.Size(166, 20);
+            this.checkIdentServer.TabIndex = 47;
+            this.checkIdentServer.Text = "Ident Server Enabled";
+            this.checkIdentServer.UseVisualStyleBackColor = true;
+            // 
+            // textDefaultNick
+            // 
+            this.textDefaultNick.Location = new System.Drawing.Point(119, 4);
+            this.textDefaultNick.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textDefaultNick.Name = "textDefaultNick";
+            this.textDefaultNick.Size = new System.Drawing.Size(150, 23);
+            this.textDefaultNick.TabIndex = 45;
+            // 
+            // labelDefaultNickName
+            // 
+            this.labelDefaultNickName.AutoSize = true;
+            this.labelDefaultNickName.ForeColor = System.Drawing.Color.Black;
+            this.labelDefaultNickName.Location = new System.Drawing.Point(15, 7);
+            this.labelDefaultNickName.Name = "labelDefaultNickName";
+            this.labelDefaultNickName.Size = new System.Drawing.Size(75, 16);
+            this.labelDefaultNickName.TabIndex = 46;
+            this.labelDefaultNickName.Text = "Nick name";
+            // 
             // imageListEditor
             // 
             this.imageListEditor.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEditor.ImageStream")));
@@ -740,21 +1025,11 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // checkUseSSL
-            // 
-            this.checkUseSSL.AutoSize = true;
-            this.checkUseSSL.Location = new System.Drawing.Point(275, 63);
-            this.checkUseSSL.Name = "checkUseSSL";
-            this.checkUseSSL.Size = new System.Drawing.Size(242, 20);
-            this.checkUseSSL.TabIndex = 48;
-            this.checkUseSSL.Text = "Connect with SSL (Not Working)";
-            this.checkUseSSL.UseVisualStyleBackColor = true;
-            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(625, 279);
+            this.ClientSize = new System.Drawing.Size(709, 279);
             this.Controls.Add(this.buttonRemoveServer);
             this.Controls.Add(this.tabControlSettings);
             this.Controls.Add(this.buttonCancel);
@@ -780,6 +1055,10 @@
             this.tabPageAutoPerform.PerformLayout();
             this.tabPageIgnore.ResumeLayout(false);
             this.tabPageIgnore.PerformLayout();
+            this.tabPageProxy.ResumeLayout(false);
+            this.tabPageProxy.PerformLayout();
+            this.tabPageDefault.ResumeLayout(false);
+            this.tabPageDefault.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -848,5 +1127,29 @@
         private System.Windows.Forms.Label labelIgnoreNote;
         private System.Windows.Forms.CheckBox checkAutoStart;
         private System.Windows.Forms.CheckBox checkUseSSL;
+        private System.Windows.Forms.TabPage tabPageDefault;
+        private System.Windows.Forms.CheckBox checkServerReconnect;
+        private System.Windows.Forms.CheckBox checkIdentServer;
+        private System.Windows.Forms.TextBox textDefaultNick;
+        private System.Windows.Forms.Label labelDefaultNickName;
+        private System.Windows.Forms.TextBox textDefaultIdent;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textDefaultQuitMessage;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textDefaultFullName;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TabPage tabPageProxy;
+        private System.Windows.Forms.RadioButton radioSocksHTTP;
+        private System.Windows.Forms.RadioButton radioSocks4;
+        private System.Windows.Forms.RadioButton radioSocks5;
+        private System.Windows.Forms.TextBox textProxyPort;
+        private System.Windows.Forms.Label labelProxyPort;
+        private System.Windows.Forms.TextBox textProxyIP;
+        private System.Windows.Forms.Label labelProxyIP;
+        private System.Windows.Forms.CheckBox checkUseProxy;
+        private System.Windows.Forms.TextBox textProxyPass;
+        private System.Windows.Forms.Label labelProxyPass;
+        private System.Windows.Forms.TextBox textProxyUser;
+        private System.Windows.Forms.Label labelProxyUser;
     }
 }

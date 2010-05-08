@@ -54,8 +54,8 @@
             // 
             // buttonEmoticonPicker
             // 
+            StaticMethods.LoadResourceImage(buttonEmoticonPicker, "Smile.png");
             this.buttonEmoticonPicker.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonEmoticonPicker.Image = global::IceChat.Properties.Resources.Smile;
             this.buttonEmoticonPicker.Location = new System.Drawing.Point(0, 30);
             this.buttonEmoticonPicker.Name = "buttonEmoticonPicker";
             this.buttonEmoticonPicker.Size = new System.Drawing.Size(28, 23);
@@ -65,8 +65,8 @@
             // 
             // buttonColorPicker
             // 
+            StaticMethods.LoadResourceImage(buttonColorPicker, "color.png");
             this.buttonColorPicker.Dock = System.Windows.Forms.DockStyle.Left;
-            this.buttonColorPicker.Image = global::IceChat.Properties.Resources.color;
             this.buttonColorPicker.Location = new System.Drawing.Point(28, 30);
             this.buttonColorPicker.Name = "buttonColorPicker";
             this.buttonColorPicker.Size = new System.Drawing.Size(28, 23);

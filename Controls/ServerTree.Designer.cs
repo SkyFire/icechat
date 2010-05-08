@@ -152,8 +152,8 @@
             this.contextMenuChannel.Size = new System.Drawing.Size(185, 92);
             // 
             // clearWindowToolStripMenuItem
-            // 
-            this.clearWindowToolStripMenuItem.Image = global::IceChat.Properties.Resources.clear;
+            //             
+            StaticMethods.LoadResourceImage(clearWindowToolStripMenuItem, "clear.png");
             this.clearWindowToolStripMenuItem.Name = "clearWindowToolStripMenuItem";
             this.clearWindowToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.clearWindowToolStripMenuItem.Text = "Clear Window";
@@ -161,7 +161,7 @@
             // 
             // closeChannelToolStripMenuItem
             // 
-            this.closeChannelToolStripMenuItem.Image = global::IceChat.Properties.Resources.CloseButton;
+            StaticMethods.LoadResourceImage(closeChannelToolStripMenuItem, "CloseButton.png");
             this.closeChannelToolStripMenuItem.Name = "closeChannelToolStripMenuItem";
             this.closeChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.closeChannelToolStripMenuItem.Text = "Close Channel";
@@ -169,7 +169,7 @@
             // 
             // reJoinChannelToolStripMenuItem
             // 
-            this.reJoinChannelToolStripMenuItem.Image = global::IceChat.Properties.Resources.refresh;
+            StaticMethods.LoadResourceImage(reJoinChannelToolStripMenuItem, "refresh.png");
             this.reJoinChannelToolStripMenuItem.Name = "reJoinChannelToolStripMenuItem";
             this.reJoinChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.reJoinChannelToolStripMenuItem.Text = "Rejoin Channel";
@@ -177,7 +177,7 @@
             // 
             // channelInformationToolStripMenuItem
             // 
-            this.channelInformationToolStripMenuItem.Image = global::IceChat.Properties.Resources.info;
+            StaticMethods.LoadResourceImage(channelInformationToolStripMenuItem, "info.png");
             this.channelInformationToolStripMenuItem.Name = "channelInformationToolStripMenuItem";
             this.channelInformationToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.channelInformationToolStripMenuItem.Text = "Channel Information";
@@ -185,7 +185,7 @@
             // 
             // autoPerformToolStripMenuItem
             // 
-            this.autoPerformToolStripMenuItem.Image = global::IceChat.Properties.Resources.autoperform;
+            StaticMethods.LoadResourceImage(autoPerformToolStripMenuItem, "autoperform.png");
             this.autoPerformToolStripMenuItem.Name = "autoPerformToolStripMenuItem";
             this.autoPerformToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autoPerformToolStripMenuItem.Text = "Auto Perform";
@@ -207,7 +207,7 @@
             // 
             // connectToolStripMenuItem
             // 
-            this.connectToolStripMenuItem.Image = global::IceChat.Properties.Resources.connected;
+            StaticMethods.LoadResourceImage(connectToolStripMenuItem, "connected.png");
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
             this.connectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.connectToolStripMenuItem.Text = "Connect";
@@ -215,7 +215,7 @@
             // 
             // disconnectToolStripMenuItem
             // 
-            this.disconnectToolStripMenuItem.Image = global::IceChat.Properties.Resources.disconected;
+            StaticMethods.LoadResourceImage(disconnectToolStripMenuItem, "disconected.png");
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
             this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
@@ -235,7 +235,7 @@
             // 
             // editToolStripMenuItem
             // 
-            this.editToolStripMenuItem.Image = global::IceChat.Properties.Resources.quickconnect;
+            StaticMethods.LoadResourceImage(editToolStripMenuItem, "quickconnect.png");
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.editToolStripMenuItem.Text = "Edit";
@@ -243,7 +243,7 @@
             // 
             // autoJoinToolStripMenuItem
             // 
-            this.autoJoinToolStripMenuItem.Image = global::IceChat.Properties.Resources.refresh;
+            StaticMethods.LoadResourceImage(autoJoinToolStripMenuItem, "refresh.png");
             this.autoJoinToolStripMenuItem.Name = "autoJoinToolStripMenuItem";
             this.autoJoinToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autoJoinToolStripMenuItem.Text = "Auto Join";
@@ -251,7 +251,7 @@
             // 
             // openLogFolderToolStripMenuItem
             // 
-            this.openLogFolderToolStripMenuItem.Image = global::IceChat.Properties.Resources.folder;
+            StaticMethods.LoadResourceImage(openLogFolderToolStripMenuItem, "folder.png");
             this.openLogFolderToolStripMenuItem.Name = "openLogFolderToolStripMenuItem";
             this.openLogFolderToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.openLogFolderToolStripMenuItem.Text = "Open Log Folder";
@@ -269,7 +269,7 @@
             // 
             // clearWindowToolStripMenuItem1
             // 
-            this.clearWindowToolStripMenuItem1.Image = global::IceChat.Properties.Resources.clear;
+            StaticMethods.LoadResourceImage(clearWindowToolStripMenuItem, "clear.png");
             this.clearWindowToolStripMenuItem1.Name = "clearWindowToolStripMenuItem1";
             this.clearWindowToolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
             this.clearWindowToolStripMenuItem1.Text = "Clear Window";
@@ -277,7 +277,7 @@
             // 
             // closeWindowToolStripMenuItem
             // 
-            this.closeWindowToolStripMenuItem.Image = global::IceChat.Properties.Resources.CloseButton;
+            StaticMethods.LoadResourceImage(closeWindowToolStripMenuItem, "CloseButton.png");
             this.closeWindowToolStripMenuItem.Name = "closeWindowToolStripMenuItem";
             this.closeWindowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeWindowToolStripMenuItem.Text = "Close Window";
@@ -285,7 +285,7 @@
             // 
             // userInformationToolStripMenuItem
             // 
-            this.userInformationToolStripMenuItem.Image = global::IceChat.Properties.Resources.user_info;
+            StaticMethods.LoadResourceImage(userInformationToolStripMenuItem, "user_info.png");
             this.userInformationToolStripMenuItem.Name = "userInformationToolStripMenuItem";
             this.userInformationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.userInformationToolStripMenuItem.Text = "User Information";

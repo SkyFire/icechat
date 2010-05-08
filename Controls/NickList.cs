@@ -51,8 +51,8 @@ namespace IceChat
 
         private ToolTip toolTip;
         private int toolTipNode = -1;
-        private bool docked = false;
-        private int oldDockWidth = 0;
+        //private bool docked = false;
+        //private int oldDockWidth = 0;
 
         private ArrayList sortedNicks = null;
         
@@ -117,6 +117,17 @@ namespace IceChat
 
         private void OnDoubleClick(object sender, EventArgs e)
         {
+            //check if header was double clicked
+            Point p = this.PointToClient(Cursor.Position);
+            if (p.Y <= headerHeight)
+            {
+                if (this.Parent.Parent.GetType() == typeof(TabPage))
+                {
+                    FormMain.Instance.UnDockPanel((Panel)this.Parent);
+                    return;
+                }
+            }
+
             if (selectedIndex >= 0)
             {
                 string nick = sortedNicks[selectedIndex].ToString();
@@ -136,6 +147,7 @@ namespace IceChat
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
+            /*
             if (e.Y <= headerHeight)
             {
                 if (e.X < 20)
@@ -143,7 +155,7 @@ namespace IceChat
                     if (!docked)
                     {
                         oldDockWidth = ((Panel)this.Parent).Width;
-                        FormMain.Instance.tabPanelRight.Visible = false;
+                        //FormMain.Instance.tabPanelRight.Visible = false;
                         FormMain.Instance.splitterRight.Visible = false;
                         docked = true;
                         panelButtons.Visible = false;
@@ -151,7 +163,7 @@ namespace IceChat
                     }
                     else
                     {
-                        FormMain.Instance.tabPanelRight.Visible = true;
+                        //FormMain.Instance.tabPanelRight.Visible = true;
                         FormMain.Instance.splitterRight.Visible = true;
                         docked = false;
                         panelButtons.Visible = true;
@@ -163,13 +175,16 @@ namespace IceChat
 
             if (docked)
             {
-                FormMain.Instance.tabPanelRight.Visible = true;
+                //FormMain.Instance.tabPanelRight.Visible = true;
                 FormMain.Instance.splitterRight.Visible = true;
                 docked = false;
                 panelButtons.Visible = true;
                 ((Panel)this.Parent).Width = oldDockWidth;
                 return;
             }
+            */
+            if (e.Y <= headerHeight)
+                return;    
 
             if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
@@ -347,7 +362,6 @@ namespace IceChat
                 
                 Font headerFont = new Font("Verdana", 10);
 
-                if (!docked)
                 {
                     Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
                     //get the header colors here
@@ -360,7 +374,7 @@ namespace IceChat
                     centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
                     g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(0, 2, 16, 16));
+                    //g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(0, 2, 16, 16));
 
                     //draw the nicks 
                     Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
@@ -473,21 +487,6 @@ namespace IceChat
                     l.Dispose();
                     sf.Dispose();
                 }
-                else
-                {
-                    Rectangle headerR = new Rectangle(0, 0, this.Width, this.Height);                    
-                    Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 30);
-                    g.FillRectangle(l, headerR);
-                    Matrix x = new Matrix();
-                    x.Rotate(270);
-                    g.Transform = x;
-                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(-24, 0, 16, 16));
-                    x.Rotate(180);
-                    g.Transform = x;
-                    g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), 30, -20);
-
-                    l.Dispose();
-                }
                 
                 //paint the buffer onto the usercontrol
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
@@ -497,7 +496,7 @@ namespace IceChat
             }
             catch (Exception ee)
             {
-                FormMain.Instance.WriteErrorFile("NickList OnPaint Error:" + ee.Message, ee.StackTrace);
+                FormMain.Instance.WriteErrorFile(currentWindow.Connection, "NickList OnPaint", ee);
             }
         }
 
@@ -508,7 +507,7 @@ namespace IceChat
         /// <param name="e"></param>
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            FormMain.Instance.FocusInputBox();
+            //FormMain.Instance.FocusInputBox();
         }
 
         /// <summary>
@@ -555,6 +554,11 @@ namespace IceChat
             {
                 this.currentWindow = page;
                 UpdateHeader("DCC Chat:" + page.TabCaption);
+            }
+            else if (page.WindowStyle == IceTabPage.WindowType.Window)
+            {
+                this.currentWindow = page;
+                UpdateHeader(page.TabCaption);
             }
             else if (page.WindowStyle == IceTabPage.WindowType.Debug)
             {
@@ -625,7 +629,7 @@ namespace IceChat
 
         internal bool Docked
         {
-            get { return docked; }
+            get { return false; }
         }
 
         private void buttonOp_Click(object sender, EventArgs e)

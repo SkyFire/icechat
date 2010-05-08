@@ -59,6 +59,7 @@ namespace IceChat
         
         //private SslStream sslStream;
         //private NetworkStream socketStream;
+        private bool proxyAuthed;
 
         public IRCConnection(ServerSetting ss)
         {
@@ -95,6 +96,15 @@ namespace IceChat
             if (attemptReconnect)
             {
                 whichAddressinList++;
+
+                //reconnect
+                if (ServerMessage != null)
+                {
+                    string msg = FormMain.Instance.GetMessageFormat("Server Reconnect");
+                    msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                    ServerMessage(this, msg);
+                }
+
                 ConnectSocket();
             }
         }
@@ -105,7 +115,7 @@ namespace IceChat
             {
                 //pong has not received, re-connect server
                 //disable for the time being
-                ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
+                //ServerError(this, "No Pong Message Received in " + serverSetting.PongTimerMinutes + " Minutes, Reconnecting");
                 //send a ping to the server
                 SendData("PING :" + this.serverSetting.RealServerName);
                 //ForceDisconnect();
@@ -250,14 +260,7 @@ namespace IceChat
                 if (ServerMessage != null)
                     ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");
                 disconnectError = false;
-                try
-                {
-                    if (reconnectTimer != null)
-                        reconnectTimer.Start();
-                }
-                catch
-                {
-                }
+                reconnectTimer.Start();
             }
 
         }
@@ -287,13 +290,10 @@ namespace IceChat
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Error:" + e.Message.ToString());
+                    ServerError(this, "Socket Exception Error:" + e.Message.ToString());
 
                 disconnectError = true;
-                if (serverSocket.Connected)
-                {
-                    ForceDisconnect();
-                }
+                ForceDisconnect();
                 return;
             }
 
@@ -307,19 +307,58 @@ namespace IceChat
 
                 FormMain.Instance.ServerTree.Invalidate();
 
-                if (serverSetting.Password != null && serverSetting.Password.Length > 0)
-                    SendData("PASS " + serverSetting.Password);
+                if (serverSetting.UseProxy)
+                {
+                    byte[] d = new byte[256];
+                    ushort nIndex = 0;
+                    d[nIndex++] = 0x05;
 
-                //send the USER / NICK stuff
-                SendData("NICK " + serverSetting.NickName);
-                SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+                    if (serverSetting.ProxyUser.Length > 0)
+                    {
+                        d[nIndex++] = 0x02;
+                        d[nIndex++] = 0x00;
+                        d[nIndex++] = 0x02;
+                    }
+                    else
+                    {
+                        d[nIndex++] = 0x01;
+                        d[nIndex++] = 0x00;
+                    }
 
-                whichAddressinList = whichAddressCurrent;
+                    try
+                    {
+                        serverSocket.BeginSend(d, 0, nIndex, SocketFlags.None, new AsyncCallback(OnSendData), serverSocket);
 
-                if (ServerMessage != null)
-                    ServerMessage(this, "Sending User Registration Information");
+                        if (ServerMessage != null)
+                            ServerMessage(this, "Socks 5 Connection Established with " + serverSetting.ProxyIP);
+                    }
+                    catch (SocketException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error Sending Proxy Data");
+                    }
+                    catch (Exception)
+                    {
+                        System.Diagnostics.Debug.WriteLine("proxy exception");
+                    }
+                }
+                else
+                {
+                    if (serverSetting.Password != null && serverSetting.Password.Length > 0)
+                        SendData("PASS " + serverSetting.Password);
 
-                this.pongTimer.Start();
+                    //send the USER / NICK stuff
+                    SendData("NICK " + serverSetting.NickName);
+                    SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+
+                    whichAddressinList = whichAddressCurrent;
+
+                    if (ServerMessage != null)
+                        ServerMessage(this, "Sending User Registration Information");
+                    
+                    this.pongTimer.Start();
+                }
+
+
             }
             catch (SocketException se)
             {
@@ -454,63 +493,135 @@ namespace IceChat
         private void OnReceivedData(IAsyncResult ar)
         {
             SocketPacket handler = (SocketPacket)ar.AsyncState;
-
             try
             {
                 int size = handler.workSocket.EndReceive(ar);
-
-                if (size > 0)
+                if (serverSetting.UseProxy && !proxyAuthed)
                 {
+                    System.Diagnostics.Debug.WriteLine("recv:" + size);
+
                     Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
                     char[] chars = new char[size];
                     int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
-                    System.String strData = new System.String(chars);
                     
-                    if (strData.Length != charLen)  //removes any trailing null characters
-                        strData = strData.Substring(0, charLen);
-
-                    strData = strData.Replace("\r", string.Empty);
-                    
-                    if (!strData.EndsWith("\n"))
+                    if (size == 2)
                     {
-                        //create a buffer
-                        dataBuffer += strData;
-                        handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
-                        return;
-                    }
-
-                    if (dataBuffer.Length > 0)
-                    {
-                        strData = dataBuffer + strData;
-                        dataBuffer = string.Empty;
-                    }
-
-                    //split into lines and stuff
-                    if (strData.IndexOf('\n') > -1)
-                    {
-                        string[] Data = strData.Split('\n');
-                        foreach (string Line in Data)
+                        System.Diagnostics.Debug.WriteLine("got:" + (int)chars[0] + ":" + (int)chars[1]);
+                        
+                        if (chars[1] == 0xFF)
                         {
-                            if (Line.Length > 0)
-                                ParseData(Line);
+                            if (ServerError != null)
+                                ServerError(this, "Proxy Server Error: None of the authentication method was accepted by proxy server.");
+                            ForceDisconnect();
+                        }
+                        else if (chars[1] == 0x00)  //send proxy information
+                        {
+                            byte[] proxyData = new byte[7 + serverSetting.ServerName.Length];
+                            proxyData[0] = 0x05;
+                            proxyData[1] = 0x01;
+                            proxyData[2] = 0x00;
+                            proxyData[3] = 0x03;
+                            proxyData[4] = Convert.ToByte(serverSetting.ServerName.Length);
+                            byte[] rawBytes = new byte[serverSetting.ServerName.Length];
+                            rawBytes = Encoding.Default.GetBytes(serverSetting.ServerName);
+                            rawBytes.CopyTo(proxyData, 5);
+                            proxyData[proxyData.Length -2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
+                            proxyData[proxyData.Length -1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
+                            ServerMessage(this, "Sending Proxy Verification");
+                            serverSocket.BeginSend(proxyData, 0, proxyData.Length, SocketFlags.None , new AsyncCallback(OnSendData), serverSocket);                            
+                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);                            
+                        }
+                        else if (chars[1] == 0x02)  //send proxy information with user/pass
+                        {
+                            ushort nIndex = 0;
+
+                            byte[] proxyData = new byte[256];
+                            proxyData[nIndex++] = 0x05;
+                            proxyData[nIndex++] = 0x01;
+                            proxyData[nIndex++] = 0x00;
+                            proxyData[nIndex++] = 0x03;
+                            proxyData[nIndex++] = Convert.ToByte(serverSetting.ServerName.Length);
+
+                            byte[] rawBytes = new byte[256];
+                            rawBytes = Encoding.ASCII.GetBytes(serverSetting.ServerName);
+                            rawBytes.CopyTo(proxyData, nIndex);
+                            nIndex += (ushort)rawBytes.Length;
+
+                            proxyData[proxyData.Length - 2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
+                            proxyData[proxyData.Length - 1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
+                            ServerMessage(this, "Sending Proxy Verification (user/pass)");
+                            serverSocket.BeginSend(proxyData, 0, nIndex, 0, new AsyncCallback(OnSendData), serverSocket);
+                            
+                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
                         }
                     }
-                    else
+                    else if (size == 10)
                     {
-                        if (strData.Length > 0)
-                            ParseData(strData);
+                        System.Diagnostics.Debug.WriteLine("got10:" + (int)chars[0] + ":" + (int)chars[1]);
+                        ServerMessage(this, "Socks 5 Connection Successfull");
+                        SendData("NICK " + serverSetting.NickName);
+                        SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+                        ServerMessage(this, "Sending User Registration Information");
+                        //serverSetting.UseProxy = false;
+                        proxyAuthed = true;
+                        handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
                     }
-
-                    handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
                 }
                 else
                 {
-                    //connection lost                    
-                    if (ServerError != null)
-                        ServerError(this, "Connection Lost");
+                    if (size > 0)
+                    {
+                        Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
+                        char[] chars = new char[size];
+                        int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
+                        System.String strData = new System.String(chars);
 
-                    disconnectError = true;
-                    ForceDisconnect();
+                        if (strData.Length != charLen)  //removes any trailing null characters
+                            strData = strData.Substring(0, charLen);
+
+                        strData = strData.Replace("\r", string.Empty);
+
+                        if (!strData.EndsWith("\n"))
+                        {
+                            //create a buffer
+                            dataBuffer += strData;
+                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+                            return;
+                        }
+
+                        if (dataBuffer.Length > 0)
+                        {
+                            strData = dataBuffer + strData;
+                            dataBuffer = string.Empty;
+                        }
+
+                        //split into lines and stuff
+                        if (strData.IndexOf('\n') > -1)
+                        {
+                            string[] Data = strData.Split('\n');
+                            foreach (string Line in Data)
+                            {
+                                if (Line.Length > 0)
+                                    ParseData(Line);
+                            }
+                        }
+                        else
+                        {
+                            if (strData.Length > 0)
+                                ParseData(strData);
+                        }
+
+                        handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+                    }
+                    else
+                    {
+                        //connection lost                    
+                        if (ServerError != null)
+                            ServerError(this, "Connection Lost");
+
+                        disconnectError = true;
+                        ForceDisconnect();
+                    }
                 }
             }                        
             catch (SocketException se)
@@ -523,9 +634,8 @@ namespace IceChat
             {
                 ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
                 disconnectError = true;
-                ForceDisconnect(); 
-            }     
-            
+                ForceDisconnect();
+            }                 
         }
         
         /// <summary>
@@ -540,70 +650,109 @@ namespace IceChat
             try
             {
                 // Get host related information.
-                hostEntry = Dns.GetHostEntry(serverSetting.ServerName);
-
-                whichAddressCurrent = 1;
-                totalAddressinDNS = hostEntry.AddressList.Length;
-
-                if (whichAddressinList > totalAddressinDNS)
-                    whichAddressinList = 1;
-
-                // Loop through the AddressList to obtain the supported AddressFamily. This is to avoid
-                // an exception that occurs when the host IP Address is not compatible with the address family
-                // (typical in the IPv6 case).
-                foreach (IPAddress address in hostEntry.AddressList)
+                if (serverSetting.UseProxy)
                 {
+                    whichAddressCurrent = 1;
+                    totalAddressinDNS = 1;
+                    IPAddress proxyIP = null;
+
                     try
                     {
-                        if (whichAddressCurrent == whichAddressinList)
-                        {
-                            IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
-                            Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-                            if (ServerMessage != null)
-                            {
-                                string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                                msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                                serverSetting.ServerIP = address.ToString();
-                                ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
-                            }
-
-                            serverSocket = tempSocket;
-                            /*
-                            if (serverSetting.UseSSL)
-                            {
-                                socketStream = new NetworkStream(serverSocket);
-                                sslStream = new SslStream(socketStream);                                
-                            }
-                            */
-                            tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
-
-                            break;
-                        }
-                        whichAddressCurrent++;
-                        if (whichAddressCurrent > hostEntry.AddressList.Length)
-                            whichAddressCurrent = 1;
+                        proxyIP = IPAddress.Parse(serverSetting.ProxyIP);
                     }
-                    catch (Exception e)
+                    catch (FormatException)
                     {
-                        if (ServerError != null)
-                            ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
+                        //proxyIP = Dns.GetHostByAddress(serverSetting.ProxyIP).AddressList[0];
+                    }
 
-                        whichAddressCurrent++;
-                        if (whichAddressCurrent > hostEntry.AddressList.Length)
-                            whichAddressCurrent = 1;
+                    try
+                    {
+                        IPEndPoint proxyEndPoint = new IPEndPoint(proxyIP, Convert.ToInt32(serverSetting.ProxyPort));
+                        Socket proxySocket = new Socket(proxyEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                        disconnectError = true;
-                        if (serverSocket != null)
+                        if (ServerMessage != null)
                         {
+                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                            msg = msg.Replace("$serverip", proxyIP.ToString()).Replace("$server", serverSetting.ProxyIP).Replace("$port", serverSetting.ProxyPort);
+                            //serverSetting.ServerIP = address.ToString();
+                            ServerMessage(this, msg);
+                        }
+
+                        serverSocket = proxySocket;
+                        proxySocket.BeginConnect(proxyEndPoint, new AsyncCallback(OnConnectionReady), null);
+                    }
+                    catch (SocketException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Socket Exception Proxy Connect");
+                    }
+                    catch (Exception)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Exception Proxy Connect");
+                    }
+                }
+                else
+                {
+                    hostEntry = Dns.GetHostEntry(serverSetting.ServerName);
+
+                    whichAddressCurrent = 1;
+                    totalAddressinDNS = hostEntry.AddressList.Length;
+
+                    if (whichAddressinList > totalAddressinDNS)
+                        whichAddressinList = 1;
+
+                    // Loop through the AddressList to obtain the supported AddressFamily. This is to avoid
+                    // an exception that occurs when the host IP Address is not compatible with the address family
+                    // (typical in the IPv6 case).
+                    foreach (IPAddress address in hostEntry.AddressList)
+                    {
+                        try
+                        {
+                            if (whichAddressCurrent == whichAddressinList)
+                            {
+                                IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
+                                Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                                if (ServerMessage != null)
+                                {
+                                    string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                                    msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                                    serverSetting.ServerIP = address.ToString();
+                                    ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
+                                }
+
+                                serverSocket = tempSocket;
+                                /*
+                                if (serverSetting.UseSSL)
+                                {
+                                    socketStream = new NetworkStream(serverSocket);
+                                    sslStream = new SslStream(socketStream);                                
+                                }
+                                */
+                                tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
+
+                                break;
+                            }
+                            whichAddressCurrent++;
+                            if (whichAddressCurrent > hostEntry.AddressList.Length)
+                                whichAddressCurrent = 1;
+                        }
+                        catch (Exception e)
+                        {
+                            if (ServerError != null)
+                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
+
+                            whichAddressCurrent++;
+                            if (whichAddressCurrent > hostEntry.AddressList.Length)
+                                whichAddressCurrent = 1;
+
+                            disconnectError = true;
                             ForceDisconnect();
                         }
-
-                    }
-                    finally
-                    {
-                        if (whichAddressCurrent > hostEntry.AddressList.Length)
-                            whichAddressCurrent = 1;
+                        finally
+                        {
+                            if (whichAddressCurrent > hostEntry.AddressList.Length)
+                                whichAddressCurrent = 1;
+                        }
                     }
                 }
             }
@@ -613,15 +762,7 @@ namespace IceChat
                     ServerError(this, "Socket Exception Error:" + se.Message);
 
                 disconnectError = true;
-
-                //reconnect
-                if (ServerMessage != null)
-                {
-                    string msg = FormMain.Instance.GetMessageFormat("Server Reconnect");
-                    msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                    ServerMessage(this, msg);
-                }
-                reconnectTimer.Start();            
+                ForceDisconnect();
             }
         }
 
@@ -638,6 +779,22 @@ namespace IceChat
             catch
             {
             }
+
+            if (FormMain.Instance.IceChatOptions.ReconnectServer)
+            {
+                if (ServerMessage != null)
+                    ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");
+                try
+                {
+                    if (reconnectTimer != null)
+                        reconnectTimer.Start();
+                }
+                catch (Exception)
+                {
+                    //do nada
+                }
+            }
+
         }
         
         #endregion

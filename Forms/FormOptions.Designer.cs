@@ -115,11 +115,6 @@ namespace IceChat
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.imageListEmoticons = new System.Windows.Forms.ImageList(this.components);
             this.tabEvents = new System.Windows.Forms.TabPage();
-            this.tabServer = new System.Windows.Forms.TabPage();
-            this.checkServerReconnect = new System.Windows.Forms.CheckBox();
-            this.checkIdentServer = new System.Windows.Forms.CheckBox();
-            this.textDefaultNick = new System.Windows.Forms.TextBox();
-            this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
@@ -129,13 +124,12 @@ namespace IceChat
             this.tabDCC.SuspendLayout();
             this.tabSounds.SuspendLayout();
             this.tabEmoticon.SuspendLayout();
-            this.tabServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
+            StaticMethods.LoadResourceImage(buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(430, 250);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
@@ -148,7 +142,7 @@ namespace IceChat
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
+            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(541, 250);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -169,7 +163,6 @@ namespace IceChat
             this.tabControlOptions.Controls.Add(this.tabSounds);
             this.tabControlOptions.Controls.Add(this.tabEmoticon);
             this.tabControlOptions.Controls.Add(this.tabEvents);
-            this.tabControlOptions.Controls.Add(this.tabServer);
             this.tabControlOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlOptions.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
@@ -1003,58 +996,6 @@ namespace IceChat
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
             // 
-            // tabServer
-            // 
-            this.tabServer.Controls.Add(this.checkServerReconnect);
-            this.tabServer.Controls.Add(this.checkIdentServer);
-            this.tabServer.Controls.Add(this.textDefaultNick);
-            this.tabServer.Controls.Add(this.labelDefaultNickName);
-            this.tabServer.Location = new System.Drawing.Point(4, 25);
-            this.tabServer.Name = "tabServer";
-            this.tabServer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabServer.Size = new System.Drawing.Size(652, 213);
-            this.tabServer.TabIndex = 5;
-            this.tabServer.Text = "Default Server";
-            this.tabServer.UseVisualStyleBackColor = true;
-            // 
-            // checkServerReconnect
-            // 
-            this.checkServerReconnect.AutoSize = true;
-            this.checkServerReconnect.Location = new System.Drawing.Point(18, 66);
-            this.checkServerReconnect.Name = "checkServerReconnect";
-            this.checkServerReconnect.Size = new System.Drawing.Size(209, 20);
-            this.checkServerReconnect.TabIndex = 44;
-            this.checkServerReconnect.Text = "Reconnect Servers on Error";
-            this.checkServerReconnect.UseVisualStyleBackColor = true;
-            // 
-            // checkIdentServer
-            // 
-            this.checkIdentServer.AutoSize = true;
-            this.checkIdentServer.Location = new System.Drawing.Point(18, 40);
-            this.checkIdentServer.Name = "checkIdentServer";
-            this.checkIdentServer.Size = new System.Drawing.Size(166, 20);
-            this.checkIdentServer.TabIndex = 43;
-            this.checkIdentServer.Text = "Ident Server Enabled";
-            this.checkIdentServer.UseVisualStyleBackColor = true;
-            // 
-            // textDefaultNick
-            // 
-            this.textDefaultNick.Location = new System.Drawing.Point(115, 10);
-            this.textDefaultNick.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.textDefaultNick.Name = "textDefaultNick";
-            this.textDefaultNick.Size = new System.Drawing.Size(150, 23);
-            this.textDefaultNick.TabIndex = 41;
-            // 
-            // labelDefaultNickName
-            // 
-            this.labelDefaultNickName.AutoSize = true;
-            this.labelDefaultNickName.ForeColor = System.Drawing.Color.Black;
-            this.labelDefaultNickName.Location = new System.Drawing.Point(15, 13);
-            this.labelDefaultNickName.Name = "labelDefaultNickName";
-            this.labelDefaultNickName.Size = new System.Drawing.Size(75, 16);
-            this.labelDefaultNickName.TabIndex = 42;
-            this.labelDefaultNickName.Text = "Nick name";
-            // 
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
@@ -1093,8 +1034,6 @@ namespace IceChat
             this.tabSounds.PerformLayout();
             this.tabEmoticon.ResumeLayout(false);
             this.tabEmoticon.PerformLayout();
-            this.tabServer.ResumeLayout(false);
-            this.tabServer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1130,9 +1069,6 @@ namespace IceChat
         private System.Windows.Forms.TextBox textQueryFontSize;
         private System.Windows.Forms.TextBox textQueryFont;
         private System.Windows.Forms.Button buttonQueryFont;
-        private System.Windows.Forms.TabPage tabServer;
-        private System.Windows.Forms.TextBox textDefaultNick;
-        private System.Windows.Forms.Label labelDefaultNickName;
         private System.Windows.Forms.Button buttonNickListFont;
         private System.Windows.Forms.TextBox textNickListFontSize;
         private System.Windows.Forms.Label labelNickListSize;
@@ -1145,7 +1081,6 @@ namespace IceChat
         private System.Windows.Forms.Button buttonServerListFont;
         private System.Windows.Forms.TextBox textInputFont;
         private System.Windows.Forms.Label labelInputBoxSize;
-        private System.Windows.Forms.CheckBox checkIdentServer;
         private System.Windows.Forms.TabPage tabLogging;
         private System.Windows.Forms.CheckBox checkLogConsole;
         private System.Windows.Forms.CheckBox checkLogChannel;
@@ -1159,7 +1094,6 @@ namespace IceChat
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.Button buttonRemoveEmoticon;
         private System.Windows.Forms.Button buttonEditTrigger;
-        private System.Windows.Forms.CheckBox checkServerReconnect;
         private System.Windows.Forms.CheckBox checkSeperateLogs;
         private System.Windows.Forms.CheckBox checkEmoticons;
         private System.Windows.Forms.CheckBox checkStatusBar;

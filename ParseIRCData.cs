@@ -150,6 +150,7 @@ namespace IceChat
 
                             if (serverSetting.NickName != ircData[2])
                             {
+                                ServerMessage(this, "FORCE CHANGE NICK:" + ircData[2] + ":" + serverSetting.NickName + ":" + data);
                                 ChangeNick(this, serverSetting.NickName, ircData[2], HostFromFullHost(ircData[0]));
                                 serverSetting.NickName = ircData[2];
                             }
@@ -476,9 +477,8 @@ namespace IceChat
                             if (t != null)
                             {
                                 //end of who reply, do a channel refresh
-                                if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
-                                    if ((FormMain.Instance.NickList.CurrentWindow.TabCaption == t.TabCaption) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
-                                        FormMain.Instance.NickList.RefreshList(t);
+                                if (FormMain.Instance.NickList.CurrentWindow == t)
+                                    FormMain.Instance.NickList.RefreshList(t);
 
                             }
                             break;
@@ -528,9 +528,8 @@ namespace IceChat
                                     SendData("WHO " + t.TabCaption);
                                 
                                 t.IsFullyJoined = true;
-                                if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
-                                    if ((FormMain.Instance.NickList.CurrentWindow.TabCaption == t.TabCaption) && (FormMain.Instance.NickList.CurrentWindow.Connection == t.Connection))
-                                        FormMain.Instance.NickList.RefreshList(t);
+                                if (FormMain.Instance.NickList.CurrentWindow == t)
+                                    FormMain.Instance.NickList.RefreshList(t);
                             }
                             break;
                         case "367": //channel ban list
@@ -950,7 +949,7 @@ namespace IceChat
                         case "472": //unknown char to me (channel mode)
                             ServerError(this, JoinString(ircData, 3, false));
                             break;
-                        case "473":     //can not join channel invite only
+                        case "473": //can not join channel invite only
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             ServerError(this, msg);
                             break;
@@ -962,20 +961,27 @@ namespace IceChat
                             break;  
 
                         case "433": //nickname in use
-                            nick = NickFromFullHost(RemoveColon(ircData[0]));
+                            ServerMessage(this, JoinString(ircData, 4, true));
 
-                            ServerMessage(this, JoinString(ircData, 4, true) + " : " + ircData[3]);
-                           
                             if (!triedAltNickName && !initialLogon)
                             {
+                                nick = serverSetting.NickName;
                                 SendData("NICK " + serverSetting.AltNickName);
                                 ChangeNick(this, nick, serverSetting.AltNickName, HostFromFullHost(RemoveColon(ircData[0])));
                                 serverSetting.NickName = serverSetting.AltNickName;
                                 serverSetting.AltNickName = nick;
                                 triedAltNickName = true;
                             }
+                            else
+                            {
+                                SendData("NICK " + serverSetting.AltNickName + "_");
+                                serverSetting.AltNickName = serverSetting.AltNickName + "_";
+                                serverSetting.NickName = serverSetting.AltNickName + "_";
+                                //ChangeNick(this, nick, serverSetting.AltNickName, "");                                                            
+                            }
 
                             break;
+                        case "465": //no open proxies
                         case "513": //if you can not connect, type /quote PONG ...
                             ServerError(this, JoinString(ircData, 3, true));                            
                             break;
@@ -989,7 +995,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("ParseData Error:" + e.Message + "::" + data, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(this, "ParseData", e);
             }
         }
 

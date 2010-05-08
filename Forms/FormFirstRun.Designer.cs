@@ -93,7 +93,7 @@
             // 
             // buttonNext
             // 
-            this.buttonNext.Image = global::IceChat.Properties.Resources.Next;
+            StaticMethods.LoadResourceImage(buttonNext, "next.svg.png");
             this.buttonNext.Location = new System.Drawing.Point(460, 248);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(55, 51);
@@ -103,7 +103,7 @@
             // 
             // buttonBack
             // 
-            this.buttonBack.Image = global::IceChat.Properties.Resources.Previous;
+            StaticMethods.LoadResourceImage(buttonBack, "previous.svg.png");
             this.buttonBack.Location = new System.Drawing.Point(399, 248);
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(55, 51);

@@ -87,7 +87,7 @@
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Image = global::IceChat.Properties.Resources.quickconnect;
+            StaticMethods.LoadResourceImage(buttonConnect, "quickconnect.png");
             this.buttonConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonConnect.Location = new System.Drawing.Point(305, 90);
             this.buttonConnect.Name = "buttonConnect";

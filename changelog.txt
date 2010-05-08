@@ -1,3 +1,16 @@
+Build Alpha 14 - May 8 2010
+* Change from using .Net 2.0 to .Net 3.5
+* Fix bug with changing nicks while in Console
+* Moved Default Server Settings from Settings to Server settings Window
+* Improvements on Error Handling
+* Added ability to undock panels and move them around, or keep them floating
+* Adjustment for changing images to embedded resources for Mono compatability
+* Added anonymous Socks5 Proxy support (no user/pass support yet)
+* Added $read() identifier, defaults to read from Scripts folder
+* Starting implementation of the Buddy List
+* Started the IceChat Updater Project
+
+
 Build Alpha 12.4 - April 17 2010
 * Added IceChatScript.dll , needs to be added in same folder with EXE and IPluginIceChat.dll
 * Added Self Notice in Colors, when using /notice command
@@ -6,7 +19,7 @@ Build Alpha 12.4 - April 17 2010
 * Added Pictures folder created in data folder
 * Added when server re-connects, goes through DNS of server address
 * Fixed /query command if a message was also included
-* Fixed hovering over a nickname in a channel, strips alpha numeric chars
+* Fixed hovering over a nickname in a channel, strips non-alpha numeric chars
 * Fixed issues with server events, checking nicknames no longer case-sensative
 * Fixed clicking on Docked Side Panel - now undocks the Panel
 

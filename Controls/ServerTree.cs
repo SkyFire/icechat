@@ -53,23 +53,19 @@ namespace IceChat
         private ToolTip toolTip;
         private int toolTipNode = -1;
 
-        private bool docked = false;
-        private int oldDockWidth = 0;
+        //private bool docked = false;
+        //private int oldDockWidth = 0;
 
         private List<KeyValuePair<string,object>> serverNodes;
 
         internal event NewServerConnectionDelegate NewServerConnection;
 
+        internal delegate void SaveDefaultDelegate();
+        internal event SaveDefaultDelegate SaveDefault;
+
         public ServerTree()
         {
             InitializeComponent();
-
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.disconected, System.Drawing.Color.Transparent);
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.connected, System.Drawing.Color.Transparent);
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.refresh, System.Drawing.Color.Transparent);
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.window, System.Drawing.Color.Transparent);
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
-            //this.imageListServers.Images.Add(global::IceChat.Properties.Resources.query, System.Drawing.Color.Transparent);
 
             headerCaption = "Favorite Servers";
             
@@ -142,6 +138,18 @@ namespace IceChat
 
         private void OnDoubleClick(object sender, EventArgs e)
         {
+            //check if the header was double clicked
+            Point p = this.PointToClient(Cursor.Position);
+            if (p.Y <= headerHeight)
+            {
+                //undock this baby
+                if (this.Parent.Parent.GetType() == typeof(TabPage))
+                {
+                    FormMain.Instance.UnDockPanel((Panel)this.Parent);
+                    return;
+                }
+            }
+
             if (selectedServerID == 0)
                 return;            
             
@@ -173,6 +181,7 @@ namespace IceChat
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
+            /*
             if (e.Y <= headerHeight)
             {
                 if (!docked)
@@ -207,6 +216,9 @@ namespace IceChat
                 ((Panel)this.Parent).Width = oldDockWidth;
                 return;
             }
+            */
+            if (e.Y <= headerHeight)
+                return;
 
             Graphics g = this.CreateGraphics();
             
@@ -332,7 +344,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("SelectNodeByIndex:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"SelectNodeByIndex", e);
             }
         }
 
@@ -489,8 +501,8 @@ namespace IceChat
                     }
                 }
             }
-            else
-                FormMain.Instance.FocusInputBox();
+            //else
+            //    FormMain.Instance.FocusInputBox();
         }
 
         private void AddPopupMenu(string PopupType, ContextMenuStrip mainMenu)
@@ -644,7 +656,6 @@ namespace IceChat
 
                 Font headerFont = new Font("Verdana", 10);
 
-                if (!docked)
                 {
                     Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
                     Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
@@ -656,7 +667,7 @@ namespace IceChat
                     centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
                     g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-                    g.DrawImageUnscaled(IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
+                    //g.DrawImageUnscaled(IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
 
                     //draw each individual server
                     Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
@@ -710,29 +721,34 @@ namespace IceChat
                                 if (nodeCount == selectedNodeIndex)
                                     selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
                             }
+                            else if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Window)
+                            {
+                                if (((IceTabPage)value).Connection == null)
+                                    x = 0;
+                            }
                         }
                         switch (nodes[1])
                         {
                             case "0":   //disconnected
-                                g.DrawImage(IceChat.Properties.Resources.disconected, x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("disconected.png"), x, currentY, 16, 16);
                                 break;
                             case "1":   //connected
-                                g.DrawImage(IceChat.Properties.Resources.connected, x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("connected.png"), x, currentY, 16, 16);
                                 break;
                             case "2":   //connecting
-                                g.DrawImage(IceChat.Properties.Resources.refresh, x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("refresh.png"), x, currentY, 16, 16);
                                 break;
                             case "3":   //channel
-                                g.DrawImage(IceChat.Properties.Resources.window, x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
                                 break;
                             case "4":   //query
                             case "5":   //dcc chat
-                                g.DrawImage(IceChat.Properties.Resources.query, x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
                                 break;
-                        
+                            case "7":
+                                g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
+                                break;
                         }
-
-                        //g.DrawImage(imageListServers.Images[Convert.ToInt32(nodes[1])], x, currentY);
 
                         g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
 
@@ -756,22 +772,7 @@ namespace IceChat
                     sf.Dispose();
 
                 }
-                else
-                {
-                    Rectangle headerR = new Rectangle(0, 0, this.Width, this.Height);
-                    Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 30);
-                    g.FillRectangle(l, headerR);
-                    Matrix x = new Matrix();
-                    x.Rotate(270);
-                    g.Transform = x;
-                    g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(-24, 0, 16, 16));
-                    x.Rotate(180);
-                    g.Transform = x;
-                    g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), 30, -20);
-                    
-                    l.Dispose();
-                    
-                }
+                
                 //paint the buffer onto the usercontrol
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
 
@@ -781,7 +782,7 @@ namespace IceChat
             }
             catch (Exception ee)
             {
-                FormMain.Instance.WriteErrorFile("ServerTree OnPaint:" + ee.Message, ee.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"ServerTree OnPaint", ee);
             }
         }
 
@@ -792,6 +793,27 @@ namespace IceChat
                 serverNodes.Clear();
 
                 int nodeCount = 0;
+
+                foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                {
+                    if (t.Connection == null)
+                    {
+                        if (t.WindowStyle == IceTabPage.WindowType.Window)
+                        {
+                            //get the color
+                            int colorQ = 0;
+                            if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                            else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                            else
+                                colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                            nodeCount++;
+                            serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                        }
+                    }
+                }
 
                 //make a list of all the servers/windows open
                 foreach (ServerSetting s in serversCollection.listServers)
@@ -879,12 +901,34 @@ namespace IceChat
                             }
                         }
                     }
+                    //add @window windows
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.Connection != null)
+                        {
+                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Window)
+                            {
+                                //get the color
+                                int colorQ = 0;
+                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                else
+                                    colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                nodeCount++;
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                            }
+                        }
+                    }
+
 
                 }
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("BuildServerNodes:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"BuildServerNodes", e);
             }
         }
 
@@ -963,7 +1007,7 @@ namespace IceChat
 
         internal bool Docked
         {
-            get { return docked; }
+            get { return false; }
         }
 
         #region Server Tree Buttons
@@ -1016,14 +1060,25 @@ namespace IceChat
             {
                 f = new FormServers(GetServerSetting(selectedServerID));
                 f.SaveServer += new FormServers.SaveServerDelegate(OnSaveServer);
+                f.SaveDefaultServer += new FormServers.SaveDefaultServerDelegate(OnSaveDefaultServer);
             }
             else
             {
                 f = new FormServers();
                 f.NewServer += new FormServers.NewServerDelegate(OnNewServer);
+                f.SaveDefaultServer += new FormServers.SaveDefaultServerDelegate(OnSaveDefaultServer);
             }
 
             f.ShowDialog(this.Parent);
+        }
+        
+        /// <summary>
+        /// Save the Default Server Settings
+        /// </summary>
+        private void OnSaveDefaultServer()
+        {
+            if (SaveDefault != null)
+                SaveDefault();
         }
         
         private void OnSaveServer(ServerSetting s, bool removeServer)
@@ -1081,6 +1136,7 @@ namespace IceChat
         {
             FormServers f = new FormServers();
             f.NewServer += new FormServers.NewServerDelegate(OnNewServer);
+            f.SaveDefaultServer += new FormServers.SaveDefaultServerDelegate(OnSaveDefaultServer);            
             f.ShowDialog(this.Parent);
         }
 

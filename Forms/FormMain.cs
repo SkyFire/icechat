@@ -58,6 +58,7 @@ namespace IceChat
         private string logsFolder;
         private string pluginsFolder;
         private string emoticonsFile;
+        private string buddyListFile;
         private List<LanguageItem> languageFiles;
         private LanguageItem currentLanguageFile;
 
@@ -71,12 +72,19 @@ namespace IceChat
         private IceChatPopupMenus iceChatPopups;
         private IceChatEmoticon iceChatEmoticons;
         private IceChatLanguage iceChatLanguage;
-
+        private IceChatBuddyList iceChatBuddyList;
         //private System.Threading.Mutex mutex;
 
         private ArrayList loadedPlugins;
 
         private IdentServer identServer;
+        
+        private Point mousePos;
+        private bool mouseDown;
+        private TabPage nickListTab;
+        private TabPage serverListTab;
+        private TabPage channelListTab;
+        private TabPage buddyListTab;
 
         private delegate void AddWindowDelegate(IRCConnection connection, string windowName, IceTabPage.WindowType windowType);
         private delegate void RemoveTabDelegate(IRCConnection connection, string channel);
@@ -161,6 +169,7 @@ namespace IceChat
             popupsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml";
             highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
             emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
+            buddyListFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatBuddies.xml";
 
             logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
             pluginsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
@@ -170,6 +179,9 @@ namespace IceChat
 
             if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures"))
                 Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures");
+
+            if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts"))
+                Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts");
 
             #endregion
 
@@ -218,13 +230,15 @@ namespace IceChat
             }
             
             InitializeComponent();
+            //load icons from Embedded Resources
+            
 
             serverListToolStripMenuItem.Checked = iceChatOptions.ShowServerTree;
-            panelLeft.Visible = serverListToolStripMenuItem.Checked;
+            panelDockLeft.Visible = serverListToolStripMenuItem.Checked;
             splitterLeft.Visible = serverListToolStripMenuItem.Checked;
 
             nickListToolStripMenuItem.Checked = iceChatOptions.ShowNickList;
-            panelRight.Visible = nickListToolStripMenuItem.Checked;
+            panelDockRight.Visible = nickListToolStripMenuItem.Checked;
             splitterRight.Visible = nickListToolStripMenuItem.Checked;
 
             statusBarToolStripMenuItem.Checked = iceChatOptions.ShowStatusBar;
@@ -234,10 +248,11 @@ namespace IceChat
             toolStripMain.Visible = toolBarToolStripMenuItem.Checked;
 
             serverTree = new ServerTree();
-            
-            panelLeft.Controls.Add(serverTree);
+            serverTree.Dock = DockStyle.Fill;
+            serverTree.MouseDown += new MouseEventHandler(OnPanelMouseDown);
+            serverTree.MouseMove += new MouseEventHandler(OnPanelMouseMove);
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 17 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 8 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -281,10 +296,12 @@ namespace IceChat
             LoadEmoticons();
             LoadMessageFormat();
             LoadFonts();
+            LoadBuddyList();
 
             channelList = new ChannelList();            
             channelList.Dock = DockStyle.Fill;
-            channelList.Visible = false;
+            buddyList = new BuddyList();
+            buddyList.Dock = DockStyle.Fill;
 
             toolStripMain.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
             menuMainStrip.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
@@ -292,22 +309,50 @@ namespace IceChat
             toolStripStatus.ForeColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
             inputPanel.SetInputBoxColors();
             channelList.SetListColors();
+            buddyList.SetListColors();
 
             nickList = new NickList();            
             nickList.Header = iceChatLanguage.consoleTabTitle;
             nickList.Dock = DockStyle.Fill;
-            nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName,iceChatFonts.FontSettings[3].FontSize);
+            nickList.MouseDown += new MouseEventHandler(OnPanelMouseDown);
+            nickList.MouseMove += new MouseEventHandler(OnPanelMouseMove);
 
+            TabPage serverTab = new TabPage("Favorite Servers");
+            Panel serverPanel = new Panel();
+            serverPanel.Dock = DockStyle.Fill;
+            serverPanel.Controls.Add(serverTree);
+            serverTab.Controls.Add(serverPanel);            
+            this.tabControlLeft.TabPages.Add(serverTab);
 
-            panelRight.Controls.Add(channelList);
-            panelRight.Controls.Add(nickList);
-            panelRight.Controls.Add(panelRightBottom);
+            nickListTab = new TabPage("Nick List");
+            Panel nickPanel = new Panel();
+            nickPanel.Dock = DockStyle.Fill;
+            nickPanel.Controls.Add(nickList);            
+            nickListTab.Controls.Add(nickPanel);
+            this.tabControlRight.TabPages.Add(nickListTab);
 
-            serverTree.Dock = DockStyle.Fill;
+            channelListTab = new TabPage("Favorite Channels");
+            Panel channelPanel = new Panel();
+            channelPanel.Dock = DockStyle.Fill;
+            channelPanel.Controls.Add(channelList);
+            channelListTab.Controls.Add(channelPanel);
+            this.tabControlRight.TabPages.Add(channelListTab);
+
+            buddyListTab = new TabPage("Buddy List");
+            Panel buddyPanel = new Panel();
+            buddyPanel.Dock = DockStyle.Fill;
+            buddyPanel.Controls.Add(buddyList);
+            buddyListTab.Controls.Add(buddyPanel);
+            this.tabControlRight.TabPages.Add(buddyListTab);
+
+            tabControlLeft.DoubleClick += new EventHandler(tabControl_DoubleClick);
+            tabControlRight.DoubleClick += new EventHandler(tabControl_DoubleClick);
+
+            panelDockLeft.Width = iceChatOptions.LeftPanelWidth;
+            panelDockRight.Width = iceChatOptions.RightPanelWidth;
+
+            nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName, iceChatFonts.FontSettings[3].FontSize);
             serverTree.Font = new Font(iceChatFonts.FontSettings[4].FontName, iceChatFonts.FontSettings[4].FontSize);
-
-            panelLeft.Width = iceChatOptions.LeftPanelWidth;
-            panelRight.Width = iceChatOptions.RightPanelWidth;
 
             inputPanel.OnCommand +=new InputPanel.OnCommandDelegate(inputPanel_OnCommand);
             inputPanel.InputBoxFont = new Font(iceChatFonts.FontSettings[5].FontName, iceChatFonts.FontSettings[5].FontSize);
@@ -316,12 +361,10 @@ namespace IceChat
             mainTabControl.OnTabClosed += new IceTabControl.TabClosedDelegate(mainTabControl_OnTabClosed);
             
             serverTree.NewServerConnection += new NewServerConnectionDelegate(NewServerConnection);
-            
+            serverTree.SaveDefault += new ServerTree.SaveDefaultDelegate(OnDefaultServerSettings);
             CreateDefaultConsoleWindow();
 
             this.FormClosing += new FormClosingEventHandler(FormMainClosing);
-
-            tabPanelRight.SelectedIndexChanged += new EventHandler(tabPanelRight_SelectedIndexChanged);
 
             if (iceChatOptions.IdentServer)
                 identServer = new IdentServer();
@@ -349,7 +392,16 @@ namespace IceChat
             WindowMessage(null, "Console", "Current Data Folder: " + currentFolder, 4, true);
         }
 
-        #region load language file
+        
+        /// <summary>
+        /// Save Default Server Settings
+        /// </summary>
+        private void OnDefaultServerSettings()
+        {
+            SaveOptions();
+        }
+
+        #region Load Language File
 
         private LanguageItem LoadLanguageItem(string languageFileName)
         {
@@ -424,8 +476,10 @@ namespace IceChat
             toolStripAway.Text = iceChatLanguage.toolStripAway;
             toolStripSystemTray.Text = iceChatLanguage.toolStripSystemTray;
             toolStripStatus.Text = iceChatLanguage.toolStripStatus;
-            tabPageFaveChannels.Text = iceChatLanguage.tabPageFaveChannels;
-            tabPageNicks.Text = iceChatLanguage.tabPageNicks;
+            
+            channelListTab.Text = iceChatLanguage.tabPageFaveChannels;
+            nickListTab.Text = iceChatLanguage.tabPageNicks;
+            serverListTab.Text = iceChatLanguage.serverTreeHeader;
 
             channelList.ApplyLanguage();
             nickList.ApplyLanguage();
@@ -466,9 +520,9 @@ namespace IceChat
                     iceChatOptions.WindowLocation = this.Location;
                     iceChatOptions.WindowSize = this.Size;
                     if (!nickList.Docked)
-                        iceChatOptions.RightPanelWidth = panelRight.Width;
+                        iceChatOptions.RightPanelWidth = panelDockRight.Width;
                     if (!serverTree.Docked)
-                        iceChatOptions.LeftPanelWidth = panelLeft.Width;
+                        iceChatOptions.LeftPanelWidth = panelDockLeft.Width;
                 }
 
                 SaveOptions();
@@ -490,7 +544,6 @@ namespace IceChat
         {
             IceTabPage p = new IceTabPage(IceTabPage.WindowType.Console, "Console");
             p.AddConsoleTab(iceChatLanguage.consoleTabWelcome);
-            //mainTabControl.Controls.Add(p);
             mainTabControl.TabPages.Add(p);
 
             WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1, false);
@@ -582,6 +635,20 @@ namespace IceChat
             }
         }
 
+        internal IceChatBuddyList IceChatBuddyList
+        {
+            get
+            {
+                return iceChatBuddyList;
+            }
+            set
+            {
+                iceChatBuddyList = value;
+                //save the buddy list
+                SaveBuddyList();
+            }
+        }
+
         internal IceChatPopupMenus IceChatPopupMenus
         {
             get
@@ -650,6 +717,14 @@ namespace IceChat
             get
             {
                 return favoriteChannelsFile;
+            }
+        }
+
+        internal string BuddyListFile
+        {
+            get
+            {
+                return buddyListFile;
             }
         }
 
@@ -1190,25 +1265,16 @@ namespace IceChat
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
+            else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.Window)
+            {
+                mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
+            }
             else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.Debug)
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
         }
 
-        private void tabPanelRight_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (tabPanelRight.SelectedIndex == 0)
-            {
-                nickList.Visible = true;
-                channelList.Visible = false;
-            }
-            else
-            {
-                nickList.Visible = false;
-                channelList.Visible = true;
-            }
-        }
         #endregion
         
         #region InputPanel Events
@@ -1349,7 +1415,7 @@ namespace IceChat
                                 }
                                 catch (Exception ex)
                                 {
-                                    WriteErrorFile("ReLoadPlugins Cast:" + ex.Message, ex.StackTrace);
+                                    WriteErrorFile(connection, "ReLoadPlugins Cast:",ex);
                                 }
                                 try
                                 {
@@ -1381,7 +1447,7 @@ namespace IceChat
                                 }
                                 catch (Exception ex)
                                 {
-                                    WriteErrorFile("LoadPlugins" + ex.Message, ex.StackTrace);
+                                    WriteErrorFile(connection, "LoadPlugins",ex);
                                 }
                             }                            
                             break;
@@ -1424,7 +1490,7 @@ namespace IceChat
                                     }
                                     catch (Exception ex)
                                     {
-                                        WriteErrorFile("ReLoadPlugins Cast:" + ex.Message, ex.StackTrace);
+                                        WriteErrorFile(connection, "ReLoadPlugins Cast:", ex);
                                     }
                                     try
                                     {
@@ -1454,7 +1520,7 @@ namespace IceChat
                                     }
                                     catch (Exception ex)
                                     {
-                                        WriteErrorFile("ReLoadPlugins" + ex.Message, ex.StackTrace);
+                                        WriteErrorFile(connection, "ReLoadPlugins", ex);
                                     }
                                 }
                             }
@@ -2141,6 +2207,9 @@ namespace IceChat
                                     s.NickName = iceChatOptions.DefaultNick;
                                     s.AltNickName = iceChatOptions.DefaultNick + "_";
                                     s.AwayNickName = iceChatOptions.DefaultNick + "[A]";
+                                    s.FullName = iceChatOptions.DefaultFullName;
+                                    s.QuitMessage = iceChatOptions.DefaultQuitMessage;
+                                    s.IdentName = iceChatOptions.DefaultIdent;                                    
                                     s.IAL = new Hashtable();
 
                                     Random r = new Random();
@@ -2252,6 +2321,29 @@ namespace IceChat
                             if (connection != null && data.Length > 0)
                                 SendData(connection, "WHOIS " + data);
                             break;
+                        case "/aline":  //for adding lines to @windows
+                            if (data.Length > 0 && data.IndexOf(" ") > -1)
+                            {
+                                string window = data.Substring(0, data.IndexOf(' '));
+                                string msg = data.Substring(data.IndexOf(' ') + 1);
+                                if (GetWindow(null, window, IceTabPage.WindowType.Window) == null)
+                                    AddWindow(null, window, IceTabPage.WindowType.Window);
+
+                                IceTabPage t = GetWindow(null, window, IceTabPage.WindowType.Window);
+                                if (t != null)
+                                    t.TextWindow.AppendText(msg, 1);
+                            }
+                            break;
+                        case "/window":
+                            if (data.Length > 0)
+                            {
+                                if (data.StartsWith("@") && data.IndexOf(" ") == -1)
+                                {
+                                    if (GetWindow(null, data, IceTabPage.WindowType.Window) == null)
+                                        AddWindow(null, data, IceTabPage.WindowType.Window);
+                                }
+                            }
+                            break;
                         case "/quote":
                         case "/raw":
                             if (connection != null && connection.IsConnected)
@@ -2353,7 +2445,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                WriteErrorFile("ParseOutGoingCommand:" + e.Message + ":" + data, e.StackTrace);
+                WriteErrorFile(connection, "ParseOutGoingCommand", e);
             }
         }
         /// <summary>
@@ -2516,6 +2608,9 @@ namespace IceChat
                         break;
                     
                     //identifiers that do not require a connection                                
+                    case "$totalrows":
+                        data = data.Replace(m.Value, this.mainTabControl._TotalTabRows.ToString());
+                        break;
                     case "$appdata":
                         data = data.Replace(m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
                         break;
@@ -2699,6 +2794,50 @@ namespace IceChat
 
                             default:
                                 int result;
+                                if (word.StartsWith("$read(") && word.IndexOf(')') > word.IndexOf('('))
+                                {
+                                    string file = ReturnBrackValue(word);
+                                    //check if we have passed a path or just a filename
+                                    if (file.IndexOf(System.IO.Path.DirectorySeparatorChar) > -1)
+                                    {
+                                        //its a full folder
+                                        if (File.Exists(file))
+                                        {
+                                            //count the number of lines in the file
+                                            
+                                            //load the file in and read a random line from it
+                                            string[] lines = File.ReadAllLines(file);
+                                            if (lines.Length > 0)
+                                            {
+                                                //pick a random line
+                                                Random r = new Random();
+                                                int line = r.Next(0, lines.Length - 1);
+                                                changedData[count] = lines[line];
+                                            }
+                                            else
+                                                changedData[count] = "$null";
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //just check in the Scripts Folder
+                                        if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts" + System.IO.Path.DirectorySeparatorChar + file))
+                                        {
+                                            //load the file in and read a random line from it
+                                            string[] lines = File.ReadAllLines(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts" + System.IO.Path.DirectorySeparatorChar + file);
+                                            if (lines.Length > 0)
+                                            {
+                                                //pick a random line
+                                                Random r = new Random();
+                                                int line = r.Next(0, lines.Length - 1);
+                                                changedData[count] = lines[line];
+                                            }
+                                            else
+                                                changedData[count] = "$null";
+                                        }
+                                    }
+                                }
                                 if (connection != null)
                                 {
                                     if (word.StartsWith("$ial(") && word.IndexOf(')') > word.IndexOf('('))
@@ -2855,7 +2994,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                WriteErrorFile("ParseIdentifiers Error:" + e.Message + ":" + data, e.StackTrace);
+                WriteErrorFile(connection, "ParseIdentifiers" + data, e);
             }
             return String.Join(" ", changedData);
         }
@@ -2972,14 +3111,14 @@ namespace IceChat
         private void serverListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             splitterLeft.Visible = serverListToolStripMenuItem.Checked;
-            panelLeft.Visible = serverListToolStripMenuItem.Checked;
+            panelDockLeft.Visible = serverListToolStripMenuItem.Checked;
             iceChatOptions.ShowServerTree = serverListToolStripMenuItem.Checked;
         }
 
         private void nickListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             splitterRight.Visible = nickListToolStripMenuItem.Checked;
-            panelRight.Visible = nickListToolStripMenuItem.Checked;
+            panelDockRight.Visible = nickListToolStripMenuItem.Checked;
             iceChatOptions.ShowNickList = nickListToolStripMenuItem.Checked;
         }
 
@@ -3037,6 +3176,7 @@ namespace IceChat
             toolStripStatus.ForeColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
             inputPanel.SetInputBoxColors();
             channelList.SetListColors();
+            buddyList.SetListColors();
             nickList.Invalidate();
             serverTree.Invalidate();
             mainTabControl.Invalidate();
@@ -3188,7 +3328,7 @@ namespace IceChat
                     }
                     catch (Exception ex)
                     {
-                        WriteErrorFile("LoadPlugins Cast:" + ex.Message, ex.StackTrace);
+                        WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins Cast", ex);
                     }
                     try
                     {
@@ -3223,7 +3363,7 @@ namespace IceChat
                     }
                     catch (Exception ex)
                     {
-                        WriteErrorFile("LoadPlugins:" + ex.Message, ex.StackTrace);
+                        WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins", ex);
                     }
                 }
             }
@@ -3249,17 +3389,170 @@ namespace IceChat
             ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
         }
 
-        internal void WriteErrorFile(string message, string stackTrace)
+        internal void WriteErrorFile(IRCConnection connection, string method, Exception e)
         {
-            System.Diagnostics.Debug.WriteLine(message + ":" + stackTrace);
-            
-            WindowMessage(null, "Console", "Error:: " + message + ":" + stackTrace, 4, true);
+            System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
+            System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e, true);
+            WindowMessage(connection, "Console", "Error:" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber(), 4, true);
             
             if (errorFile != null)
             {
-                errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + message + ":" + stackTrace);
+                errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber());
                 errorFile.Flush();
             }
         }
+
+        internal void WriteErrorFile(string method, FileNotFoundException e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
+            System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e, true);
+            WindowMessage(inputPanel.CurrentConnection, "Console", "Error:" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber(), 4, true);
+
+            if (errorFile != null)
+            {
+                errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber());
+                errorFile.Flush();
+            }
+        }
+
+        private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //check for newer version
+            System.Diagnostics.FileVersionInfo fv = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            double currentVersion = Convert.ToDouble(fv.FileVersion.Replace(".", String.Empty));
+            
+            try
+            {
+                System.Net.WebClient webClient = new System.Net.WebClient();
+                webClient.DownloadFile("http://www.icechat.net/update.xml", currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml");
+                System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
+                xmlDoc.Load(currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml");
+                System.Xml.XmlNodeList version = xmlDoc.GetElementsByTagName("version");
+                System.Xml.XmlNodeList versiontext = xmlDoc.GetElementsByTagName("versiontext");
+                
+                if (Convert.ToDouble(version[0].InnerText) > currentVersion)
+                {
+                    CurrentWindowMessage(inputPanel.CurrentConnection, "There is a newer version of IceChat available (" + versiontext[0].InnerText + ")", 4, true);
+                    DialogResult result = MessageBox.Show("Would you like to update to the newer version of IceChat?", "IceChat " + versiontext[0].InnerText + " available", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Debug.WriteLine("run update program : " + Application.StartupPath);
+                        System.Diagnostics.Process.Start(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatUpdater.exe","\"" + currentFolder + "\"");                    
+                    }
+                }
+                else
+                {
+                    CurrentWindowMessage(inputPanel.CurrentConnection, "You are running the latest version of IceChat (" + fv.FileVersion + ") -- Version Online = " + versiontext[0].InnerText, 4, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentWindowMessage(inputPanel.CurrentConnection, "Error checking for update:" + ex.Message, 4, true);
+            }
+           
+        }
+        
+        private void tabControl_DoubleClick(object sender, EventArgs e)
+        {
+            TabControl t = (TabControl)sender;
+            if (t.SelectedTab.Controls[0].GetType() == typeof(Panel))
+            {
+                Panel p = (Panel)t.SelectedTab.Controls[0];
+                UnDockPanel(p);
+            }
+        }
+        /// <summary>
+        /// Undock the Specified Panel to a Floating Window
+        /// </summary>
+        /// <param name="p">The panel to remove and add to a Floating Window</param>
+        internal void UnDockPanel(Panel p)
+        {
+            if (p.Parent.GetType() == typeof(TabPage))
+            {
+                //System.Diagnostics.Debug.WriteLine(panel1.Parent.Name);
+                //remove the tab from the tabStrip
+                TabControl t = (TabControl)p.Parent.Parent;
+                TabPage tp = (TabPage)p.Parent;
+                ((TabControl)p.Parent.Parent).TabPages.Remove((TabPage)p.Parent);
+                ((TabPage)p.Parent).Controls.Remove(p);
+
+                if (t.TabPages.Count == 0)
+                {
+                    //hide the splitter bar along with the panel
+                    if (t.Parent == panelDockLeft)
+                        splitterLeft.Visible = false;
+                    else if (t.Parent == panelDockRight)
+                        splitterRight.Visible = false;
+
+                    t.Parent.Visible = false;
+                }
+
+                FormFloat formFloat = new FormFloat(ref p, this, tp.Text);
+                formFloat.Show();
+                formFloat.Location = Cursor.Position;
+            }
+        }
+
+        /// <summary>
+        /// Re-Dock the Panel checking whether it is closer to the right or left
+        /// </summary>
+        /// <param name="panel">The panel to re-dock</param>
+        /// <param name="formLocation">Current Location of the Floating Form</param>
+        /// <param name="tabName">The panels caption</param>
+        internal void SetPanel(ref Panel panel, Point formLocation, string tabName)
+        {
+            mouseDown = false;
+
+            if (formLocation.X < (this.Left + 200))
+            {
+                TabPage p = new TabPage(tabName);
+                p.Controls.Add(panel);
+                panel.Dock = DockStyle.Fill;
+                this.tabControlLeft.TabPages.Add(p);
+                this.tabControlLeft.Visible = true;
+                panelDockLeft.Visible = true;
+                splitterLeft.Visible = true;
+                this.tabControlLeft.SelectedTab = p;
+            }
+            else
+            {
+                TabPage p = new TabPage(tabName);
+                p.Controls.Add(panel);
+                panel.Dock = DockStyle.Fill;
+                this.tabControlRight.TabPages.Add(p);
+                this.tabControlRight.Visible = true;
+                panelDockRight.Visible = true;
+                splitterRight.Visible = true;
+                this.tabControlRight.SelectedTab = p;
+            }
+        }
+        private void OnPanelMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && mouseDown)
+            {
+                //check how much mouse has moved
+                //if it has moved a specified amount, undock it
+                if (Math.Abs(mousePos.X - e.Location.X) > 10 || Math.Abs(mousePos.Y - e.Location.Y) > 10)
+                {
+                    if (sender.GetType() == typeof(NickList))
+                        UnDockPanel((Panel)((NickList)sender).Parent);
+                    else if (sender.GetType() == typeof(ServerTree))
+                        UnDockPanel((Panel)((ServerTree)sender).Parent);
+                    else if (sender.GetType() == typeof(ChannelList))
+                        UnDockPanel((Panel)((ChannelList)sender).Parent);
+                }
+            }
+        }
+
+        private void OnPanelMouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Y < 20)
+            {
+                mousePos = e.Location;
+                mouseDown = true;
+            }
+        }
+ 
+    
     }
 }

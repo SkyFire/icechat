@@ -11,15 +11,14 @@
     <RootNamespace>IceChat</RootNamespace>
     <AssemblyName>IceChat2009</AssemblyName>
     <StartupObject>IceChat.Program</StartupObject>
-    <ApplicationIcon>icechat2009.ico</ApplicationIcon>
+    <ApplicationIcon>icechat9.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <TargetFrameworkSubset>
-    </TargetFrameworkSubset>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -58,6 +57,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -69,6 +71,12 @@
     </Compile>
     <Compile Include="Controls\ChannelList.Designer.cs">
       <DependentUpon>ChannelList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BuddyList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\BuddyList.Designer.cs">
+      <DependentUpon>BuddyList.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\IceTabControl.cs">
       <SubType>UserControl</SubType>
@@ -85,6 +93,12 @@
     </Compile>
     <Compile Include="Forms\FormAbout.Designer.cs">
       <DependentUpon>FormAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormBuddyItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBuddyItem.Designer.cs">
+      <DependentUpon>FormBuddyItem.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormChannelInfo.cs">
       <SubType>Form</SubType>
@@ -127,6 +141,12 @@
     </Compile>
     <Compile Include="Forms\FormFirstRun.Designer.cs">
       <DependentUpon>FormFirstRun.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFloat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFloat.Designer.cs">
+      <DependentUpon>FormFloat.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormMainEvents.cs">
       <SubType>Form</SubType>
@@ -253,6 +273,9 @@
     <EmbeddedResource Include="Forms\FormFirstRun.resx">
       <DependentUpon>FormFirstRun.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFloat.resx">
+      <DependentUpon>FormFloat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -268,6 +291,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="StaticMethods.cs" />
     <Compile Include="User.cs" />
     <EmbeddedResource Include="Controls\ChannelList.resx">
       <DependentUpon>ChannelList.cs</DependentUpon>
@@ -344,32 +368,40 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Icons\color.png" />
-    <None Include="Icons\CloseButton.png" />
+    <EmbeddedResource Include="Controls\BuddyList.resx">
+      <DependentUpon>BuddyList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBuddyItem.resx">
+      <DependentUpon>FormBuddyItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\color.png" />
+    <EmbeddedResource Include="Icons\CloseButton.png" />
     <Content Include="icechat2009.ico" />
-    <None Include="Icons\window.png" />
-    <None Include="Icons\query.png" />
+    <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Icons\Smile.png" />
+    <EmbeddedResource Include="Icons\window.png" />
+    <EmbeddedResource Include="Icons\query.png" />
     <None Include="Icons\pin.png" />
-    <None Include="Icons\codeplex.ico" />
-    <None Include="Icons\smf.ico" />
-    <None Include="Icons\autoperform.png" />
-    <None Include="Icons\fonts.png" />
-    <None Include="Icons\user-info.png" />
-    <None Include="Icons\clear.png" />
-    <None Include="Icons\save.png" />
-    <None Include="Icons\refresh.png" />
-    <None Include="Icons\info.png" />
-    <None Include="Icons\folder.png" />
-    <None Include="Icons\disconected.png" />
-    <None Include="Icons\connected.png" />
-    <None Include="Icons\quickconnect.png" />
-    <None Include="Icons\editormenu.png" />
-    <None Include="Icons\debugmenu.png" />
-    <None Include="Icons\colorsmenu.png" />
-    <None Include="Icons\settingsmenu.png" />
-    <None Include="Icons\previous.svg.png" />
-    <None Include="Icons\next.svg.png" />
-    <None Include="Icons\Smile.png" />
+    <EmbeddedResource Include="Icons\codeplex.ico" />
+    <EmbeddedResource Include="Icons\smf.ico" />
+    <EmbeddedResource Include="Icons\autoperform.png" />
+    <EmbeddedResource Include="Icons\fonts.png" />
+    <EmbeddedResource Include="Icons\user-info.png" />
+    <EmbeddedResource Include="Icons\clear.png" />
+    <EmbeddedResource Include="Icons\save.png" />
+    <EmbeddedResource Include="Icons\refresh.png" />
+    <EmbeddedResource Include="Icons\info.png" />
+    <EmbeddedResource Include="Icons\folder.png" />
+    <EmbeddedResource Include="Icons\disconected.png" />
+    <EmbeddedResource Include="Icons\connected.png" />
+    <EmbeddedResource Include="Icons\quickconnect.png" />
+    <EmbeddedResource Include="Icons\editormenu.png" />
+    <EmbeddedResource Include="Icons\debugmenu.png" />
+    <EmbeddedResource Include="Icons\colorsmenu.png" />
+    <EmbeddedResource Include="Icons\settingsmenu.png" />
+    <EmbeddedResource Include="Icons\previous.svg.png" />
+    <EmbeddedResource Include="Icons\next.svg.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="IPlugin\IPluginIceChat.csproj">

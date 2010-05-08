@@ -37,27 +37,41 @@ namespace IceChat
 {
     public partial class ChannelList : UserControl
     {
-        //private string favoriteChannelsFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml";
-        
-        //internal bool collapsed;
-        //internal int oldCollapse;
-        
+        private string headerCaption = "Favorite Channels";
+
         public ChannelList()
         {
             InitializeComponent();
 
-            labelHeader.Paint += new PaintEventHandler(OnHeaderPaint);
+            this.Paint += new PaintEventHandler(OnHeaderPaint);
+            this.DoubleClick += new EventHandler(OnDoubleClick);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
-
+            this.Resize += new EventHandler(OnResize);
             DoubleBuffered = true;
+            
             //load channel list from XML File
             ReadSettings();
+        }
+
+        private void OnResize(object sender, EventArgs e)
+        {
+            listChannels.Height = this.Height - (panelButtons.Height + listChannels.Top);
+            listChannels.Width = this.Width;
+        }
+
+        private void OnDoubleClick(object sender, EventArgs e)
+        {
+            if (this.Parent.Parent.GetType() == typeof(TabPage))
+            {
+                FormMain.Instance.UnDockPanel((Panel)this.Parent);
+                return;
+            }
         }
 
         internal void ApplyLanguage()
         {
             IceChatLanguage iceChatLanguage = FormMain.Instance.IceChatLanguage;
-            labelHeader.Text = iceChatLanguage.favChanHeader;
+            headerCaption = iceChatLanguage.favChanHeader;
             buttonAdd.Text = iceChatLanguage.favChanbuttonAdd;
             buttonJoin.Text = iceChatLanguage.favChanbuttonJoin;
             buttonEdit.Text = iceChatLanguage.favChanbuttonEdit;
@@ -89,12 +103,13 @@ namespace IceChat
             e.Graphics.FillRectangle(l, e.Graphics.ClipBounds);
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
+            
+            Font headerFont = new Font("Verdana", 10);
 
             Rectangle centered = e.ClipRectangle;
-            centered.Offset(0, (int)(e.ClipRectangle.Height - e.Graphics.MeasureString(labelHeader.Text, labelHeader.Font).Height) / 2);
+            centered.Offset(0, (int)(e.ClipRectangle.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
             
-            e.Graphics.DrawString(labelHeader.Text, labelHeader.Font, new SolidBrush(Color.Black), centered, sf);
-
+            e.Graphics.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
 
             l.Dispose();            
         }

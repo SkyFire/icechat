@@ -50,7 +50,7 @@ namespace IceChat
         private int _TabRowHeight = 30;
         
         //how many rows of tabs to display
-        private int _TotalTabRows = 1;
+        internal int _TotalTabRows = 1;
 
         //TabControl's selectedIndex
         private int _selectedIndex = -1;
@@ -253,7 +253,7 @@ namespace IceChat
 
             string command = e.ClickedItem.Tag.ToString();
 
-            if (GetTabPage(_selectedIndex).TabCaption == "Console")
+            if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Console)
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
@@ -275,10 +275,11 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear", "/clear $1",global::IceChat.Properties.Resources.clear));
-            menu.Items.Add(NewMenuItem("Clear All", "/clear all console", global::IceChat.Properties.Resources.clear));
+            menu.Items.Add(NewMenuItem("Clear", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Clear All", "/clear all console", StaticMethods.LoadResourceImage("clear.png")));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(NewMenuItem("Quit Server", "/quit", global::IceChat.Properties.Resources.disconected));
+            menu.Items.Add(NewMenuItem("Quit Server", "/quit", StaticMethods.LoadResourceImage("disconected.png")));
+            
             //add the console popup menu
             AddPopupMenu("Console", menu);
             return menu;
@@ -288,10 +289,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", global::IceChat.Properties.Resources.clear));
-            menu.Items.Add(NewMenuItem("Close Channel", "/part $1", global::IceChat.Properties.Resources.CloseButton));
-            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", global::IceChat.Properties.Resources.refresh));
-            menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", global::IceChat.Properties.Resources.info));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Close Channel", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
+            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", StaticMethods.LoadResourceImage("refresh.png")));
+            menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", StaticMethods.LoadResourceImage("info.png")));
 
             //add then channel popup menu
             AddPopupMenu("Channel", menu);
@@ -302,10 +303,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1",global::IceChat.Properties.Resources.clear));
-            menu.Items.Add(NewMenuItem("Close Window", "/part $1", global::IceChat.Properties.Resources.CloseButton));
-            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1", global::IceChat.Properties.Resources.user_info));
-            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1", null));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Close Window", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
+            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1", StaticMethods.LoadResourceImage("refresh.png")));
+            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1", StaticMethods.LoadResourceImage("info.png")));
 
             //add then channel popup menu
             AddPopupMenu("Query", menu);
@@ -316,7 +317,6 @@ namespace IceChat
         private ToolStripMenuItem NewMenuItem(string caption, string command, Bitmap icon)
         {
             ToolStripMenuItem t = new ToolStripMenuItem(caption);
-            //global::IceChat.Properties.Resources.connected
             if (icon != null)
                 t.Image = icon;
             t.Tag = command;
@@ -374,7 +374,7 @@ namespace IceChat
                         {
                             //parse out $identifiers
                             IceTabPage tw = null;
-                            if (GetTabPage(_selectedIndex).TabCaption != "Console")
+                            if (GetTabPage(_selectedIndex).WindowStyle != IceTabPage.WindowType.Console)
                             {
                                 tw = GetTabPage(_selectedIndex);
                             }
@@ -432,7 +432,7 @@ namespace IceChat
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
 
-            if (GetTabPage(_selectedIndex).TabCaption == "Console")
+            if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Console)
             {
                 //a console command, find out which is the current tab
                 command = command.Replace("$1", "Console");
@@ -482,7 +482,7 @@ namespace IceChat
 
                 if (this._selectedIndex > (_TabPages.Count - 1))
                     SelectedIndex = 0;
-
+                
                 CalculateTabSizes(g);                
 
                 Region rsaved = g.Clip;
@@ -504,9 +504,7 @@ namespace IceChat
             }
             catch (Exception e) 
             {
-                //System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
-                MessageBox.Show(e.StackTrace);
-                FormMain.Instance.WriteErrorFile("IceTabControl DrawControl Error:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection, "IceTabControl DrawControl",e);
             }
         }
 
@@ -631,7 +629,7 @@ namespace IceChat
                             break;
                     }
                 }
-                if (tabPage.TabCaption != "Console")
+                if (tabPage.WindowStyle != IceTabPage.WindowType.Console)
                 {
                     if (tabPage.WindowStyle != IceTabPage.WindowType.ChannelList)
                         g.DrawString(tabPage.TabCaption, _tabFont, br, tabTextArea, stringFormat);
@@ -648,7 +646,7 @@ namespace IceChat
             }            
             catch (Exception e) 
             { 
-                FormMain.Instance.WriteErrorFile("IceTabControl DrawTab Error:" + e.Message + ":" + nIndex, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"IceTabControl DrawTab", e);
             }
         }
 
@@ -749,7 +747,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile("CalculateTabSizes:" + e.Message, e.StackTrace);
+                FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection,"CalculateTabSizes", e);
             }
         }
 
@@ -866,16 +864,9 @@ namespace IceChat
             {
                 if (_dragTab != null)
                 {
-                    
-                }
-                /*    
-                IceTabPage current = GetTabPage(_selectedIndex);
-                if (current != null)
-                {
                     if (this.OnTabClosed != null)
                         OnTabClosed(SelectedIndex);
                 }
-                */
             }
         }
         
@@ -884,7 +875,7 @@ namespace IceChat
             if (e.Button == MouseButtons.Right)
             {
                 //show the proper popup menu according to what kind of tab
-                if (GetTabPage(_selectedIndex).TabCaption == "Console")
+                if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Console)
                 {
                     //console tab
                     _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);

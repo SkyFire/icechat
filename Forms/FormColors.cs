@@ -235,8 +235,8 @@ namespace IceChat
 
             textFormattedText.SingleLine = true;
             textFormattedText.NoEmoticons = true;
-            textFormattedText.SingleLine = true;
-            textFormattedText.NoEmoticons = true;
+            textFormattedBasic.SingleLine = true;
+            textFormattedBasic.NoEmoticons = true;
 
             //populate Message Settings            
             if (iceChatMessages.MessageSettings != null)

@@ -90,6 +90,9 @@ namespace IceChat
             favChanbuttonEdit = "Edit";
             favChanbuttonRemove = "Remove";
 
+            buddyListHeader = "Buddy List";
+            buddyListbuttonMessage = "Message";
+
             serverTreeHeader = "Favorite Servers";
             serverTreeButtonConnect = "Connect";
             serverTreeButtonEdit = "Edit";
@@ -229,6 +232,12 @@ namespace IceChat
         { get; set; }
 
         public string favChanbuttonRemove
+        { get; set; }
+
+        public string buddyListHeader
+        { get; set; }
+
+        public string buddyListbuttonMessage
         { get; set; }
 
         public string serverTreeHeader

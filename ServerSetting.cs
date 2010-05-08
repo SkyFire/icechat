@@ -67,16 +67,13 @@ namespace IceChat
         //set the default values (only for specific settings)
         private string _serverPort = "6667";
         private string _displayName = "";
-        private string _identName = "IceChat09";
-        private string _fullName = "The Chat Cool People Use";
         private string _realServerName = "";
-        private string _quitMessage = "$randquit";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
         private bool _showPingPong = false;
         private bool _autoJoinDelay = false;
         private int _pongTimerMinutes = 30;
-
+        
         [XmlAttribute("ServerID")]
         public int ID
         { get; set; }
@@ -115,15 +112,15 @@ namespace IceChat
 
         [XmlElement("QuitMessage")]
         public string QuitMessage
-        { get { return this._quitMessage; } set { this._quitMessage = value; } }
+        { get; set; }
 
         [XmlElement("FullName")]
         public string FullName
-        { get { return this._fullName; } set { this._fullName = value; } }
+        { get; set; }
 
         [XmlElement("IdentName")]
         public string IdentName
-        { get { return this._identName; } set { this._identName = value; } }
+        { get; set; }
 
         [XmlElement("SetModeI")]
         public bool SetModeI
@@ -190,6 +187,31 @@ namespace IceChat
 
         [XmlElement("UseSSL")]
         public bool UseSSL
+        { get; set; }
+
+        [XmlElement("UseProxy")]
+        public bool UseProxy
+        { get; set; }
+
+        [XmlElement("ProxyType")]
+        //1 = HTTP ; 2 = SOCKS4 ; 3 = SOCKS5
+        public int ProxyType
+        { get; set; }
+
+        [XmlElement("ProxyIP")]
+        public string ProxyIP
+        { get; set; }
+        
+        [XmlElement("ProxyPort")]
+        public string ProxyPort
+        { get; set; }
+
+        [XmlElement("ProxyUser")]
+        public string ProxyUser
+        { get; set; }
+        
+        [XmlElement("ProxyPass")]
+        public string ProxyPass
         { get; set; }
 
         //these are all temporary server settings, not saved to the XML file

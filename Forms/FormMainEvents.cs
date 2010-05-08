@@ -717,7 +717,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                WriteErrorFile("OnKickSelf Error:" + e.Message, e.StackTrace);
+                WriteErrorFile(connection, "OnKickSelf", e);
             }
         }
 
@@ -795,10 +795,10 @@ namespace IceChat
                                     t.AddNick(nick, true);
                                     t.LastMessageType = ServerMessageType.Other;
                                 }
-
-                                if ((nickList.CurrentWindow.TabCaption == t.TabCaption) && (nickList.CurrentWindow.Connection == t.Connection))
+                                
+                                if (nickList.CurrentWindow == t)
                                     nickList.RefreshList(t);
-
+                            
                             }
                         }
                         else if (t.WindowStyle == IceTabPage.WindowType.Query)
@@ -828,7 +828,7 @@ namespace IceChat
                                         StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + t.Connection.ServerSetting.RealServerName + "}");
                                 }
 
-                                if ((nickList.CurrentWindow.TabCaption == newnick) && (nickList.CurrentWindow.Connection == t.Connection))
+                                if (nickList.CurrentWindow == t)
                                     nickList.RefreshList(t);
 
                                 this.serverTree.Invalidate();
@@ -841,7 +841,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                WriteErrorFile("OnChangeNick Error:" + e.Message, e.StackTrace);
+                WriteErrorFile(connection, "OnChangeNick Error:" + oldnick + ":" + newnick ,e);
             }
         }
 
@@ -1012,7 +1012,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                WriteErrorFile("OnChannelMode Error:" + e.Message, e.StackTrace);
+                WriteErrorFile(connection, "OnChannelMode", e);
             }
         }
 

@@ -1405,7 +1405,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Image = global::IceChat.Properties.Resources.disconected;
+            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(642, 436);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -1419,7 +1419,7 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Image = global::IceChat.Properties.Resources.save;
+            StaticMethods.LoadResourceImage(buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(531, 436);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);

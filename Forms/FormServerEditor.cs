@@ -38,17 +38,20 @@ namespace IceChat
         
         private bool newServer;
 
-        public delegate void NewServerDelegate(ServerSetting s);
-        public event NewServerDelegate NewServer;
+        internal delegate void NewServerDelegate(ServerSetting s);
+        internal event NewServerDelegate NewServer;
 
-        public delegate void SaveServerDelegate(ServerSetting s, bool removeServer);
-        public event SaveServerDelegate SaveServer;
+        internal delegate void SaveServerDelegate(ServerSetting s, bool removeServer);
+        internal event SaveServerDelegate SaveServer;
+
+        internal delegate void SaveDefaultServerDelegate();
+        internal event SaveDefaultServerDelegate SaveDefaultServer;
 
         public FormServers()
         {
             InitializeComponent();
             newServer = true;
-
+            
             this.Text = "Server Editor: New Server";
 
             foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
@@ -61,6 +64,13 @@ namespace IceChat
             }
             comboEncoding.Text = System.Text.Encoding.Default.WebName.ToString();
             buttonRemoveServer.Enabled = false;
+
+            LoadDefaultServerSettings();
+
+            this.textNickName.Text = textDefaultNick.Text;
+            this.textIdentName.Text = textDefaultIdent.Text;
+            this.textFullName.Text = textDefaultFullName.Text;
+            this.textQuitMessage.Text = textDefaultQuitMessage.Text;
 
             ApplyLanguage();
         }
@@ -83,6 +93,9 @@ namespace IceChat
             LoadSettings();
 
             this.Text = "Server Editor: " + s.ServerName;
+            LoadDefaultServerSettings();
+
+
 
             ApplyLanguage();
         }
@@ -92,6 +105,37 @@ namespace IceChat
 
         }
         
+        /// <summary>
+        /// Load the Default Server Settings
+        /// </summary>
+        private void LoadDefaultServerSettings()
+        {
+            textDefaultNick.Text = FormMain.Instance.IceChatOptions.DefaultNick;
+            textDefaultIdent.Text = FormMain.Instance.IceChatOptions.DefaultIdent;
+            textDefaultFullName.Text = FormMain.Instance.IceChatOptions.DefaultFullName;
+            textDefaultQuitMessage.Text = FormMain.Instance.IceChatOptions.DefaultQuitMessage;
+
+            checkIdentServer.Checked = FormMain.Instance.IceChatOptions.IdentServer;
+            checkServerReconnect.Checked = FormMain.Instance.IceChatOptions.ReconnectServer;
+        }
+        
+        /// <summary>
+        /// Save the Default Server Settings
+        /// </summary>
+        private void SaveDefaultServerSettings()
+        {
+            FormMain.Instance.IceChatOptions.DefaultNick = textDefaultNick.Text;
+            FormMain.Instance.IceChatOptions.DefaultIdent = textDefaultIdent.Text;
+            FormMain.Instance.IceChatOptions.DefaultFullName = textDefaultFullName.Text;
+            FormMain.Instance.IceChatOptions.DefaultQuitMessage = textDefaultQuitMessage.Text;
+
+            FormMain.Instance.IceChatOptions.IdentServer = checkIdentServer.Checked;
+            FormMain.Instance.IceChatOptions.ReconnectServer = checkServerReconnect.Checked;
+
+            if (SaveDefaultServer != null)
+                SaveDefaultServer();
+        }
+
         /// <summary>
         /// Load the Server Settings into the text boxes
         /// </summary>
@@ -186,6 +230,19 @@ namespace IceChat
 
                 }
             }
+
+            checkUseProxy.Checked = serverSetting.UseProxy;
+            textProxyIP.Text = serverSetting.ProxyIP;
+            textProxyPort.Text = serverSetting.ProxyPort;
+            textProxyUser.Text = serverSetting.ProxyUser;
+            textProxyPass.Text = serverSetting.ProxyPass;
+
+            if (serverSetting.ProxyType == 1)
+                radioSocksHTTP.Checked = true;
+            else if (serverSetting.ProxyType == 2)
+                radioSocks4.Checked = true;
+            else if (serverSetting.ProxyType == 3)
+                radioSocks5.Checked = true;
         }
 
         /// <summary>
@@ -223,15 +280,15 @@ namespace IceChat
             serverSetting.ServerPort = textServerPort.Text;
 
             if (textIdentName.Text.Length == 0)
-                textIdentName.Text = "IceChat09";
+                textIdentName.Text = textDefaultIdent.Text;
             serverSetting.IdentName = textIdentName.Text;
 
             if (textFullName.Text.Length == 0)
-                textFullName.Text = "The Chat Cool People Use";
+                textFullName.Text = textDefaultFullName.Text;
             serverSetting.FullName = textFullName.Text;
 
             if (textQuitMessage.Text.Length == 0)
-                textQuitMessage.Text = "$randquit";
+                textQuitMessage.Text = textDefaultQuitMessage.Text;
 
             serverSetting.QuitMessage = textQuitMessage.Text;
 
@@ -280,6 +337,20 @@ namespace IceChat
             serverSetting.UseSSL = checkUseSSL.Checked;
             serverSetting.Encoding = comboEncoding.Text;
 
+            serverSetting.UseProxy = checkUseProxy.Checked;
+            serverSetting.ProxyIP = textProxyIP.Text;
+            serverSetting.ProxyPort = textProxyPort.Text;
+            serverSetting.ProxyUser = textProxyUser.Text;
+            serverSetting.ProxyPass = textProxyPass.Text;
+
+            if (radioSocksHTTP.Checked)
+                serverSetting.ProxyType = 1;
+            else if (radioSocks4.Checked)
+                serverSetting.ProxyType = 2;
+            else if (radioSocks5.Checked)
+                serverSetting.ProxyType = 3;
+
+
             if (newServer == true)
             {
                 //add in the server to the server collection
@@ -294,8 +365,12 @@ namespace IceChat
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            //save the default server settings
+            SaveDefaultServerSettings();
+
             //save all the server settings first
             SaveSettings();
+
             this.Close();
         }
 
