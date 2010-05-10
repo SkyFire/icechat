@@ -351,8 +351,6 @@ namespace IceChat
 
                 //draw the header
                 g.Clear(IrcColor.colors[FormMain.Instance.IceChatColors.NickListBackColor]);
-                //g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                 g.InterpolationMode = InterpolationMode.Low;
                 g.SmoothingMode = SmoothingMode.HighSpeed;
@@ -374,7 +372,16 @@ namespace IceChat
                     centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
 
                     g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-                    //g.DrawImageUnscaled(global::IceChat.Properties.Resources.pin, new Rectangle(0, 2, 16, 16));
+
+                    if (Application.RenderWithVisualStyles)
+                    {
+                        if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                        {
+                            System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
+                            Rectangle rect = new Rectangle(0, 0, 22, 22);
+                            renderer.DrawBackground(g, rect);
+                        }
+                    }
 
                     //draw the nicks 
                     Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);

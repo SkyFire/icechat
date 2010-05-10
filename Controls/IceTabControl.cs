@@ -85,9 +85,18 @@ namespace IceChat
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.ResizeRedraw, true);
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-
+            
             InitializeComponent();
             InitializeCustom();
+
+            this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+
+            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("quickconnect.png"));
+            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("window.png"));
+            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("query.png"));
+            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("window.png"));
+            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("channelllist.ico"));
 
             _popupMenu = ConsolePopupMenu();
             _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);

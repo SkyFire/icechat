@@ -29,7 +29,6 @@ namespace IceChat
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
@@ -115,7 +114,6 @@ namespace IceChat
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.imageListEmoticons = new System.Windows.Forms.ImageList(this.components);
             this.tabEvents = new System.Windows.Forms.TabPage();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -129,7 +127,7 @@ namespace IceChat
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(buttonSave, "save.png");
+            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(430, 250);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
@@ -142,7 +140,8 @@ namespace IceChat
             // 
             // buttonCancel
             // 
-            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
+            this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            StaticMethods.LoadResourceImage(this.buttonCancel, "disconected.png");            
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(541, 250);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -982,9 +981,9 @@ namespace IceChat
             // 
             // imageListEmoticons
             // 
-            this.imageListEmoticons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEmoticons.ImageStream")));
+            this.imageListEmoticons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.imageListEmoticons.ImageSize = new System.Drawing.Size(18, 18);
             this.imageListEmoticons.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListEmoticons.Images.SetKeyName(0, "Smile.png");
             // 
             // tabEvents
             // 
@@ -995,12 +994,6 @@ namespace IceChat
             this.tabEvents.TabIndex = 4;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // FormSettings
             // 
@@ -1120,7 +1113,6 @@ namespace IceChat
         private System.Windows.Forms.Label labelDCCTimeOut;
         private System.Windows.Forms.CheckBox checkIgnoreDCCChat;
         private System.Windows.Forms.CheckBox checkAutoDCCChat;
-        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Label labelDCCPortHigh;
         private System.Windows.Forms.Label labelDCCPortLow;
         private System.Windows.Forms.TextBox textDCCPortHigh;

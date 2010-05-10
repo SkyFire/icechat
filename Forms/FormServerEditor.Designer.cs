@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormServers));
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
@@ -90,6 +89,7 @@
             this.buttonEditIgnore = new System.Windows.Forms.Button();
             this.buttonRemoveIgnore = new System.Windows.Forms.Button();
             this.buttonAddIgnore = new System.Windows.Forms.Button();
+            this.tabBuddyList = new System.Windows.Forms.TabPage();
             this.tabPageProxy = new System.Windows.Forms.TabPage();
             this.textProxyPass = new System.Windows.Forms.TextBox();
             this.labelProxyPass = new System.Windows.Forms.Label();
@@ -103,6 +103,7 @@
             this.textProxyIP = new System.Windows.Forms.TextBox();
             this.labelProxyIP = new System.Windows.Forms.Label();
             this.checkUseProxy = new System.Windows.Forms.CheckBox();
+            this.tabBNC = new System.Windows.Forms.TabPage();
             this.tabPageDefault = new System.Windows.Forms.TabPage();
             this.textDefaultQuitMessage = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -116,22 +117,26 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
             this.tabPageAutoJoin.SuspendLayout();
             this.tabPageAutoPerform.SuspendLayout();
             this.tabPageIgnore.SuspendLayout();
+            this.tabBuddyList.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
+            this.tabBNC.SuspendLayout();
             this.tabPageDefault.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
-            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            StaticMethods.LoadResourceImage(this.buttonCancel, "disconected.png");
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(609, 245);
+            this.buttonCancel.Location = new System.Drawing.Point(527, 284);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -143,8 +148,9 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(500, 246);
+            this.buttonSave.Location = new System.Drawing.Point(418, 285);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 31);
@@ -161,15 +167,18 @@
             this.tabControlSettings.Controls.Add(this.tabPageAutoJoin);
             this.tabControlSettings.Controls.Add(this.tabPageAutoPerform);
             this.tabControlSettings.Controls.Add(this.tabPageIgnore);
+            this.tabControlSettings.Controls.Add(this.tabBuddyList);
             this.tabControlSettings.Controls.Add(this.tabPageProxy);
+            this.tabControlSettings.Controls.Add(this.tabBNC);
             this.tabControlSettings.Controls.Add(this.tabPageDefault);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlSettings.ImageList = this.imageListEditor;
             this.tabControlSettings.Location = new System.Drawing.Point(0, 0);
             this.tabControlSettings.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControlSettings.Multiline = true;
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
-            this.tabControlSettings.Size = new System.Drawing.Size(709, 237);
+            this.tabControlSettings.Size = new System.Drawing.Size(627, 266);
             this.tabControlSettings.TabIndex = 36;
             // 
             // tabPageMain
@@ -194,10 +203,10 @@
             this.tabPageMain.Controls.Add(this.labelServerName);
             this.tabPageMain.Controls.Add(this.labelNickName);
             this.tabPageMain.ImageIndex = 0;
-            this.tabPageMain.Location = new System.Drawing.Point(4, 25);
+            this.tabPageMain.Location = new System.Drawing.Point(4, 46);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageMain.Name = "tabPageMain";
-            this.tabPageMain.Size = new System.Drawing.Size(701, 208);
+            this.tabPageMain.Size = new System.Drawing.Size(619, 216);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
@@ -374,10 +383,10 @@
             this.tabPageExtra.Controls.Add(this.checkMOTD);
             this.tabPageExtra.Controls.Add(this.checkModeI);
             this.tabPageExtra.ImageIndex = 1;
-            this.tabPageExtra.Location = new System.Drawing.Point(4, 25);
+            this.tabPageExtra.Location = new System.Drawing.Point(4, 46);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageExtra.Size = new System.Drawing.Size(701, 208);
+            this.tabPageExtra.Size = new System.Drawing.Size(619, 216);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
@@ -516,11 +525,11 @@
             this.tabPageAutoJoin.Controls.Add(this.textChannel);
             this.tabPageAutoJoin.Controls.Add(this.labelChannel);
             this.tabPageAutoJoin.ImageIndex = 2;
-            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 25);
+            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 46);
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
             this.tabPageAutoJoin.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoJoin.Size = new System.Drawing.Size(701, 208);
+            this.tabPageAutoJoin.Size = new System.Drawing.Size(619, 216);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
             this.tabPageAutoJoin.UseVisualStyleBackColor = true;
@@ -623,11 +632,11 @@
             this.tabPageAutoPerform.Controls.Add(this.textAutoPerform);
             this.tabPageAutoPerform.Controls.Add(this.checkAutoPerform);
             this.tabPageAutoPerform.ImageIndex = 3;
-            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 25);
+            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 46);
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
             this.tabPageAutoPerform.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoPerform.Size = new System.Drawing.Size(701, 208);
+            this.tabPageAutoPerform.Size = new System.Drawing.Size(619, 216);
             this.tabPageAutoPerform.TabIndex = 2;
             this.tabPageAutoPerform.Text = "AutoPerform";
             this.tabPageAutoPerform.UseVisualStyleBackColor = true;
@@ -639,16 +648,16 @@
             this.textAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAutoPerform.Multiline = true;
             this.textAutoPerform.Name = "textAutoPerform";
-            this.textAutoPerform.Size = new System.Drawing.Size(695, 180);
+            this.textAutoPerform.Size = new System.Drawing.Size(613, 188);
             this.textAutoPerform.TabIndex = 28;
             // 
             // checkAutoPerform
             // 
             this.checkAutoPerform.AutoSize = true;
             this.checkAutoPerform.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.checkAutoPerform.Location = new System.Drawing.Point(3, 184);
+            this.checkAutoPerform.Location = new System.Drawing.Point(3, 192);
             this.checkAutoPerform.Name = "checkAutoPerform";
-            this.checkAutoPerform.Size = new System.Drawing.Size(695, 20);
+            this.checkAutoPerform.Size = new System.Drawing.Size(613, 20);
             this.checkAutoPerform.TabIndex = 29;
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
@@ -663,9 +672,9 @@
             this.tabPageIgnore.Controls.Add(this.buttonEditIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonRemoveIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
-            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
+            this.tabPageIgnore.Location = new System.Drawing.Point(4, 46);
             this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(701, 208);
+            this.tabPageIgnore.Size = new System.Drawing.Size(619, 216);
             this.tabPageIgnore.TabIndex = 4;
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
@@ -755,6 +764,17 @@
             this.buttonAddIgnore.UseVisualStyleBackColor = true;
             this.buttonAddIgnore.Click += new System.EventHandler(this.buttonAddIgnore_Click);
             // 
+            // tabBuddyList
+            // 
+            this.tabBuddyList.Controls.Add(this.label4);
+            this.tabBuddyList.Location = new System.Drawing.Point(4, 46);
+            this.tabBuddyList.Name = "tabBuddyList";
+            this.tabBuddyList.Padding = new System.Windows.Forms.Padding(3);
+            this.tabBuddyList.Size = new System.Drawing.Size(619, 216);
+            this.tabBuddyList.TabIndex = 7;
+            this.tabBuddyList.Text = "Buddy List";
+            this.tabBuddyList.UseVisualStyleBackColor = true;
+            // 
             // tabPageProxy
             // 
             this.tabPageProxy.Controls.Add(this.textProxyPass);
@@ -769,12 +789,12 @@
             this.tabPageProxy.Controls.Add(this.textProxyIP);
             this.tabPageProxy.Controls.Add(this.labelProxyIP);
             this.tabPageProxy.Controls.Add(this.checkUseProxy);
-            this.tabPageProxy.Location = new System.Drawing.Point(4, 25);
+            this.tabPageProxy.Location = new System.Drawing.Point(4, 46);
             this.tabPageProxy.Name = "tabPageProxy";
             this.tabPageProxy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProxy.Size = new System.Drawing.Size(701, 208);
+            this.tabPageProxy.Size = new System.Drawing.Size(619, 216);
             this.tabPageProxy.TabIndex = 6;
-            this.tabPageProxy.Text = "Proxy";
+            this.tabPageProxy.Text = "Proxy Settings";
             this.tabPageProxy.UseVisualStyleBackColor = true;
             // 
             // textProxyPass
@@ -892,6 +912,17 @@
             this.checkUseProxy.Text = "Enable Proxy Connection";
             this.checkUseProxy.UseVisualStyleBackColor = true;
             // 
+            // tabBNC
+            // 
+            this.tabBNC.Controls.Add(this.label5);
+            this.tabBNC.Location = new System.Drawing.Point(4, 46);
+            this.tabBNC.Name = "tabBNC";
+            this.tabBNC.Padding = new System.Windows.Forms.Padding(3);
+            this.tabBNC.Size = new System.Drawing.Size(619, 216);
+            this.tabBNC.TabIndex = 8;
+            this.tabBNC.Text = "BNC Settings";
+            this.tabBNC.UseVisualStyleBackColor = true;
+            // 
             // tabPageDefault
             // 
             this.tabPageDefault.Controls.Add(this.textDefaultQuitMessage);
@@ -904,12 +935,12 @@
             this.tabPageDefault.Controls.Add(this.checkIdentServer);
             this.tabPageDefault.Controls.Add(this.textDefaultNick);
             this.tabPageDefault.Controls.Add(this.labelDefaultNickName);
-            this.tabPageDefault.Location = new System.Drawing.Point(4, 25);
+            this.tabPageDefault.Location = new System.Drawing.Point(4, 46);
             this.tabPageDefault.Name = "tabPageDefault";
             this.tabPageDefault.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDefault.Size = new System.Drawing.Size(701, 208);
+            this.tabPageDefault.Size = new System.Drawing.Size(619, 216);
             this.tabPageDefault.TabIndex = 5;
-            this.tabPageDefault.Text = "Default";
+            this.tabPageDefault.Text = "Default Server Settings";
             this.tabPageDefault.UseVisualStyleBackColor = true;
             // 
             // textDefaultQuitMessage
@@ -1006,17 +1037,14 @@
             // 
             // imageListEditor
             // 
-            this.imageListEditor.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListEditor.ImageStream")));
+            this.imageListEditor.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageListEditor.ImageSize = new System.Drawing.Size(16, 16);
             this.imageListEditor.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListEditor.Images.SetKeyName(0, "quickconnect.png");
-            this.imageListEditor.Images.SetKeyName(1, "info.png");
-            this.imageListEditor.Images.SetKeyName(2, "refresh.png");
-            this.imageListEditor.Images.SetKeyName(3, "autoperform.png");
             // 
             // buttonRemoveServer
             // 
             this.buttonRemoveServer.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRemoveServer.Location = new System.Drawing.Point(4, 245);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(4, 284);
             this.buttonRemoveServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(117, 31);
@@ -1025,11 +1053,29 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 12);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(147, 16);
+            this.label4.TabIndex = 47;
+            this.label4.Text = "Not yet Implemented";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(8, 12);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(147, 16);
+            this.label5.TabIndex = 48;
+            this.label5.Text = "Not yet Implemented";
+            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(709, 279);
+            this.ClientSize = new System.Drawing.Size(627, 319);
             this.Controls.Add(this.buttonRemoveServer);
             this.Controls.Add(this.tabControlSettings);
             this.Controls.Add(this.buttonCancel);
@@ -1055,8 +1101,12 @@
             this.tabPageAutoPerform.PerformLayout();
             this.tabPageIgnore.ResumeLayout(false);
             this.tabPageIgnore.PerformLayout();
+            this.tabBuddyList.ResumeLayout(false);
+            this.tabBuddyList.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
             this.tabPageProxy.PerformLayout();
+            this.tabBNC.ResumeLayout(false);
+            this.tabBNC.PerformLayout();
             this.tabPageDefault.ResumeLayout(false);
             this.tabPageDefault.PerformLayout();
             this.ResumeLayout(false);
@@ -1151,5 +1201,9 @@
         private System.Windows.Forms.Label labelProxyPass;
         private System.Windows.Forms.TextBox textProxyUser;
         private System.Windows.Forms.Label labelProxyUser;
+        private System.Windows.Forms.TabPage tabBuddyList;
+        private System.Windows.Forms.TabPage tabBNC;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
     }
 }

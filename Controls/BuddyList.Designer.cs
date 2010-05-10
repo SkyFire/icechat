@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Disconnected");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Connected");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Disconnected");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Connected");
             this.panelButtons = new System.Windows.Forms.Panel();
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
@@ -60,6 +60,7 @@
             this.buttonRemove.TabIndex = 3;
             this.buttonRemove.Text = "Remove";
             this.buttonRemove.UseVisualStyleBackColor = true;
+            this.buttonRemove.Visible = false;
             this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
             // 
             // buttonEdit
@@ -70,6 +71,7 @@
             this.buttonEdit.TabIndex = 2;
             this.buttonEdit.Text = "Edit";
             this.buttonEdit.UseVisualStyleBackColor = true;
+            this.buttonEdit.Visible = false;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
             // buttonMessage
@@ -80,6 +82,7 @@
             this.buttonMessage.TabIndex = 1;
             this.buttonMessage.Text = "Message";
             this.buttonMessage.UseVisualStyleBackColor = true;
+            this.buttonMessage.Visible = false;
             this.buttonMessage.Click += new System.EventHandler(this.buttonMessage_Click);
             // 
             // buttonAdd
@@ -91,6 +94,7 @@
             this.buttonAdd.TabIndex = 0;
             this.buttonAdd.Text = "Add";
             this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Visible = false;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
             // treeBuddies
@@ -100,13 +104,13 @@
             this.treeBuddies.HideSelection = false;
             this.treeBuddies.Location = new System.Drawing.Point(0, 20);
             this.treeBuddies.Name = "treeBuddies";
-            treeNode1.Name = "nodeDisconnected";
-            treeNode1.Text = "Disconnected";
-            treeNode2.Name = "nodeConnected";
-            treeNode2.Text = "Connected";
+            treeNode3.Name = "nodeDisconnected";
+            treeNode3.Text = "Disconnected";
+            treeNode4.Name = "nodeConnected";
+            treeNode4.Text = "Connected";
             this.treeBuddies.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
+            treeNode3,
+            treeNode4});
             this.treeBuddies.Size = new System.Drawing.Size(175, 212);
             this.treeBuddies.TabIndex = 4;
             // 
@@ -116,6 +120,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.treeBuddies);
             this.Controls.Add(this.panelButtons);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "BuddyList";
             this.Size = new System.Drawing.Size(175, 292);

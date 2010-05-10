@@ -111,6 +111,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.listChannels);
             this.Controls.Add(this.panelButtons);
+            this.DoubleBuffered = true;
             this.Name = "ChannelList";
             this.Size = new System.Drawing.Size(150, 292);
             this.panelButtons.ResumeLayout(false);

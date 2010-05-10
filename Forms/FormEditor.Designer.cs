@@ -189,6 +189,9 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
+            this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(563, 4);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
@@ -201,6 +204,8 @@
             // buttonSave
             // 
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
+            this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(452, 5);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";

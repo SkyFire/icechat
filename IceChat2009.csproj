@@ -379,6 +379,7 @@
     <EmbeddedResource Include="Icons\CloseButton.png" />
     <Content Include="icechat2009.ico" />
     <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Icons\channelllist.ico" />
     <EmbeddedResource Include="Icons\Smile.png" />
     <EmbeddedResource Include="Icons\window.png" />
     <EmbeddedResource Include="Icons\query.png" />

@@ -46,7 +46,6 @@ namespace IceChat
         private string[] Query_Popup = new string[] { "Info:/userinfo $1", "Whois:/whois $nick", "-", "Ignore:/ignore $1 1 | /closemsg $1", "-", ".Ping:/ctcp $1 ping", ".Time:/ctcp $1 time", ".Version:/ctcp $1 version", "DCC", ".Send:/dcc send $1", ".Chat:/dcc chat $1" };
         private string[] Buddy_Popup = new string[] { "Query:/query $1", "Whois:/whois $1" };
 
-
         private int _currentStep;
 
         private string _nickName;

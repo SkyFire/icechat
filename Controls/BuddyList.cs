@@ -50,7 +50,9 @@ namespace IceChat
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             this.Resize += new EventHandler(OnResize);
-            DoubleBuffered = true;
+            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            this.UpdateStyles();
             
             //load buddy list from XML File
             buddyList = FormMain.Instance.IceChatBuddyList;
@@ -105,6 +107,17 @@ namespace IceChat
         {
             Brush l = new LinearGradientBrush(e.Graphics.ClipBounds, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
             e.Graphics.FillRectangle(l, e.Graphics.ClipBounds);
+            // http://www.scip.be/index.php?Page=ArticlesNET01&Lang=EN
+            if (Application.RenderWithVisualStyles)
+            {
+                if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                {
+                    System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
+                    Rectangle rect = new Rectangle(0, 0, 22, 22);
+                    renderer.DrawBackground(e.Graphics, rect);
+                }
+            }
+            
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             
@@ -149,11 +162,7 @@ namespace IceChat
         
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            //add a new buddy list item
-            FormBuddyItem fbi = new FormBuddyItem("", "", null);
-            fbi.AddBuddyList += new FormBuddyItem.AddBuddyListDelegate(OnAddBuddyList);
-
-            fbi.ShowDialog(this);
+            MessageBox.Show("Edit Buddy List in Server Editor");
         }
 
         /// <summary>
@@ -193,12 +202,12 @@ namespace IceChat
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            //
+            MessageBox.Show("Edit Buddy List in Server Editor");
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-            //
+            MessageBox.Show("Edit Buddy List in Server Editor");
         }
     }
 }

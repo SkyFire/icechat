@@ -29,16 +29,6 @@ namespace IceChat
             this.ImageList = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
-            // ImageList
-            // 
-            this.ImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ImageList.ImageStream")));
-            this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageList.Images.SetKeyName(0, "quickconnect.png");
-            this.ImageList.Images.SetKeyName(1, "window.png");
-            this.ImageList.Images.SetKeyName(2, "query.png");
-            this.ImageList.Images.SetKeyName(3, "window.ico");
-            this.ImageList.Images.SetKeyName(4, "channelllist.ico");
-            // 
             // IceTabControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

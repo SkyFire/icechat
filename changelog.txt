@@ -1,3 +1,8 @@
+Build Alpha 14.1 - May 9 2010
+* Small resource changes for Server Editor Tabs and Main Tab Control
+* Floating forms stay on top
+
+
 Build Alpha 14 - May 8 2010
 * Change from using .Net 2.0 to .Net 3.5
 * Fix bug with changing nicks while in Console
