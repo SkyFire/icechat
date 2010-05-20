@@ -72,7 +72,6 @@ namespace IceChat
 
         private void FormFirstRun_FormClosing(object sender, FormClosingEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(_currentStep);
             if (e.CloseReason == CloseReason.UserClosing && _currentStep != 3)
                 e.Cancel = true;
         }
@@ -118,8 +117,11 @@ namespace IceChat
                         labelHeader.Text = "Done";
                         labelDesc.Text = "Your information has been saved. Simply select a server from the Favorite Server List, and click the 'Connect' button.";
                         labelTip.Text = "Tip: Use the '?' in the bottom left corner beside the Input Box for all your basic needs";
-                        labelField.Text = "";
+                        labelDesc.Text += "\r\n\r\nDefault Nick Name: " + _nickName ;
+                        if (comboData.Text.Length > 0)
+                            labelDesc.Text += "\r\nDefault Server: " + comboData.Text;
 
+                        labelField.Text = "";
                         textData.Visible = false;
                         comboData.Visible = false;
                         buttonBack.Visible = true;
@@ -163,6 +165,9 @@ namespace IceChat
                 s.NickName = _nickName;
                 s.AltNickName = _nickName + "_";
                 s.ServerPort = "6667";
+                s.FullName = FormMain.Instance.IceChatOptions.DefaultFullName;
+                s.IdentName = FormMain.Instance.IceChatOptions.DefaultIdent;
+                s.QuitMessage = FormMain.Instance.IceChatOptions.DefaultQuitMessage;
                 s.SetModeI = true;
 
                 if (comboData.Text.ToLower() == "irc.quakenet.org")
@@ -187,7 +192,9 @@ namespace IceChat
                     ss.AltNickName = _nickName + "_";
                     ss.ServerPort = "6667";
                     ss.SetModeI = true;
-
+                    ss.FullName = FormMain.Instance.IceChatOptions.DefaultFullName;
+                    ss.IdentName = FormMain.Instance.IceChatOptions.DefaultIdent;
+                    ss.QuitMessage = FormMain.Instance.IceChatOptions.DefaultQuitMessage;
                     ID++;
 
                     servers.AddServer(ss);
@@ -237,7 +244,6 @@ namespace IceChat
             serializerP.Serialize(textWriterP, popupList);
             textWriterP.Close();
             textWriterP.Dispose();
-
 
         }
 

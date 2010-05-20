@@ -38,8 +38,10 @@ namespace IceChat
     public partial class BuddyList : UserControl
     {
         private string headerCaption = "Buddy List";
+        private int headerHeight = 23;
 
-        private IceChatBuddyList buddyList;
+        private delegate void UpdateBuddyListDelegate(IRCConnection connection, BuddyListItem buddy);
+        private delegate void ClearBuddyListDelegate(IRCConnection connection);
 
 
         public BuddyList()
@@ -50,18 +52,17 @@ namespace IceChat
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             this.Resize += new EventHandler(OnResize);
+            this.MouseDown += new MouseEventHandler(OnMouseDown);
+
             this.DoubleBuffered = true;
-            SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             this.UpdateStyles();
             
-            //load buddy list from XML File
-            buddyList = FormMain.Instance.IceChatBuddyList;
-            LoadBuddies();
         }
 
         private void OnResize(object sender, EventArgs e)
         {
-            treeBuddies.Height = this.Height - (panelButtons.Height + treeBuddies.Top);
+            treeBuddies.Height = this.Height - (treeBuddies.Top);
             treeBuddies.Width = this.Width;
         }
 
@@ -69,7 +70,8 @@ namespace IceChat
         {
             if (this.Parent.Parent.GetType() == typeof(TabPage))
             {
-                FormMain.Instance.UnDockPanel((Panel)this.Parent);
+                if (this.Parent.Parent.GetType() != typeof(FormFloat))
+                    FormMain.Instance.UnDockPanel((Panel)this.Parent);
                 return;
             }
         }
@@ -105,95 +107,77 @@ namespace IceChat
         /// </summary>
         private void OnHeaderPaint(object sender, PaintEventArgs e)
         {
-            Brush l = new LinearGradientBrush(e.Graphics.ClipBounds, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
-            e.Graphics.FillRectangle(l, e.Graphics.ClipBounds);
+            Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+            Graphics g = Graphics.FromImage(buffer);
+
+            //draw the header
+            Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+            Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+
+            g.FillRectangle(l, headerR);
             // http://www.scip.be/index.php?Page=ArticlesNET01&Lang=EN
-            if (Application.RenderWithVisualStyles)
+            if (this.Parent.Parent.GetType() != typeof(FormFloat))
             {
-                if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                if (Application.RenderWithVisualStyles)
                 {
-                    System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
-                    Rectangle rect = new Rectangle(0, 0, 22, 22);
-                    renderer.DrawBackground(e.Graphics, rect);
+                    if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                    {
+                        System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
+                        //which side are we docked on
+                        Rectangle rect = Rectangle.Empty;
+                        if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right)
+                            rect = new Rectangle(0, 0, 22, 22);
+                        else
+                            rect = new Rectangle(this.Width - 22, 0, 22, 22);
+                        renderer.DrawBackground(g, rect);
+                    }
                 }
             }
-            
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
             
             Font headerFont = new Font("Verdana", 10);
 
-            Rectangle centered = e.ClipRectangle;
-            centered.Offset(0, (int)(e.ClipRectangle.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
+            Rectangle centered = headerR;
+            centered.Offset(0, (int)(headerR.Height - g.MeasureString(headerCaption, headerFont).Height) / 2);
             
-            e.Graphics.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
+            g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
 
-            l.Dispose();            
+            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+            buffer.Dispose();
+            g.Dispose();
+            l.Dispose();
+            headerFont.Dispose();                    
+
         }
 
-        
-        /// <summary>
-        /// Read all buddies from the buddy list file
-        /// </summary>
-        private void LoadBuddies()
+        private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            if (buddyList.listBuddies == null) return;
-
-            foreach (BuddyListItem buddy in buddyList.listBuddies)
+            if (this.Parent.Parent.GetType() != typeof(FormFloat))
             {
-                TreeNode t = new TreeNode();
-                t.Text = buddy.BuddyName;
-                t.Tag = buddy.Network;
-                
-                TreeNode root = this.treeBuddies.Nodes[0];
-                root.Nodes.Add(t);
-                treeBuddies.ExpandAll();
+                if (e.Y <= headerHeight)
+                {
+                    //which side are we docked on
+                    if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right && e.X < 22)
+                    {
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
+                    }
+                    else if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Left && e.X > (this.Width - 22))
+                    {
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
+                    }
+                }
             }
         }
-        
-        /// <summary>
-        /// Write out all the Buddy List to the XML File
-        /// </summary>
-        private void WriteSettings()
-        {
-            FormMain.Instance.IceChatBuddyList = buddyList;
-            FormMain.Instance.FocusInputBox();
-        }
-        
+       
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Edit Buddy List in Server Editor");
         }
 
-        /// <summary>
-        /// Add a new Buddy List Item to the Buddy List
-        /// </summary>
-        /// <param name="buddy"></param>
-        /// <param name="network"></param>
-        /// <param name="newItem"></param>
-        private void OnAddBuddyList(string buddy, string network, TreeNode newItem)
-        {
-            if (buddy.Trim().Length == 0 && network.Trim().Length == 0)
-                return;
-            
-            if (newItem == null)
-            {                
-                BuddyListItem b = new BuddyListItem();
-                b.BuddyName = buddy;
-                b.Network = network;
-
-                buddyList.listBuddies.Add(b);
-
-                TreeNode t = new TreeNode();
-                t.Text = buddy;
-                t.Tag = network;
-
-                this.treeBuddies.Nodes[0].Nodes.Add(t);
-                this.treeBuddies.ExpandAll();
-            }
-            
-            WriteSettings();
-        }
+       
 
         private void buttonMessage_Click(object sender, EventArgs e)
         {
@@ -208,6 +192,60 @@ namespace IceChat
         private void buttonRemove_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Edit Buddy List in Server Editor");
+        }
+
+        internal void ClearBuddyList(IRCConnection connection)
+        {
+            if (this.InvokeRequired)
+            {
+                ClearBuddyListDelegate cbl = new ClearBuddyListDelegate(ClearBuddyList);
+                this.Invoke(cbl, new object[] { connection });
+            }
+            else
+            {
+                //remove all items in the buddy list with this connection
+                for (int i = treeBuddies.Nodes[1].Nodes.Count; i > 0; i--)
+                {
+                    if (treeBuddies.Nodes[1].Nodes[i-1].Tag == connection)
+                        treeBuddies.Nodes[1].Nodes[i-1].Remove();
+                }
+                for (int i = treeBuddies.Nodes[0].Nodes.Count; i > 0; i--)
+                {
+                    if (treeBuddies.Nodes[0].Nodes[i-1].Tag == connection)
+                        treeBuddies.Nodes[0].Nodes[i-1].Remove();
+                }
+                    
+            }
+        }
+
+        internal void UpdateBuddy(IRCConnection connection,  BuddyListItem buddy)
+        {
+            if (this.InvokeRequired)
+            {
+                UpdateBuddyListDelegate ubl = new UpdateBuddyListDelegate(UpdateBuddy);
+                this.Invoke(ubl, new object[] { connection, buddy });
+            }
+            else
+            {
+                TreeNode t = new TreeNode();
+                t.Text = buddy.Nick;
+                t.Tag = connection;
+                t.ToolTipText = buddy.Note;
+
+                if (buddy.Connected)
+                {
+                    this.treeBuddies.Nodes[1].Nodes.Add(t);
+                    if (buddy.PreviousState == false)
+                        FormMain.Instance.PlaySoundFile("buddy");
+                    buddy.PreviousState = true;
+                }
+                else if (!buddy.Nick.StartsWith(";"))
+                {
+                    this.treeBuddies.Nodes[0].Nodes.Add(t);
+                    buddy.PreviousState = false;
+                }
+                this.treeBuddies.ExpandAll();
+            }
         }
     }
 }

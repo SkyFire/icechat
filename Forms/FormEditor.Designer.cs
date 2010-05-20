@@ -48,6 +48,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scriptsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.popupTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,7 +61,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlEditor.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -165,6 +165,7 @@
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.Location = new System.Drawing.Point(118, 3);
             this.button2.Margin = new System.Windows.Forms.Padding(4);
@@ -177,6 +178,7 @@
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Location = new System.Drawing.Point(7, 4);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
@@ -189,8 +191,8 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCancel.Location = new System.Drawing.Point(563, 4);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
@@ -203,8 +205,8 @@
             // 
             // buttonSave
             // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonSave.Location = new System.Drawing.Point(452, 5);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
@@ -282,6 +284,13 @@
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
             this.saveAsToolStripMenuItem.Text = "Save As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // scriptsFolderToolStripMenuItem
+            // 
+            this.scriptsFolderToolStripMenuItem.Name = "scriptsFolderToolStripMenuItem";
+            this.scriptsFolderToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.scriptsFolderToolStripMenuItem.Text = "Explore Scripts Folder";
+            this.scriptsFolderToolStripMenuItem.Click += new System.EventHandler(this.scriptsFolderToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -363,13 +372,6 @@
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
             // 
-            // scriptsFolderToolStripMenuItem
-            // 
-            this.scriptsFolderToolStripMenuItem.Name = "scriptsFolderToolStripMenuItem";
-            this.scriptsFolderToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.scriptsFolderToolStripMenuItem.Text = "Explore Scripts Folder";
-            this.scriptsFolderToolStripMenuItem.Click += new System.EventHandler(this.scriptsFolderToolStripMenuItem_Click);
-            // 
             // FormEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -379,7 +381,7 @@
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

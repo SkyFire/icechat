@@ -128,6 +128,12 @@
             this.labelIdentifiers = new System.Windows.Forms.Label();
             this.labelEditMessage = new System.Windows.Forms.Label();
             this.tabPageTabBar = new System.Windows.Forms.TabPage();
+            this.checkOtherMessage = new System.Windows.Forms.CheckBox();
+            this.checkServerMessage = new System.Windows.Forms.CheckBox();
+            this.checkServerQuit = new System.Windows.Forms.CheckBox();
+            this.checkChannelPart = new System.Windows.Forms.CheckBox();
+            this.checkChannelJoin = new System.Windows.Forms.CheckBox();
+            this.checkNewMessage = new System.Windows.Forms.CheckBox();
             this.pictureTabBackground = new System.Windows.Forms.PictureBox();
             this.labelTabBackground = new System.Windows.Forms.Label();
             this.pictureTabBarHover2 = new System.Windows.Forms.PictureBox();
@@ -214,12 +220,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.checkNewMessage = new System.Windows.Forms.CheckBox();
-            this.checkChannelJoin = new System.Windows.Forms.CheckBox();
-            this.checkChannelPart = new System.Windows.Forms.CheckBox();
-            this.checkServerQuit = new System.Windows.Forms.CheckBox();
-            this.checkServerMessage = new System.Windows.Forms.CheckBox();
-            this.checkOtherMessage = new System.Windows.Forms.CheckBox();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -273,12 +273,13 @@
             this.tabControlColors.Controls.Add(this.tabPageTabBar);
             this.tabControlColors.Controls.Add(this.tabPageBackGround);
             this.tabControlColors.Controls.Add(this.tabPageNickNames);
+            this.tabControlColors.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlColors.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlColors.Location = new System.Drawing.Point(0, 0);
             this.tabControlColors.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlColors.Name = "tabControlColors";
             this.tabControlColors.SelectedIndex = 0;
-            this.tabControlColors.Size = new System.Drawing.Size(738, 414);
+            this.tabControlColors.Size = new System.Drawing.Size(748, 414);
             this.tabControlColors.TabIndex = 0;
             this.tabControlColors.Tag = "";
             // 
@@ -290,7 +291,7 @@
             this.tabPageMessages.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageMessages.Name = "tabPageMessages";
             this.tabPageMessages.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageMessages.Size = new System.Drawing.Size(730, 385);
+            this.tabPageMessages.Size = new System.Drawing.Size(740, 385);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
             // 
@@ -302,7 +303,7 @@
             this.tabMessages.Location = new System.Drawing.Point(4, 4);
             this.tabMessages.Name = "tabMessages";
             this.tabMessages.SelectedIndex = 0;
-            this.tabMessages.Size = new System.Drawing.Size(722, 377);
+            this.tabMessages.Size = new System.Drawing.Size(732, 377);
             this.tabMessages.TabIndex = 39;
             // 
             // tabBasic
@@ -316,7 +317,7 @@
             this.tabBasic.Location = new System.Drawing.Point(4, 25);
             this.tabBasic.Name = "tabBasic";
             this.tabBasic.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBasic.Size = new System.Drawing.Size(714, 348);
+            this.tabBasic.Size = new System.Drawing.Size(724, 348);
             this.tabBasic.TabIndex = 2;
             this.tabBasic.Text = "Basic";
             // 
@@ -559,6 +560,60 @@
             this.tabPageTabBar.Size = new System.Drawing.Size(730, 385);
             this.tabPageTabBar.TabIndex = 3;
             this.tabPageTabBar.Text = "Tab Bar";
+            // 
+            // checkOtherMessage
+            // 
+            this.checkOtherMessage.AutoSize = true;
+            this.checkOtherMessage.Location = new System.Drawing.Point(20, 201);
+            this.checkOtherMessage.Name = "checkOtherMessage";
+            this.checkOtherMessage.Size = new System.Drawing.Size(15, 14);
+            this.checkOtherMessage.TabIndex = 106;
+            this.checkOtherMessage.UseVisualStyleBackColor = true;
+            // 
+            // checkServerMessage
+            // 
+            this.checkServerMessage.AutoSize = true;
+            this.checkServerMessage.Location = new System.Drawing.Point(20, 174);
+            this.checkServerMessage.Name = "checkServerMessage";
+            this.checkServerMessage.Size = new System.Drawing.Size(15, 14);
+            this.checkServerMessage.TabIndex = 105;
+            this.checkServerMessage.UseVisualStyleBackColor = true;
+            // 
+            // checkServerQuit
+            // 
+            this.checkServerQuit.AutoSize = true;
+            this.checkServerQuit.Location = new System.Drawing.Point(20, 147);
+            this.checkServerQuit.Name = "checkServerQuit";
+            this.checkServerQuit.Size = new System.Drawing.Size(15, 14);
+            this.checkServerQuit.TabIndex = 104;
+            this.checkServerQuit.UseVisualStyleBackColor = true;
+            // 
+            // checkChannelPart
+            // 
+            this.checkChannelPart.AutoSize = true;
+            this.checkChannelPart.Location = new System.Drawing.Point(20, 120);
+            this.checkChannelPart.Name = "checkChannelPart";
+            this.checkChannelPart.Size = new System.Drawing.Size(15, 14);
+            this.checkChannelPart.TabIndex = 103;
+            this.checkChannelPart.UseVisualStyleBackColor = true;
+            // 
+            // checkChannelJoin
+            // 
+            this.checkChannelJoin.AutoSize = true;
+            this.checkChannelJoin.Location = new System.Drawing.Point(20, 93);
+            this.checkChannelJoin.Name = "checkChannelJoin";
+            this.checkChannelJoin.Size = new System.Drawing.Size(15, 14);
+            this.checkChannelJoin.TabIndex = 102;
+            this.checkChannelJoin.UseVisualStyleBackColor = true;
+            // 
+            // checkNewMessage
+            // 
+            this.checkNewMessage.AutoSize = true;
+            this.checkNewMessage.Location = new System.Drawing.Point(20, 68);
+            this.checkNewMessage.Name = "checkNewMessage";
+            this.checkNewMessage.Size = new System.Drawing.Size(15, 14);
+            this.checkNewMessage.TabIndex = 101;
+            this.checkNewMessage.UseVisualStyleBackColor = true;
             // 
             // pictureTabBackground
             // 
@@ -1398,16 +1453,16 @@
             // 
             this.panelColorPicker.BackColor = System.Drawing.SystemColors.Control;
             this.panelColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.panelColorPicker.Location = new System.Drawing.Point(2, 428);
+            this.panelColorPicker.Location = new System.Drawing.Point(4, 421);
             this.panelColorPicker.Name = "panelColorPicker";
-            this.panelColorPicker.Size = new System.Drawing.Size(288, 40);
+            this.panelColorPicker.Size = new System.Drawing.Size(244, 123);
             this.panelColorPicker.TabIndex = 20;
             // 
             // buttonCancel
             // 
-            StaticMethods.LoadResourceImage(buttonCancel, "disconected.png");
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(642, 436);
+            this.buttonCancel.Location = new System.Drawing.Point(648, 515);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -1418,10 +1473,10 @@
             // 
             // buttonSave
             // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(531, 436);
+            this.buttonSave.Location = new System.Drawing.Point(537, 515);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -1432,78 +1487,24 @@
             // 
             // labelCurrent
             // 
-            this.labelCurrent.Location = new System.Drawing.Point(303, 427);
+            this.labelCurrent.Location = new System.Drawing.Point(254, 421);
             this.labelCurrent.Name = "labelCurrent";
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current:";
             // 
-            // checkNewMessage
-            // 
-            this.checkNewMessage.AutoSize = true;
-            this.checkNewMessage.Location = new System.Drawing.Point(20, 68);
-            this.checkNewMessage.Name = "checkNewMessage";
-            this.checkNewMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkNewMessage.TabIndex = 101;
-            this.checkNewMessage.UseVisualStyleBackColor = true;
-            // 
-            // checkChannelJoin
-            // 
-            this.checkChannelJoin.AutoSize = true;
-            this.checkChannelJoin.Location = new System.Drawing.Point(20, 93);
-            this.checkChannelJoin.Name = "checkChannelJoin";
-            this.checkChannelJoin.Size = new System.Drawing.Size(15, 14);
-            this.checkChannelJoin.TabIndex = 102;
-            this.checkChannelJoin.UseVisualStyleBackColor = true;
-            // 
-            // checkChannelPart
-            // 
-            this.checkChannelPart.AutoSize = true;
-            this.checkChannelPart.Location = new System.Drawing.Point(20, 120);
-            this.checkChannelPart.Name = "checkChannelPart";
-            this.checkChannelPart.Size = new System.Drawing.Size(15, 14);
-            this.checkChannelPart.TabIndex = 103;
-            this.checkChannelPart.UseVisualStyleBackColor = true;
-            // 
-            // checkServerQuit
-            // 
-            this.checkServerQuit.AutoSize = true;
-            this.checkServerQuit.Location = new System.Drawing.Point(20, 147);
-            this.checkServerQuit.Name = "checkServerQuit";
-            this.checkServerQuit.Size = new System.Drawing.Size(15, 14);
-            this.checkServerQuit.TabIndex = 104;
-            this.checkServerQuit.UseVisualStyleBackColor = true;
-            // 
-            // checkServerMessage
-            // 
-            this.checkServerMessage.AutoSize = true;
-            this.checkServerMessage.Location = new System.Drawing.Point(20, 174);
-            this.checkServerMessage.Name = "checkServerMessage";
-            this.checkServerMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkServerMessage.TabIndex = 105;
-            this.checkServerMessage.UseVisualStyleBackColor = true;
-            // 
-            // checkOtherMessage
-            // 
-            this.checkOtherMessage.AutoSize = true;
-            this.checkOtherMessage.Location = new System.Drawing.Point(20, 201);
-            this.checkOtherMessage.Name = "checkOtherMessage";
-            this.checkOtherMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkOtherMessage.TabIndex = 106;
-            this.checkOtherMessage.UseVisualStyleBackColor = true;
-            // 
             // FormColors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(742, 477);
+            this.ClientSize = new System.Drawing.Size(748, 554);
             this.Controls.Add(this.labelCurrent);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.panelColorPicker);
             this.Controls.Add(this.tabControlColors);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1569,8 +1570,8 @@
         private System.Windows.Forms.PictureBox picturePanelHeaderBG1;
         private System.Windows.Forms.Label labelPanelHeaderBG2;
         private System.Windows.Forms.Label labelPanelHeaderBG1;
-        private TextWindow textFormattedBasic;
-        private TextWindow textFormattedText;
+        private IceChat.TextWindow textFormattedBasic;
+        private IceChat.TextWindow textFormattedText;
         private System.Windows.Forms.PictureBox pictureTabBarHover2;
         private System.Windows.Forms.PictureBox pictureTabBarHover1;
         private System.Windows.Forms.Label labelTabBarHover2;

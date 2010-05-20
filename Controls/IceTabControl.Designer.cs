@@ -24,9 +24,6 @@ namespace IceChat
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IceTabControl));
-            this.ImageList = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // IceTabControl
@@ -41,6 +38,5 @@ namespace IceChat
         }
         #endregion
 
-        private System.Windows.Forms.ImageList ImageList;
     }
 }

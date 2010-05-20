@@ -90,6 +90,14 @@
             this.buttonRemoveIgnore = new System.Windows.Forms.Button();
             this.buttonAddIgnore = new System.Windows.Forms.Button();
             this.tabBuddyList = new System.Windows.Forms.TabPage();
+            this.listBuddyList = new System.Windows.Forms.ListView();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.checkBuddyList = new System.Windows.Forms.CheckBox();
+            this.textBuddy = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.buttonEditBuddy = new System.Windows.Forms.Button();
+            this.buttonRemoveBuddy = new System.Windows.Forms.Button();
+            this.buttonAddBuddy = new System.Windows.Forms.Button();
             this.tabPageProxy = new System.Windows.Forms.TabPage();
             this.textProxyPass = new System.Windows.Forms.TextBox();
             this.labelProxyPass = new System.Windows.Forms.Label();
@@ -104,6 +112,7 @@
             this.labelProxyIP = new System.Windows.Forms.Label();
             this.checkUseProxy = new System.Windows.Forms.CheckBox();
             this.tabBNC = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabPageDefault = new System.Windows.Forms.TabPage();
             this.textDefaultQuitMessage = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -117,8 +126,6 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -133,10 +140,10 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonCancel, "disconected.png");
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(527, 284);
+            this.buttonCancel.Location = new System.Drawing.Point(550, 287);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -147,10 +154,10 @@
             // 
             // buttonSave
             // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(418, 285);
+            this.buttonSave.Location = new System.Drawing.Point(441, 288);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 31);
@@ -178,7 +185,7 @@
             this.tabControlSettings.Multiline = true;
             this.tabControlSettings.Name = "tabControlSettings";
             this.tabControlSettings.SelectedIndex = 0;
-            this.tabControlSettings.Size = new System.Drawing.Size(627, 266);
+            this.tabControlSettings.Size = new System.Drawing.Size(650, 282);
             this.tabControlSettings.TabIndex = 36;
             // 
             // tabPageMain
@@ -206,7 +213,7 @@
             this.tabPageMain.Location = new System.Drawing.Point(4, 46);
             this.tabPageMain.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageMain.Name = "tabPageMain";
-            this.tabPageMain.Size = new System.Drawing.Size(619, 216);
+            this.tabPageMain.Size = new System.Drawing.Size(642, 232);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
@@ -721,6 +728,7 @@
             this.textIgnore.Name = "textIgnore";
             this.textIgnore.Size = new System.Drawing.Size(278, 23);
             this.textIgnore.TabIndex = 37;
+            this.textIgnore.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textIgnore_KeyDown);
             // 
             // labelNickHost
             // 
@@ -766,7 +774,13 @@
             // 
             // tabBuddyList
             // 
+            this.tabBuddyList.Controls.Add(this.listBuddyList);
+            this.tabBuddyList.Controls.Add(this.checkBuddyList);
+            this.tabBuddyList.Controls.Add(this.textBuddy);
             this.tabBuddyList.Controls.Add(this.label4);
+            this.tabBuddyList.Controls.Add(this.buttonEditBuddy);
+            this.tabBuddyList.Controls.Add(this.buttonRemoveBuddy);
+            this.tabBuddyList.Controls.Add(this.buttonAddBuddy);
             this.tabBuddyList.Location = new System.Drawing.Point(4, 46);
             this.tabBuddyList.Name = "tabBuddyList";
             this.tabBuddyList.Padding = new System.Windows.Forms.Padding(3);
@@ -774,6 +788,84 @@
             this.tabBuddyList.TabIndex = 7;
             this.tabBuddyList.Text = "Buddy List";
             this.tabBuddyList.UseVisualStyleBackColor = true;
+            // 
+            // listBuddyList
+            // 
+            this.listBuddyList.CheckBoxes = true;
+            this.listBuddyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader4});
+            this.listBuddyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listBuddyList.Location = new System.Drawing.Point(6, 40);
+            this.listBuddyList.Name = "listBuddyList";
+            this.listBuddyList.Size = new System.Drawing.Size(350, 137);
+            this.listBuddyList.TabIndex = 47;
+            this.listBuddyList.UseCompatibleStateImageBehavior = false;
+            this.listBuddyList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Nick Name";
+            this.columnHeader4.Width = 339;
+            // 
+            // checkBuddyList
+            // 
+            this.checkBuddyList.Location = new System.Drawing.Point(6, 183);
+            this.checkBuddyList.Name = "checkBuddyList";
+            this.checkBuddyList.Size = new System.Drawing.Size(151, 20);
+            this.checkBuddyList.TabIndex = 46;
+            this.checkBuddyList.Text = "Enable Buddy List";
+            this.checkBuddyList.UseVisualStyleBackColor = true;
+            // 
+            // textBuddy
+            // 
+            this.textBuddy.Location = new System.Drawing.Point(48, 6);
+            this.textBuddy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBuddy.Name = "textBuddy";
+            this.textBuddy.Size = new System.Drawing.Size(308, 23);
+            this.textBuddy.TabIndex = 44;
+            this.textBuddy.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBuddy_KeyDown);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 11);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 16);
+            this.label4.TabIndex = 45;
+            this.label4.Text = "Nick";
+            // 
+            // buttonEditBuddy
+            // 
+            this.buttonEditBuddy.Location = new System.Drawing.Point(362, 74);
+            this.buttonEditBuddy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonEditBuddy.Name = "buttonEditBuddy";
+            this.buttonEditBuddy.Size = new System.Drawing.Size(87, 27);
+            this.buttonEditBuddy.TabIndex = 43;
+            this.buttonEditBuddy.Text = "Edit";
+            this.buttonEditBuddy.UseVisualStyleBackColor = true;
+            this.buttonEditBuddy.Click += new System.EventHandler(this.buttonEditBuddy_Click);
+            // 
+            // buttonRemoveBuddy
+            // 
+            this.buttonRemoveBuddy.Location = new System.Drawing.Point(362, 39);
+            this.buttonRemoveBuddy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonRemoveBuddy.Name = "buttonRemoveBuddy";
+            this.buttonRemoveBuddy.Size = new System.Drawing.Size(87, 27);
+            this.buttonRemoveBuddy.TabIndex = 42;
+            this.buttonRemoveBuddy.Text = "Remove";
+            this.buttonRemoveBuddy.UseVisualStyleBackColor = true;
+            this.buttonRemoveBuddy.Click += new System.EventHandler(this.buttonRemoveBuddy_Click);
+            // 
+            // buttonAddBuddy
+            // 
+            this.buttonAddBuddy.Location = new System.Drawing.Point(362, 6);
+            this.buttonAddBuddy.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.buttonAddBuddy.Name = "buttonAddBuddy";
+            this.buttonAddBuddy.Size = new System.Drawing.Size(87, 27);
+            this.buttonAddBuddy.TabIndex = 41;
+            this.buttonAddBuddy.Text = "Add";
+            this.buttonAddBuddy.UseVisualStyleBackColor = true;
+            this.buttonAddBuddy.Click += new System.EventHandler(this.buttonAddBuddy_Click);
             // 
             // tabPageProxy
             // 
@@ -923,6 +1015,15 @@
             this.tabBNC.Text = "BNC Settings";
             this.tabBNC.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(8, 12);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(147, 16);
+            this.label5.TabIndex = 48;
+            this.label5.Text = "Not yet Implemented";
+            // 
             // tabPageDefault
             // 
             this.tabPageDefault.Controls.Add(this.textDefaultQuitMessage);
@@ -1043,45 +1144,29 @@
             // 
             // buttonRemoveServer
             // 
+            this.buttonRemoveServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonRemoveServer.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRemoveServer.Location = new System.Drawing.Point(4, 284);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(4, 286);
             this.buttonRemoveServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
-            this.buttonRemoveServer.Size = new System.Drawing.Size(117, 31);
+            this.buttonRemoveServer.Padding = new System.Windows.Forms.Padding(3);
+            this.buttonRemoveServer.Size = new System.Drawing.Size(122, 31);
             this.buttonRemoveServer.TabIndex = 37;
             this.buttonRemoveServer.Text = "Remove Server";
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 12);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(147, 16);
-            this.label4.TabIndex = 47;
-            this.label4.Text = "Not yet Implemented";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 12);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(147, 16);
-            this.label5.TabIndex = 48;
-            this.label5.Text = "Not yet Implemented";
-            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(627, 319);
+            this.ClientSize = new System.Drawing.Size(650, 321);
             this.Controls.Add(this.buttonRemoveServer);
             this.Controls.Add(this.tabControlSettings);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1112,6 +1197,7 @@
             this.ResumeLayout(false);
 
         }
+
 
         #endregion
 
@@ -1203,7 +1289,14 @@
         private System.Windows.Forms.Label labelProxyUser;
         private System.Windows.Forms.TabPage tabBuddyList;
         private System.Windows.Forms.TabPage tabBNC;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ListView listBuddyList;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.CheckBox checkBuddyList;
+        private System.Windows.Forms.TextBox textBuddy;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button buttonEditBuddy;
+        private System.Windows.Forms.Button buttonRemoveBuddy;
+        private System.Windows.Forms.Button buttonAddBuddy;
     }
 }

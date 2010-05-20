@@ -71,13 +71,6 @@ namespace IceChat
         public static Bitmap LoadResourceImage(string resourceName)
         {
             Assembly a = Assembly.GetExecutingAssembly();
-            //string[] resNames = a.GetManifestResourceNames();
-            /*
-            foreach (string ss in resNames)
-            {
-                System.Diagnostics.Debug.WriteLine(ss);
-            }
-            */
             Stream s;
             //if (IsRunningOnMono())
             //    s = a.GetManifestResourceStream(@"IceChat.Icons\" + resourceName);

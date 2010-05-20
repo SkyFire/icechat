@@ -66,20 +66,20 @@ namespace IceChat
         public ServerTree()
         {
             InitializeComponent();
-
             headerCaption = "Favorite Servers";
             
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
             this.MouseMove += new MouseEventHandler(OnMouseMove);
+            this.MouseWheel += new MouseEventHandler(OnMouseWheel);
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
+            this.Resize += new EventHandler(OnResize);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
-
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;
-
+            
             SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
             
             this.UpdateStyles();
@@ -99,11 +99,13 @@ namespace IceChat
 
             toolTip = new ToolTip();
             toolTip.AutoPopDelay = 3000;
-            //toolTip.AutoPopDelay = 5000;
-            //toolTip.InitialDelay = 2000;
-            //toolTip.ReshowDelay = 2000;
-            //toolTip.IsBalloon = true;
             Invalidate();
+        }
+
+        private void OnResize(object sender, EventArgs e)
+        {
+            this.vScrollBar.Left = this.Width - this.vScrollBar.Width;
+            this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
         }
 
         internal void ApplyLanguage()
@@ -127,6 +129,7 @@ namespace IceChat
             
             buttonEdit.Left = (panelButtons.Width / 2) + 1;
             buttonAdd.Left = (panelButtons.Width / 2) + 1;
+            
         }
 
 
@@ -134,6 +137,38 @@ namespace IceChat
         {
             topIndex = ((VScrollBar)sender).Value;
             Invalidate();
+        }
+
+        private void OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            if (vScrollBar.Visible == true)
+            {
+                if (e.Delta < 0)
+                {
+                    if (vScrollBar.Maximum < (vScrollBar.Value + 2))
+                    {
+                        vScrollBar.Value = vScrollBar.Maximum;
+                    }
+                    else
+                    {
+                        vScrollBar.Value += 2;
+                    }
+                }
+                else if (e.Delta > 0)
+                {
+                    if (0 > (vScrollBar.Value - 2))
+                    {
+                        vScrollBar.Value = 0;
+                    }
+                    else
+                    {
+                        vScrollBar.Value -= 2;
+                    }
+                }
+
+                topIndex = vScrollBar.Value;
+                Invalidate();
+            }
         }
 
         private void OnDoubleClick(object sender, EventArgs e)
@@ -181,42 +216,24 @@ namespace IceChat
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            /*
-            if (e.Y <= headerHeight)
+            if (this.Parent.Parent.GetType() != typeof(FormFloat))
             {
-                if (!docked)
+                if (e.Y <= headerHeight)
                 {
-                    if (e.X > (this.Width - 26))
+                    //which side are we docked on
+                    if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right && e.X < 22)
                     {
-                        oldDockWidth = ((Panel)this.Parent).Width;
-                        FormMain.Instance.splitterLeft.Visible = false;
-                        docked = true;
-                        panelButtons.Visible = false;
-                        ((Panel)this.Parent).Width = 20;
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
+                    }
+                    else if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Left && e.X > (this.Width - 22))
+                    {
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
                     }
                 }
-                else
-                {
-                    if (e.X < 20)
-                    {
-                        docked = false;
-                        FormMain.Instance.splitterLeft.Visible = true;
-                        panelButtons.Visible = true;
-                        ((Panel)this.Parent).Width = oldDockWidth;
-                    }
-                }
-                return;
             }
 
-            if (docked)
-            {
-                docked = false;
-                FormMain.Instance.splitterLeft.Visible = true;
-                panelButtons.Visible = true;
-                ((Panel)this.Parent).Width = oldDockWidth;
-                return;
-            }
-            */
             if (e.Y <= headerHeight)
                 return;
 
@@ -501,8 +518,6 @@ namespace IceChat
                     }
                 }
             }
-            //else
-            //    FormMain.Instance.FocusInputBox();
         }
 
         private void AddPopupMenu(string PopupType, ContextMenuStrip mainMenu)
@@ -637,6 +652,31 @@ namespace IceChat
 
         }
 
+        private void panelTop_Paint(object sender, PaintEventArgs e)
+        {
+            Bitmap buffer = new Bitmap(this.Width, headerHeight, e.Graphics);
+            Graphics g = Graphics.FromImage(buffer);
+            
+            Font headerFont = new Font("Verdana", 10);
+            Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+            Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+            g.FillRectangle(l, headerR);
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+            Rectangle centered = headerR;
+            centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
+
+            g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
+
+            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+
+            buffer.Dispose();
+            headerFont.Dispose();
+            //g.Dispose();
+        }
+
+
         private void OnPaint(object sender, PaintEventArgs e)
         {
             try
@@ -656,123 +696,139 @@ namespace IceChat
 
                 Font headerFont = new Font("Verdana", 10);
 
+                Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+                Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+                g.FillRectangle(l, headerR);
+
+                StringFormat sf = new StringFormat();
+                sf.Alignment = StringAlignment.Center;
+                Rectangle centered = headerR;
+                centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
+
+                g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
+                    
+                if (this.Parent.Parent.GetType() != typeof(FormFloat))
                 {
-                    Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
-                    Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
-                    g.FillRectangle(l, headerR);
-
-                    StringFormat sf = new StringFormat();
-                    sf.Alignment = StringAlignment.Center;
-                    Rectangle centered = headerR;
-                    centered.Offset(0, (int)(headerR.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
-
-                    g.DrawString(headerCaption, headerFont, new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderForeColor]), centered, sf);
-                    //g.DrawImageUnscaled(IceChat.Properties.Resources.pin, new Rectangle(this.Width - 24 , 2, 16, 16));
-
-                    //draw each individual server
-                    Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
-
-                    int currentY = listR.Y;
-                    int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
-
-                    BuildServerNodes();
-
-                    int nodeCount = 0;
-
-                    //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
-
-                    foreach (KeyValuePair<string, object> de in serverNodes)
+                    if (Application.RenderWithVisualStyles)
                     {
-                        //get the object type for this node
-                        string node = (string)de.Key;
-                        string[] nodes = node.Split(':');
+                        if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                        {
+                            System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
+                            //which side are we docked on
+                            Rectangle rect = Rectangle.Empty;
+                            if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right)
+                                rect = new Rectangle(0, 0, 22, 22);
+                            else
+                                rect = new Rectangle(this.Width - 22, 0, 22, 22);
+                            renderer.DrawBackground(g, rect);
+                        }
+                    }
+                }
+                //draw each individual server
+                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
 
-                        object value = de.Value;
+                int currentY = listR.Y;
+                int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
 
-                        int x = 0;
-                        Brush b;
-                        nodeCount++;
-                        if (nodeCount <= topIndex)
-                            continue;
+                BuildServerNodes();
 
+                int nodeCount = 0;
+
+                //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
+
+                foreach (KeyValuePair<string, object> de in serverNodes)
+                {
+                    //get the object type for this node
+                    string node = (string)de.Key;
+                    string[] nodes = node.Split(':');
+
+                    object value = de.Value;
+
+                    int x = 0;
+                    Brush b;
+                    nodeCount++;
+                    if (nodeCount <= topIndex)
+                        continue;
+
+                    if (nodeCount == selectedNodeIndex)
+                    {
+                        g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
+                        b = new SolidBrush(SystemColors.HighlightText);
+                    }
+                    else
+                        b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
+
+                    if (value.GetType() == typeof(ServerSetting))
+                    {
                         if (nodeCount == selectedNodeIndex)
                         {
-                            g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
-                            b = new SolidBrush(SystemColors.HighlightText);
-                        }
-                        else
-                            b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
-
-                        if (value.GetType() == typeof(ServerSetting))
-                        {
-                            if (nodeCount == selectedNodeIndex)
-                            {
-                                selectedServerID = ((ServerSetting)value).ID;
-                            }
-
-                            x = 0;
+                            selectedServerID = ((ServerSetting)value).ID;
                         }
 
-                        if (value.GetType() == typeof(IceTabPage))
-                        {
-                            x = 16;
-                            if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
-                            {
-                                if (nodeCount == selectedNodeIndex)
-                                    selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
-                            }
-                            else if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Window)
-                            {
-                                if (((IceTabPage)value).Connection == null)
-                                    x = 0;
-                            }
-                        }
-                        switch (nodes[1])
-                        {
-                            case "0":   //disconnected
-                                g.DrawImage(StaticMethods.LoadResourceImage("disconected.png"), x, currentY, 16, 16);
-                                break;
-                            case "1":   //connected
-                                g.DrawImage(StaticMethods.LoadResourceImage("connected.png"), x, currentY, 16, 16);
-                                break;
-                            case "2":   //connecting
-                                g.DrawImage(StaticMethods.LoadResourceImage("refresh.png"), x, currentY, 16, 16);
-                                break;
-                            case "3":   //channel
-                                g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
-                                break;
-                            case "4":   //query
-                            case "5":   //dcc chat
-                                g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
-                                break;
-                            case "7":
-                                g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
-                                break;
-                        }
-
-                        g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
-
-                        b.Dispose();
-
-                        if (currentY >= listR.Height + listR.Y)
-                        {
-                            vScrollBar.Maximum = serverNodes.Count - ((listR.Height - _lineSize) / _lineSize);
-                            break;
-                        }
-
-                        currentY += _lineSize;
+                        x = 0;
                     }
 
-                    if (currentY > listR.Height || vScrollBar.Value > 0)
-                        vScrollBar.Visible = true;
-                    else
-                        vScrollBar.Visible = false;
+                    if (value.GetType() == typeof(IceTabPage))
+                    {
+                        x = 16;
+                        if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
+                        {
+                            if (nodeCount == selectedNodeIndex)
+                                selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
+                        }
+                        else if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Window)
+                        {
+                            if (((IceTabPage)value).Connection == null)
+                                x = 0;
+                        }
+                    }
+                    switch (nodes[1])
+                    {
+                        case "0":   //disconnected
+                            g.DrawImage(StaticMethods.LoadResourceImage("disconected.png"), x, currentY, 16, 16);
+                            break;
+                        case "1":   //connected
+                            g.DrawImage(StaticMethods.LoadResourceImage("connected.png"), x, currentY, 16, 16);
+                            break;
+                        case "2":   //connecting
+                            g.DrawImage(StaticMethods.LoadResourceImage("refresh.png"), x, currentY, 16, 16);
+                            break;
+                        case "3":   //channel
+                            g.DrawImage(StaticMethods.LoadResourceImage("channel.png"), x, currentY, 16, 16);
+                            break;
+                        case "4":   //query
+                        case "5":   //dcc chat
+                            g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
+                            break;
+                        case "6":   //channel list
+                            g.DrawImage(StaticMethods.LoadResourceImage("channellist.png"), x, currentY, 16, 16);
+                            break;
+                        case "7":
+                            g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
+                            break;
+                    }
 
-                    l.Dispose();
-                    sf.Dispose();
+                    g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
 
+                    b.Dispose();
+
+                    if (currentY >= listR.Height + listR.Y)
+                    {
+                        vScrollBar.Maximum = serverNodes.Count - ((listR.Height - _lineSize) / _lineSize);
+                        break;
+                    }
+
+                    currentY += _lineSize;
                 }
-                
+
+                if (currentY > listR.Height || vScrollBar.Value > 0)
+                    vScrollBar.Visible = true;
+                else
+                    vScrollBar.Visible = false;
+
+                l.Dispose();
+                sf.Dispose();
+
                 //paint the buffer onto the usercontrol
                 e.Graphics.DrawImageUnscaled(buffer, 0, 0);
 
@@ -901,6 +957,22 @@ namespace IceChat
                             }
                         }
                     }
+                    //add any channel lists
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.Connection != null)
+                        {
+                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.ChannelList)
+                            {
+                                //get the color
+                                int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                nodeCount++;
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":6:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                            }
+                        }
+                    }
+
                     //add @window windows
                     foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
                     {

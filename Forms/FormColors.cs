@@ -651,15 +651,15 @@ namespace IceChat
                             {
                                 int result;
                                 if (int.TryParse(textRawMessage.Text.Substring(1, 2), out result))
-                                    textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(3);
+                                    textRawMessage.Text = "" + colorSelected.ToString("00") + textRawMessage.Text.Substring(3);
                                 else
-                                    textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text.Substring(2);
+                                    textRawMessage.Text = "" + colorSelected.ToString("00") + textRawMessage.Text.Substring(2);
                             }
                             else
-                                this.textRawMessage.SelectedText = "" + colorSelected.ToString();
+                                this.textRawMessage.SelectedText = "" + colorSelected.ToString("00");
                         }
                         else
-                            this.textRawMessage.Text = "" + colorSelected.ToString() + textRawMessage.Text;
+                            this.textRawMessage.Text = "" + colorSelected.ToString("00") + textRawMessage.Text;
                     }
                 }
                 else
@@ -678,7 +678,7 @@ namespace IceChat
                         message = message.Replace("&#x3;", ((char)3).ToString());
                         message = RemoveColorCodes(message);
                         
-                        message = "" + colorSelected.ToString() + message;
+                        message = "" + colorSelected.ToString("00") + message;
                         message = message.Replace(((char)3).ToString(),"&#x3;");
 
                         treeBasicMessages.SelectedNode.Tag = message;

@@ -377,9 +377,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\color.png" />
     <EmbeddedResource Include="Icons\CloseButton.png" />
-    <Content Include="icechat2009.ico" />
-    <Content Include="icechat9.ico" />
-    <EmbeddedResource Include="Icons\channelllist.ico" />
+    <EmbeddedResource Include="Icons\channellist.png" />
+    <EmbeddedResource Include="Icons\channel.png" />
+    <EmbeddedResource Include="Icons\console.png" />
+    <EmbeddedResource Include="Icons\icechat2009.ico" />
     <EmbeddedResource Include="Icons\Smile.png" />
     <EmbeddedResource Include="Icons\window.png" />
     <EmbeddedResource Include="Icons\query.png" />
@@ -413,6 +414,9 @@
       <Project>{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}</Project>
       <Name>IceChatScript</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icechat9.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

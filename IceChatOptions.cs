@@ -531,6 +531,72 @@ namespace IceChat
         [XmlArrayItem("Item")]
         public string[] ScriptFiles
         { get; set; }
+
+        [XmlElement("JoinEventLocation")]
+        public int JoinEventLocation
+        { get; set; }
+
+        [XmlElement("PartEventLocation")]
+        public int PartEventLocation
+        { get; set; }
+
+        [XmlElement("QuitEventLocation")]
+        public int QuitEventLocation
+        { get; set; }
+
+        [XmlElement("ModeEventLocation")]
+        public int ModeEventLocation
+        { get; set; }
+
+        [XmlElement("TopicEventLocation")]
+        public int TopicEventLocation
+        { get; set; }
+
+        [XmlElement("KickEventLocation")]
+        public int KickEventLocation
+        { get; set; }
+
+        [XmlElement("ChannelMessageEventLocation")]
+        public int ChannelMessageEventLocation
+        { get; set; }
+
+        [XmlElement("ChannelActionEventLocation")]
+        public int ChannelActionEventLocation
+        { get; set; }
+
+        [XmlElement("NickChangeEventLocation")]
+        public int NickChangeEventLocation
+        { get; set; }
+
+        [XmlElement("ServerNoticeEventLocation")]
+        public int ServerNoticeEventLocation
+        { get; set; }
+
+        [XmlElement("UserNoticeEventLocation")]
+        public int UserNoticeEventLocation
+        { get; set; }
+
+        [XmlElement("WhoisEventLocation")]
+        public int WhoisEventLocation
+        { get; set; }
+
+        [XmlElement("CtcpEventLocation")]
+        public int CtcpEventLocation
+        { get; set; }
+
+        [XmlElement("ServerErrorEventLocation")]
+        public int ServerErrorEventLocation
+        { get; set; }
+
+        [XmlElement("BuddyEventLocation")]
+        public int BuddyEventLocation
+        { get; set; }
+
+        [XmlElement("DccEventLocation")]
+        public int DccEventLocation
+        { get; set; }
+
+    
     }
     
     [XmlRoot("IceChatMessageFormat")]
@@ -669,34 +735,122 @@ namespace IceChat
 
     }
 
-    public class IceChatBuddyList
+    [XmlRoot("IceChatSounds")]
+    public class IceChatSounds
     {
-        [XmlArray("BuddyList")]
-        [XmlArrayItem("Item", typeof(BuddyListItem))]
-        public ArrayList listBuddies;
-        public IceChatBuddyList()
+        public class soundEntry
         {
-            listBuddies = new ArrayList();
+            public soundEntry() { }
+            public soundEntry(string k, string d)
+            {
+                key = k; desc = d;
+            }
+
+            public soundEntry(string k, string d, string f)
+            {
+                key=k; desc=d; file=f;
+            }
+
+            public soundEntry(string k, string d, soundEntry p)
+            {
+                key = k; desc = d; parent = p;
+            }
+
+            private string key;
+            private string desc;
+            private string file;
+            soundEntry parent;
+
+            [XmlElement("Key")]
+            public string Key
+            {
+                get { return key; }
+                set
+                {                    
+                    if (key != null)
+                        throw new InvalidOperationException("Cannot modify a key after it was assigned a value.");
+                    key = value;
+                }
+            }
+            [XmlElement("Description")]
+            public string Description
+            {
+                get { return desc; }
+                set { desc = value; }
+            }
+            [XmlElement("File")]
+            public string File
+            {
+                get { return file; }
+                set { file = value; }
+            }
+
+            public soundEntry Parent
+            {
+                get {return parent;}
+                set { parent = value; }
+            }
+
+            public string getSoundFile()
+            {
+                if (file!=null && file.Length>0) return file;
+                if (parent!=null) return parent.getSoundFile();
+                return null;
+            }
+
         }
-        public void AddBuddy(BuddyListItem item)
+
+        [XmlArray("soundList")]
+        [XmlArrayItem("soundEntry", typeof(soundEntry))]
+        public ArrayList soundList;
+
+        public IceChatSounds()
         {
-            listBuddies.Add(item);
+            soundList = new ArrayList();
         }
-    }
 
-    public class BuddyListItem
-    {
-        [XmlAttribute("BuddyName")]
-        public string BuddyName
-        { get; set; }
+        public void AddDefaultSounds()
+        {
+            Add(new soundEntry("conmsg", "New Message in Console"));
+            Add(new soundEntry("chanmsg", "New Channel Message"));
+            Add(new soundEntry("privmsg", "New Private Message"));
+            Add(new soundEntry("notice", "New User Notice"));
+            Add(new soundEntry("nickchan", "Nickname said in channel"));
+            Add(new soundEntry("nickpriv", "Nickname said in private message"));
+            Add(new soundEntry("buddy", "A buddy has come online"));
+            Add(new soundEntry("dropped", "Server Disconnection"));
+            Add(new soundEntry("operping", "Request for operator"));
+        }
 
-        [XmlAttribute("Network")]
-        public string Network
-        { get; set; }
+        public void Add(soundEntry s)
+        {
+            foreach (soundEntry x in soundList)
+            {
+                if (x.Key.Equals(s.Key))
+                {
+                    x.Parent = s.Parent;
+                    return;
+                }
+            }
+            soundList.Add(s);
+        }
 
-        [XmlIgnore()]
-        public bool Connected
-        { get; set; }
+        public soundEntry getSound(string key)
+        {
+            foreach (soundEntry x in soundList)
+            {
+                if (x.Key.Equals(key))
+                {
+                    return x;
+                }
+            }
+            return null;
+        }
+
+        public soundEntry getSound(int index)
+        {
+            return (soundEntry)soundList[index];
+        }
 
     }
 }

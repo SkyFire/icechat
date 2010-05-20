@@ -89,15 +89,6 @@ namespace IceChat
             InitializeComponent();
             InitializeCustom();
 
-            this.ImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
-
-            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("quickconnect.png"));
-            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("window.png"));
-            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("query.png"));
-            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("window.png"));
-            this.ImageList.Images.Add(StaticMethods.LoadResourceImage("channelllist.ico"));
-
             _popupMenu = ConsolePopupMenu();
             _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
 
@@ -419,7 +410,7 @@ namespace IceChat
                                 t.Click += new EventHandler(OnPopupExtraMenuClick);
                                 t.Tag = command;
                             }
-                            System.Diagnostics.Debug.WriteLine(mainMenu.Items[subMenu].GetType().ToString());
+
                             if (menuDepth == 0)
                                 subMenu = mainMenu.Items.Add(t);
                             else
@@ -567,23 +558,28 @@ namespace IceChat
                 switch (tabPage.WindowStyle)
                 {
                     case IceTabPage.WindowType.Console:
-                        img = this.ImageList.Images[0];
+                        img = StaticMethods.LoadResourceImage("console.png");
                         break;
                     case IceTabPage.WindowType.Channel:
-                        img = this.ImageList.Images[1];
+                        img = StaticMethods.LoadResourceImage("channel.png");
                         break;
                     case IceTabPage.WindowType.Query:
-                        img = this.ImageList.Images[2];
+                    case IceTabPage.WindowType.DCCChat:
+                        img = StaticMethods.LoadResourceImage("query.png");
                         break;
+                    case IceTabPage.WindowType.ChannelList:
+                        img = StaticMethods.LoadResourceImage("channellist.png");
+                        break;
+                    case IceTabPage.WindowType.Window:
                     case IceTabPage.WindowType.Debug:
-                        img = this.ImageList.Images[3];
+                        img = StaticMethods.LoadResourceImage("window.png");
                         break;
                     default:
-                        img = this.ImageList.Images[3];
+                        img = StaticMethods.LoadResourceImage("window.png");
                         break;
 
                 }
-                
+
                 Rectangle rimage = new Rectangle(recBounds.X, recBounds.Y, img.Width, img.Height);
                 if (bSelected)
                 {
@@ -651,7 +647,7 @@ namespace IceChat
                     g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, _tabFont, br, tabTextArea, stringFormat);
                 }
 
-                g.DrawString((nIndex + 1).ToString(), new Font("Arial", 8.0F), br, recBounds);
+                //g.DrawString((nIndex + 1).ToString(), new Font("Arial", 8.0F), br, recBounds);
             }            
             catch (Exception e) 
             { 

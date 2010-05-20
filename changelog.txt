@@ -1,3 +1,17 @@
+Build Alpha 14.2 - May 19 2010
+* Added MouseWheel support to Nicklist and Server Tree
+* Added Events options to Settings, select where messages go (in progress)
+* Added Sound Events, now saves in IceChatSounds.xml
+* Added Sounds folder created in data folder
+* Added Confirm Exit if connected when IceChat is closed
+* Fixed issue with mode +x on self not updating nicklist with new host
+* Fixed bug with userhost and /dns command
+* Fixed bug with sending ctcp messages and how they are received
+* Fixed bug with FirstRun not adding all default server values
+* Buddy List editable in Server Editor
+* Buddy shows connected or disconnected when connected to Server
+
+
 Build Alpha 14.1 - May 9 2010
 * Small resource changes for Server Editor Tabs and Main Tab Control
 * Floating forms stay on top

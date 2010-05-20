@@ -67,7 +67,8 @@ namespace IceChat
     public delegate void ServerMOTDDelegate(IRCConnection connection, string message);    
     public delegate void ServerErrorDelegate(IRCConnection connection, string message);
     public delegate void WhoisDataDelegate(IRCConnection connection, string nick, string data);
-    public delegate void CtcpMessageDelegate(IRCConnection connection, string nick, string ctcp);
+    public delegate void CtcpMessageDelegate(IRCConnection connection, string nick, string ctcp, string message);
+    public delegate void CtcpReplyDelegate(IRCConnection connection, string nick, string ctcp, string message);
 
     public delegate void ChannelListStartDelegate(IRCConnection connection);
     public delegate void ChannelListDelegate(IRCConnection connection, string channel, string users, string topic);
@@ -78,6 +79,9 @@ namespace IceChat
     
     //for the Server Tree
     public delegate void NewServerConnectionDelegate(ServerSetting serverSetting);
+
+    //for the Buddy List
+    public delegate void BuddyListRefreshDelegate(IRCConnection connection, BuddyListItem[] buddyList);
 
     //for the IAL (internal address list)
     public delegate void IALUserDataDelegate(IRCConnection connection, string nick, string host, string channel);

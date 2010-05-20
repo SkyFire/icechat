@@ -38,6 +38,7 @@ namespace IceChat
         private IceChatOptions iceChatOptions;
         private IceChatFontSetting iceChatFonts;
         private IceChatEmoticon iceChatEmoticons;
+        private IceChatSounds iceChatSounds;
 
         private ListViewItem listMoveItem = null;
 
@@ -59,10 +60,11 @@ namespace IceChat
         }
 
 
-        public FormSettings(IceChatOptions Options, IceChatFontSetting Fonts, IceChatEmoticon Emoticons)
+        public FormSettings(IceChatOptions Options, IceChatFontSetting Fonts, IceChatEmoticon Emoticons, IceChatSounds Sounds)
         {
             InitializeComponent();
-
+            
+            /*
             listBoxSounds.Items.Add("New Message in Console");
             listBoxSounds.Items.Add("New Channel Message");
             listBoxSounds.Items.Add("New Private Message");
@@ -71,11 +73,17 @@ namespace IceChat
             listBoxSounds.Items.Add("Your Nickname is said in a Private Message");
             listBoxSounds.Items.Add("A Buddy has come Online");
             listBoxSounds.Items.Add("Server Disconnection");
+            */
 
-            
+            foreach(IceChatSounds.soundEntry x in Sounds.soundList)
+            {
+                listBoxSounds.Items.Add(x.Description);
+            }
+
             this.iceChatOptions = Options;
             this.iceChatFonts = Fonts;
             this.iceChatEmoticons = Emoticons;
+            this.iceChatSounds = Sounds;
 
             this.listViewEmot.MouseDown += new MouseEventHandler(listViewEmot_MouseDown);
             this.listViewEmot.MouseUp += new MouseEventHandler(listViewEmot_MouseUp);
@@ -151,6 +159,17 @@ namespace IceChat
 
             comboBoxLanguage.DataSource = FormMain.Instance.IceChatLanguageFiles;
             comboBoxLanguage.SelectedItem = FormMain.Instance.IceChatCurrentLanguageFile;
+            
+            //Event Settings
+            comboJoinEvent.SelectedIndex = iceChatOptions.JoinEventLocation;
+            comboPartEvent.SelectedIndex = iceChatOptions.PartEventLocation;
+            comboQuitEvent.SelectedIndex = iceChatOptions.QuitEventLocation;
+            comboModeEvent.SelectedIndex = iceChatOptions.ModeEventLocation;
+            comboKickEvent.SelectedIndex = iceChatOptions.KickEventLocation;
+            comboTopicEvent.SelectedIndex = iceChatOptions.TopicEventLocation;
+            comboChannelMessageEvent.SelectedIndex = iceChatOptions.ChannelMessageEventLocation;
+            comboChannelActionEvent.SelectedIndex = iceChatOptions.ChannelActionEventLocation;
+
 
             ApplyLanguage();
 
@@ -265,7 +284,17 @@ namespace IceChat
 
             // apply language change
             FormMain.Instance.IceChatCurrentLanguageFile = (LanguageItem) comboBoxLanguage.SelectedItem;
-            
+
+            //Event Settings
+            iceChatOptions.JoinEventLocation = comboJoinEvent.SelectedIndex;
+            iceChatOptions.PartEventLocation = comboPartEvent.SelectedIndex;
+            iceChatOptions.QuitEventLocation = comboQuitEvent.SelectedIndex;
+            iceChatOptions.ModeEventLocation = comboModeEvent.SelectedIndex;
+            iceChatOptions.KickEventLocation = comboKickEvent.SelectedIndex;
+            iceChatOptions.TopicEventLocation = comboTopicEvent.SelectedIndex;
+            iceChatOptions.ChannelMessageEventLocation = comboChannelMessageEvent.SelectedIndex;
+            iceChatOptions.ChannelActionEventLocation = comboChannelActionEvent.SelectedIndex;
+
             if (SaveOptions != null)
                 SaveOptions();
 
@@ -403,29 +432,52 @@ namespace IceChat
 
         private void listBoxSounds_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //
+            if (listBoxSounds.SelectedIndex >= 0)
+            {
+                textSound.Text = iceChatSounds.getSound(listBoxSounds.SelectedIndex).File;
+            }
         }
 
         private void buttonChooseSound_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = FormMain.Instance.CurrentFolder;
-            ofd.RestoreDirectory = true;
-            ofd.Filter = "Sounds (*.wav)|*.wav";
-            
-            if (ofd.ShowDialog() == DialogResult.OK)
+            try
             {
-                textSound.Text = ofd.FileName;
-                System.Diagnostics.Debug.WriteLine(ofd.FileName);
+                OpenFileDialog ofd = new OpenFileDialog();
+                if (textSound.Text.Length > 0)
+                {
+                    //go to the same folder
+                    ofd.InitialDirectory = System.IO.Path.GetDirectoryName(textSound.Text);
+                }
+                else
+                    ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds";
+
+                ofd.RestoreDirectory = true;
+                ofd.Filter = "Sounds (*.wav)|*.wav";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    textSound.Text = ofd.FileName;
             }
+            catch { }
         }
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-            if (textSound.Text != "<none>" || textSound.Text.Length > 0)
-            {                
-                player.SoundLocation = @textSound.Text;
-                player.Play();
+            if (textSound.Text.Length > 0)
+            {
+                try
+                {
+                    player.SoundLocation = @textSound.Text;
+                    player.Play();
+                }
+                catch { }
+            }
+        }
+        
+        private void textSound_TextChanged(object sender, EventArgs e)
+        {
+            if (listBoxSounds.SelectedIndex >= 0)
+            {
+                iceChatSounds.getSound(listBoxSounds.SelectedIndex).File = textSound.Text;
             }
         }
 

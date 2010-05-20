@@ -114,6 +114,22 @@ namespace IceChat
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.imageListEmoticons = new System.Windows.Forms.ImageList(this.components);
             this.tabEvents = new System.Windows.Forms.TabPage();
+            this.comboChannelActionEvent = new System.Windows.Forms.ComboBox();
+            this.labelChannelActionEvent = new System.Windows.Forms.Label();
+            this.comboChannelMessageEvent = new System.Windows.Forms.ComboBox();
+            this.labelChannelMessageEvent = new System.Windows.Forms.Label();
+            this.comboTopicEvent = new System.Windows.Forms.ComboBox();
+            this.labelTopicEvent = new System.Windows.Forms.Label();
+            this.comboKickEvent = new System.Windows.Forms.ComboBox();
+            this.labelKickEvent = new System.Windows.Forms.Label();
+            this.comboModeEvent = new System.Windows.Forms.ComboBox();
+            this.labelModeEvent = new System.Windows.Forms.Label();
+            this.comboQuitEvent = new System.Windows.Forms.ComboBox();
+            this.labelQuitEvent = new System.Windows.Forms.Label();
+            this.comboPartEvent = new System.Windows.Forms.ComboBox();
+            this.labelPartEvent = new System.Windows.Forms.Label();
+            this.comboJoinEvent = new System.Windows.Forms.ComboBox();
+            this.labelJoinEvent = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -122,14 +138,15 @@ namespace IceChat
             this.tabDCC.SuspendLayout();
             this.tabSounds.SuspendLayout();
             this.tabEmoticon.SuspendLayout();
+            this.tabEvents.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSave
             // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonSave, "save.png");
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(430, 250);
+            this.buttonSave.Location = new System.Drawing.Point(449, 267);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -140,10 +157,10 @@ namespace IceChat
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            StaticMethods.LoadResourceImage(this.buttonCancel, "disconected.png");            
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(541, 250);
+            this.buttonCancel.Location = new System.Drawing.Point(560, 267);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -168,7 +185,7 @@ namespace IceChat
             this.tabControlOptions.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(660, 242);
+            this.tabControlOptions.Size = new System.Drawing.Size(660, 259);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabMain
@@ -184,7 +201,7 @@ namespace IceChat
             this.tabMain.Margin = new System.Windows.Forms.Padding(4);
             this.tabMain.Name = "tabMain";
             this.tabMain.Padding = new System.Windows.Forms.Padding(4);
-            this.tabMain.Size = new System.Drawing.Size(652, 213);
+            this.tabMain.Size = new System.Drawing.Size(652, 230);
             this.tabMain.TabIndex = 0;
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
@@ -863,6 +880,7 @@ namespace IceChat
             this.textSound.Name = "textSound";
             this.textSound.Size = new System.Drawing.Size(299, 23);
             this.textSound.TabIndex = 4;
+            this.textSound.TextChanged += new System.EventHandler(this.textSound_TextChanged);
             // 
             // labelSoundFile
             // 
@@ -987,6 +1005,22 @@ namespace IceChat
             // 
             // tabEvents
             // 
+            this.tabEvents.Controls.Add(this.comboChannelActionEvent);
+            this.tabEvents.Controls.Add(this.labelChannelActionEvent);
+            this.tabEvents.Controls.Add(this.comboChannelMessageEvent);
+            this.tabEvents.Controls.Add(this.labelChannelMessageEvent);
+            this.tabEvents.Controls.Add(this.comboTopicEvent);
+            this.tabEvents.Controls.Add(this.labelTopicEvent);
+            this.tabEvents.Controls.Add(this.comboKickEvent);
+            this.tabEvents.Controls.Add(this.labelKickEvent);
+            this.tabEvents.Controls.Add(this.comboModeEvent);
+            this.tabEvents.Controls.Add(this.labelModeEvent);
+            this.tabEvents.Controls.Add(this.comboQuitEvent);
+            this.tabEvents.Controls.Add(this.labelQuitEvent);
+            this.tabEvents.Controls.Add(this.comboPartEvent);
+            this.tabEvents.Controls.Add(this.labelPartEvent);
+            this.tabEvents.Controls.Add(this.comboJoinEvent);
+            this.tabEvents.Controls.Add(this.labelJoinEvent);
             this.tabEvents.Location = new System.Drawing.Point(4, 25);
             this.tabEvents.Name = "tabEvents";
             this.tabEvents.Padding = new System.Windows.Forms.Padding(3);
@@ -995,16 +1029,192 @@ namespace IceChat
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
             // 
+            // comboChannelActionEvent
+            // 
+            this.comboChannelActionEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboChannelActionEvent.FormattingEnabled = true;
+            this.comboChannelActionEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboChannelActionEvent.Location = new System.Drawing.Point(338, 45);
+            this.comboChannelActionEvent.Name = "comboChannelActionEvent";
+            this.comboChannelActionEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboChannelActionEvent.TabIndex = 15;
+            // 
+            // labelChannelActionEvent
+            // 
+            this.labelChannelActionEvent.AutoSize = true;
+            this.labelChannelActionEvent.Location = new System.Drawing.Point(204, 48);
+            this.labelChannelActionEvent.Name = "labelChannelActionEvent";
+            this.labelChannelActionEvent.Size = new System.Drawing.Size(113, 16);
+            this.labelChannelActionEvent.TabIndex = 14;
+            this.labelChannelActionEvent.Text = "Channel Action:";
+            // 
+            // comboChannelMessageEvent
+            // 
+            this.comboChannelMessageEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboChannelMessageEvent.FormattingEnabled = true;
+            this.comboChannelMessageEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboChannelMessageEvent.Location = new System.Drawing.Point(338, 12);
+            this.comboChannelMessageEvent.Name = "comboChannelMessageEvent";
+            this.comboChannelMessageEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboChannelMessageEvent.TabIndex = 13;
+            // 
+            // labelChannelMessageEvent
+            // 
+            this.labelChannelMessageEvent.AutoSize = true;
+            this.labelChannelMessageEvent.Location = new System.Drawing.Point(204, 15);
+            this.labelChannelMessageEvent.Name = "labelChannelMessageEvent";
+            this.labelChannelMessageEvent.Size = new System.Drawing.Size(128, 16);
+            this.labelChannelMessageEvent.TabIndex = 12;
+            this.labelChannelMessageEvent.Text = "Channel Message:";
+            // 
+            // comboTopicEvent
+            // 
+            this.comboTopicEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboTopicEvent.FormattingEnabled = true;
+            this.comboTopicEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboTopicEvent.Location = new System.Drawing.Point(67, 181);
+            this.comboTopicEvent.Name = "comboTopicEvent";
+            this.comboTopicEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboTopicEvent.TabIndex = 11;
+            // 
+            // labelTopicEvent
+            // 
+            this.labelTopicEvent.AutoSize = true;
+            this.labelTopicEvent.Location = new System.Drawing.Point(8, 184);
+            this.labelTopicEvent.Name = "labelTopicEvent";
+            this.labelTopicEvent.Size = new System.Drawing.Size(57, 16);
+            this.labelTopicEvent.TabIndex = 10;
+            this.labelTopicEvent.Text = "Topics:";
+            // 
+            // comboKickEvent
+            // 
+            this.comboKickEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboKickEvent.FormattingEnabled = true;
+            this.comboKickEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboKickEvent.Location = new System.Drawing.Point(67, 147);
+            this.comboKickEvent.Name = "comboKickEvent";
+            this.comboKickEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboKickEvent.TabIndex = 9;
+            // 
+            // labelKickEvent
+            // 
+            this.labelKickEvent.AutoSize = true;
+            this.labelKickEvent.Location = new System.Drawing.Point(8, 150);
+            this.labelKickEvent.Name = "labelKickEvent";
+            this.labelKickEvent.Size = new System.Drawing.Size(47, 16);
+            this.labelKickEvent.TabIndex = 8;
+            this.labelKickEvent.Text = "Kicks:";
+            // 
+            // comboModeEvent
+            // 
+            this.comboModeEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboModeEvent.FormattingEnabled = true;
+            this.comboModeEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboModeEvent.Location = new System.Drawing.Point(67, 114);
+            this.comboModeEvent.Name = "comboModeEvent";
+            this.comboModeEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboModeEvent.TabIndex = 7;
+            // 
+            // labelModeEvent
+            // 
+            this.labelModeEvent.AutoSize = true;
+            this.labelModeEvent.Location = new System.Drawing.Point(8, 117);
+            this.labelModeEvent.Name = "labelModeEvent";
+            this.labelModeEvent.Size = new System.Drawing.Size(56, 16);
+            this.labelModeEvent.TabIndex = 6;
+            this.labelModeEvent.Text = "Modes:";
+            // 
+            // comboQuitEvent
+            // 
+            this.comboQuitEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboQuitEvent.FormattingEnabled = true;
+            this.comboQuitEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboQuitEvent.Location = new System.Drawing.Point(67, 79);
+            this.comboQuitEvent.Name = "comboQuitEvent";
+            this.comboQuitEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboQuitEvent.TabIndex = 5;
+            // 
+            // labelQuitEvent
+            // 
+            this.labelQuitEvent.AutoSize = true;
+            this.labelQuitEvent.Location = new System.Drawing.Point(8, 82);
+            this.labelQuitEvent.Name = "labelQuitEvent";
+            this.labelQuitEvent.Size = new System.Drawing.Size(48, 16);
+            this.labelQuitEvent.TabIndex = 4;
+            this.labelQuitEvent.Text = "Quits:";
+            // 
+            // comboPartEvent
+            // 
+            this.comboPartEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboPartEvent.FormattingEnabled = true;
+            this.comboPartEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboPartEvent.Location = new System.Drawing.Point(67, 45);
+            this.comboPartEvent.Name = "comboPartEvent";
+            this.comboPartEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboPartEvent.TabIndex = 3;
+            // 
+            // labelPartEvent
+            // 
+            this.labelPartEvent.AutoSize = true;
+            this.labelPartEvent.Location = new System.Drawing.Point(8, 48);
+            this.labelPartEvent.Name = "labelPartEvent";
+            this.labelPartEvent.Size = new System.Drawing.Size(48, 16);
+            this.labelPartEvent.TabIndex = 2;
+            this.labelPartEvent.Text = "Parts:";
+            // 
+            // comboJoinEvent
+            // 
+            this.comboJoinEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboJoinEvent.FormattingEnabled = true;
+            this.comboJoinEvent.Items.AddRange(new object[] {
+            "In Channel",
+            "In Console",
+            "Hide"});
+            this.comboJoinEvent.Location = new System.Drawing.Point(67, 12);
+            this.comboJoinEvent.Name = "comboJoinEvent";
+            this.comboJoinEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboJoinEvent.TabIndex = 1;
+            // 
+            // labelJoinEvent
+            // 
+            this.labelJoinEvent.AutoSize = true;
+            this.labelJoinEvent.Location = new System.Drawing.Point(8, 15);
+            this.labelJoinEvent.Name = "labelJoinEvent";
+            this.labelJoinEvent.Size = new System.Drawing.Size(46, 16);
+            this.labelJoinEvent.TabIndex = 0;
+            this.labelJoinEvent.Text = "Joins:";
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(660, 292);
+            this.ClientSize = new System.Drawing.Size(660, 303);
             this.Controls.Add(this.tabControlOptions);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -1027,6 +1237,8 @@ namespace IceChat
             this.tabSounds.PerformLayout();
             this.tabEmoticon.ResumeLayout(false);
             this.tabEmoticon.PerformLayout();
+            this.tabEvents.ResumeLayout(false);
+            this.tabEvents.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1118,5 +1330,21 @@ namespace IceChat
         private System.Windows.Forms.TextBox textDCCPortHigh;
         private System.Windows.Forms.TextBox textDCCPortLow;
         private System.Windows.Forms.Label labelPortRange;
+        private System.Windows.Forms.ComboBox comboJoinEvent;
+        private System.Windows.Forms.Label labelJoinEvent;
+        private System.Windows.Forms.ComboBox comboQuitEvent;
+        private System.Windows.Forms.Label labelQuitEvent;
+        private System.Windows.Forms.ComboBox comboPartEvent;
+        private System.Windows.Forms.Label labelPartEvent;
+        private System.Windows.Forms.ComboBox comboTopicEvent;
+        private System.Windows.Forms.Label labelTopicEvent;
+        private System.Windows.Forms.ComboBox comboKickEvent;
+        private System.Windows.Forms.Label labelKickEvent;
+        private System.Windows.Forms.ComboBox comboModeEvent;
+        private System.Windows.Forms.Label labelModeEvent;
+        private System.Windows.Forms.ComboBox comboChannelActionEvent;
+        private System.Windows.Forms.Label labelChannelActionEvent;
+        private System.Windows.Forms.ComboBox comboChannelMessageEvent;
+        private System.Windows.Forms.Label labelChannelMessageEvent;
     }
 }

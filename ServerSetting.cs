@@ -70,10 +70,9 @@ namespace IceChat
         private string _realServerName = "";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
-        private bool _showPingPong = false;
-        private bool _autoJoinDelay = false;
         private int _pongTimerMinutes = 30;
-        
+        private int _maxNickLength = 15;
+
         [XmlAttribute("ServerID")]
         public int ID
         { get; set; }
@@ -136,12 +135,12 @@ namespace IceChat
 
         [XmlElement("ShowPingPong")]
         public bool ShowPingPong
-        { get { return this._showPingPong; } set { this._showPingPong = value; } }
-
+        { get; set; }
+ 
         [XmlElement("AutoJoinDelay")]
         public bool AutoJoinDelay
-        { get { return this._autoJoinDelay; } set { this._autoJoinDelay = value; } }
-
+        { get; set; }
+ 
         [XmlArray("AutoPerform")]
         [XmlArrayItem("Item")]
         public string[] AutoPerform
@@ -179,6 +178,15 @@ namespace IceChat
 
         [XmlElement("IgnoreListEnable")]
         public bool IgnoreListEnable
+        { get; set; }
+
+        [XmlArray("BuddyList")]
+        [XmlArrayItem("Item", typeof(BuddyListItem))]
+        public BuddyListItem[] BuddyList
+        { get; set; }
+
+        [XmlElement("BuddyListEnable")]
+        public bool BuddyListEnable
         { get; set; }
 
         [XmlElement("PongTimerMinutes")]
@@ -288,6 +296,15 @@ namespace IceChat
         [XmlIgnore()]
         public string LocalHost
         { get; set; }
+
+        [XmlIgnore()]
+        public int MaxNickLength
+        { get { return this._maxNickLength; } set { this._maxNickLength = value; } }
+
+        [XmlIgnore()]
+        public bool DisableSounds
+        { get; set; }
+
     }
     
     public class InternalAddressList
@@ -332,5 +349,33 @@ namespace IceChat
             if (_channels.IndexOf(channel) != -1)
                 _channels.Remove(channel);
         }
+    }
+
+    public class BuddyListItem
+    {
+        [XmlElement("Nick")]
+        public string Nick
+        { get; set; }
+
+        [XmlElement("Note")]
+        public string Note
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool Connected
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool PreviousState
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool IsOnSent
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool IsOnReceived
+        { get; set; }
+
     }
 }

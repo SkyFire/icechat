@@ -66,6 +66,7 @@ namespace IceChat
         internal event ServerErrorDelegate ServerError;
         internal event WhoisDataDelegate WhoisData;
         internal event CtcpMessageDelegate CtcpMessage;
+        internal event CtcpReplyDelegate CtcpReply;
         internal event UserNoticeDelegate UserNotice;
     
         internal event ServerNoticeDelegate ServerNotice;
@@ -84,10 +85,12 @@ namespace IceChat
         internal event IALUserPartDelegate IALUserPart;
         internal event IALUserQuitDelegate IALUserQuit;
 
+        internal event BuddyListRefreshDelegate BuddyListRefresh;
+
         private bool triedAltNickName = false;
         private bool initialLogon = false;
 
-        public FormUserInfo UserInfoWindow = null;
+        internal FormUserInfo UserInfoWindow = null;
 
         private void ParseData(string data)
         {
@@ -234,6 +237,22 @@ namespace IceChat
                                     }
                                 }
 
+                                //check max nick length
+                                if (ircData[i].Length > 8)
+                                {
+                                    if (ircData[i].Substring(0, 8) == "NICKLEN=")
+                                    {
+                                        serverSetting.MaxNickLength = Convert.ToInt32(ircData[i].Substring(8));
+                                    }
+                                }
+                                if (ircData[i].Length > 11)
+                                {
+                                    if (ircData[i].Substring(0, 11) == "MAXNICKLEN=")
+                                    {
+                                        serverSetting.MaxNickLength = Convert.ToInt32(ircData[i].Substring(11));
+                                    }
+                                }
+
                                 //tell server this client supports NAMESX
                                 if (ircData[i] == "NAMESX")
                                 {
@@ -294,11 +313,58 @@ namespace IceChat
                             else
                             {
                                 //multiple hosts
-                                string[] hosts = msg.Split(' ');
+                                string[] hosts = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                                 foreach (string h in hosts)
                                     UserHostReply(this, h);
                             }
                             break;
+                        case "303": //parse out ISON information (Buddy List)
+                            msg = JoinString(ircData, 3, true);
+
+                            //queue up next batch to send
+                            buddyListTimer.Start();
+
+                            if (msg.Length == 0) return;
+                            
+                            string[] buddies = msg.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (BuddyListItem b in serverSetting.BuddyList)
+                            {
+                                if (b.IsOnSent && !b.IsOnReceived)
+                                {
+                                    bool isFound = false;
+                                    foreach (string buddy in buddies)
+                                    {
+                                        //this nick is connected
+                                        if (b.Nick.ToLower() == buddy.ToLower())
+                                        {
+                                            b.Connected = true;
+                                            b.IsOnReceived = true;
+                                            isFound = true;
+                                        }
+                                    }
+                                    if (!isFound)
+                                    {
+                                        b.Connected = false;
+                                        b.IsOnReceived = true;
+                                    }
+                                }
+                            }
+
+                            if (buddiesIsOnSent == serverSetting.BuddyList.Length)
+                            {
+                                //reset all the isonsent values
+                                foreach (BuddyListItem buddy in serverSetting.BuddyList)
+                                {
+                                    buddy.IsOnSent = false;
+                                    buddy.IsOnReceived = false;
+                                }
+                                buddiesIsOnSent = 0;
+
+                                //send a user event to refresh the buddy list for this server
+                                if (BuddyListRefresh != null)
+                                    BuddyListRefresh(this, serverSetting.BuddyList);
+                            }
+                            break;                        
                         case "311":     //whois information username address
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
                             {
@@ -638,10 +704,19 @@ namespace IceChat
                                     SendData(command);
                             }
                             commandQueue.Clear();
-                            break;
 
-                        case "396":     //mode X message
+                            BuddyListCheck();
+                            buddyListTimer.Start();
+                            break;
+                        case "396":     //mode X message                            
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            if (this.serverSetting.IAL.ContainsKey(this.serverSetting.NickName))
+                            {
+                                host = ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host;
+                                if (host.IndexOf("@") > -1)
+                                    ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host = host.Substring(0, host.IndexOf("@") + 1) + ircData[3];
+                                
+                            }
                             ServerMessage(this, msg);
                             break;
                         case "439":
@@ -683,7 +758,7 @@ namespace IceChat
                                         case "CLIENTINFO":
                                         case "SOURCE":
                                         case "FINGER":
-                                            CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
+                                            CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper(), msg.Substring(msg.IndexOf(" ") + 1));
                                             break;
                                         default:
                                             //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
@@ -736,10 +811,10 @@ namespace IceChat
                                         case "CLIENTINFO":
                                         case "SOURCE":
                                         case "FINGER":
-                                            CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper());
+                                            //we need to send a reply
+                                            CtcpMessage(this, nick, msg.Split(' ')[0].ToUpper(), msg);
                                             break;
                                         default:
-                                            //System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
                                             if (msg.ToUpper().StartsWith("ACTION "))
                                             {
                                                 msg = msg.Substring(7);
@@ -806,7 +881,33 @@ namespace IceChat
                                             UserNotice(this, nick, msg);
                                     }
                                     else
-                                        UserNotice(this, nick, msg);
+                                    {
+                                        if (msg[0] == (char)1)
+                                        {
+                                            msg = msg.Substring(1, msg.Length - 2);
+                                            string ctcp = msg.Split(' ')[0].ToUpper();
+                                            msg = msg.Substring(msg.IndexOf(" ") + 1);
+                                            switch (ctcp)
+                                            {
+                                                case "PING":
+                                                    int result;
+                                                    if (Int32.TryParse(msg, out result))
+                                                    {
+                                                        int diff = System.Environment.TickCount - Convert.ToInt32(msg);
+                                                        msg = GetDurationMS(diff);
+                                                    }
+                                                    if (CtcpReply != null)
+                                                        CtcpReply(this, nick, ctcp, msg);    
+                                                    break;
+                                                default:
+                                                    if (CtcpReply != null)
+                                                        CtcpReply(this, nick, ctcp, msg);
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                            UserNotice(this, nick, msg);
+                                    }
                                 }
                             }
                             break;
@@ -973,11 +1074,21 @@ namespace IceChat
                                 triedAltNickName = true;
                             }
                             else
-                            {
-                                SendData("NICK " + serverSetting.AltNickName + "_");
-                                serverSetting.AltNickName = serverSetting.AltNickName + "_";
-                                serverSetting.NickName = serverSetting.AltNickName + "_";
-                                //ChangeNick(this, nick, serverSetting.AltNickName, "");                                                            
+                            {                                
+                                //pick a random nick
+                                Random r = new Random();
+                                string randNick = r.Next(10, 99).ToString();
+                                if (serverSetting.NickName.Length + 2 <= serverSetting.MaxNickLength)
+                                {
+                                    serverSetting.NickName = serverSetting.NickName + randNick;
+                                    SendData("NICK " + serverSetting.NickName);
+                                }
+                                else
+                                {
+                                    serverSetting.NickName = serverSetting.NickName.Substring(0, serverSetting.MaxNickLength - 2);
+                                    serverSetting.NickName = serverSetting.NickName + randNick;
+                                    SendData("NICK " + serverSetting.NickName);
+                                }
                             }
 
                             break;
@@ -1031,11 +1142,26 @@ namespace IceChat
 
         #region Parsing Methods
 
+        private string GetDurationMS(int milliSseconds)
+        {
+            TimeSpan t = new TimeSpan(0,0,0,0, milliSseconds);
+
+            string s = t.Seconds.ToString() + "." + t.Milliseconds.ToString() + " secs";
+            if (t.Minutes > 0)
+                s = t.Minutes.ToString() + " mins " + s;
+            if (t.Hours > 0)
+                s = t.Hours.ToString() + " hrs " + s;
+            if (t.Days > 0)
+                s = t.Days.ToString() + " days " + s;
+
+            return s;
+        }
+
         private string GetDuration(int seconds)
         {
             TimeSpan t = new TimeSpan(0, 0, seconds);
-            
-            string s = t.Seconds.ToString() + " secs";
+
+            string s = t.Seconds.ToString() + " secs";            
             if (t.Minutes > 0)
                 s = t.Minutes.ToString() + " mins " + s;
             if (t.Hours > 0)

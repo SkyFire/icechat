@@ -161,13 +161,12 @@
             // 
             // vScrollBar
             // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
             this.vScrollBar.LargeChange = 2;
-            this.vScrollBar.Location = new System.Drawing.Point(183, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(183, 23);
             this.vScrollBar.Maximum = 1;
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Padding = new System.Windows.Forms.Padding(0, 23, 0, 0);
-            this.vScrollBar.Size = new System.Drawing.Size(17, 281);
+            this.vScrollBar.Size = new System.Drawing.Size(17, 258);
             this.vScrollBar.TabIndex = 2;
             this.vScrollBar.Value = 1;
             this.vScrollBar.Visible = false;

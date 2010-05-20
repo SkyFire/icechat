@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Disconnected");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Connected");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Disconnected");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Connected");
             this.panelButtons = new System.Windows.Forms.Panel();
             this.buttonRemove = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
@@ -51,6 +51,7 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(175, 57);
             this.panelButtons.TabIndex = 3;
+            this.panelButtons.Visible = false;
             // 
             // buttonRemove
             // 
@@ -82,7 +83,6 @@
             this.buttonMessage.TabIndex = 1;
             this.buttonMessage.Text = "Message";
             this.buttonMessage.UseVisualStyleBackColor = true;
-            this.buttonMessage.Visible = false;
             this.buttonMessage.Click += new System.EventHandler(this.buttonMessage_Click);
             // 
             // buttonAdd
@@ -104,13 +104,13 @@
             this.treeBuddies.HideSelection = false;
             this.treeBuddies.Location = new System.Drawing.Point(0, 20);
             this.treeBuddies.Name = "treeBuddies";
-            treeNode3.Name = "nodeDisconnected";
-            treeNode3.Text = "Disconnected";
-            treeNode4.Name = "nodeConnected";
-            treeNode4.Text = "Connected";
+            treeNode1.Name = "nodeDisconnected";
+            treeNode1.Text = "Disconnected";
+            treeNode2.Name = "nodeConnected";
+            treeNode2.Text = "Connected";
             this.treeBuddies.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode4});
+            treeNode1,
+            treeNode2});
             this.treeBuddies.Size = new System.Drawing.Size(175, 212);
             this.treeBuddies.TabIndex = 4;
             // 

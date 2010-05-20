@@ -43,6 +43,8 @@ namespace IceChat
         private bool attemptReconnect = true;
 
         private System.Timers.Timer reconnectTimer;
+        private System.Timers.Timer buddyListTimer;
+        private int buddiesIsOnSent = 0;
 
         private ServerSetting serverSetting;
         private bool fullyConnected = false;
@@ -66,9 +68,13 @@ namespace IceChat
             dataBuffer = "";
             commandQueue = new ArrayList();
             serverSetting = ss;
+            
             reconnectTimer = new System.Timers.Timer(30000);            
             reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnReconnectTimerElapsed);
-            
+
+            buddyListTimer = new System.Timers.Timer(60000);
+            buddyListTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnBuddyListTimerElapsed);            
+
             pongTimer = new System.Timers.Timer(60000 * serverSetting.PongTimerMinutes);    //15 minutes
             pongTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnPongTimerElapsed);
             
@@ -89,6 +95,45 @@ namespace IceChat
 
             reconnectTimer.Stop();
             reconnectTimer.Dispose();
+        }
+
+        private void BuddyListCheck()
+        {
+            if (serverSetting.BuddyListEnable)
+            {
+                string ison = string.Empty;
+
+                foreach (BuddyListItem buddy in serverSetting.BuddyList)
+                {
+                    if (ison.Length > 200)
+                        break;
+                    else if (!buddy.IsOnSent)
+                    {
+                        if (!buddy.Nick.StartsWith(";"))
+                        {
+                            ison += " " + buddy.Nick;
+                            buddy.IsOnSent = true;
+                        }
+                        buddiesIsOnSent++;
+                    }
+                }
+
+                if (ison != null)
+                {
+                    ison = "ISON" + ison;
+                    SendData(ison);
+                }
+
+                buddyListTimer.Stop();
+            }
+            else
+                FormMain.Instance.BuddyList.ClearBuddyList(this);
+
+        }
+
+        private void OnBuddyListTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            BuddyListCheck();
         }
 
         private void OnReconnectTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -237,6 +282,19 @@ namespace IceChat
             serverSetting.ConnectedTime = DateTime.Now;
 
             commandQueue.Clear();
+            
+            buddyListTimer.Stop();
+            FormMain.Instance.BuddyList.ClearBuddyList(this);
+            foreach (BuddyListItem buddy in serverSetting.BuddyList)
+            {
+                buddy.Connected = false;
+                buddy.PreviousState = false;
+                buddy.IsOnSent = false;
+                buddy.IsOnReceived = false;
+            }
+
+            FormMain.Instance.PlaySoundFile("dropped");
+
             initialLogon = false;
             triedAltNickName = false;
             fullyConnected = false;
@@ -493,6 +551,7 @@ namespace IceChat
         private void OnReceivedData(IAsyncResult ar)
         {
             SocketPacket handler = (SocketPacket)ar.AsyncState;
+            
             try
             {
                 int size = handler.workSocket.EndReceive(ar);

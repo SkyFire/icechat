@@ -87,7 +87,6 @@
             // 
             // buttonConnect
             // 
-            StaticMethods.LoadResourceImage(buttonConnect, "quickconnect.png");
             this.buttonConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonConnect.Location = new System.Drawing.Point(305, 90);
             this.buttonConnect.Name = "buttonConnect";
@@ -110,7 +109,7 @@
             this.Controls.Add(this.textServer);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

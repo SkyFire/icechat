@@ -32,9 +32,10 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.Panel panelDockRight;
-        private System.Windows.Forms.Splitter splitterLeft;
-        private System.Windows.Forms.Splitter splitterRight;
+        private IceDockPanel panelDockRight;
+        private IceDockPanel panelDockLeft;
+        internal System.Windows.Forms.Splitter splitterLeft;
+        internal System.Windows.Forms.Splitter splitterRight;
         private ServerTree serverTree;
         private ChannelList channelList;
         private BuddyList buddyList;
@@ -42,7 +43,6 @@ namespace IceChat
         internal System.Windows.Forms.ToolStripMenuItem iceChatColorsToolStripMenuItem;
         internal System.Windows.Forms.ToolStripMenuItem iceChatEditorToolStripMenuItem;
         internal System.Windows.Forms.ToolStripMenuItem iceChatSettingsToolStripMenuItem;
-        private System.Windows.Forms.Panel panelDockLeft;
         private System.Windows.Forms.ToolStrip toolStripMain;
         private System.Windows.Forms.ToolStripButton toolStripQuickConnect;
         private System.Windows.Forms.ToolStripButton toolStripSettings;
@@ -83,16 +83,14 @@ namespace IceChat
             this.forumsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelDockRight = new System.Windows.Forms.Panel();
-            this.tabControlRight = new System.Windows.Forms.TabControl();
+            this.panelDockRight = new IceDockPanel();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelDockLeft = new System.Windows.Forms.Panel();
-            this.tabControlLeft = new System.Windows.Forms.TabControl();
+            this.panelDockLeft = new IceDockPanel();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
             this.contextMenuToolBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,7 +105,6 @@ namespace IceChat
             this.mainTabControl = new IceChat.IceTabControl();
             this.inputPanel = new IceChat.InputPanel();
             this.menuMainStrip.SuspendLayout();
-            this.panelDockRight.SuspendLayout();
             this.contextMenuNotify.SuspendLayout();
             this.panelDockLeft.SuspendLayout();
             this.toolStripMain.SuspendLayout();
@@ -143,6 +140,7 @@ namespace IceChat
             // 
             // minimizeToTrayToolStripMenuItem
             // 
+            this.minimizeToTrayToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("minimizeToTrayToolStripMenuItem.Image")));
             this.minimizeToTrayToolStripMenuItem.Name = "minimizeToTrayToolStripMenuItem";
             this.minimizeToTrayToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
             this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
@@ -151,7 +149,7 @@ namespace IceChat
             // 
             // debugWindowToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(debugWindowToolStripMenuItem, "debugmenu.png");
+            this.debugWindowToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("debugWindowToolStripMenuItem.Image")));
             this.debugWindowToolStripMenuItem.Name = "debugWindowToolStripMenuItem";
             this.debugWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.debugWindowToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
@@ -160,7 +158,7 @@ namespace IceChat
             // 
             // exitToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(exitToolStripMenuItem, "CloseButton.png");
+            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.exitToolStripMenuItem.Text = "Exit";
@@ -179,7 +177,7 @@ namespace IceChat
             // 
             // iceChatSettingsToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(iceChatSettingsToolStripMenuItem, "settingsmenu.png");
+            this.iceChatSettingsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatSettingsToolStripMenuItem.Image")));
             this.iceChatSettingsToolStripMenuItem.Name = "iceChatSettingsToolStripMenuItem";
             this.iceChatSettingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -188,7 +186,7 @@ namespace IceChat
             // 
             // iceChatColorsToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(iceChatColorsToolStripMenuItem, "colorsmenu.png");
+            this.iceChatColorsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatColorsToolStripMenuItem.Image")));
             this.iceChatColorsToolStripMenuItem.Name = "iceChatColorsToolStripMenuItem";
             this.iceChatColorsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
             this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -197,7 +195,7 @@ namespace IceChat
             // 
             // iceChatEditorToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(iceChatEditorToolStripMenuItem, "editormenu.png");
+            this.iceChatEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatEditorToolStripMenuItem.Image")));
             this.iceChatEditorToolStripMenuItem.Name = "iceChatEditorToolStripMenuItem";
             this.iceChatEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -227,7 +225,7 @@ namespace IceChat
             this.serverListToolStripMenuItem.CheckOnClick = true;
             this.serverListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.serverListToolStripMenuItem.Name = "serverListToolStripMenuItem";
-            this.serverListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.serverListToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.serverListToolStripMenuItem.Text = "Left Panel";
             this.serverListToolStripMenuItem.Click += new System.EventHandler(this.serverListToolStripMenuItem_Click);
             // 
@@ -237,7 +235,7 @@ namespace IceChat
             this.nickListToolStripMenuItem.CheckOnClick = true;
             this.nickListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.nickListToolStripMenuItem.Name = "nickListToolStripMenuItem";
-            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.nickListToolStripMenuItem.Text = "Right Panel";
             this.nickListToolStripMenuItem.Click += new System.EventHandler(this.nickListToolStripMenuItem_Click);
             // 
@@ -247,7 +245,7 @@ namespace IceChat
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.statusBarToolStripMenuItem.Text = "Status Bar";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.statusBarToolStripMenuItem_Click);
             // 
@@ -257,7 +255,7 @@ namespace IceChat
             this.toolBarToolStripMenuItem.CheckOnClick = true;
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.toolBarToolStripMenuItem.Text = "Tool Bar";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.toolBarToolStripMenuItem_Click);
             // 
@@ -275,7 +273,7 @@ namespace IceChat
             // 
             // codePlexPageToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(codePlexPageToolStripMenuItem, "codeplex.ico");
+            this.codePlexPageToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("codePlexPageToolStripMenuItem.Image")));
             this.codePlexPageToolStripMenuItem.Name = "codePlexPageToolStripMenuItem";
             this.codePlexPageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.codePlexPageToolStripMenuItem.Text = "CodePlex Page";
@@ -290,7 +288,7 @@ namespace IceChat
             // 
             // forumsToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(forumsToolStripMenuItem, "smf.ico");            
+            this.forumsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("forumsToolStripMenuItem.Image")));
             this.forumsToolStripMenuItem.Name = "forumsToolStripMenuItem";
             this.forumsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.forumsToolStripMenuItem.Text = "Forums";
@@ -312,27 +310,12 @@ namespace IceChat
             // 
             // panelDockRight
             // 
-            this.panelDockRight.Controls.Add(this.tabControlRight);
             this.panelDockRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelDockRight.Location = new System.Drawing.Point(621, 63);
             this.panelDockRight.Name = "panelDockRight";
             this.panelDockRight.Size = new System.Drawing.Size(175, 345);
             this.panelDockRight.TabIndex = 14;
-            // 
-            // tabControlRight
-            // 
-            this.tabControlRight.Alignment = System.Windows.Forms.TabAlignment.Right;
-            this.tabControlRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControlRight.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControlRight.Location = new System.Drawing.Point(0, 0);
-            this.tabControlRight.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControlRight.Multiline = true;
-            this.tabControlRight.Name = "tabControlRight";
-            this.tabControlRight.Padding = new System.Drawing.Point(0, 0);
-            this.tabControlRight.SelectedIndex = 0;
-            this.tabControlRight.Size = new System.Drawing.Size(175, 345);
-            this.tabControlRight.TabIndex = 0;
-            this.tabControlRight.TabStop = false;
+            this.panelDockRight.TabControl.Alignment = System.Windows.Forms.TabAlignment.Right;
             // 
             // splitterLeft
             // 
@@ -384,27 +367,12 @@ namespace IceChat
             // 
             // panelDockLeft
             // 
-            this.panelDockLeft.Controls.Add(this.tabControlLeft);
             this.panelDockLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelDockLeft.Location = new System.Drawing.Point(0, 63);
             this.panelDockLeft.Name = "panelDockLeft";
             this.panelDockLeft.Size = new System.Drawing.Size(181, 345);
             this.panelDockLeft.TabIndex = 13;
-            // 
-            // tabControlLeft
-            // 
-            this.tabControlLeft.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tabControlLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControlLeft.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabControlLeft.Location = new System.Drawing.Point(0, 0);
-            this.tabControlLeft.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControlLeft.Multiline = true;
-            this.tabControlLeft.Name = "tabControlLeft";
-            this.tabControlLeft.Padding = new System.Drawing.Point(0, 0);
-            this.tabControlLeft.SelectedIndex = 0;
-            this.tabControlLeft.Size = new System.Drawing.Size(181, 345);
-            this.tabControlLeft.TabIndex = 0;
-            this.tabControlLeft.TabStop = false;
+            this.panelDockLeft.TabControl.Alignment = System.Windows.Forms.TabAlignment.Left;
             // 
             // toolStripMain
             // 
@@ -561,7 +529,6 @@ namespace IceChat
             this.Text = "IceChat 2009";
             this.menuMainStrip.ResumeLayout(false);
             this.menuMainStrip.PerformLayout();
-            this.panelDockRight.ResumeLayout(false);
             this.contextMenuNotify.ResumeLayout(false);
             this.panelDockLeft.ResumeLayout(false);
             this.toolStripMain.ResumeLayout(false);
@@ -592,8 +559,6 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdateToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabControlRight;
-        private System.Windows.Forms.TabControl tabControlLeft;
 
 
 

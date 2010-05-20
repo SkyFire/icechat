@@ -169,6 +169,7 @@ namespace IceChat
             this.checkAutoJoinDelay.Checked = serverSetting.AutoJoinDelay;
             this.checkAutoPerform.Checked = serverSetting.AutoPerformEnable;
             this.checkIgnore.Checked = serverSetting.IgnoreListEnable;
+            this.checkBuddyList.Checked = serverSetting.BuddyListEnable;
 
             this.checkModeI.Checked = serverSetting.SetModeI;
             this.checkMOTD.Checked = serverSetting.ShowMOTD;
@@ -240,9 +241,24 @@ namespace IceChat
                     }
                     else
                         listIgnore.Items.Add(ignore.Substring(1));
-
                 }
             }
+
+            if (serverSetting.BuddyList != null)
+            {
+                foreach (BuddyListItem buddy in serverSetting.BuddyList)
+                {
+                    if (!buddy.Nick.StartsWith(";"))
+                    {
+                        ListViewItem lvi = new ListViewItem(buddy.Nick);
+                        lvi.Checked = true;
+                        listBuddyList.Items.Add(lvi);
+                    }
+                    else
+                        listBuddyList.Items.Add(buddy.Nick.Substring(1));
+                }
+            }
+
 
             checkUseProxy.Checked = serverSetting.UseProxy;
             textProxyIP.Text = serverSetting.ProxyIP;
@@ -309,6 +325,7 @@ namespace IceChat
             serverSetting.AutoJoinDelay = checkAutoJoinDelay.Checked;
             serverSetting.AutoPerformEnable = checkAutoPerform.Checked;
             serverSetting.IgnoreListEnable = checkIgnore.Checked;
+            serverSetting.BuddyListEnable = checkBuddyList.Checked;
 
             serverSetting.AutoJoinChannels = new string[listChannel.Items.Count];
             for (int i = 0; i < listChannel.Items.Count; i++)
@@ -336,7 +353,23 @@ namespace IceChat
                     serverSetting.IgnoreList[i] = ";" + listIgnore.Items[i].Text;
                 else
                     serverSetting.IgnoreList[i] = listIgnore.Items[i].Text;
+            }
 
+            serverSetting.BuddyList = new BuddyListItem[listBuddyList.Items.Count];
+            for (int i = 0; i < listBuddyList.Items.Count; i++)
+            {
+                BuddyListItem b = new BuddyListItem();
+                
+                if (listBuddyList.Items[i].Checked == false)
+                {
+                    b.Nick = ";" + listBuddyList.Items[i].Text;
+                }
+                else
+                {
+                    b.Nick = listBuddyList.Items[i].Text;
+                }
+                //b.Note = serverSetting.ServerName;
+                serverSetting.BuddyList[i] = b;
             }
 
             serverSetting.AutoPerform = textAutoPerform.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);
@@ -443,6 +476,37 @@ namespace IceChat
                 }
             }
         }
+        
+        private void textIgnore_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+            {
+                if (textIgnore.Text.Length > 0)
+                {
+                    ListViewItem lvi = new ListViewItem(textIgnore.Text);
+                    lvi.Checked = true;
+                    listIgnore.Items.Add(lvi);
+                    textIgnore.Text = "";
+                    textIgnore.Focus();
+                }
+            }        
+        }
+
+        private void textBuddy_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+            {
+                if (textBuddy.Text.Length > 0)
+                {
+                    ListViewItem lvi = new ListViewItem(textBuddy.Text);
+                    lvi.Checked = true;
+                    listBuddyList.Items.Add(lvi);
+                    textBuddy.Text = "";
+                    textBuddy.Focus();
+                }
+            }
+        }
+
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
@@ -473,7 +537,7 @@ namespace IceChat
                 lvi.Checked = true;
                 listIgnore.Items.Add(lvi);
                 textIgnore.Text = "";
-                textChannel.Focus();
+                textIgnore.Focus();
             }
         }
 
@@ -491,6 +555,36 @@ namespace IceChat
                 textIgnore.Text = eachItem.Text;
                 listIgnore.Items.Remove(eachItem);
             }
+        }
+
+        private void buttonAddBuddy_Click(object sender, EventArgs e)
+        {
+            if (textBuddy.Text.Length > 0)
+            {
+                ListViewItem lvi = new ListViewItem(textBuddy.Text);
+                lvi.Checked = true;
+                listBuddyList.Items.Add(lvi);
+                textBuddy.Text = "";
+                textBuddy.Focus();
+            }
+
+        }
+
+        private void buttonRemoveBuddy_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listBuddyList.SelectedItems)
+                listBuddyList.Items.Remove(eachItem);
+
+        }
+
+        private void buttonEditBuddy_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listBuddyList.SelectedItems)
+            {
+                textBuddy.Text = eachItem.Text;
+                listBuddyList.Items.Remove(eachItem);
+            }
+
         }
     }
 }

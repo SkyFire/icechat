@@ -131,13 +131,13 @@
             // 
             // vScrollBar
             // 
-            this.vScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
+            this.vScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollBar.LargeChange = 2;
-            this.vScrollBar.Location = new System.Drawing.Point(163, 0);
+            this.vScrollBar.Location = new System.Drawing.Point(163, 23);
             this.vScrollBar.Maximum = 1;
             this.vScrollBar.Name = "vScrollBar";
             this.vScrollBar.Padding = new System.Windows.Forms.Padding(0, 25, 0, 0);
-            this.vScrollBar.Size = new System.Drawing.Size(17, 266);
+            this.vScrollBar.Size = new System.Drawing.Size(15, 216);
             this.vScrollBar.TabIndex = 3;
             this.vScrollBar.Visible = false;
             // 
@@ -152,8 +152,7 @@
             this.contextMenuChannel.Size = new System.Drawing.Size(185, 92);
             // 
             // clearWindowToolStripMenuItem
-            //             
-            StaticMethods.LoadResourceImage(clearWindowToolStripMenuItem, "clear.png");
+            // 
             this.clearWindowToolStripMenuItem.Name = "clearWindowToolStripMenuItem";
             this.clearWindowToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.clearWindowToolStripMenuItem.Text = "Clear Window";
@@ -161,7 +160,6 @@
             // 
             // closeChannelToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(closeChannelToolStripMenuItem, "CloseButton.png");
             this.closeChannelToolStripMenuItem.Name = "closeChannelToolStripMenuItem";
             this.closeChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.closeChannelToolStripMenuItem.Text = "Close Channel";
@@ -169,7 +167,6 @@
             // 
             // reJoinChannelToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(reJoinChannelToolStripMenuItem, "refresh.png");
             this.reJoinChannelToolStripMenuItem.Name = "reJoinChannelToolStripMenuItem";
             this.reJoinChannelToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.reJoinChannelToolStripMenuItem.Text = "Rejoin Channel";
@@ -177,7 +174,6 @@
             // 
             // channelInformationToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(channelInformationToolStripMenuItem, "info.png");
             this.channelInformationToolStripMenuItem.Name = "channelInformationToolStripMenuItem";
             this.channelInformationToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.channelInformationToolStripMenuItem.Text = "Channel Information";
@@ -185,7 +181,6 @@
             // 
             // autoPerformToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(autoPerformToolStripMenuItem, "autoperform.png");
             this.autoPerformToolStripMenuItem.Name = "autoPerformToolStripMenuItem";
             this.autoPerformToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autoPerformToolStripMenuItem.Text = "Auto Perform";
@@ -207,7 +202,6 @@
             // 
             // connectToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(connectToolStripMenuItem, "connected.png");
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
             this.connectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.connectToolStripMenuItem.Text = "Connect";
@@ -215,7 +209,6 @@
             // 
             // disconnectToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(disconnectToolStripMenuItem, "disconected.png");
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
             this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
@@ -235,7 +228,6 @@
             // 
             // editToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(editToolStripMenuItem, "quickconnect.png");
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.editToolStripMenuItem.Text = "Edit";
@@ -243,7 +235,6 @@
             // 
             // autoJoinToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(autoJoinToolStripMenuItem, "refresh.png");
             this.autoJoinToolStripMenuItem.Name = "autoJoinToolStripMenuItem";
             this.autoJoinToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autoJoinToolStripMenuItem.Text = "Auto Join";
@@ -251,7 +242,6 @@
             // 
             // openLogFolderToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(openLogFolderToolStripMenuItem, "folder.png");
             this.openLogFolderToolStripMenuItem.Name = "openLogFolderToolStripMenuItem";
             this.openLogFolderToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.openLogFolderToolStripMenuItem.Text = "Open Log Folder";
@@ -269,7 +259,6 @@
             // 
             // clearWindowToolStripMenuItem1
             // 
-            StaticMethods.LoadResourceImage(clearWindowToolStripMenuItem, "clear.png");
             this.clearWindowToolStripMenuItem1.Name = "clearWindowToolStripMenuItem1";
             this.clearWindowToolStripMenuItem1.Size = new System.Drawing.Size(163, 22);
             this.clearWindowToolStripMenuItem1.Text = "Clear Window";
@@ -277,7 +266,6 @@
             // 
             // closeWindowToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(closeWindowToolStripMenuItem, "CloseButton.png");
             this.closeWindowToolStripMenuItem.Name = "closeWindowToolStripMenuItem";
             this.closeWindowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.closeWindowToolStripMenuItem.Text = "Close Window";
@@ -285,7 +273,6 @@
             // 
             // userInformationToolStripMenuItem
             // 
-            StaticMethods.LoadResourceImage(userInformationToolStripMenuItem, "user_info.png");
             this.userInformationToolStripMenuItem.Name = "userInformationToolStripMenuItem";
             this.userInformationToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.userInformationToolStripMenuItem.Text = "User Information";

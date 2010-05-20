@@ -66,8 +66,7 @@ namespace IceChat
         private delegate void ClearChannelListDelegate();
 
         private Panel panelTopic;
-        //private int ImageIndex;
-
+        
         private TextWindow textWindow;
         private TextWindow textTopic;
         private WindowType windowType;
@@ -77,7 +76,8 @@ namespace IceChat
 
         private FormMain.ServerMessageType lastMessageType;
 
-        private bool DisableConsoleSelectChangedEvent = false;
+        private bool _disableConsoleSelectChangedEvent = false;
+        private bool _disableSounds = false;
 
         private TcpClient dccChatSocket;
         private TcpListener dccChatSocketListener;
@@ -719,6 +719,13 @@ namespace IceChat
                 channelInfoForm = value;
             }
         }
+        
+        //whether to play sound events for this window
+        internal bool DisableSounds
+        {
+            get { return _disableSounds; }
+            set { _disableSounds = value; }
+        }
 
         internal TabControl ConsoleTab
         {
@@ -843,16 +850,16 @@ namespace IceChat
 
         internal void SelectConsoleTab(ConsoleTab c)
         {
-            DisableConsoleSelectChangedEvent = true;
+            _disableConsoleSelectChangedEvent = true;
             consoleTab.SelectedTab = c;
-            DisableConsoleSelectChangedEvent = false;
+            _disableConsoleSelectChangedEvent = false;
         }
 
         private void OnTabConsoleSelectedIndexChanged(object sender, EventArgs e)
         {
             ((TextWindow)(consoleTab.SelectedTab.Controls[0])).resetUnreadMarker(); 
             
-            if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0 && !DisableConsoleSelectChangedEvent)
+            if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0 && !_disableConsoleSelectChangedEvent)
             {
                 FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
 

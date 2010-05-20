@@ -32,10 +32,10 @@
             this.buttonEmoticonPicker = new System.Windows.Forms.Button();
             this.buttonColorPicker = new System.Windows.Forms.Button();
             this.panelSearch = new System.Windows.Forms.Panel();
-            this.textSearch = new System.Windows.Forms.TextBox();
-            this.labelFind = new System.Windows.Forms.Label();
-            this.buttonNext = new System.Windows.Forms.Button();
             this.buttonPrevious = new System.Windows.Forms.Button();
+            this.buttonNext = new System.Windows.Forms.Button();
+            this.labelFind = new System.Windows.Forms.Label();
+            this.textSearch = new System.Windows.Forms.TextBox();
             this.textInput = new IceChat.IceInputBox();
             this.panelSearch.SuspendLayout();
             this.SuspendLayout();
@@ -54,8 +54,8 @@
             // 
             // buttonEmoticonPicker
             // 
-            StaticMethods.LoadResourceImage(buttonEmoticonPicker, "Smile.png");
             this.buttonEmoticonPicker.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonEmoticonPicker.Image = StaticMethods.LoadResourceImage("Smile.png");
             this.buttonEmoticonPicker.Location = new System.Drawing.Point(0, 30);
             this.buttonEmoticonPicker.Name = "buttonEmoticonPicker";
             this.buttonEmoticonPicker.Size = new System.Drawing.Size(28, 23);
@@ -65,8 +65,8 @@
             // 
             // buttonColorPicker
             // 
-            StaticMethods.LoadResourceImage(buttonColorPicker, "color.png");
             this.buttonColorPicker.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonColorPicker.Image = StaticMethods.LoadResourceImage("color.png");
             this.buttonColorPicker.Location = new System.Drawing.Point(28, 30);
             this.buttonColorPicker.Name = "buttonColorPicker";
             this.buttonColorPicker.Size = new System.Drawing.Size(28, 23);
@@ -89,21 +89,15 @@
             this.panelSearch.TabIndex = 4;
             this.panelSearch.Visible = false;
             // 
-            // textSearch
+            // buttonPrevious
             // 
-            this.textSearch.Location = new System.Drawing.Point(62, 3);
-            this.textSearch.Name = "textSearch";
-            this.textSearch.Size = new System.Drawing.Size(201, 23);
-            this.textSearch.TabIndex = 0;
-            // 
-            // labelFind
-            // 
-            this.labelFind.AutoSize = true;
-            this.labelFind.Location = new System.Drawing.Point(15, 6);
-            this.labelFind.Name = "labelFind";
-            this.labelFind.Size = new System.Drawing.Size(41, 16);
-            this.labelFind.TabIndex = 1;
-            this.labelFind.Text = "Find:";
+            this.buttonPrevious.Location = new System.Drawing.Point(269, 2);
+            this.buttonPrevious.Name = "buttonPrevious";
+            this.buttonPrevious.Size = new System.Drawing.Size(75, 23);
+            this.buttonPrevious.TabIndex = 3;
+            this.buttonPrevious.Text = "Previous";
+            this.buttonPrevious.UseVisualStyleBackColor = true;
+            this.buttonPrevious.Click += new System.EventHandler(this.buttonPrevious_Click);
             // 
             // buttonNext
             // 
@@ -115,15 +109,21 @@
             this.buttonNext.UseVisualStyleBackColor = true;
             this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
             // 
-            // buttonPrevious
+            // labelFind
             // 
-            this.buttonPrevious.Location = new System.Drawing.Point(269, 2);
-            this.buttonPrevious.Name = "buttonPrevious";
-            this.buttonPrevious.Size = new System.Drawing.Size(75, 23);
-            this.buttonPrevious.TabIndex = 3;
-            this.buttonPrevious.Text = "Previous";
-            this.buttonPrevious.UseVisualStyleBackColor = true;
-            this.buttonPrevious.Click += new System.EventHandler(this.buttonPrevious_Click);
+            this.labelFind.AutoSize = true;
+            this.labelFind.Location = new System.Drawing.Point(15, 6);
+            this.labelFind.Name = "labelFind";
+            this.labelFind.Size = new System.Drawing.Size(41, 16);
+            this.labelFind.TabIndex = 1;
+            this.labelFind.Text = "Find:";
+            // 
+            // textSearch
+            // 
+            this.textSearch.Location = new System.Drawing.Point(62, 3);
+            this.textSearch.Name = "textSearch";
+            this.textSearch.Size = new System.Drawing.Size(201, 23);
+            this.textSearch.TabIndex = 0;
             // 
             // textInput
             // 

@@ -6,7 +6,7 @@
       <Value Profile="(Default)">IceChat 2009</Value>
     </Setting>
     <Setting Name="Version" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Alpha 14.1</Value>
+      <Value Profile="(Default)">Alpha 14.2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

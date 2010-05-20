@@ -38,6 +38,7 @@ namespace IceChat
     public partial class ChannelList : UserControl
     {
         private string headerCaption = "Favorite Channels";
+        private int headerHeight = 23;
 
         public ChannelList()
         {
@@ -47,6 +48,7 @@ namespace IceChat
             this.DoubleClick += new EventHandler(OnDoubleClick);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             this.Resize += new EventHandler(OnResize);
+            this.MouseDown += new MouseEventHandler(OnMouseDown);
             
             this.DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
@@ -66,7 +68,8 @@ namespace IceChat
         {
             if (this.Parent.Parent.GetType() == typeof(TabPage))
             {
-                FormMain.Instance.UnDockPanel((Panel)this.Parent);
+                if (this.Parent.Parent.GetType() != typeof(FormFloat))
+                    FormMain.Instance.UnDockPanel((Panel)this.Parent);
                 return;
             }
         }
@@ -102,64 +105,70 @@ namespace IceChat
         /// </summary>
         private void OnHeaderPaint(object sender, PaintEventArgs e)
         {
-            Brush l = new LinearGradientBrush(e.Graphics.ClipBounds, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
-            e.Graphics.FillRectangle(l, e.Graphics.ClipBounds);
-            l.Dispose();
+            Bitmap buffer = new Bitmap(this.Width, this.Height, e.Graphics);
+            Graphics g = Graphics.FromImage(buffer);
 
-            if (Application.RenderWithVisualStyles)
+            //draw the header
+            Rectangle headerR = new Rectangle(0, 0, this.Width, headerHeight);
+            Brush l = new LinearGradientBrush(headerR, IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG1], IrcColor.colors[FormMain.Instance.IceChatColors.PanelHeaderBG2], 300);
+
+            g.FillRectangle(l, headerR);
+            if (this.Parent.Parent.GetType() != typeof(FormFloat))
             {
-                if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                if (Application.RenderWithVisualStyles)
                 {
-                    System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
-                    Rectangle rect = new Rectangle(0, 0, 22, 22);
-                    renderer.DrawBackground(e.Graphics, rect);
+                    if (System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal))
+                    {
+                        System.Windows.Forms.VisualStyles.VisualStyleRenderer renderer = new System.Windows.Forms.VisualStyles.VisualStyleRenderer(System.Windows.Forms.VisualStyles.VisualStyleElement.ExplorerBar.NormalGroupCollapse.Normal);
+                        //which side are we docked on
+                        Rectangle rect = Rectangle.Empty;
+                        if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right)
+                            rect = new Rectangle(0, 0, 22, 22);
+                        else
+                            rect = new Rectangle(this.Width - 22, 0, 22, 22);
+                        renderer.DrawBackground(g, rect);
+                    }
                 }
             }
-            
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
-            
+
             Font headerFont = new Font("Verdana", 10);
 
-            Rectangle centered = e.ClipRectangle;
-            centered.Offset(0, (int)(e.ClipRectangle.Height - e.Graphics.MeasureString(headerCaption, headerFont).Height) / 2);
-            
-            e.Graphics.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
+            Rectangle centered = headerR;
+            centered.Offset(0, (int)(headerR.Height - g.MeasureString(headerCaption, headerFont).Height) / 2);
 
-            
+            g.DrawString(headerCaption, headerFont, new SolidBrush(Color.Black), centered, sf);
+
+            e.Graphics.DrawImageUnscaled(buffer, 0, 0);
+            buffer.Dispose();
+            g.Dispose();
+            l.Dispose();
+            headerFont.Dispose();                    
+
         }
 
-        /// <summary>
-        /// Check if Collapse Button has been pressed and dock to Side Panel
-        /// </summary>
-        /*
-        private void OnHeaderMouseDown(object sender, MouseEventArgs e)
+        private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {                
-                if (e.X <= labelHeader.Left + 21)
+            if (this.Parent.Parent.GetType() != typeof(FormFloat))
+            {
+                if (e.Y <= headerHeight)
                 {
-                    //collapse button clicked
-                    if (!collapsed)
+                    //which side are we docked on
+                    if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Right && e.X < 22)
                     {
-                        CollapseChannelList();
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
+                    }
+                    else if (((IceDockPanel)this.Parent.Parent.Parent.Parent).Dock == DockStyle.Left && e.X > (this.Width - 22))
+                    {
+                        ((IceDockPanel)this.Parent.Parent.Parent.Parent).DockControl();
+                        return;
                     }
                 }
             }
         }
-        
-        internal void CollapseChannelList()
-        {
-            if (!collapsed)
-            {
-                //oldCollapse = ((SplitContainer)this.Parent.Parent).SplitterDistance;
-
-                //((SplitContainer)this.Parent.Parent).Panel2Collapsed = true;
-                //FormMain.Instance.AddDockItem("Right", "Favorite Channels");
-                collapsed = true;
-            }
-        }
-        */
+       
         /// <summary>
         /// Read in all the Favorite Channels from the XML File
         /// </summary>
