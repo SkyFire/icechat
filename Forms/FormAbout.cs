@@ -48,7 +48,11 @@ namespace IceChat
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.icechat.net/");
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.icechat.net/");
+            }
+            catch {}
         }
     }
 }

@@ -404,7 +404,7 @@
             this.tabAdvanced.Location = new System.Drawing.Point(4, 25);
             this.tabAdvanced.Name = "tabAdvanced";
             this.tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAdvanced.Size = new System.Drawing.Size(714, 348);
+            this.tabAdvanced.Size = new System.Drawing.Size(724, 348);
             this.tabAdvanced.TabIndex = 1;
             this.tabAdvanced.Text = "Advanced";
             // 
@@ -557,7 +557,7 @@
             this.tabPageTabBar.Location = new System.Drawing.Point(4, 25);
             this.tabPageTabBar.Name = "tabPageTabBar";
             this.tabPageTabBar.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTabBar.Size = new System.Drawing.Size(730, 385);
+            this.tabPageTabBar.Size = new System.Drawing.Size(740, 385);
             this.tabPageTabBar.TabIndex = 3;
             this.tabPageTabBar.Text = "Tab Bar";
             // 
@@ -962,7 +962,7 @@
             this.tabPageBackGround.Location = new System.Drawing.Point(4, 25);
             this.tabPageBackGround.Name = "tabPageBackGround";
             this.tabPageBackGround.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBackGround.Size = new System.Drawing.Size(730, 385);
+            this.tabPageBackGround.Size = new System.Drawing.Size(740, 385);
             this.tabPageBackGround.TabIndex = 4;
             this.tabPageBackGround.Text = "Other";
             // 
@@ -1311,7 +1311,7 @@
             this.tabPageNickNames.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageNickNames.Name = "tabPageNickNames";
             this.tabPageNickNames.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageNickNames.Size = new System.Drawing.Size(730, 385);
+            this.tabPageNickNames.Size = new System.Drawing.Size(740, 385);
             this.tabPageNickNames.TabIndex = 1;
             this.tabPageNickNames.Text = "Nick List";
             // 
@@ -1451,6 +1451,7 @@
             // 
             // panelColorPicker
             // 
+            this.panelColorPicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelColorPicker.BackColor = System.Drawing.SystemColors.Control;
             this.panelColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.panelColorPicker.Location = new System.Drawing.Point(4, 421);

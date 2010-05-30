@@ -86,6 +86,14 @@ namespace IceChat
             this.labelChannelFont = new System.Windows.Forms.Label();
             this.labelConsoleFont = new System.Windows.Forms.Label();
             this.tabDCC = new System.Windows.Forms.TabPage();
+            this.checkAutoDCCFile = new System.Windows.Forms.CheckBox();
+            this.checkIgnoreDCCFile = new System.Windows.Forms.CheckBox();
+            this.buttonDCCSendFolder = new System.Windows.Forms.Button();
+            this.buttonDCCReceiveFolder = new System.Windows.Forms.Button();
+            this.textDCCSendFolder = new System.Windows.Forms.TextBox();
+            this.labelDCCSend = new System.Windows.Forms.Label();
+            this.textDCCReceiveFolder = new System.Windows.Forms.TextBox();
+            this.labelDCCReceive = new System.Windows.Forms.Label();
             this.labelDCCPortHigh = new System.Windows.Forms.Label();
             this.labelDCCPortLow = new System.Windows.Forms.Label();
             this.textDCCPortHigh = new System.Windows.Forms.TextBox();
@@ -130,6 +138,9 @@ namespace IceChat
             this.labelPartEvent = new System.Windows.Forms.Label();
             this.comboJoinEvent = new System.Windows.Forms.ComboBox();
             this.labelJoinEvent = new System.Windows.Forms.Label();
+            this.labelLocalIP = new System.Windows.Forms.Label();
+            this.textDCCLocalIP = new System.Windows.Forms.TextBox();
+            this.linkWhatisMyIP = new System.Windows.Forms.LinkLabel();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -146,7 +157,7 @@ namespace IceChat
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(449, 267);
+            this.buttonSave.Location = new System.Drawing.Point(449, 297);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -160,7 +171,7 @@ namespace IceChat
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(560, 267);
+            this.buttonCancel.Location = new System.Drawing.Point(560, 297);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -185,7 +196,7 @@ namespace IceChat
             this.tabControlOptions.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(660, 259);
+            this.tabControlOptions.Size = new System.Drawing.Size(660, 289);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabMain
@@ -283,7 +294,7 @@ namespace IceChat
             this.tabDisplay.Margin = new System.Windows.Forms.Padding(4);
             this.tabDisplay.Name = "tabDisplay";
             this.tabDisplay.Padding = new System.Windows.Forms.Padding(4);
-            this.tabDisplay.Size = new System.Drawing.Size(652, 213);
+            this.tabDisplay.Size = new System.Drawing.Size(652, 230);
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
@@ -350,7 +361,7 @@ namespace IceChat
             this.tabLogging.Location = new System.Drawing.Point(4, 25);
             this.tabLogging.Name = "tabLogging";
             this.tabLogging.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLogging.Size = new System.Drawing.Size(652, 213);
+            this.tabLogging.Size = new System.Drawing.Size(652, 230);
             this.tabLogging.TabIndex = 6;
             this.tabLogging.Text = "Logging";
             this.tabLogging.UseVisualStyleBackColor = true;
@@ -463,7 +474,7 @@ namespace IceChat
             this.tabFonts.Margin = new System.Windows.Forms.Padding(4);
             this.tabFonts.Name = "tabFonts";
             this.tabFonts.Padding = new System.Windows.Forms.Padding(4);
-            this.tabFonts.Size = new System.Drawing.Size(652, 213);
+            this.tabFonts.Size = new System.Drawing.Size(652, 230);
             this.tabFonts.TabIndex = 2;
             this.tabFonts.Text = "Fonts";
             this.tabFonts.UseVisualStyleBackColor = true;
@@ -734,6 +745,17 @@ namespace IceChat
             // 
             // tabDCC
             // 
+            this.tabDCC.Controls.Add(this.linkWhatisMyIP);
+            this.tabDCC.Controls.Add(this.textDCCLocalIP);
+            this.tabDCC.Controls.Add(this.labelLocalIP);
+            this.tabDCC.Controls.Add(this.checkAutoDCCFile);
+            this.tabDCC.Controls.Add(this.checkIgnoreDCCFile);
+            this.tabDCC.Controls.Add(this.buttonDCCSendFolder);
+            this.tabDCC.Controls.Add(this.buttonDCCReceiveFolder);
+            this.tabDCC.Controls.Add(this.textDCCSendFolder);
+            this.tabDCC.Controls.Add(this.labelDCCSend);
+            this.tabDCC.Controls.Add(this.textDCCReceiveFolder);
+            this.tabDCC.Controls.Add(this.labelDCCReceive);
             this.tabDCC.Controls.Add(this.labelDCCPortHigh);
             this.tabDCC.Controls.Add(this.labelDCCPortLow);
             this.tabDCC.Controls.Add(this.textDCCPortHigh);
@@ -746,15 +768,87 @@ namespace IceChat
             this.tabDCC.Controls.Add(this.checkAutoDCCChat);
             this.tabDCC.Location = new System.Drawing.Point(4, 25);
             this.tabDCC.Name = "tabDCC";
-            this.tabDCC.Size = new System.Drawing.Size(652, 213);
+            this.tabDCC.Size = new System.Drawing.Size(652, 260);
             this.tabDCC.TabIndex = 8;
             this.tabDCC.Text = "DCC";
             this.tabDCC.UseVisualStyleBackColor = true;
             // 
+            // checkAutoDCCFile
+            // 
+            this.checkAutoDCCFile.AutoSize = true;
+            this.checkAutoDCCFile.Location = new System.Drawing.Point(15, 35);
+            this.checkAutoDCCFile.Name = "checkAutoDCCFile";
+            this.checkAutoDCCFile.Size = new System.Drawing.Size(231, 20);
+            this.checkAutoDCCFile.TabIndex = 60;
+            this.checkAutoDCCFile.Text = "Auto Accept DCC File requests";
+            this.checkAutoDCCFile.UseVisualStyleBackColor = true;
+            // 
+            // checkIgnoreDCCFile
+            // 
+            this.checkIgnoreDCCFile.AutoSize = true;
+            this.checkIgnoreDCCFile.Location = new System.Drawing.Point(15, 85);
+            this.checkIgnoreDCCFile.Name = "checkIgnoreDCCFile";
+            this.checkIgnoreDCCFile.Size = new System.Drawing.Size(190, 20);
+            this.checkIgnoreDCCFile.TabIndex = 59;
+            this.checkIgnoreDCCFile.Text = "Ignore DCC File requests";
+            this.checkIgnoreDCCFile.UseVisualStyleBackColor = true;
+            // 
+            // buttonDCCSendFolder
+            // 
+            this.buttonDCCSendFolder.Location = new System.Drawing.Point(350, 187);
+            this.buttonDCCSendFolder.Name = "buttonDCCSendFolder";
+            this.buttonDCCSendFolder.Size = new System.Drawing.Size(32, 23);
+            this.buttonDCCSendFolder.TabIndex = 58;
+            this.buttonDCCSendFolder.Text = "...";
+            this.buttonDCCSendFolder.UseVisualStyleBackColor = true;
+            this.buttonDCCSendFolder.Click += new System.EventHandler(this.buttonDCCSendFolder_Click);
+            // 
+            // buttonDCCReceiveFolder
+            // 
+            this.buttonDCCReceiveFolder.Location = new System.Drawing.Point(350, 134);
+            this.buttonDCCReceiveFolder.Name = "buttonDCCReceiveFolder";
+            this.buttonDCCReceiveFolder.Size = new System.Drawing.Size(32, 23);
+            this.buttonDCCReceiveFolder.TabIndex = 57;
+            this.buttonDCCReceiveFolder.Text = "...";
+            this.buttonDCCReceiveFolder.UseVisualStyleBackColor = true;
+            this.buttonDCCReceiveFolder.Click += new System.EventHandler(this.buttonDCCReceiveFolder_Click);
+            // 
+            // textDCCSendFolder
+            // 
+            this.textDCCSendFolder.Location = new System.Drawing.Point(13, 187);
+            this.textDCCSendFolder.Name = "textDCCSendFolder";
+            this.textDCCSendFolder.Size = new System.Drawing.Size(331, 23);
+            this.textDCCSendFolder.TabIndex = 56;
+            // 
+            // labelDCCSend
+            // 
+            this.labelDCCSend.AutoSize = true;
+            this.labelDCCSend.Location = new System.Drawing.Point(12, 168);
+            this.labelDCCSend.Name = "labelDCCSend";
+            this.labelDCCSend.Size = new System.Drawing.Size(118, 16);
+            this.labelDCCSend.TabIndex = 55;
+            this.labelDCCSend.Text = "DCC Send Folder";
+            // 
+            // textDCCReceiveFolder
+            // 
+            this.textDCCReceiveFolder.Location = new System.Drawing.Point(13, 134);
+            this.textDCCReceiveFolder.Name = "textDCCReceiveFolder";
+            this.textDCCReceiveFolder.Size = new System.Drawing.Size(331, 23);
+            this.textDCCReceiveFolder.TabIndex = 54;
+            // 
+            // labelDCCReceive
+            // 
+            this.labelDCCReceive.AutoSize = true;
+            this.labelDCCReceive.Location = new System.Drawing.Point(12, 115);
+            this.labelDCCReceive.Name = "labelDCCReceive";
+            this.labelDCCReceive.Size = new System.Drawing.Size(136, 16);
+            this.labelDCCReceive.TabIndex = 53;
+            this.labelDCCReceive.Text = "DCC Receive Folder";
+            // 
             // labelDCCPortHigh
             // 
             this.labelDCCPortHigh.AutoSize = true;
-            this.labelDCCPortHigh.Location = new System.Drawing.Point(306, 183);
+            this.labelDCCPortHigh.Location = new System.Drawing.Point(433, 142);
             this.labelDCCPortHigh.Name = "labelDCCPortHigh";
             this.labelDCCPortHigh.Size = new System.Drawing.Size(95, 16);
             this.labelDCCPortHigh.TabIndex = 52;
@@ -763,7 +857,7 @@ namespace IceChat
             // labelDCCPortLow
             // 
             this.labelDCCPortLow.AutoSize = true;
-            this.labelDCCPortLow.Location = new System.Drawing.Point(306, 158);
+            this.labelDCCPortLow.Location = new System.Drawing.Point(433, 111);
             this.labelDCCPortLow.Name = "labelDCCPortLow";
             this.labelDCCPortLow.Size = new System.Drawing.Size(93, 16);
             this.labelDCCPortLow.TabIndex = 51;
@@ -771,22 +865,22 @@ namespace IceChat
             // 
             // textDCCPortHigh
             // 
-            this.textDCCPortHigh.Location = new System.Drawing.Point(429, 180);
+            this.textDCCPortHigh.Location = new System.Drawing.Point(556, 142);
             this.textDCCPortHigh.Name = "textDCCPortHigh";
-            this.textDCCPortHigh.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortHigh.Size = new System.Drawing.Size(64, 23);
             this.textDCCPortHigh.TabIndex = 50;
             // 
             // textDCCPortLow
             // 
-            this.textDCCPortLow.Location = new System.Drawing.Point(429, 151);
+            this.textDCCPortLow.Location = new System.Drawing.Point(556, 108);
             this.textDCCPortLow.Name = "textDCCPortLow";
-            this.textDCCPortLow.Size = new System.Drawing.Size(100, 23);
+            this.textDCCPortLow.Size = new System.Drawing.Size(64, 23);
             this.textDCCPortLow.TabIndex = 49;
             // 
             // labelPortRange
             // 
             this.labelPortRange.AutoSize = true;
-            this.labelPortRange.Location = new System.Drawing.Point(306, 129);
+            this.labelPortRange.Location = new System.Drawing.Point(433, 89);
             this.labelPortRange.Name = "labelPortRange";
             this.labelPortRange.Size = new System.Drawing.Size(112, 16);
             this.labelPortRange.TabIndex = 48;
@@ -794,15 +888,15 @@ namespace IceChat
             // 
             // textDCCChatTimeout
             // 
-            this.textDCCChatTimeout.Location = new System.Drawing.Point(401, 35);
+            this.textDCCChatTimeout.Location = new System.Drawing.Point(556, 35);
             this.textDCCChatTimeout.Name = "textDCCChatTimeout";
-            this.textDCCChatTimeout.Size = new System.Drawing.Size(55, 23);
+            this.textDCCChatTimeout.Size = new System.Drawing.Size(64, 23);
             this.textDCCChatTimeout.TabIndex = 47;
             // 
             // labelDCCChat
             // 
             this.labelDCCChat.AutoSize = true;
-            this.labelDCCChat.Location = new System.Drawing.Point(306, 41);
+            this.labelDCCChat.Location = new System.Drawing.Point(433, 41);
             this.labelDCCChat.Name = "labelDCCChat";
             this.labelDCCChat.Size = new System.Drawing.Size(77, 16);
             this.labelDCCChat.TabIndex = 46;
@@ -811,16 +905,16 @@ namespace IceChat
             // labelDCCTimeOut
             // 
             this.labelDCCTimeOut.AutoSize = true;
-            this.labelDCCTimeOut.Location = new System.Drawing.Point(306, 15);
+            this.labelDCCTimeOut.Location = new System.Drawing.Point(433, 15);
             this.labelDCCTimeOut.Name = "labelDCCTimeOut";
-            this.labelDCCTimeOut.Size = new System.Drawing.Size(150, 16);
+            this.labelDCCTimeOut.Size = new System.Drawing.Size(143, 16);
             this.labelDCCTimeOut.TabIndex = 45;
-            this.labelDCCTimeOut.Text = "Time outs in Seconds";
+            this.labelDCCTimeOut.Text = "Time out in Seconds";
             // 
             // checkIgnoreDCCChat
             // 
             this.checkIgnoreDCCChat.AutoSize = true;
-            this.checkIgnoreDCCChat.Location = new System.Drawing.Point(15, 37);
+            this.checkIgnoreDCCChat.Location = new System.Drawing.Point(15, 59);
             this.checkIgnoreDCCChat.Name = "checkIgnoreDCCChat";
             this.checkIgnoreDCCChat.Size = new System.Drawing.Size(199, 20);
             this.checkIgnoreDCCChat.TabIndex = 44;
@@ -849,24 +943,24 @@ namespace IceChat
             this.tabSounds.Margin = new System.Windows.Forms.Padding(4);
             this.tabSounds.Name = "tabSounds";
             this.tabSounds.Padding = new System.Windows.Forms.Padding(4);
-            this.tabSounds.Size = new System.Drawing.Size(652, 213);
+            this.tabSounds.Size = new System.Drawing.Size(652, 230);
             this.tabSounds.TabIndex = 3;
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
             // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(368, 190);
+            this.buttonTest.Location = new System.Drawing.Point(545, 188);
             this.buttonTest.Name = "buttonTest";
-            this.buttonTest.Size = new System.Drawing.Size(55, 23);
+            this.buttonTest.Size = new System.Drawing.Size(104, 23);
             this.buttonTest.TabIndex = 6;
-            this.buttonTest.Text = "Test";
+            this.buttonTest.Text = "Test Sound";
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
             // buttonChooseSound
             // 
-            this.buttonChooseSound.Location = new System.Drawing.Point(330, 190);
+            this.buttonChooseSound.Location = new System.Drawing.Point(507, 188);
             this.buttonChooseSound.Name = "buttonChooseSound";
             this.buttonChooseSound.Size = new System.Drawing.Size(32, 23);
             this.buttonChooseSound.TabIndex = 5;
@@ -878,7 +972,7 @@ namespace IceChat
             // 
             this.textSound.Location = new System.Drawing.Point(15, 188);
             this.textSound.Name = "textSound";
-            this.textSound.Size = new System.Drawing.Size(299, 23);
+            this.textSound.Size = new System.Drawing.Size(475, 23);
             this.textSound.TabIndex = 4;
             this.textSound.TextChanged += new System.EventHandler(this.textSound_TextChanged);
             // 
@@ -906,7 +1000,7 @@ namespace IceChat
             this.listBoxSounds.ItemHeight = 16;
             this.listBoxSounds.Location = new System.Drawing.Point(15, 23);
             this.listBoxSounds.Name = "listBoxSounds";
-            this.listBoxSounds.Size = new System.Drawing.Size(336, 148);
+            this.listBoxSounds.Size = new System.Drawing.Size(393, 148);
             this.listBoxSounds.TabIndex = 0;
             this.listBoxSounds.SelectedIndexChanged += new System.EventHandler(this.listBoxSounds_SelectedIndexChanged);
             // 
@@ -920,7 +1014,7 @@ namespace IceChat
             this.tabEmoticon.Location = new System.Drawing.Point(4, 25);
             this.tabEmoticon.Name = "tabEmoticon";
             this.tabEmoticon.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEmoticon.Size = new System.Drawing.Size(652, 213);
+            this.tabEmoticon.Size = new System.Drawing.Size(652, 230);
             this.tabEmoticon.TabIndex = 7;
             this.tabEmoticon.Text = "Emoticons";
             this.tabEmoticon.UseVisualStyleBackColor = true;
@@ -1024,7 +1118,7 @@ namespace IceChat
             this.tabEvents.Location = new System.Drawing.Point(4, 25);
             this.tabEvents.Name = "tabEvents";
             this.tabEvents.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEvents.Size = new System.Drawing.Size(652, 213);
+            this.tabEvents.Size = new System.Drawing.Size(652, 230);
             this.tabEvents.TabIndex = 4;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
@@ -1205,11 +1299,38 @@ namespace IceChat
             this.labelJoinEvent.TabIndex = 0;
             this.labelJoinEvent.Text = "Joins:";
             // 
+            // labelLocalIP
+            // 
+            this.labelLocalIP.AutoSize = true;
+            this.labelLocalIP.Location = new System.Drawing.Point(12, 213);
+            this.labelLocalIP.Name = "labelLocalIP";
+            this.labelLocalIP.Size = new System.Drawing.Size(181, 16);
+            this.labelLocalIP.TabIndex = 61;
+            this.labelLocalIP.Text = "Router/Firewall IP Address";
+            // 
+            // textDCCLocalIP
+            // 
+            this.textDCCLocalIP.Location = new System.Drawing.Point(15, 232);
+            this.textDCCLocalIP.Name = "textDCCLocalIP";
+            this.textDCCLocalIP.Size = new System.Drawing.Size(184, 23);
+            this.textDCCLocalIP.TabIndex = 62;
+            // 
+            // linkWhatisMyIP
+            // 
+            this.linkWhatisMyIP.AutoSize = true;
+            this.linkWhatisMyIP.Location = new System.Drawing.Point(226, 215);
+            this.linkWhatisMyIP.Name = "linkWhatisMyIP";
+            this.linkWhatisMyIP.Size = new System.Drawing.Size(169, 16);
+            this.linkWhatisMyIP.TabIndex = 63;
+            this.linkWhatisMyIP.TabStop = true;
+            this.linkWhatisMyIP.Text = "What is my IP Address ?";
+            this.linkWhatisMyIP.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkWhatisMyIP_LinkClicked);
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(660, 303);
+            this.ClientSize = new System.Drawing.Size(660, 333);
             this.Controls.Add(this.tabControlOptions);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -1346,5 +1467,16 @@ namespace IceChat
         private System.Windows.Forms.Label labelChannelActionEvent;
         private System.Windows.Forms.ComboBox comboChannelMessageEvent;
         private System.Windows.Forms.Label labelChannelMessageEvent;
+        private System.Windows.Forms.TextBox textDCCSendFolder;
+        private System.Windows.Forms.Label labelDCCSend;
+        private System.Windows.Forms.TextBox textDCCReceiveFolder;
+        private System.Windows.Forms.Label labelDCCReceive;
+        private System.Windows.Forms.Button buttonDCCSendFolder;
+        private System.Windows.Forms.Button buttonDCCReceiveFolder;
+        private System.Windows.Forms.CheckBox checkIgnoreDCCFile;
+        private System.Windows.Forms.CheckBox checkAutoDCCFile;
+        private System.Windows.Forms.TextBox textDCCLocalIP;
+        private System.Windows.Forms.Label labelLocalIP;
+        private System.Windows.Forms.LinkLabel linkWhatisMyIP;
     }
 }

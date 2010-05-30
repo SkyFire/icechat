@@ -432,6 +432,12 @@ namespace IceChat
                             msg = JoinString(ircData, 5, true) + " " + ircData[4];
                             WhoisData(this, ircData[3], msg);
                             break;
+                        case "335":     //whois information
+                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                                return;
+                            msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            WhoisData(this, ircData[3], msg);
+                            break;
                         case "338":     //whois information
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
                                 return;
@@ -696,7 +702,7 @@ namespace IceChat
 
                             fullyConnected = true;
                             FormMain.Instance.ServerTree.Invalidate();
-
+                            
                             //read the command queue
                             if (commandQueue.Count > 0)
                             {
@@ -764,22 +770,58 @@ namespace IceChat
                                             //check for DCC SEND, DCC CHAT, DCC ACCEPT, DCC RESUME
                                             if (msg.ToUpper().StartsWith("DCC SEND"))
                                             {
-                                                msg = msg.Substring(8);
-                                                //string fileName = ircData[4];
-                                                //string ip = ircData[5];
-                                                //string port = ircData[6];
-                                                //string fileSize = ircData[7].TrimEnd(new char[] { (char)1 });
-                                                //System.Diagnostics.Debug.WriteLine("DCC SEND Port:" + port + ":IP:" + ip);
-                                                System.Diagnostics.Debug.WriteLine("PRIVMSG DCC SEND:" + msg);
-                                                //DCC SEND: !Jc!-News(2010-03-11)-OS.zip 3179314244 1026 95867
-                                                //:ToTe!~imanol@iMaNoL.users.undernet.org PRIVMSG Snerf_ :DCC SEND ToTe-default(2010-03-16)-OS.zip 3383003574 1026 99482
-
+                                                msg = msg.Substring(8).Trim();
+                                                System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
+                                                string[] dccData = msg.Split(' ');
+                                                //sometimes the filenames can be include in quotes
+                                                System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
+                                                if (dccData.Length > 4)
+                                                {
+                                                    string fileSize = dccData[dccData.Length - 1];
+                                                    string port = dccData[dccData.Length - 2];
+                                                    string ip = dccData[dccData.Length - 3];
+                                                    string file = "";
+                                                    if (msg.Contains("\""))
+                                                    {
+                                                        string[] words = msg.Split('"');
+                                                        if (words.Length == 3)
+                                                            file = words[1];
+                                                        System.Diagnostics.Debug.WriteLine(words.Length);                                                        
+                                                        foreach (string w in words)
+                                                        {
+                                                            System.Diagnostics.Debug.WriteLine(w);
+                                                        }
+                                                    }
+                                                    System.Diagnostics.Debug.WriteLine(fileSize + ":" + port + ":" + ip + ":" + file);
+                                                    
+                                                    if (DCCFile != null && file.Length > 0)
+                                                        DCCFile(this, nick, host, port, ip, file, fileSize);                                                    
+                                                    return;
+                                                }
+                                                //string fileName = dccData[0];
+                                                //string ip = dccData[1];
+                                                //string port = dccData[2];
+                                                //string fileSize = dccData[3];
+                                                System.Diagnostics.Debug.WriteLine("DCC SEND:" + dccData[0] + "::" + dccData[1] + "::" + dccData[2] + "::" + dccData[3]);
+                                                if (DCCFile != null)
+                                                    DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], dccData[3]);
+                                            }
+                                            else if (msg.ToUpper().StartsWith("DCC RESUME"))
+                                            {
+                                                //dcc resume, other client requests resuming a file
+                                                //PRIVMSG User1 :DCC RESUME filename port position
+                                            }
+                                            else if (msg.ToUpper().StartsWith("DCC ACCEPT"))
+                                            {
+                                                //dcc accept, other client accepts the dcc resume
+                                                //PRIVMSG User2 :DCC ACCEPT filename port position (Response)
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC CHAT"))
                                             {
                                                 string ip = ircData[6];
                                                 string port = ircData[7].TrimEnd(new char[] { (char)1 });
-                                                DCCChat(this, nick, host, port, ip);
+                                                if (DCCChat != null)
+                                                    DCCChat(this, nick, host, port, ip);
                                             }
                                             else
                                                 UserNotice(this, nick, msg);
@@ -851,18 +893,18 @@ namespace IceChat
                             {
                                 if (CheckIgnoreList(nick, host)) return;
                                 
-                                if (initialLogon && serverSetting.StatusMSG == null)
+                                if (initialLogon && serverSetting.StatusMSG == null && serverSetting.StatusModes != null)
                                 {
                                     serverSetting.StatusMSG = new char[serverSetting.StatusModes[1].Length];
                                     for (int j = 0; j < serverSetting.StatusModes[1].Length; j++)
                                         serverSetting.StatusMSG[j] = serverSetting.StatusModes[1][j];
                                 }
-                                if (initialLogon && Array.IndexOf(serverSetting.ChannelTypes, ircData[2][0]) != -1)
+                                if (initialLogon && serverSetting.ChannelTypes != null && Array.IndexOf(serverSetting.ChannelTypes, ircData[2][0]) != -1)
                                 {
                                     ChannelNotice(this, nick, host, '0', ircData[2], msg);
                                     IALUserData(this, nick, host, ircData[2]);
                                 }
-                                else if (initialLogon && Array.IndexOf(serverSetting.StatusMSG, ircData[2][0]) != -1 && Array.IndexOf(serverSetting.ChannelTypes, ircData[2][1]) != -1)
+                                else if (initialLogon && serverSetting.StatusMSG != null && Array.IndexOf(serverSetting.StatusMSG, ircData[2][0]) != -1 && Array.IndexOf(serverSetting.ChannelTypes, ircData[2][1]) != -1)
                                 {
                                     ChannelNotice(this, nick, host, ircData[2][0], ircData[2].Substring(1), msg);
                                     IALUserData(this, nick, host, ircData[2]);
@@ -872,7 +914,7 @@ namespace IceChat
                                     //System.Diagnostics.Debug.WriteLine("NOTICE:" + msg);
                                     if (msg.ToUpper().StartsWith("DCC SEND"))
                                     {
-                                        System.Diagnostics.Debug.WriteLine("NOTICE DCC SEND:" + nick + ":" + msg);
+                                        System.Diagnostics.Debug.WriteLine("NOTICE DCC SEND:" + nick + ":" + msg);                                        
                                         UserNotice(this, nick, msg);
                                     }
                                     else if (msg.ToUpper().StartsWith("DCC CHAT"))
@@ -920,10 +962,14 @@ namespace IceChat
                                 if (host.IndexOf('@') > -1 && this.serverSetting.LocalIP == null)
                                 {
                                     this.serverSetting.LocalHost = host;
-                                    host = host.Substring(host.IndexOf('@') + 1);
-                                    System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
-                                    foreach (System.Net.IPAddress address in addresslist)
-                                        this.serverSetting.LocalIP = address;
+                                    try
+                                    {
+                                        host = host.Substring(host.IndexOf('@') + 1);
+                                        System.Net.IPAddress[] addresslist = System.Net.Dns.GetHostAddresses(host);
+                                        foreach (System.Net.IPAddress address in addresslist)
+                                            this.serverSetting.LocalIP = address;
+                                    }
+                                    catch { }
 
                                 }
                                 //user mode

@@ -285,14 +285,16 @@ namespace IceChat
             
             buddyListTimer.Stop();
             FormMain.Instance.BuddyList.ClearBuddyList(this);
-            foreach (BuddyListItem buddy in serverSetting.BuddyList)
+            if (serverSetting.BuddyList != null)
             {
-                buddy.Connected = false;
-                buddy.PreviousState = false;
-                buddy.IsOnSent = false;
-                buddy.IsOnReceived = false;
+                foreach (BuddyListItem buddy in serverSetting.BuddyList)
+                {
+                    buddy.Connected = false;
+                    buddy.PreviousState = false;
+                    buddy.IsOnSent = false;
+                    buddy.IsOnReceived = false;
+                }
             }
-
             FormMain.Instance.PlaySoundFile("dropped");
 
             initialLogon = false;
@@ -733,7 +735,6 @@ namespace IceChat
                         {
                             string msg = FormMain.Instance.GetMessageFormat("Server Connect");
                             msg = msg.Replace("$serverip", proxyIP.ToString()).Replace("$server", serverSetting.ProxyIP).Replace("$port", serverSetting.ProxyPort);
-                            //serverSetting.ServerIP = address.ToString();
                             ServerMessage(this, msg);
                         }
 
@@ -759,6 +760,26 @@ namespace IceChat
                     if (whichAddressinList > totalAddressinDNS)
                         whichAddressinList = 1;
 
+                    IPAddress ipAddress = null;
+                    if (IPAddress.TryParse(serverSetting.ServerName, out ipAddress))
+                    {
+                        IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
+                        Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                        if (ServerMessage != null)
+                        {
+                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                            msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                            serverSetting.ServerIP = ipAddress.ToString();
+                            ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
+                        }
+
+                        serverSocket = tempSocket;
+                        tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
+                        return;
+                    }
+                    
+                    
                     // Loop through the AddressList to obtain the supported AddressFamily. This is to avoid
                     // an exception that occurs when the host IP Address is not compatible with the address family
                     // (typical in the IPv6 case).
@@ -780,13 +801,6 @@ namespace IceChat
                                 }
 
                                 serverSocket = tempSocket;
-                                /*
-                                if (serverSetting.UseSSL)
-                                {
-                                    socketStream = new NetworkStream(serverSocket);
-                                    sslStream = new SslStream(socketStream);                                
-                                }
-                                */
                                 tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
 
                                 break;

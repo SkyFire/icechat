@@ -111,8 +111,6 @@
             this.textProxyIP = new System.Windows.Forms.TextBox();
             this.labelProxyIP = new System.Windows.Forms.Label();
             this.checkUseProxy = new System.Windows.Forms.CheckBox();
-            this.tabBNC = new System.Windows.Forms.TabPage();
-            this.label5 = new System.Windows.Forms.Label();
             this.tabPageDefault = new System.Windows.Forms.TabPage();
             this.textDefaultQuitMessage = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -134,7 +132,6 @@
             this.tabPageIgnore.SuspendLayout();
             this.tabBuddyList.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
-            this.tabBNC.SuspendLayout();
             this.tabPageDefault.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,7 +173,6 @@
             this.tabControlSettings.Controls.Add(this.tabPageIgnore);
             this.tabControlSettings.Controls.Add(this.tabBuddyList);
             this.tabControlSettings.Controls.Add(this.tabPageProxy);
-            this.tabControlSettings.Controls.Add(this.tabBNC);
             this.tabControlSettings.Controls.Add(this.tabPageDefault);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlSettings.ImageList = this.imageListEditor;
@@ -393,7 +389,7 @@
             this.tabPageExtra.Location = new System.Drawing.Point(4, 46);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageExtra.Size = new System.Drawing.Size(619, 216);
+            this.tabPageExtra.Size = new System.Drawing.Size(642, 232);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
@@ -536,7 +532,7 @@
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
             this.tabPageAutoJoin.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoJoin.Size = new System.Drawing.Size(619, 216);
+            this.tabPageAutoJoin.Size = new System.Drawing.Size(642, 232);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
             this.tabPageAutoJoin.UseVisualStyleBackColor = true;
@@ -643,7 +639,7 @@
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
             this.tabPageAutoPerform.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoPerform.Size = new System.Drawing.Size(619, 216);
+            this.tabPageAutoPerform.Size = new System.Drawing.Size(642, 232);
             this.tabPageAutoPerform.TabIndex = 2;
             this.tabPageAutoPerform.Text = "AutoPerform";
             this.tabPageAutoPerform.UseVisualStyleBackColor = true;
@@ -655,16 +651,16 @@
             this.textAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAutoPerform.Multiline = true;
             this.textAutoPerform.Name = "textAutoPerform";
-            this.textAutoPerform.Size = new System.Drawing.Size(613, 188);
+            this.textAutoPerform.Size = new System.Drawing.Size(636, 204);
             this.textAutoPerform.TabIndex = 28;
             // 
             // checkAutoPerform
             // 
             this.checkAutoPerform.AutoSize = true;
             this.checkAutoPerform.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.checkAutoPerform.Location = new System.Drawing.Point(3, 192);
+            this.checkAutoPerform.Location = new System.Drawing.Point(3, 208);
             this.checkAutoPerform.Name = "checkAutoPerform";
-            this.checkAutoPerform.Size = new System.Drawing.Size(613, 20);
+            this.checkAutoPerform.Size = new System.Drawing.Size(636, 20);
             this.checkAutoPerform.TabIndex = 29;
             this.checkAutoPerform.Text = "Enable AutoPerform";
             this.checkAutoPerform.UseVisualStyleBackColor = true;
@@ -681,7 +677,7 @@
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
             this.tabPageIgnore.Location = new System.Drawing.Point(4, 46);
             this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(619, 216);
+            this.tabPageIgnore.Size = new System.Drawing.Size(642, 232);
             this.tabPageIgnore.TabIndex = 4;
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
@@ -784,7 +780,7 @@
             this.tabBuddyList.Location = new System.Drawing.Point(4, 46);
             this.tabBuddyList.Name = "tabBuddyList";
             this.tabBuddyList.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBuddyList.Size = new System.Drawing.Size(619, 216);
+            this.tabBuddyList.Size = new System.Drawing.Size(642, 232);
             this.tabBuddyList.TabIndex = 7;
             this.tabBuddyList.Text = "Buddy List";
             this.tabBuddyList.UseVisualStyleBackColor = true;
@@ -884,7 +880,7 @@
             this.tabPageProxy.Location = new System.Drawing.Point(4, 46);
             this.tabPageProxy.Name = "tabPageProxy";
             this.tabPageProxy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProxy.Size = new System.Drawing.Size(619, 216);
+            this.tabPageProxy.Size = new System.Drawing.Size(642, 232);
             this.tabPageProxy.TabIndex = 6;
             this.tabPageProxy.Text = "Proxy Settings";
             this.tabPageProxy.UseVisualStyleBackColor = true;
@@ -1004,26 +1000,6 @@
             this.checkUseProxy.Text = "Enable Proxy Connection";
             this.checkUseProxy.UseVisualStyleBackColor = true;
             // 
-            // tabBNC
-            // 
-            this.tabBNC.Controls.Add(this.label5);
-            this.tabBNC.Location = new System.Drawing.Point(4, 46);
-            this.tabBNC.Name = "tabBNC";
-            this.tabBNC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBNC.Size = new System.Drawing.Size(619, 216);
-            this.tabBNC.TabIndex = 8;
-            this.tabBNC.Text = "BNC Settings";
-            this.tabBNC.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 12);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(147, 16);
-            this.label5.TabIndex = 48;
-            this.label5.Text = "Not yet Implemented";
-            // 
             // tabPageDefault
             // 
             this.tabPageDefault.Controls.Add(this.textDefaultQuitMessage);
@@ -1039,7 +1015,7 @@
             this.tabPageDefault.Location = new System.Drawing.Point(4, 46);
             this.tabPageDefault.Name = "tabPageDefault";
             this.tabPageDefault.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDefault.Size = new System.Drawing.Size(619, 216);
+            this.tabPageDefault.Size = new System.Drawing.Size(642, 232);
             this.tabPageDefault.TabIndex = 5;
             this.tabPageDefault.Text = "Default Server Settings";
             this.tabPageDefault.UseVisualStyleBackColor = true;
@@ -1190,8 +1166,6 @@
             this.tabBuddyList.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
             this.tabPageProxy.PerformLayout();
-            this.tabBNC.ResumeLayout(false);
-            this.tabBNC.PerformLayout();
             this.tabPageDefault.ResumeLayout(false);
             this.tabPageDefault.PerformLayout();
             this.ResumeLayout(false);
@@ -1288,8 +1262,6 @@
         private System.Windows.Forms.TextBox textProxyUser;
         private System.Windows.Forms.Label labelProxyUser;
         private System.Windows.Forms.TabPage tabBuddyList;
-        private System.Windows.Forms.TabPage tabBNC;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListView listBuddyList;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.CheckBox checkBuddyList;

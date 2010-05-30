@@ -146,10 +146,15 @@ namespace IceChat
 
             //dcc settings
             checkAutoDCCChat.Checked = iceChatOptions.DCCChatAutoAccept;
+            checkAutoDCCFile.Checked = iceChatOptions.DCCFileAutoAccept;
             checkIgnoreDCCChat.Checked = iceChatOptions.DCCChatIgnore;
+            checkIgnoreDCCFile.Checked = iceChatOptions.DCCFileIgnore;
             textDCCChatTimeout.Text = iceChatOptions.DCCChatTimeOut.ToString();
             textDCCPortLow.Text = iceChatOptions.DCCPortLower.ToString();
             textDCCPortHigh.Text = iceChatOptions.DCCPortUpper.ToString();
+            textDCCReceiveFolder.Text = iceChatOptions.DCCReceiveFolder;
+            textDCCSendFolder.Text = iceChatOptions.DCCSendFolder;
+            textDCCLocalIP.Text = iceChatOptions.DCCLocalIP;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -262,10 +267,15 @@ namespace IceChat
 
             //dcc settings
             iceChatOptions.DCCChatAutoAccept = checkAutoDCCChat.Checked;
+            iceChatOptions.DCCFileAutoAccept = checkAutoDCCFile.Checked;
             iceChatOptions.DCCChatIgnore = checkIgnoreDCCChat.Checked;
+            iceChatOptions.DCCFileIgnore = checkIgnoreDCCFile.Checked;
             iceChatOptions.DCCChatTimeOut = Convert.ToInt32(textDCCChatTimeout.Text);
             iceChatOptions.DCCPortLower = Convert.ToInt32(textDCCPortLow.Text);
             iceChatOptions.DCCPortUpper = Convert.ToInt32(textDCCPortHigh.Text);
+            iceChatOptions.DCCReceiveFolder = textDCCReceiveFolder.Text;
+            iceChatOptions.DCCSendFolder = textDCCSendFolder.Text;
+            iceChatOptions.DCCLocalIP = textDCCLocalIP.Text;
 
             //save the emoticons
             iceChatEmoticons.listEmoticons.Clear();
@@ -480,10 +490,63 @@ namespace IceChat
                 iceChatSounds.getSound(listBoxSounds.SelectedIndex).File = textSound.Text;
             }
         }
-
+        /// <summary>
+        /// Open the Logs Folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonBrowseLogs_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(FormMain.Instance.LogsFolder);
+            try
+            {
+                System.Diagnostics.Process.Start(FormMain.Instance.LogsFolder);
+            }
+            catch { }
+        }
+        /// <summary>
+        /// Choose the default DCC Receive Folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonDCCReceiveFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    textDCCReceiveFolder.Text = fbd.SelectedPath;
+                }
+            }
+            catch { }
+        }
+        /// <summary>
+        /// Choose the default DCC Send Folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonDCCSendFolder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    textDCCSendFolder.Text = fbd.SelectedPath;
+                }
+            }
+            catch { }
+        }
+
+        private void linkWhatisMyIP_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.icechat.net/getip.php");
+            }
+            catch { }
         }
     }
 }

@@ -501,9 +501,10 @@ namespace IceChat
                                 g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }
                         currentY += _lineSize;
-                        if (currentY >= listR.Height + listR.Y)
+                        if (currentY >= (listR.Height + listR.Y))
                         {
-                            vScrollBar.Maximum = sortedNicks.Count - ((listR.Height - _lineSize) / _lineSize);
+                            vScrollBar.Maximum = sortedNicks.Count - 2;
+                            vScrollBar.LargeChange = ((listR.Height - _lineSize) / _lineSize);
                             break;
                         }
                     }
@@ -526,7 +527,7 @@ namespace IceChat
             }
             catch (Exception ee)
             {
-                FormMain.Instance.WriteErrorFile(currentWindow.Connection, "NickList OnPaint", ee);
+                FormMain.Instance.WriteErrorFile(currentWindow.Connection, "NickList OnPaint:" + currentWindow.Nicks.Values.Count, ee);
             }
         }
 

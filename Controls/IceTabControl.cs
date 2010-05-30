@@ -50,7 +50,7 @@ namespace IceChat
         private int _TabRowHeight = 30;
         
         //how many rows of tabs to display
-        internal int _TotalTabRows = 1;
+        private int _TotalTabRows = 1;
 
         //TabControl's selectedIndex
         private int _selectedIndex = -1;
@@ -188,7 +188,15 @@ namespace IceChat
         {
             foreach (IceTabPage t in this.TabPages)
             {
-                if (t.Connection == connection)
+                if (t.Connection == null)
+                {
+                    if (t.WindowStyle == IceTabPage.WindowType.DCCFile)
+                    {
+                        if (t.TabCaption.ToLower() == windowName.ToLower())
+                            return true;
+                    }                
+                }
+                else if (t.Connection == connection)
                 {
                     if (t.WindowStyle == windowType)
                     {
@@ -462,7 +470,6 @@ namespace IceChat
 
         protected override void OnPaint(PaintEventArgs e) 
         {
-            //base.OnPaint(e);
             if (FormMain.Instance != null)
                 DrawControl(e.Graphics);
         }
@@ -790,7 +797,6 @@ namespace IceChat
                 _TabPages.Remove((IceTabPage)e.Control);
                 ((IceTabPage)e.Control).Dispose();
                 SelectedIndex = _previousSelectedIndex;
-                
                 Invalidate();
                 FormMain.Instance.ServerTree.Invalidate();
             }

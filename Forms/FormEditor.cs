@@ -596,7 +596,11 @@ namespace IceChat
 
         private void scriptsFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts");
+            try
+            {
+                System.Diagnostics.Process.Start(FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts");
+            }
+            catch { }
         }
     }
 }

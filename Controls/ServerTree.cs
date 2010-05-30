@@ -53,9 +53,6 @@ namespace IceChat
         private ToolTip toolTip;
         private int toolTipNode = -1;
 
-        //private bool docked = false;
-        //private int oldDockWidth = 0;
-
         private List<KeyValuePair<string,object>> serverNodes;
 
         internal event NewServerConnectionDelegate NewServerConnection;
@@ -812,9 +809,10 @@ namespace IceChat
 
                     b.Dispose();
 
-                    if (currentY >= listR.Height + listR.Y)
+                    if (currentY >= (listR.Height + listR.Y))
                     {
-                        vScrollBar.Maximum = serverNodes.Count - ((listR.Height - _lineSize) / _lineSize);
+                        vScrollBar.Maximum = serverNodes.Count - 2;
+                        vScrollBar.LargeChange = ((listR.Height - _lineSize) / _lineSize);
                         break;
                     }
 
@@ -1180,7 +1178,7 @@ namespace IceChat
                 Random r = new Random();
                 do
                 {
-                    c.ServerSetting.ID = r.Next(10000, 99999);
+                    c.ServerSetting.ID = r.Next(10000, 49999);
                 } while (ServerConnections.ContainsKey(c.ServerSetting.ID));
             }
             ServerConnections.Add(c.ServerSetting.ID, c);

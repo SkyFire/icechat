@@ -39,6 +39,7 @@ using System.Reflection;
 using IceChat.Properties;
 using IceChatPlugin;
 
+// http://osc.template-help.com/wordpress_27910/
 namespace IceChat
 {
     public partial class FormMain : Form
@@ -237,6 +238,25 @@ namespace IceChat
             
             InitializeComponent();
             //load icons from Embedded Resources
+            this.toolStripQuickConnect.Image = StaticMethods.LoadResourceImage("quick.png");
+            this.toolStripSettings.Image = StaticMethods.LoadResourceImage("settings.png");
+            this.toolStripColors.Image = StaticMethods.LoadResourceImage("colors.png");
+            this.toolStripEditor.Image = StaticMethods.LoadResourceImage("editor.png");
+            this.toolStripAway.Image = StaticMethods.LoadResourceImage("away.png");
+            this.toolStripSystemTray.Image = StaticMethods.LoadResourceImage("system-tray.png");
+            
+            this.minimizeToTrayToolStripMenuItem.Image = StaticMethods.LoadResourceImage("icechat2009.ico");
+            this.debugWindowToolStripMenuItem.Image = StaticMethods.LoadResourceImage("window.png");
+            this.exitToolStripMenuItem.Image = StaticMethods.LoadResourceImage("disconected.png");
+            this.iceChatSettingsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("settings.png");
+            this.iceChatColorsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("colors.png");
+            this.iceChatEditorToolStripMenuItem.Image = StaticMethods.LoadResourceImage("editor.png");
+            this.codePlexPageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("codeplex.ico");
+            this.forumsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("smf.ico");
+            this.facebookFanPageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("facebook.png");
+
+            this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
+            this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
 
             serverListToolStripMenuItem.Checked = iceChatOptions.ShowServerTree;
             panelDockLeft.Visible = serverListToolStripMenuItem.Checked;
@@ -255,7 +275,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 19 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 29 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -313,12 +333,12 @@ namespace IceChat
             nickList.Header = iceChatLanguage.consoleTabTitle;
             nickList.Dock = DockStyle.Fill;
 
-            TabPage serverTab = new TabPage("Favorite Servers");
+            serverListTab = new TabPage("Favorite Servers");
             Panel serverPanel = new Panel();
             serverPanel.Dock = DockStyle.Fill;
             serverPanel.Controls.Add(serverTree);
-            serverTab.Controls.Add(serverPanel);            
-            this.panelDockLeft.TabControl.TabPages.Add(serverTab);
+            serverListTab.Controls.Add(serverPanel);            
+            this.panelDockLeft.TabControl.TabPages.Add(serverListTab);
 
             nickListTab = new TabPage("Nick List");
             Panel nickPanel = new Panel();
@@ -342,7 +362,9 @@ namespace IceChat
             this.panelDockRight.TabControl.TabPages.Add(buddyListTab);
 
             panelDockLeft.Width = iceChatOptions.LeftPanelWidth;
+            panelDockLeft.TabControl.Alignment = TabAlignment.Left;
             panelDockRight.Width = iceChatOptions.RightPanelWidth;
+            panelDockRight.TabControl.Alignment = TabAlignment.Right;
 
             nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName, iceChatFonts.FontSettings[3].FontSize);
             serverTree.Font = new Font(iceChatFonts.FontSettings[4].FontName, iceChatFonts.FontSettings[4].FontSize);
@@ -925,7 +947,9 @@ namespace IceChat
             {
                 if (t.TabCaption.ToLower() == sCaption.ToLower() && t.WindowStyle == windowType)
                 {
-                    if (t.Connection == connection)
+                    if (t.Connection == null && windowType == IceTabPage.WindowType.DCCFile)
+                        return t;
+                    else if (t.Connection == connection)
                         return t;
                 }
             }
@@ -1120,7 +1144,7 @@ namespace IceChat
                 
                 //find the last window index for this connection
                 int index = 0;
-                if (page.WindowStyle == IceTabPage.WindowType.Channel || page.WindowStyle == IceTabPage.WindowType.Query || page.WindowStyle == IceTabPage.WindowType.DCCChat)
+                if (page.WindowStyle == IceTabPage.WindowType.Channel || page.WindowStyle == IceTabPage.WindowType.Query || page.WindowStyle == IceTabPage.WindowType.DCCChat || page.WindowStyle == IceTabPage.WindowType.DCCFile)
                 {
                     for (int i = 1; i < mainTabControl.TabPages.Count; i++)
                     {
@@ -1294,6 +1318,10 @@ namespace IceChat
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
             else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.DCCChat)
+            {
+                mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
+            }
+            else if (mainTabControl.GetTabPage(nIndex).WindowStyle == IceTabPage.WindowType.DCCFile)
             {
                 mainTabControl.Controls.Remove(mainTabControl.GetTabPage(nIndex));
             }
@@ -1763,7 +1791,7 @@ namespace IceChat
                                 string dccType = data.Substring(0, data.IndexOf(' ')).ToUpper();
                                 //get who it is being sent to
                                 string nick = data.Substring(data.IndexOf(' ') + 1);
-
+                                System.Diagnostics.Debug.WriteLine(dccType + ":" + nick);
                                 switch (dccType)
                                 {
                                     case "CHAT":
@@ -1791,15 +1819,29 @@ namespace IceChat
                                         }
                                         break;
                                     case "SEND":
+                                        //was a filename specified, if not try and select one
                                         if (nick.IndexOf(' ') > 0)
                                         {
+                                            System.Diagnostics.Debug.WriteLine("try it");
                                             //more to it, maybe a file to send
 
                                         }
+                                        else
+                                        {
+                                            //ask for a file name
+                                            OpenFileDialog dialog = new OpenFileDialog();
+                                            dialog.InitialDirectory = iceChatOptions.DCCSendFolder;
+                                            dialog.CheckFileExists = true;
+                                            dialog.CheckPathExists = true;
+                                            if (dialog.ShowDialog() == DialogResult.OK)
+                                            {
+                                                //returns the full path
+                                                System.Diagnostics.Debug.WriteLine(dialog.FileName);
+                                            }
+
+                                        }
                                         break;
-
                                 }
-
                             }                            
                             break;
                         case "/describe":   //me command for a specific channel
@@ -2208,7 +2250,7 @@ namespace IceChat
                                 //check if default nick name has been set
                                 if (iceChatOptions.DefaultNick == null || iceChatOptions.DefaultNick.Length == 0)
                                 {
-                                    CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to IceChat Settings and set one under the Default Server Section.", 1, false);
+                                    CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to Server Settings and set one under the Default Server Settings section.", 1, false);
                                 }
                                 else
                                 {
@@ -2248,7 +2290,7 @@ namespace IceChat
                                     s.IAL = new Hashtable();
 
                                     Random r = new Random();
-                                    s.ID = r.Next(10000, 99999);
+                                    s.ID = r.Next(50000, 99999);
                                     NewServerConnection(s);
                                 }
                             }
@@ -2454,7 +2496,7 @@ namespace IceChat
                             }
                             else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
                             {
-                                CurrentWindow.SendDCCChatData(data);
+                                CurrentWindow.SendDCCData(data);
 
                                 string msg = GetMessageFormat("Self DCC Chat Message");
                                 msg = msg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName).Replace("$message", data);
@@ -2501,7 +2543,7 @@ namespace IceChat
             ParseOutGoingCommand(inputPanel.CurrentConnection, args.Extra);
             if (CurrentWindowType == IceTabPage.WindowType.Console)
                 mainTabControl.CurrentTab.CurrentConsoleWindow().ScrollToBottom();
-            else
+            else if (CurrentWindowType != IceTabPage.WindowType.DCCFile && CurrentWindowType != IceTabPage.WindowType.ChannelList)
                 CurrentWindow.TextWindow.ScrollToBottom();
         }
 
@@ -2643,9 +2685,6 @@ namespace IceChat
                         break;
                     
                     //identifiers that do not require a connection                                
-                    case "$totalrows":
-                        data = data.Replace(m.Value, this.mainTabControl._TotalTabRows.ToString());
-                        break;
                     case "$appdata":
                         data = data.Replace(m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
                         break;
@@ -3173,17 +3212,38 @@ namespace IceChat
 
         private void codePlexPageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://icechat.codeplex.com/");
+            try
+            {
+                System.Diagnostics.Process.Start("http://icechat.codeplex.com/");
+            }
+            catch { }
         }
 
         private void forumsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.icechat.net/forums");
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.icechat.net/forums");
+            }
+            catch { }
         }
 
         private void iceChatHomePageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.icechat.net/");
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.icechat.net/");
+            }
+            catch { }
+        }
+
+        private void facebookFanPageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.facebook.com/IceChat");
+            }
+            catch { }
         }
 
         private void iceChatColorsToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,3 +1,21 @@
+Build Alpha 14.3 - May 29 2010
+* Fixed crash when disconnected from server (if you had an empty buddy list)
+* Fixed $color not parsing at times in Channel Messages
+* Fixed connection to new server, IP Detection bug
+* Fixed bug with a manual /server connection when tab removed from console, did not remove from Server Tree
+* Fixed error on MODE when attempting to get self host, and passed host is invalid(masked)
+* Fixed error with hovering over words that had links, and then to words that were not, the cursor did not change
+* Fixed hovering over channel names that are preceded with a user mode (@#channel)
+* Fixed Nicklist where scrollbar was not allowing to view all nicknames in larger channels
+* Changed more Images to use the Embedded Resources
+* Better behaviour with BNC's and removed BNC Tab in Server Settings
+* Added crash fixes for browser links
+* Added DCC File Window, will show all transfers in a single window
+* Added DCC File receiving
+* Added more DCC Options to IceChat Options
+* Auto Renaming of files if file exists adding (#) to the end of the file name.
+
+
 Build Alpha 14.2 - May 19 2010
 * Added MouseWheel support to Nicklist and Server Tree
 * Added Events options to Settings, select where messages go (in progress)

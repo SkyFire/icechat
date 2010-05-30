@@ -81,16 +81,17 @@ namespace IceChat
             this.codePlexPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iceChatHomePageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forumsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.facebookFanPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelDockRight = new IceDockPanel();
+            this.panelDockRight = new IceChat.IceDockPanel();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelDockLeft = new IceDockPanel();
+            this.panelDockLeft = new IceChat.IceDockPanel();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
             this.contextMenuToolBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,7 +107,6 @@ namespace IceChat
             this.inputPanel = new IceChat.InputPanel();
             this.menuMainStrip.SuspendLayout();
             this.contextMenuNotify.SuspendLayout();
-            this.panelDockLeft.SuspendLayout();
             this.toolStripMain.SuspendLayout();
             this.contextMenuToolBar.SuspendLayout();
             this.statusStripMain.SuspendLayout();
@@ -140,7 +140,6 @@ namespace IceChat
             // 
             // minimizeToTrayToolStripMenuItem
             // 
-            this.minimizeToTrayToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("minimizeToTrayToolStripMenuItem.Image")));
             this.minimizeToTrayToolStripMenuItem.Name = "minimizeToTrayToolStripMenuItem";
             this.minimizeToTrayToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
             this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
@@ -149,7 +148,6 @@ namespace IceChat
             // 
             // debugWindowToolStripMenuItem
             // 
-            this.debugWindowToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("debugWindowToolStripMenuItem.Image")));
             this.debugWindowToolStripMenuItem.Name = "debugWindowToolStripMenuItem";
             this.debugWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.debugWindowToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
@@ -158,7 +156,6 @@ namespace IceChat
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.exitToolStripMenuItem.Text = "Exit";
@@ -177,7 +174,6 @@ namespace IceChat
             // 
             // iceChatSettingsToolStripMenuItem
             // 
-            this.iceChatSettingsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatSettingsToolStripMenuItem.Image")));
             this.iceChatSettingsToolStripMenuItem.Name = "iceChatSettingsToolStripMenuItem";
             this.iceChatSettingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -186,7 +182,6 @@ namespace IceChat
             // 
             // iceChatColorsToolStripMenuItem
             // 
-            this.iceChatColorsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatColorsToolStripMenuItem.Image")));
             this.iceChatColorsToolStripMenuItem.Name = "iceChatColorsToolStripMenuItem";
             this.iceChatColorsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
             this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -195,7 +190,6 @@ namespace IceChat
             // 
             // iceChatEditorToolStripMenuItem
             // 
-            this.iceChatEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("iceChatEditorToolStripMenuItem.Image")));
             this.iceChatEditorToolStripMenuItem.Name = "iceChatEditorToolStripMenuItem";
             this.iceChatEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
@@ -265,6 +259,7 @@ namespace IceChat
             this.codePlexPageToolStripMenuItem,
             this.iceChatHomePageToolStripMenuItem,
             this.forumsToolStripMenuItem,
+            this.facebookFanPageToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.checkForUpdateToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -273,7 +268,6 @@ namespace IceChat
             // 
             // codePlexPageToolStripMenuItem
             // 
-            this.codePlexPageToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("codePlexPageToolStripMenuItem.Image")));
             this.codePlexPageToolStripMenuItem.Name = "codePlexPageToolStripMenuItem";
             this.codePlexPageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.codePlexPageToolStripMenuItem.Text = "CodePlex Page";
@@ -288,11 +282,17 @@ namespace IceChat
             // 
             // forumsToolStripMenuItem
             // 
-            this.forumsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("forumsToolStripMenuItem.Image")));
             this.forumsToolStripMenuItem.Name = "forumsToolStripMenuItem";
             this.forumsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.forumsToolStripMenuItem.Text = "Forums";
             this.forumsToolStripMenuItem.Click += new System.EventHandler(this.forumsToolStripMenuItem_Click);
+            // 
+            // facebookFanPageToolStripMenuItem
+            // 
+            this.facebookFanPageToolStripMenuItem.Name = "facebookFanPageToolStripMenuItem";
+            this.facebookFanPageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.facebookFanPageToolStripMenuItem.Text = "Facebook Fan page";
+            this.facebookFanPageToolStripMenuItem.Click += new System.EventHandler(this.facebookFanPageToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -311,11 +311,11 @@ namespace IceChat
             // panelDockRight
             // 
             this.panelDockRight.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelDockRight.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelDockRight.Location = new System.Drawing.Point(621, 63);
             this.panelDockRight.Name = "panelDockRight";
             this.panelDockRight.Size = new System.Drawing.Size(175, 345);
             this.panelDockRight.TabIndex = 14;
-            this.panelDockRight.TabControl.Alignment = System.Windows.Forms.TabAlignment.Right;
             // 
             // splitterLeft
             // 
@@ -339,7 +339,6 @@ namespace IceChat
             // notifyIcon
             // 
             this.notifyIcon.ContextMenuStrip = this.contextMenuNotify;
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "IceChat 2009";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMouseDoubleClick);
             // 
@@ -368,11 +367,11 @@ namespace IceChat
             // panelDockLeft
             // 
             this.panelDockLeft.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelDockLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelDockLeft.Location = new System.Drawing.Point(0, 63);
             this.panelDockLeft.Name = "panelDockLeft";
             this.panelDockLeft.Size = new System.Drawing.Size(181, 345);
             this.panelDockLeft.TabIndex = 13;
-            this.panelDockLeft.TabControl.Alignment = System.Windows.Forms.TabAlignment.Left;
             // 
             // toolStripMain
             // 
@@ -410,8 +409,7 @@ namespace IceChat
             // 
             // toolStripQuickConnect
             // 
-            this.toolStripQuickConnect.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripQuickConnect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripQuickConnect.Image")));
+            this.toolStripEditor.BackColor = System.Drawing.Color.Transparent;
             this.toolStripQuickConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripQuickConnect.Margin = new System.Windows.Forms.Padding(0);
             this.toolStripQuickConnect.Name = "toolStripQuickConnect";
@@ -422,7 +420,6 @@ namespace IceChat
             // toolStripSettings
             // 
             this.toolStripSettings.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSettings.Image")));
             this.toolStripSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSettings.Name = "toolStripSettings";
             this.toolStripSettings.Size = new System.Drawing.Size(85, 36);
@@ -432,7 +429,6 @@ namespace IceChat
             // toolStripColors
             // 
             this.toolStripColors.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripColors.Image = ((System.Drawing.Image)(resources.GetObject("toolStripColors.Image")));
             this.toolStripColors.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripColors.Name = "toolStripColors";
             this.toolStripColors.Size = new System.Drawing.Size(77, 36);
@@ -442,7 +438,6 @@ namespace IceChat
             // toolStripEditor
             // 
             this.toolStripEditor.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripEditor.Image = ((System.Drawing.Image)(resources.GetObject("toolStripEditor.Image")));
             this.toolStripEditor.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripEditor.Name = "toolStripEditor";
             this.toolStripEditor.Size = new System.Drawing.Size(74, 36);
@@ -452,7 +447,6 @@ namespace IceChat
             // toolStripAway
             // 
             this.toolStripAway.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripAway.Image = ((System.Drawing.Image)(resources.GetObject("toolStripAway.Image")));
             this.toolStripAway.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripAway.Name = "toolStripAway";
             this.toolStripAway.Size = new System.Drawing.Size(91, 36);
@@ -463,7 +457,6 @@ namespace IceChat
             // toolStripSystemTray
             // 
             this.toolStripSystemTray.BackColor = System.Drawing.Color.Transparent;
-            this.toolStripSystemTray.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSystemTray.Image")));
             this.toolStripSystemTray.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSystemTray.Name = "toolStripSystemTray";
             this.toolStripSystemTray.Size = new System.Drawing.Size(107, 36);
@@ -522,7 +515,6 @@ namespace IceChat
             this.Controls.Add(this.statusStripMain);
             this.Controls.Add(this.toolStripMain);
             this.Controls.Add(this.menuMainStrip);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuMainStrip;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
@@ -530,7 +522,6 @@ namespace IceChat
             this.menuMainStrip.ResumeLayout(false);
             this.menuMainStrip.PerformLayout();
             this.contextMenuNotify.ResumeLayout(false);
-            this.panelDockLeft.ResumeLayout(false);
             this.toolStripMain.ResumeLayout(false);
             this.toolStripMain.PerformLayout();
             this.contextMenuToolBar.ResumeLayout(false);
@@ -559,6 +550,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem facebookFanPageToolStripMenuItem;
 
 
 

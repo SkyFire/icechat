@@ -75,7 +75,7 @@ namespace IceChat
     public delegate void ChannelInviteDelegate(IRCConnection connection, string channel, string nick, string host);
 
     public delegate void DCCChatDelegate(IRCConnection connection, string nick, string host, string port, string ip); 
-    public delegate void DCCFileDelegate(IRCConnection connection, string nick, string host, string port, string ip, string file);
+    public delegate void DCCFileDelegate(IRCConnection connection, string nick, string host, string port, string ip, string file, string fileSize);
     
     //for the Server Tree
     public delegate void NewServerConnectionDelegate(ServerSetting serverSetting);

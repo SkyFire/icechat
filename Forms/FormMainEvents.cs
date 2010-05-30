@@ -508,9 +508,13 @@ namespace IceChat
                         if (msg.Contains("$color"))
                             msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor);
                     }
-
                 }
-
+                else
+                {
+                    //System.Diagnostics.Debug.WriteLine("$color:" + t.NickExists(nick) + ":" + msg);
+                    msg = msg.Replace("$color", string.Empty);
+                }
+                
                 //check if the nickname exists
                 if (t.NickExists(nick))
                     msg = msg.Replace("$status", t.GetNick(nick).ToString().Replace(nick, ""));
@@ -1216,6 +1220,8 @@ namespace IceChat
         private void OnIALUserData(IRCConnection connection, string nick, string host, string channel)
         {
             //internal addresslist userdata            
+            if (!connection.IsFullyConnected) return;
+            
             for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
                 nick = nick.Replace(connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -1274,13 +1280,12 @@ namespace IceChat
 
             if (!iceChatOptions.DCCChatAutoAccept)
             {
-                System.Diagnostics.Debug.WriteLine("Ask for DCC Chat");
                 //check if on System Tray
                 if (notifyIcon.Visible)
                     return;
 
                 //ask for the dcc chat
-                DialogResult askDCC = MessageBox.Show(nick + " wants a DCC Chat, will you accept?\r\n" + host, "DCC Chat Request", MessageBoxButtons.YesNo);
+                DialogResult askDCC = MessageBox.Show(nick + "@" + host + " wants a DCC Chat, will you accept?", "DCC Chat Request", MessageBoxButtons.YesNo);
                 if (askDCC == DialogResult.No)
                     return;
 
@@ -1312,9 +1317,33 @@ namespace IceChat
 
         }
 
-        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file)
+        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file, string fileSize)
         {
-            //throw new NotImplementedException();
+            //check if we have disabled DCC Files, do we auto-accept or ask to allow
+            if (iceChatOptions.DCCFileIgnore)
+                return;
+
+            if (!iceChatOptions.DCCFileAutoAccept)
+            {
+                //check if on System Tray
+                if (notifyIcon.Visible)
+                    return;
+
+                //ask for the dcc chat
+                DialogResult askDCC = MessageBox.Show(nick + "@" + host + " wants a DCC to send a file\r\nWill you accept?\r\n\r\n" + file + " (" + fileSize + " bytes)", "DCC File Send Request", MessageBoxButtons.YesNo);
+                if (askDCC == DialogResult.No)
+                    return;
+
+            }
+            
+            if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
+                AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+
+            IceTabPage t = GetWindow(null,"DCC Files", IceTabPage.WindowType.DCCFile);
+            if (t != null)
+            {                
+                t.StartDCCFile(connection, nick, host, ip, port, file, fileSize);
+            }
         }
     }
 }

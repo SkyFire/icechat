@@ -379,7 +379,7 @@
     <EmbeddedResource Include="Icons\CloseButton.png" />
     <EmbeddedResource Include="Icons\channellist.png" />
     <EmbeddedResource Include="Icons\channel.png" />
-    <EmbeddedResource Include="Icons\console.png" />
+    <EmbeddedResource Include="Icons\facebook.png" />
     <EmbeddedResource Include="Icons\icechat2009.ico" />
     <EmbeddedResource Include="Icons\Smile.png" />
     <EmbeddedResource Include="Icons\window.png" />
@@ -398,10 +398,6 @@
     <EmbeddedResource Include="Icons\disconected.png" />
     <EmbeddedResource Include="Icons\connected.png" />
     <EmbeddedResource Include="Icons\quickconnect.png" />
-    <EmbeddedResource Include="Icons\editormenu.png" />
-    <EmbeddedResource Include="Icons\debugmenu.png" />
-    <EmbeddedResource Include="Icons\colorsmenu.png" />
-    <EmbeddedResource Include="Icons\settingsmenu.png" />
     <EmbeddedResource Include="Icons\previous.svg.png" />
     <EmbeddedResource Include="Icons\next.svg.png" />
   </ItemGroup>
@@ -417,6 +413,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Icons\colors.png" />
+    <EmbeddedResource Include="Icons\console.png" />
+    <EmbeddedResource Include="Icons\editor.png" />
+    <EmbeddedResource Include="Icons\quick.png" />
+    <EmbeddedResource Include="Icons\settings.png" />
+    <EmbeddedResource Include="Icons\away.png" />
+    <EmbeddedResource Include="Icons\system-tray.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

@@ -297,6 +297,8 @@ namespace IceChat
         private int _dccChatTimeOut = 60;
         private int _dccPortLower = 5000;
         private int _dccPortUpper = 10000;
+        private string _dccReceiveFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private string _dccSendFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         private string _language = "English";
         private string _identName = "IceChat09";
@@ -502,8 +504,16 @@ namespace IceChat
         public bool DCCChatAutoAccept
         { get; set; }
 
+        [XmlElement("DCCFileAutoAccept")]
+        public bool DCCFileAutoAccept
+        { get; set; }
+
         [XmlElement("DCCChatIgnore")]
         public bool DCCChatIgnore
+        { get; set; }
+
+        [XmlElement("DCCFileIgnore")]
+        public bool DCCFileIgnore
         { get; set; }
 
         [XmlElement("DCCChatTimeOut")]
@@ -526,7 +536,25 @@ namespace IceChat
             get { return this._dccPortUpper; }
             set { this._dccPortUpper = value; }
         }
-        
+
+        [XmlElement("DCCReceiveFolder")]
+        public string DCCReceiveFolder
+        {
+            get { return this._dccReceiveFolder; }
+            set { this._dccReceiveFolder = value; }
+        }
+
+        [XmlElement("DCCSendFolder")]
+        public string DCCSendFolder
+        {
+            get { return this._dccSendFolder; }
+            set { this._dccSendFolder = value; }
+        }
+
+        [XmlElement("DCCLocalIP")]
+        public string DCCLocalIP
+        { get; set; }
+
         [XmlArray("ScriptFiles")]
         [XmlArrayItem("Item")]
         public string[] ScriptFiles
