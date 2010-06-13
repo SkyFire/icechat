@@ -198,8 +198,8 @@ namespace IceChat
                         for (int i = 0; i < t.Connection.ServerSetting.StatusModes[1].Length; i++)
                             chan = chan.Replace(t.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
                         //System.Diagnostics.Debug.WriteLine("hover:" + chan);
-
-                        if (t.Connection.ServerSetting.ChannelTypes != null && Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
+                        
+                        if (chan.Length > 0 && t.Connection.ServerSetting.ChannelTypes != null && Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
                         {
                             if (this.Cursor != Cursors.Hand)
                                 this.Cursor = Cursors.Hand;
@@ -240,7 +240,7 @@ namespace IceChat
                             for (int i = 0; i < c.Connection.ServerSetting.StatusModes[1].Length; i++)
                                 chan = chan.Replace(c.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                            if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
+                            if (chan.Length > 0 && Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
                             {
                                 if (this.Cursor != Cursors.Hand)
                                     this.Cursor = Cursors.Hand;

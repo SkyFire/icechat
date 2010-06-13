@@ -591,6 +591,11 @@ namespace IceChat
                 this.currentWindow = page;
                 UpdateHeader(page.TabCaption);
             }
+            else if (page.WindowStyle == IceTabPage.WindowType.DCCFile)
+            {
+                this.currentWindow = page;
+                UpdateHeader(page.TabCaption);
+            }
             else if (page.WindowStyle == IceTabPage.WindowType.Debug)
             {
                 this.currentWindow = page;

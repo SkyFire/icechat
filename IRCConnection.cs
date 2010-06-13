@@ -492,14 +492,14 @@ namespace IceChat
             }   
             
             //get the proper encoding            
-            byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\n"); ; 
+            byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
             {                
                 if (serverSocket.Connected)
                 {
                     try
                     {
-                        serverSocket.BeginSend(bytData, 0, bytData.Length, 0, new AsyncCallback(OnSendData), serverSocket);
+                        serverSocket.BeginSend(bytData, 0, bytData.Length, SocketFlags.None, new AsyncCallback(OnSendData), serverSocket);
                         //raise an event for the debug window
                         if (RawServerOutgoingData != null)
                             RawServerOutgoingData(this, data);

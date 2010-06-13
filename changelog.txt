@@ -1,3 +1,9 @@
+Build Alpha 14.4 - June 12 2010
+* Fixed bug with @@@ and mouse hover issue
+* Started with Auto DCC Resume
+ 
+
+
 Build Alpha 14.3 - May 29 2010
 * Fixed crash when disconnected from server (if you had an empty buddy list)
 * Fixed $color not parsing at times in Channel Messages

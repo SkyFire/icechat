@@ -98,7 +98,8 @@ namespace IceChat
             switch (ctcp)
             {
                 case "VERSION":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
+                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :\x0001VERSION mIRC v6.35 Khaled Mardam-Bey\x0001");
                     break;
                 case "PING":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "PING " + message + ((char)1).ToString());
@@ -107,16 +108,16 @@ namespace IceChat
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "TIME " + System.DateTime.Now.ToString() + ((char)1).ToString());
                     break;
                 case "USERINFO":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
+                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "CLIENTINFO":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
+                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
                     break;
                 case "SOURCE":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
+                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "FINGER":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
+                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
                     break;
 
             }
@@ -269,7 +270,6 @@ namespace IceChat
                 t.AddChannelList(channel, Convert.ToInt32(users), topic);
             }
         }
-
 
         /// <summary>
         /// Received a Server/Connection Error
@@ -766,7 +766,11 @@ namespace IceChat
             //check if channel window already exists
             IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
             if (t == null)
+            {
                 AddWindow(connection, channel, IceTabPage.WindowType.Channel);
+                
+                serverTree.Invalidate();
+            }
         }
 
         /// <summary>
@@ -1317,20 +1321,20 @@ namespace IceChat
 
         }
 
-        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file, string fileSize)
+        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, bool resume, uint filePos)
         {
             //check if we have disabled DCC Files, do we auto-accept or ask to allow
             if (iceChatOptions.DCCFileIgnore)
                 return;
 
-            if (!iceChatOptions.DCCFileAutoAccept)
+            if (!iceChatOptions.DCCFileAutoAccept && !resume)
             {
                 //check if on System Tray
                 if (notifyIcon.Visible)
                     return;
 
                 //ask for the dcc chat
-                DialogResult askDCC = MessageBox.Show(nick + "@" + host + " wants a DCC to send a file\r\nWill you accept?\r\n\r\n" + file + " (" + fileSize + " bytes)", "DCC File Send Request", MessageBoxButtons.YesNo);
+                DialogResult askDCC = MessageBox.Show(nick + "@" + host + " wants a DCC to send a file\r\nWill you accept?\r\n\r\n" + file + " (" + fileSize + " bytes)", "DCC File Send Request (Port " + port +")", MessageBoxButtons.YesNo);
                 if (askDCC == DialogResult.No)
                     return;
 
@@ -1341,8 +1345,13 @@ namespace IceChat
 
             IceTabPage t = GetWindow(null,"DCC Files", IceTabPage.WindowType.DCCFile);
             if (t != null)
-            {                
-                t.StartDCCFile(connection, nick, host, ip, port, file, fileSize);
+            {
+                if (!resume)
+                    ((IceTabPageDCCFile)t).StartDCCFile(connection, nick, host, ip, port, file, fileSize);
+                else
+                {
+                    ((IceTabPageDCCFile)t).ResumeDCCFile(connection, port, filePos);
+                }
             }
         }
     }

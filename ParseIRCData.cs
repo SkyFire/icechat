@@ -777,7 +777,14 @@ namespace IceChat
                                                 System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
                                                 if (dccData.Length > 4)
                                                 {
-                                                    string fileSize = dccData[dccData.Length - 1];
+                                                    //if (Int32.TryParse(nickvalue, out result))
+                                                    uint uresult;
+                                                    if (!uint.TryParse(dccData[dccData.Length - 1], out uresult))
+                                                    {
+                                                        return;
+                                                    }
+
+                                                    uint fileSize = uint.Parse(dccData[dccData.Length - 1]);
                                                     string port = dccData[dccData.Length - 2];
                                                     string ip = dccData[dccData.Length - 3];
                                                     string file = "";
@@ -793,9 +800,10 @@ namespace IceChat
                                                         }
                                                     }
                                                     System.Diagnostics.Debug.WriteLine(fileSize + ":" + port + ":" + ip + ":" + file);
-                                                    
+                                                    //check that values are numbers
+
                                                     if (DCCFile != null && file.Length > 0)
-                                                        DCCFile(this, nick, host, port, ip, file, fileSize);                                                    
+                                                        DCCFile(this, nick, host, port, ip, file, fileSize, false, 0);                                                    
                                                     return;
                                                 }
                                                 //string fileName = dccData[0];
@@ -803,18 +811,52 @@ namespace IceChat
                                                 //string port = dccData[2];
                                                 //string fileSize = dccData[3];
                                                 System.Diagnostics.Debug.WriteLine("DCC SEND:" + dccData[0] + "::" + dccData[1] + "::" + dccData[2] + "::" + dccData[3]);
+                                                
+                                                //check if filesize is a valid number
+                                                uint result;                                                
+                                                if (!uint.TryParse(dccData[3], out result))
+                                                    return;
+
+                                                //check if quotes around file name
+                                                if (dccData[0].StartsWith("\"") && dccData[0].EndsWith("\""))
+                                                {
+                                                    dccData[0] = dccData[0].Substring(1, dccData[0].Length - 2);
+                                                }
+
                                                 if (DCCFile != null)
-                                                    DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], dccData[3]);
+                                                    DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], uint.Parse(dccData[3]), false, 0);
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC RESUME"))
                                             {
                                                 //dcc resume, other client requests resuming a file
-                                                //PRIVMSG User1 :DCC RESUME filename port position
+                                                //PRIVMSG User1 :DCC RESUME "filename" port position
+                                                System.Diagnostics.Debug.WriteLine("DCC RESUME:" + data);
+                                                //send back a DCC ACCEPT MESSAGE
+
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC ACCEPT"))
                                             {
                                                 //dcc accept, other client accepts the dcc resume
-                                                //PRIVMSG User2 :DCC ACCEPT filename port position (Response)
+                                                //PRIVMSG User2 :DCC ACCEPT file.ext port position
+                                                System.Diagnostics.Debug.WriteLine("DCC ACCEPT:" + data);
+                                                msg = msg.Substring(10).Trim();
+                                                System.Diagnostics.Debug.WriteLine("ACCEPT:" + msg);
+                                                string[] dccData = msg.Split(' ');
+                                                System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
+                                                if (DCCFile != null)
+                                                    DCCFile(this, nick, host, dccData[dccData.Length - 2], "ip", "file", 0, true, uint.Parse(dccData[dccData.Length - 1]));
+                                                
+                                                //DCC ACCEPT::Spyder420!Spyder420@173.217.227.151 PRIVMSG SnerfX :DCC ACCEPT "Spyder420-default(2010-06-04)-OS.zip" 4115 129896
+                                                //ACCEPT:"Spyder420-default(2010-06-04)-OS.zip" 4115 129896
+                                                //length:3
+
+
+                                                //DCC ACCEPT::SugarKick!Ice2009@S01060014d1352fd9.no.shawcable.net PRIVMSG SnerfX_ :DCC ACCEPT file.ext 11097 40960
+                                                //ACCEPT:file.ext 11097 40960
+                                                //length:3
+
+
+
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC CHAT"))
                                             {

@@ -87,6 +87,9 @@
     <Compile Include="Controls\IceTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\IceTabPageDCCFile.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Delegates.cs" />
     <Compile Include="Forms\FormAbout.cs">
       <SubType>Form</SubType>

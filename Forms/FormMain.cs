@@ -39,7 +39,6 @@ using System.Reflection;
 using IceChat.Properties;
 using IceChatPlugin;
 
-// http://osc.template-help.com/wordpress_27910/
 namespace IceChat
 {
     public partial class FormMain : Form
@@ -275,7 +274,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 29 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 12 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -569,7 +568,7 @@ namespace IceChat
         }
         
         /// <summary>
-        /// Play the specified sound file
+        /// Play the specified sound file (currently only supports WAV files)
         /// </summary>
         /// <param name="sound"></param>
         internal void PlaySoundFile(string key)
@@ -1112,8 +1111,14 @@ namespace IceChat
             }
             else
             {
-                IceTabPage page = new IceTabPage(windowType, windowName);
-                page.Connection = connection;
+                IceTabPage page;
+                if (windowType == IceTabPage.WindowType.DCCFile)
+                    page = new IceTabPageDCCFile(IceTabPage.WindowType.DCCFile, windowName);
+                else
+                {
+                    page = new IceTabPage(windowType, windowName);
+                    page.Connection = connection;
+                }
 
                 if (page.WindowStyle == IceTabPage.WindowType.Channel)
                 {
@@ -1609,9 +1614,12 @@ namespace IceChat
                             }
                             break;
                         case "/anick":
-                            foreach (IRCConnection c in serverTree.ServerConnections.Values)
-                                if (c.IsConnected)
-                                    SendData(c, "NICK " + data);
+                            if (data.Length > 0)
+                            {
+                                foreach (IRCConnection c in serverTree.ServerConnections.Values)
+                                    if (c.IsConnected)
+                                        SendData(c, "NICK " + data);
+                            }
                             break;                        
                         case "/autojoin":
                             if (connection != null)
@@ -3486,6 +3494,12 @@ namespace IceChat
             ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
         }
 
+        /// <summary>
+        /// Write out to the errors file, specific to the Connection
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="method"></param>
+        /// <param name="e"></param>
         internal void WriteErrorFile(IRCConnection connection, string method, Exception e)
         {
             System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
@@ -3499,6 +3513,11 @@ namespace IceChat
             }
         }
 
+        /// <summary>
+        /// Write out to the errors file, not Connection Specific
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="e"></param>
         internal void WriteErrorFile(string method, FileNotFoundException e)
         {
             System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
@@ -3623,8 +3642,10 @@ namespace IceChat
             }
         }
 
-   }
-    
+    }
+
+    #region IceDockPanel Class
+
     //custom panel class for docking
     internal class IceDockPanel : Panel
     {
@@ -3750,4 +3771,7 @@ namespace IceChat
         }
 
     }
+    
+    #endregion
+    
 }
