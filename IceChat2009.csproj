@@ -127,6 +127,12 @@
     <Compile Include="Forms\FormDCCAccept.Designer.cs">
       <DependentUpon>FormDCCAccept.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDCCFileAccept.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDCCFileAccept.Designer.cs">
+      <DependentUpon>FormDCCFileAccept.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -416,6 +422,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Forms\FormDCCFileAccept.resx">
+      <DependentUpon>FormDCCFileAccept.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Icons\colors.png" />
     <EmbeddedResource Include="Icons\console.png" />
     <EmbeddedResource Include="Icons\editor.png" />

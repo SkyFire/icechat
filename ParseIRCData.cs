@@ -76,6 +76,7 @@ namespace IceChat
 
         internal event DCCChatDelegate DCCChat;
         internal event DCCFileDelegate DCCFile;
+        internal event DCCPassiveDelegate DCCPassive;
 
         internal event RawServerIncomingDataDelegate RawServerIncomingData;
         internal event RawServerOutgoingDataDelegate RawServerOutgoingData;
@@ -772,39 +773,79 @@ namespace IceChat
                                             {
                                                 msg = msg.Substring(8).Trim();
                                                 System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
+                                                
                                                 string[] dccData = msg.Split(' ');
                                                 //sometimes the filenames can be include in quotes
                                                 System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
                                                 if (dccData.Length > 4)
                                                 {
-                                                    //if (Int32.TryParse(nickvalue, out result))
                                                     uint uresult;
                                                     if (!uint.TryParse(dccData[dccData.Length - 1], out uresult))
                                                     {
                                                         return;
                                                     }
 
-                                                    uint fileSize = uint.Parse(dccData[dccData.Length - 1]);
-                                                    string port = dccData[dccData.Length - 2];
-                                                    string ip = dccData[dccData.Length - 3];
-                                                    string file = "";
-                                                    if (msg.Contains("\""))
+                                                    //there can be a passive dcc request sent
+                                                    //PegMan-default(2010-05-07)-OS.zip 4294967295 0 176016 960
+                                                    //960 is the passive DCC ID
+                                                    //length:5
+                                                    //960:176016:0:
+                                                    if (dccData[dccData.Length - 3] == "0")
                                                     {
-                                                        string[] words = msg.Split('"');
-                                                        if (words.Length == 3)
-                                                            file = words[1];
-                                                        System.Diagnostics.Debug.WriteLine(words.Length);                                                        
-                                                        foreach (string w in words)
+                                                        //passive DCC
+                                                        string id = dccData[dccData.Length - 1];
+                                                        uint fileSize = uint.Parse(dccData[dccData.Length - 2]);
+                                                        string port = dccData[dccData.Length - 3];
+                                                        string ip = dccData[dccData.Length - 4];
+                                                        string file = "";
+                                                        if (msg.Contains("\""))
                                                         {
-                                                            System.Diagnostics.Debug.WriteLine(w);
+                                                            string[] words = msg.Split('"');
+                                                            if (words.Length == 3)
+                                                                file = words[1];
+                                                            System.Diagnostics.Debug.WriteLine(words.Length);
+                                                            foreach (string w in words)
+                                                            {
+                                                                System.Diagnostics.Debug.WriteLine(w);
+                                                            }
                                                         }
-                                                    }
-                                                    System.Diagnostics.Debug.WriteLine(fileSize + ":" + port + ":" + ip + ":" + file);
-                                                    //check that values are numbers
+                                                        else
+                                                            file = dccData[dccData.Length - 5];
 
-                                                    if (DCCFile != null && file.Length > 0)
-                                                        DCCFile(this, nick, host, port, ip, file, fileSize, false, 0);                                                    
-                                                    return;
+                                                        //start up a listening socket on a specific port and send back to ip
+                                                        //http://trout.snt.utwente.nl/ubbthreads/ubbthreads.php?ubb=showflat&Number=139329&site_id=1#import
+
+                                                        System.Diagnostics.Debug.WriteLine("PASSIVE DCC " + id + ":" + fileSize + ":" + port + ":" + ip + ":" + file);
+                                                        if (DCCPassive != null)
+                                                            DCCPassive(this, nick, host, ip, file, fileSize, 0, false, id);
+                                                        
+                                                        return;
+                                                    }
+                                                    else
+                                                    {
+                                                        uint fileSize = uint.Parse(dccData[dccData.Length - 1]);
+                                                        string port = dccData[dccData.Length - 2];
+                                                        string ip = dccData[dccData.Length - 3];
+                                                        string file = "";
+                                                        if (msg.Contains("\""))
+                                                        {
+                                                            string[] words = msg.Split('"');
+                                                            if (words.Length == 3)
+                                                                file = words[1];
+                                                            System.Diagnostics.Debug.WriteLine(words.Length);
+                                                            foreach (string w in words)
+                                                            {
+                                                                System.Diagnostics.Debug.WriteLine(w);
+                                                            }
+                                                        }
+
+                                                        System.Diagnostics.Debug.WriteLine(fileSize + ":" + port + ":" + ip + ":" + file);
+                                                        //check that values are numbers
+
+                                                        if (DCCFile != null && file.Length > 0)
+                                                            DCCFile(this, nick, host, port, ip, file, fileSize,0, false);
+                                                        return;
+                                                    }
                                                 }
                                                 //string fileName = dccData[0];
                                                 //string ip = dccData[1];
@@ -824,7 +865,9 @@ namespace IceChat
                                                 }
 
                                                 if (DCCFile != null)
-                                                    DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], uint.Parse(dccData[3]), false, 0);
+                                                    DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], uint.Parse(dccData[3]), 0, false);
+                                                else
+                                                    ServerError(this, "Invalid DCC File send from " + nick);
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC RESUME"))
                                             {
@@ -843,8 +886,9 @@ namespace IceChat
                                                 System.Diagnostics.Debug.WriteLine("ACCEPT:" + msg);
                                                 string[] dccData = msg.Split(' ');
                                                 System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
+                                                
                                                 if (DCCFile != null)
-                                                    DCCFile(this, nick, host, dccData[dccData.Length - 2], "ip", "file", 0, true, uint.Parse(dccData[dccData.Length - 1]));
+                                                    DCCFile(this, nick, host, dccData[dccData.Length - 2], "ip", "file", 0, uint.Parse(dccData[dccData.Length - 1]), true);
                                                 
                                                 //DCC ACCEPT::Spyder420!Spyder420@173.217.227.151 PRIVMSG SnerfX :DCC ACCEPT "Spyder420-default(2010-06-04)-OS.zip" 4115 129896
                                                 //ACCEPT:"Spyder420-default(2010-06-04)-OS.zip" 4115 129896

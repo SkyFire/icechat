@@ -43,6 +43,10 @@ namespace IceChat
         public FileStream FileStream;
         public IPAddress IPAddress;
         public IRCConnection Connection;
+        
+        public TcpListener PassiveSocket;
+        public Thread PassiveThread;
+        public string passiveID;
 
         public string Nick;
         public string Host;
@@ -353,7 +357,6 @@ namespace IceChat
 
         internal void ResumeDCCFile(IRCConnection connection, string port, uint filePos)
         {
-            //DccFileStruct dccUse;
             for (int i = 0; i < dccFiles.Count; i++)
             {
                 if (dccFiles[i].Port == port && dccFiles[i].Connection == connection)
@@ -372,6 +375,109 @@ namespace IceChat
                         dccFiles[i].Thread.Start(dccFiles[i]);
                     }
                 }
+            }
+        }
+
+        internal void StartDCCPassive(IRCConnection connection, string nick, string host, string ip, string file, uint fileSize, string id)
+        {
+            //open a new dcc listening port, and send back to the client
+            System.Diagnostics.Debug.WriteLine("start passive dcc - open listener:" + id);
+            DccFileStruct dcc = new DccFileStruct();
+            dcc.FileName = file;
+            dcc.FileSize = fileSize;
+            dcc.StartFileSize = 0;
+            dcc.Nick = nick;
+            dcc.Host = host;
+            dcc.Connection = connection;
+            dcc.Ip = ip;
+            dcc.passiveID = id;
+
+            dcc.Style = "Passive";
+
+            //pick a random incoming port
+            Random port = new Random();
+            int p = port.Next(FormMain.Instance.IceChatOptions.DCCPortLower, FormMain.Instance.IceChatOptions.DCCPortUpper);
+            dcc.Port = p.ToString();
+
+            //create a random number for a tag
+            dcc.ListingTag = RandomListingTag();
+
+            try
+            {
+                string dccPath = FormMain.Instance.IceChatOptions.DCCReceiveFolder;
+                //check to make sure the folder exists
+                if (!Directory.Exists(dccPath))
+                {
+                    //add a folder browsing dialog here
+                    FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                        dccPath = fbd.SelectedPath;
+                    else
+                    {
+                        //no folder selected, out we go
+                        System.Diagnostics.Debug.WriteLine("PASSIVE No folder selected, non-existant dcc receive folder");
+                        FormMain.Instance.WindowMessage(connection, "Console", "DCC Passive File Received Failed : DCC Receive Path does not exists", 4, true);
+                        return;
+                    }
+                }
+
+                //check if the file exists
+                if (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName))
+                {
+                    //check the local file size and compare to what is being sent
+                    FileInfo fi = new FileInfo(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName);
+                    if (fi.Length <= dcc.FileSize)
+                    {
+                        System.Diagnostics.Debug.WriteLine("PASSIVE appending file:" + fi.Length + ":" + dcc.FileSize + ":" + connection.IsFullyConnected);
+                        //send DCC RESUME
+                        //wait for a DCC ACCEPT from client, and start resume on this port
+                        connection.SendData("PRIVMSG " + nick + " :\x0001DCC RESUME \"" + dcc.FileName + "\" " + dcc.Port + " " + fi.Length.ToString() + "\x0001");
+                        dcc.Resume = true;
+                        dcc.TotalBytesRead = (uint)fi.Length;
+                        dcc.FileStream = new FileStream(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Append);
+                        dcc.Path = dccPath;
+                        dcc.StartFileSize = dcc.TotalBytesRead;
+                        dccFiles.Add(dcc);
+                        return;
+                    }
+                    else
+                    {
+                        //file exists, and already complete // set a new filename adding [#] to the end of the fielname
+                        int extPos = dcc.FileName.LastIndexOf('.');
+                        if (extPos == -1)
+                        {
+                            int i = 0;
+                            do
+                            {
+                                i++;
+                            } while (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName + "(" + i.ToString() + ")"));
+                            dcc.FileName += "(" + i.ToString() + ")";
+                        }
+                        else
+                        {
+                            string fileName = dcc.FileName.Substring(0, extPos);
+                            string ext = dcc.FileName.Substring(extPos + 1);
+                            int i = 0;
+                            do
+                            {
+                                i++;
+                            } while (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + fileName + "(" + i.ToString() + ")." + ext));
+                            dcc.FileName = fileName + "(" + i.ToString() + ")." + ext;
+                        }
+                    }
+                }
+
+                dcc.FileStream = new FileStream(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Create);
+                dcc.Path = dccPath;
+
+                dcc.PassiveSocket = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
+                dcc.PassiveThread = new Thread(new ParameterizedThreadStart(StartPassiveSocket));
+                dcc.PassiveThread.Start(dcc);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("passive dcc file error:" + ex.Message);
             }
         }
 
@@ -395,11 +501,27 @@ namespace IceChat
             try
             {
                 string dccPath = FormMain.Instance.IceChatOptions.DCCReceiveFolder;
+                //check to make sure the folder exists
+                if (!Directory.Exists(dccPath))
+                {
+                    //add a folder browsing dialog here
+                    FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                        dccPath = fbd.SelectedPath;
+                    else
+                    {
+                        //no folder selected, out we go
+                        System.Diagnostics.Debug.WriteLine("No folder selected, non-existant dcc receive folder");
+                        FormMain.Instance.WindowMessage(connection, "Console", "DCC File Received Failed : DCC Receive Path does not exists", 4, true);
+                        return;
+                    }
+                }
+                
                 //check if the file exists
                 if (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName))
                 {
                     //check the local file size and compare to what is being sent
-
                     FileInfo fi = new FileInfo(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName);
                     if (fi.Length <= dcc.FileSize)
                     {
@@ -439,9 +561,7 @@ namespace IceChat
                             } while (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + fileName + "(" + i.ToString() + ")." + ext));
                             dcc.FileName = fileName + "(" + i.ToString() + ")." + ext;
                         }
-                        //dcc.FileStream = new FileStream(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Create);
                     }
-
                 }
 
                 IPAddress ipAddr = LongToIPAddress(ip);
@@ -452,8 +572,6 @@ namespace IceChat
                 dcc.Socket.Connect(ep);
                 if (dcc.Socket.Connected)
                 {
-                    //string dccPath = FormMain.Instance.IceChatOptions.DCCReceiveFolder;
-                    //check if the file exists
                     dcc.FileStream = new FileStream(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Create);
                     dcc.Path = dccPath;
 
@@ -511,6 +629,41 @@ namespace IceChat
             }
         }
 
+        private void StartPassiveSocket(object dccObject)
+        {
+            DccFileStruct dcc = (DccFileStruct)dccObject;
+
+            dcc.PassiveSocket.Start();
+            bool keepListeningPassive = true;
+
+            string localIP = IPAddressToLong(dcc.Connection.ServerSetting.LocalIP).ToString();
+            if (FormMain.Instance.IceChatOptions.DCCLocalIP != null && FormMain.Instance.IceChatOptions.DCCLocalIP.Length > 0)
+            {
+                localIP = IPAddressToLong(IPAddress.Parse(FormMain.Instance.IceChatOptions.DCCLocalIP)).ToString();
+            }
+
+            dcc.Connection.SendData("PRIVMSG " + dcc.Nick + " :DCC SEND " + dcc.FileName + " " + localIP + " " + dcc.Port + " " + dcc.FileSize + " " + dcc.passiveID + "");
+            System.Diagnostics.Debug.WriteLine("PRIVMSG " + dcc.Nick + " :DCC SEND " + dcc.FileName + " " + localIP + " " + dcc.Port + " " + dcc.FileSize + " " + dcc.passiveID + "");
+
+            while (keepListeningPassive)
+            {
+                dcc.Socket = dcc.PassiveSocket.AcceptTcpClient();
+                dcc.PassiveSocket.Stop();
+
+                //string msg = FormMain.Instance.GetMessageFormat("DCC Passive Connect");
+                //msg = msg.Replace("$nick", dcc.Nick);
+                //textWindow.AppendText(msg, 1);
+                System.Diagnostics.Debug.WriteLine("dcc passive socket connected with " + dcc.Nick);
+                dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
+                dcc.Thread.Start(dcc);
+                
+                keepListeningPassive = false;
+            }
+            
+            System.Diagnostics.Debug.WriteLine("startpassive socket completed");
+
+        }
+        
         /// <summary>
         /// Get the DCC File Data for the Specified DCC Object
         /// </summary>
@@ -596,6 +749,12 @@ namespace IceChat
         {
             byte[] quads = BitConverter.GetBytes(long.Parse(longIP, System.Globalization.CultureInfo.InvariantCulture));
             return IPAddress.Parse(quads[3] + "." + quads[2] + "." + quads[1] + "." + quads[0]);
+        }
+
+        private long IPAddressToLong(IPAddress ip)
+        {
+            byte[] bytes = ip.GetAddressBytes();
+            return (long)((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]);
         }
 
         private int RandomListingTag()

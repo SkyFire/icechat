@@ -274,7 +274,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
 
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 12 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - July 28 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -1063,6 +1063,7 @@ namespace IceChat
             c.ChannelList += new ChannelListDelegate(OnChannelList);
             c.DCCChat += new DCCChatDelegate(OnDCCChat);
             c.DCCFile += new DCCFileDelegate(OnDCCFile);
+            c.DCCPassive += new DCCPassiveDelegate(OnDCCPassive);
             c.UserHostReply += new UserHostReplyDelegate(OnUserHostReply);
             c.IALUserData += new IALUserDataDelegate(OnIALUserData);
             c.IALUserChange += new IALUserChangeDelegate(OnIALUserChange);
@@ -2592,178 +2593,199 @@ namespace IceChat
             string identMatch = "\\$\\b[a-zA-Z_0-9.]+\\b";
             Regex ParseIdent = new Regex(identMatch);
             Match m = ParseIdent.Match(data);
+
+            //StringBuilder sLine = new StringBuilder();
+            //sLine.Append(data);
+            //int oldLen = 0;
+
             while (m.Success)
             {
+                //oldLen = sLine.Length - m.Length;
+                
                 switch (m.Value)
                 {
                     case "$me":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.NickName);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.NickName);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$altnick":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.AltNickName);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.AltNickName);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$ident":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.IdentName);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.IdentName);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$host":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.LocalHost);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.LocalHost);
                         else
-                            data = data.Replace(m.Value, "$null");                            
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$fullhost":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.NickName + "!" + connection.ServerSetting.LocalHost);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.NickName + "!" + connection.ServerSetting.LocalHost);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;                    
                     case "$fullname":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.FullName);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.FullName);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$ip":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.LocalIP.ToString());
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.LocalIP.ToString());
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$network":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.NetworkName);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.NetworkName);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$port":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.ServerPort);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.ServerPort);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$quitmessage":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.QuitMessage);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.QuitMessage);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$servermode":
+                        data = ReplaceFirst(data, m.Value, string.Empty);
                         break;
                     case "$server":
                         if (connection != null)
                         {
                             if (connection.ServerSetting.RealServerName.Length > 0)
-                                data = data.Replace(m.Value, connection.ServerSetting.RealServerName);
+                            {
+                                data = ReplaceFirst(data, m.Value, connection.ServerSetting.RealServerName);
+                            }
                             else
-                                data = data.Replace(m.Value, connection.ServerSetting.ServerName);
+                            {
+                                data = ReplaceFirst(data, m.Value, connection.ServerSetting.ServerName);
+                            }
                         }
                         else
-                            data = data.Replace(m.Value, "$null");
+                        {
+                            data = ReplaceFirst(data, m.Value, "$null");
+                        }
                         break;
                     case "$online":
                         if (connection != null)
                         {
                             //check the datediff
                             TimeSpan online = DateTime.Now.Subtract(connection.ServerSetting.ConnectedTime);
-                            data = data.Replace(m.Value, GetDuration((int)online.TotalSeconds));                            
+                            data = ReplaceFirst(data, m.Value, GetDuration((int)online.TotalSeconds));
                         }
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$serverip":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.ServerIP);
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.ServerIP);
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     case "$localip":
                         if (connection != null)
-                            data = data.Replace(m.Value, connection.ServerSetting.LocalIP.ToString());
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.LocalIP.ToString());
                         else
-                            data = data.Replace(m.Value, "$null");
+                            data = ReplaceFirst(data, m.Value, "$null");
                         break;
                     
                     //identifiers that do not require a connection                                
                     case "$appdata":
-                        data = data.Replace(m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
+                        data = ReplaceFirst(data, m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
                         break;
-                    case "$sp":
-                        data = data.Replace(m.Value, Environment.OSVersion.ServicePack.ToString());
+                    case "$ossp":
+                        data = ReplaceFirst(data, m.Value, Environment.OSVersion.ServicePack.ToString());
+                        break;
+                    case "$osbuild":
+                        data = ReplaceFirst(data, m.Value, Environment.OSVersion.Version.Build.ToString());
                         break;
                     case "$os":
-                        data = data.Replace(m.Value, Environment.OSVersion.ToString());
+                        data = ReplaceFirst(data, m.Value, Environment.OSVersion.ToString());
                         break;
                     case "$icepath":
                     case "$icechatexedir":
-                        data = data.Replace(m.Value, Directory.GetCurrentDirectory());
+                        data = ReplaceFirst(data, m.Value, Directory.GetCurrentDirectory());
                         break;
                     case "$aliasfile":
-                        data = data.Replace(m.Value, aliasesFile);
+                        data = ReplaceFirst(data, m.Value,aliasesFile);
                         break;
                     case "$serverfile":
-                        data = data.Replace(m.Value, serversFile);
+                        data = ReplaceFirst(data, m.Value, serversFile);
                         break;
                     case "$popupfile":
-                        data = data.Replace(m.Value, popupsFile);
+                        data = ReplaceFirst(data, m.Value, popupsFile);
                         break;
                     case "$icechatver":
-                        data = data.Replace(m.Value, Settings.Default.Version);
+                        data = ReplaceFirst(data, m.Value, Settings.Default.Version);
                         break;
                     case "$version":
-                        data = data.Replace(m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version);
+                        data = ReplaceFirst(data, m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version);
                         break;
-                    case "$icechat":
-                        data = data.Replace(m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net");
-                        break;                    
                     case "$icechatdir":
-                        data = data.Replace(m.Value, this.currentFolder);
+                        data = ReplaceFirst(data, m.Value, currentFolder);
                         break;
                     case "$icechathandle":
-                        data = data.Replace(m.Value, this.Handle.ToString());
+                        data = ReplaceFirst(data, m.Value, this.Handle.ToString());
+                        break;
+                    case "$icechat":
+                        data = ReplaceFirst(data, m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net");
                         break;
                     case "$logdir":
-                        data = data.Replace(m.Value, logsFolder);
+                        data = ReplaceFirst(data, m.Value, logsFolder);
                         break;
                     case "$randquit":
                         Random rand = new Random();
                         int rq = rand.Next(0, QuitMessages.RandomQuitMessages.Length);
-                        data = data.Replace(m.Value, QuitMessages.RandomQuitMessages[rq]);
+                        data = ReplaceFirst(data, m.Value, QuitMessages.RandomQuitMessages[rq]);
                         break;
                     case "$randcolor":
                         Random randcolor = new Random();
                         int rc = randcolor.Next(0, (IrcColor.colors.Length-1));
-                        data = data.Replace(m.Value, rc.ToString());
+                        data = ReplaceFirst(data, m.Value, rc.ToString());
                         break;
                     case "$tickcount":
-                        data = data.Replace(m.Value, System.Environment.TickCount.ToString());
+                        data = ReplaceFirst(data, m.Value, System.Environment.TickCount.ToString());
                         break;
                     case "$totalwindows":
-                        data = data.Replace(m.Value, mainTabControl.TabCount.ToString());
+                        data = ReplaceFirst(data, m.Value, mainTabControl.TabCount.ToString());
+                        break;
+                    case "$uptime2":
+                        int systemUpTime = System.Environment.TickCount / 1000;
+                        TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
+                        data = ReplaceFirst(data, m.Value, GetDuration(ts.TotalSeconds));
                         break;
                     case "$uptime":
                         System.Diagnostics.PerformanceCounter pc = new System.Diagnostics.PerformanceCounter("System", "System Up Time");
                         pc.NextValue();
                         TimeSpan ts2 = TimeSpan.FromSeconds(pc.NextValue());
-                        data = data.Replace(m.Value, GetDuration(ts2.TotalSeconds));
-                        break;
-                    case "$uptime2":
-                        int systemUpTime = System.Environment.TickCount / 1000;
-                        TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
-                        data = data.Replace(m.Value, GetDuration(ts.TotalSeconds));
+                        data = ReplaceFirst(data, m.Value, GetDuration(ts2.TotalSeconds));
                         break;
                 }
                 m = m.NextMatch();
+                //System.Diagnostics.Debug.WriteLine(sLine.Length + ":" + oldLen + ":" + sLine.ToString());                
+                
+                //m = ParseIdent.Match(sLine.ToString(), sLine.Length - oldLen);
+
             }
-            
+
             return data;
         }
 
@@ -2878,7 +2900,7 @@ namespace IceChat
                                 int result;
                                 if (word.StartsWith("$read(") && word.IndexOf(')') > word.IndexOf('('))
                                 {
-                                    string file = ReturnBrackValue(word);
+                                    string file = ReturnBracketValue(word);
                                     //check if we have passed a path or just a filename
                                     if (file.IndexOf(System.IO.Path.DirectorySeparatorChar) > -1)
                                     {
@@ -2924,7 +2946,7 @@ namespace IceChat
                                 {
                                     if (word.StartsWith("$ial(") && word.IndexOf(')') > word.IndexOf('('))
                                     {
-                                        string nick = ReturnBrackValue(word);
+                                        string nick = ReturnBracketValue(word);
                                         string prop = ReturnPropertyValue(word);
 
                                         InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[nick];
@@ -2952,7 +2974,7 @@ namespace IceChat
                                     if (word.StartsWith("$nick(") && word.IndexOf(')') > word.IndexOf('('))
                                     {
                                         //get the value between and after the brackets
-                                        string values = ReturnBrackValue(word);
+                                        string values = ReturnBracketValue(word);
                                         if (values.Split(',').Length == 2)
                                         {
                                             string channel = values.Split(',')[0];
@@ -3037,7 +3059,7 @@ namespace IceChat
                                     if (word.StartsWith("$chan(") && word.IndexOf(')') > word.IndexOf('('))
                                     {
                                         //get the value between and after the brackets
-                                        string channel = ReturnBrackValue(word);
+                                        string channel = ReturnBracketValue(word);
                                         string prop = ReturnPropertyValue(word);
 
                                         //find then channel
@@ -3080,7 +3102,7 @@ namespace IceChat
             }
             return String.Join(" ", changedData);
         }
-        private string ReturnBrackValue(string data)
+        private string ReturnBracketValue(string data)
         {
             //return what is between ( ) brackets
             string d = data.Substring(data.IndexOf('(') + 1);
@@ -3093,6 +3115,15 @@ namespace IceChat
                 return "";
             else
                 return data.Substring(data.LastIndexOf('.') + 1);
+        }
+
+        //replace 1st occurence of a string inside another string
+        private string ReplaceFirst(string haystack, string needle, string replacement)
+        {
+            int pos = haystack.IndexOf(needle);
+            if (pos < 0) return haystack;
+
+            return haystack.Substring(0, pos) + replacement + haystack.Substring(pos + needle.Length);
         }
 
         private string GetDuration(double seconds)
@@ -3508,8 +3539,12 @@ namespace IceChat
             
             if (errorFile != null)
             {
-                errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber());
-                errorFile.Flush();
+                try
+                {
+                    errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber());
+                }
+                catch { }
+                finally { errorFile.Flush(); }
             }
         }
 
@@ -3640,6 +3675,11 @@ namespace IceChat
                 splitterRight.Visible = true;
                 this.panelDockRight.TabControl.SelectedTab = p;
             }
+        }
+
+        private void browseDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ParseOutGoingCommand(null, "//run $icechatdir");
         }
 
     }

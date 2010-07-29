@@ -43,7 +43,9 @@ namespace IceChat
 {
     public partial class FormMain
     {
-       
+        private delegate void ShowDCCFileAcceptDelegate(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume);
+        private delegate void ShowDCCPassiveAcceptDelegate(IRCConnection connection, string nick, string host, string ip, string file, uint fileSize, uint filePos, bool resume, string id);
+
         /// <summary>
         /// Show updates for Buddy List
         /// </summary>
@@ -98,8 +100,7 @@ namespace IceChat
             switch (ctcp)
             {
                 case "VERSION":
-                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
-                    SendData(connection, "NOTICE " + nick + " :\x0001VERSION mIRC v6.35 Khaled Mardam-Bey\x0001");
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
                     break;
                 case "PING":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "PING " + message + ((char)1).ToString());
@@ -108,16 +109,16 @@ namespace IceChat
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "TIME " + System.DateTime.Now.ToString() + ((char)1).ToString());
                     break;
                 case "USERINFO":
-                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "CLIENTINFO":
-                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
                     break;
                 case "SOURCE":
-                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "FINGER":
-                    //SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
                     break;
 
             }
@@ -1321,29 +1322,126 @@ namespace IceChat
 
         }
 
-        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, bool resume, uint filePos)
+        private void OnDCCFile(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume)
         {
-            //check if we have disabled DCC Files, do we auto-accept or ask to allow
             if (iceChatOptions.DCCFileIgnore)
                 return;
-
-            if (!iceChatOptions.DCCFileAutoAccept && !resume)
-            {
-                //check if on System Tray
-                if (notifyIcon.Visible)
-                    return;
-
-                //ask for the dcc chat
-                DialogResult askDCC = MessageBox.Show(nick + "@" + host + " wants a DCC to send a file\r\nWill you accept?\r\n\r\n" + file + " (" + fileSize + " bytes)", "DCC File Send Request (Port " + port +")", MessageBoxButtons.YesNo);
-                if (askDCC == DialogResult.No)
-                    return;
-
-            }
             
+            if (this.InvokeRequired)
+            {
+                ShowDCCFileAcceptDelegate s = new ShowDCCFileAcceptDelegate(OnDCCFile);
+                this.Invoke(s, new object[] { connection, nick, host, port, ip, file, fileSize, filePos, resume });
+            }
+            else
+            {
+                //check if we have disabled DCC Files, do we auto-accept or ask to allow
+
+                if (!iceChatOptions.DCCFileAutoAccept && !resume)
+                {
+                    //check if on System Tray
+                    if (notifyIcon.Visible)
+                        return;
+
+
+                    //ask for the dcc file receive
+                    FormDCCFileAccept dccAccept = new FormDCCFileAccept(connection, nick, host, port, ip, file, fileSize, resume, filePos);
+                    dccAccept.DCCFileAcceptResult += new FormDCCFileAccept.DCCFileAcceptDelegate(OnDCCFileAcceptResult);
+                    dccAccept.Show(FormMain.Instance);
+
+                }
+                else if (iceChatOptions.DCCChatAutoAccept)
+                {
+                    if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
+                        AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+
+                    IceTabPage t = GetWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+                    if (t != null)
+                    {
+                        if (!resume)
+                            ((IceTabPageDCCFile)t).StartDCCFile(connection, nick, host, ip, port, file, fileSize);
+                        else
+                        {
+                            ((IceTabPageDCCFile)t).ResumeDCCFile(connection, port, filePos);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnDCCPassive(IRCConnection connection, string nick, string host, string ip, string file, uint fileSize, uint filePos, bool resume, string id)
+        {
+            //passive dcc, open a listening socket and send out back to socket
+            if (iceChatOptions.DCCFileIgnore)
+                return;
+            
+            if (this.InvokeRequired)
+            {
+                ShowDCCPassiveAcceptDelegate s = new ShowDCCPassiveAcceptDelegate(OnDCCPassive);
+                this.Invoke(s, new object[] { connection, nick, host, ip, file, fileSize, filePos, resume, id });
+            }
+            else
+            {
+                if (!iceChatOptions.DCCFileAutoAccept)
+                {
+                    //check if on System Tray
+                    if (notifyIcon.Visible)
+                        return;
+
+                    //ask for the dcc file receive
+                    FormDCCFileAccept dccAccept = new FormDCCFileAccept(connection, nick, host, "", ip, file, fileSize, filePos, resume,  id);
+                    dccAccept.DCCFileAcceptResult += new FormDCCFileAccept.DCCFileAcceptDelegate(OnDCCPassiveAcceptResult);
+                    dccAccept.Show(FormMain.Instance);
+                }
+            }
+        }
+        
+        private void OnDCCPassiveAcceptResult(DialogResult result, IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume, string id)
+        {
+            if (result == DialogResult.Ignore)
+            {
+                //ignore the nick
+                ParseOutGoingCommand(connection, "/ignore " + nick);
+                return;
+            }
+            if (result == DialogResult.No)
+            {
+                //dcc was rejected
+                return;
+            }
+
             if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
                 AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
 
-            IceTabPage t = GetWindow(null,"DCC Files", IceTabPage.WindowType.DCCFile);
+            IceTabPage t = GetWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+            if (t != null)
+            {
+                if (!resume)
+                    ((IceTabPageDCCFile)t).StartDCCPassive(connection, nick, host, ip, file, fileSize, id);
+                else
+                    ((IceTabPageDCCFile)t).ResumeDCCFile(connection, port, filePos);
+            }
+
+
+        }
+
+        private void OnDCCFileAcceptResult(DialogResult result, IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume, string id)
+        {
+            if (result == DialogResult.Ignore)
+            {
+                //ignore the nick
+                ParseOutGoingCommand(connection, "/ignore " + nick);
+                return;
+            }
+            if (result == DialogResult.No)
+            {
+                //dcc was rejected
+                return;
+            }
+
+            if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
+                AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+
+            IceTabPage t = GetWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
             if (t != null)
             {
                 if (!resume)

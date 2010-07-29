@@ -1,7 +1,11 @@
+Build Alpha 14.5 - July 28 2010
+* Added DCC Passive Support (Incoming only)
+* Added more DCC Receive fixes and additions
+
+
 Build Alpha 14.4 - June 12 2010
 * Fixed bug with @@@ and mouse hover issue
 * Started with Auto DCC Resume
- 
 
 
 Build Alpha 14.3 - May 29 2010
