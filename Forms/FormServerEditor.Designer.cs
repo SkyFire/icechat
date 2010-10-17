@@ -52,7 +52,6 @@
             this.labelServerName = new System.Windows.Forms.Label();
             this.labelNickName = new System.Windows.Forms.Label();
             this.tabPageExtra = new System.Windows.Forms.TabPage();
-            this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.checkAutoStart = new System.Windows.Forms.CheckBox();
             this.labelServerPassword = new System.Windows.Forms.Label();
             this.textServerPassword = new System.Windows.Forms.TextBox();
@@ -124,6 +123,7 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
+            this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -187,6 +187,7 @@
             // tabPageMain
             // 
             this.tabPageMain.BackColor = System.Drawing.Color.Transparent;
+            this.tabPageMain.Controls.Add(this.checkUseSSL);
             this.tabPageMain.Controls.Add(this.textAwayNick);
             this.tabPageMain.Controls.Add(this.labelAwayNickName);
             this.tabPageMain.Controls.Add(this.textAltNickName);
@@ -372,7 +373,6 @@
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.Color.Transparent;
-            this.tabPageExtra.Controls.Add(this.checkUseSSL);
             this.tabPageExtra.Controls.Add(this.checkAutoStart);
             this.tabPageExtra.Controls.Add(this.labelServerPassword);
             this.tabPageExtra.Controls.Add(this.textServerPassword);
@@ -393,16 +393,6 @@
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
-            // 
-            // checkUseSSL
-            // 
-            this.checkUseSSL.AutoSize = true;
-            this.checkUseSSL.Location = new System.Drawing.Point(275, 63);
-            this.checkUseSSL.Name = "checkUseSSL";
-            this.checkUseSSL.Size = new System.Drawing.Size(242, 20);
-            this.checkUseSSL.TabIndex = 48;
-            this.checkUseSSL.Text = "Connect with SSL (Not Working)";
-            this.checkUseSSL.UseVisualStyleBackColor = true;
             // 
             // checkAutoStart
             // 
@@ -1132,6 +1122,16 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
+            // checkUseSSL
+            // 
+            this.checkUseSSL.AutoSize = true;
+            this.checkUseSSL.Location = new System.Drawing.Point(370, 36);
+            this.checkUseSSL.Name = "checkUseSSL";
+            this.checkUseSSL.Size = new System.Drawing.Size(145, 20);
+            this.checkUseSSL.TabIndex = 51;
+            this.checkUseSSL.Text = "Connect with SSL";
+            this.checkUseSSL.UseVisualStyleBackColor = true;
+            // 
             // FormServers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1236,7 +1236,6 @@
         private System.Windows.Forms.Button buttonAddIgnore;
         private System.Windows.Forms.Label labelIgnoreNote;
         private System.Windows.Forms.CheckBox checkAutoStart;
-        private System.Windows.Forms.CheckBox checkUseSSL;
         private System.Windows.Forms.TabPage tabPageDefault;
         private System.Windows.Forms.CheckBox checkServerReconnect;
         private System.Windows.Forms.CheckBox checkIdentServer;
@@ -1270,5 +1269,6 @@
         private System.Windows.Forms.Button buttonEditBuddy;
         private System.Windows.Forms.Button buttonRemoveBuddy;
         private System.Windows.Forms.Button buttonAddBuddy;
+        private System.Windows.Forms.CheckBox checkUseSSL;
     }
 }

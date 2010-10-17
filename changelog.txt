@@ -1,3 +1,13 @@
+Build Beta 1 - October 16 2010
+* Started adding some accessibility features
+* Access Server Tree/Nicklist from Menu and allow cursor keys to scroll through
+* Can scroll through nicklist with mousewheel, without needing to select nicklist
+* /ignore command now adds an item to the ignore list
+* Added /partall command , closes all open channels for selected server
+* Added $?='Ask Question Here' identifier
+* Added SSL Support (may still need a little debugging)
+
+
 Build Alpha 14.5 - July 28 2010
 * Added DCC Passive Support (Incoming only)
 * Added more DCC Receive fixes and additions

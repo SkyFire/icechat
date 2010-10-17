@@ -29,6 +29,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace IceChat
@@ -36,7 +37,9 @@ namespace IceChat
     public partial class IRCConnection
     {
         private Socket serverSocket = null;
-        
+        private NetworkStream socketStream = null;
+        private SslStream sslStream = null;
+
         private string dataBuffer;
 
         private bool disconnectError = false;
@@ -62,7 +65,9 @@ namespace IceChat
         //private SslStream sslStream;
         //private NetworkStream socketStream;
         private bool proxyAuthed;
-
+        private byte[] readBuffer;
+        private const int BUFFER_SIZE = 1024;
+        
         public IRCConnection(ServerSetting ss)
         {
             dataBuffer = "";
@@ -118,7 +123,7 @@ namespace IceChat
                     }
                 }
 
-                if (ison != null)
+                if (ison != string.Empty)
                 {
                     ison = "ISON" + ison;
                     SendData(ison);
@@ -342,27 +347,52 @@ namespace IceChat
             }
             
             try
-            {
+            {                
                 serverSocket.EndConnect(ar);
-                //serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
-                //SetKeepAlive(serverSocket, 180 * 1000, 540 * 1000); //check every 5 minutes, max of 15 mins inactivity
             }            
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error:" + e.Message.ToString());
+                    ServerError(this, "Socket Exception Error 2:" + e.Message.ToString());
 
                 disconnectError = true;
                 ForceDisconnect();
                 return;
             }
 
-            SocketPacket thisSocket = new SocketPacket(serverSocket);
+
+            //SocketPacket thisSocket = new SocketPacket(serverSocket);
+
+            System.Diagnostics.Debug.WriteLine("connected");
+            System.Diagnostics.Debug.WriteLine("create networkstream 2");
+            socketStream = new NetworkStream(serverSocket, true);
+            if (serverSetting.UseSSL)
+            {
+                System.Diagnostics.Debug.WriteLine("create ssl stream");
+                sslStream = new SslStream(socketStream, true, this.RemoteCertificateValidationCallback);
+                sslStream.AuthenticateAsClient(serverSetting.ServerName);
+            }
 
             try
             {
-                thisSocket.workSocket.BeginReceive(thisSocket.dataBuffer, 0, thisSocket.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), thisSocket);
-
+                if (serverSetting.UseSSL)
+                {
+                    if (sslStream != null && sslStream.CanRead)
+                    {
+                        System.Diagnostics.Debug.WriteLine("start beginread SSL");
+                        readBuffer = new byte[BUFFER_SIZE];                        
+                        sslStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
+                    }
+                }
+                else
+                {
+                    if (socketStream != null && socketStream.CanRead)
+                    {
+                        System.Diagnostics.Debug.WriteLine("start beginread");
+                        readBuffer = new byte[BUFFER_SIZE];
+                        socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
+                    }
+                }
                 this.serverSetting.ConnectedTime = DateTime.Now;
 
                 FormMain.Instance.ServerTree.Invalidate();
@@ -387,7 +417,8 @@ namespace IceChat
 
                     try
                     {
-                        serverSocket.BeginSend(d, 0, nIndex, SocketFlags.None, new AsyncCallback(OnSendData), serverSocket);
+                        socketStream.BeginWrite(d, 0, nIndex, new AsyncCallback(OnSendData), socketStream);
+                        //serverSocket.BeginSend(d, 0, nIndex, SocketFlags.None, new AsyncCallback(OnSendData), serverSocket);
 
                         if (ServerMessage != null)
                             ServerMessage(this, "Socks 5 Connection Established with " + serverSetting.ProxyIP);
@@ -417,9 +448,8 @@ namespace IceChat
                     
                     this.pongTimer.Start();
                 }
-
-
             }
+            
             catch (SocketException se)
             {
                 if (ServerError != null)
@@ -436,6 +466,7 @@ namespace IceChat
                 disconnectError = true;
                 ForceDisconnect();
             }
+            
         }
         /*
         private bool SetKeepAlive(Socket sock, ulong time, ulong interval)
@@ -489,17 +520,34 @@ namespace IceChat
                 if (ServerError != null)
                     ServerError(this, "Error: You are not Connected (Socket not created) - Can not send");
                 return;
-            }   
-            
+            }
+
+            if (socketStream == null)
+            {
+                System.Diagnostics.Debug.WriteLine("senddata null stream");
+                return;
+            }
+
             //get the proper encoding            
             byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
             {                
-                if (serverSocket.Connected)
+                if (socketStream.CanWrite)
                 {
                     try
                     {
-                        serverSocket.BeginSend(bytData, 0, bytData.Length, SocketFlags.None, new AsyncCallback(OnSendData), serverSocket);
+                        if (serverSetting.UseSSL)
+                        {
+                            //error here
+                            //The Write method cannot be called when another write operation is pending.:                              //at System.Net.Security._SslStream.ProcessWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncProtocolRequest asyncRequest)                            //at System.Net.Security.SslStream.Write(Byte[] buffer)
+                            //sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
+                            sslStream.Write(bytData);
+                            sslStream.Flush();
+                            
+                        }
+                        else
+                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
+
                         //raise an event for the debug window
                         if (RawServerOutgoingData != null)
                             RawServerOutgoingData(this, data);
@@ -530,11 +578,22 @@ namespace IceChat
         /// </summary>
         private void OnSendData(IAsyncResult ar)
         {
-            Socket handler = (Socket)ar.AsyncState;
+            //NetworkStream ns = (NetworkStream)ar.AsyncState;
+            SslStream sl = null;
+            NetworkStream ns = null;
+            
+            if (serverSetting.UseSSL)
+                sl = (SslStream)ar.AsyncState;
+            else
+                ns = (NetworkStream)ar.AsyncState;
             
             try
             {
-                int bytesSent = handler.EndSend(ar);
+                //int bytesSent = handler.EndSend(ar);
+                if (serverSetting.UseSSL)
+                    sl.EndWrite(ar);
+                else
+                    ns.EndWrite(ar);
             }
             catch (Exception e)
             {
@@ -552,30 +611,36 @@ namespace IceChat
         /// <param name="ar"></param>
         private void OnReceivedData(IAsyncResult ar)
         {
-            SocketPacket handler = (SocketPacket)ar.AsyncState;
+            
+            //NetworkStream ns = (NetworkStream)ar.AsyncState;
+            int bytesRead;
             
             try
             {
-                int size = handler.workSocket.EndReceive(ar);
+                //int size = handler.workSocket.EndReceive(ar);
+                if (serverSetting.UseSSL)
+                    bytesRead = sslStream.EndRead(ar);
+                else
+                    bytesRead = socketStream.EndRead(ar);
+
                 if (serverSetting.UseProxy && !proxyAuthed)
                 {
-                    System.Diagnostics.Debug.WriteLine("recv:" + size);
-
-                    Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
-                    char[] chars = new char[size];
-                    int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
+                    //Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
+                    //char[] chars = new char[bytesRead];
+                    //int charLen = d.GetChars(readBuffer, 0, readBuffer.Length, chars, 0);
+                    string strData = Encoding.GetEncoding(serverSetting.Encoding).GetString(readBuffer);
                     
-                    if (size == 2)
+                    if (bytesRead == 2)
                     {
-                        System.Diagnostics.Debug.WriteLine("got:" + (int)chars[0] + ":" + (int)chars[1]);
+                        System.Diagnostics.Debug.WriteLine("got:" + (int)strData[0] + ":" + (int)strData[1]);
                         
-                        if (chars[1] == 0xFF)
+                        if (strData[1] == 0xFF)
                         {
                             if (ServerError != null)
                                 ServerError(this, "Proxy Server Error: None of the authentication method was accepted by proxy server.");
                             ForceDisconnect();
                         }
-                        else if (chars[1] == 0x00)  //send proxy information
+                        else if (strData[1] == 0x00)  //send proxy information
                         {
                             byte[] proxyData = new byte[7 + serverSetting.ServerName.Length];
                             proxyData[0] = 0x05;
@@ -589,10 +654,10 @@ namespace IceChat
                             proxyData[proxyData.Length -2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
                             proxyData[proxyData.Length -1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
                             ServerMessage(this, "Sending Proxy Verification");
-                            serverSocket.BeginSend(proxyData, 0, proxyData.Length, SocketFlags.None , new AsyncCallback(OnSendData), serverSocket);                            
-                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);                            
+                            
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                         }
-                        else if (chars[1] == 0x02)  //send proxy information with user/pass
+                        else if (strData[1] == 0x02)  //send proxy information with user/pass
                         {
                             ushort nIndex = 0;
 
@@ -611,42 +676,46 @@ namespace IceChat
                             proxyData[proxyData.Length - 2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
                             proxyData[proxyData.Length - 1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
                             ServerMessage(this, "Sending Proxy Verification (user/pass)");
-                            serverSocket.BeginSend(proxyData, 0, nIndex, 0, new AsyncCallback(OnSendData), serverSocket);
-                            
-                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                         }
                     }
-                    else if (size == 10)
+                    else if (bytesRead == 10)
                     {
-                        System.Diagnostics.Debug.WriteLine("got10:" + (int)chars[0] + ":" + (int)chars[1]);
+                        System.Diagnostics.Debug.WriteLine("got10:" + (int)strData[0] + ":" + (int)strData[1]);
                         ServerMessage(this, "Socks 5 Connection Successfull");
                         SendData("NICK " + serverSetting.NickName);
                         SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
                         ServerMessage(this, "Sending User Registration Information");
                         //serverSetting.UseProxy = false;
                         proxyAuthed = true;
-                        handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+                        
+                        readBuffer = new byte[BUFFER_SIZE];
+                        socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
                 }
                 else
                 {
-                    if (size > 0)
+                    if (bytesRead > 0)
                     {
-                        Decoder d = Encoding.GetEncoding(serverSetting.Encoding).GetDecoder();
-                        char[] chars = new char[size];
-                        int charLen = d.GetChars(handler.dataBuffer, 0, size, chars, 0);
-                        System.String strData = new System.String(chars);
+                        //System.Diagnostics.Debug.WriteLine("recv:" + bytesRead);
 
-                        if (strData.Length != charLen)  //removes any trailing null characters
-                            strData = strData.Substring(0, charLen);
+                        string strData = Encoding.GetEncoding(serverSetting.Encoding).GetString(readBuffer);
+                        if (strData.Length != bytesRead)  //removes any trailing null characters
+                            strData = strData.Substring(0, bytesRead);
 
+                        //System.Diagnostics.Debug.WriteLine("data:" + strData.Length + ":" + strData);
                         strData = strData.Replace("\r", string.Empty);
 
                         if (!strData.EndsWith("\n"))
                         {
                             //create a buffer
                             dataBuffer += strData;
-                            handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+                            readBuffer = new byte[BUFFER_SIZE];
+                            if (serverSetting.UseSSL)
+                                sslStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), sslStream);
+                            else
+                                socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                             return;
                         }
 
@@ -672,7 +741,11 @@ namespace IceChat
                                 ParseData(strData);
                         }
 
-                        handler.workSocket.BeginReceive(handler.dataBuffer, 0, handler.dataBuffer.Length, 0, new AsyncCallback(OnReceivedData), handler);
+                        readBuffer = new byte[BUFFER_SIZE];
+                        if (serverSetting.UseSSL)
+                            sslStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), sslStream);
+                        else
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
                     else
                     {
@@ -753,7 +826,7 @@ namespace IceChat
                 else
                 {
                     hostEntry = Dns.GetHostEntry(serverSetting.ServerName);
-
+                    
                     whichAddressCurrent = 1;
                     totalAddressinDNS = hostEntry.AddressList.Length;
 
@@ -764,8 +837,9 @@ namespace IceChat
                     if (IPAddress.TryParse(serverSetting.ServerName, out ipAddress))
                     {
                         IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
-                        Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
+                        System.Diagnostics.Debug.WriteLine("try ipv6 1:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
+                        serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                        
                         if (ServerMessage != null)
                         {
                             string msg = FormMain.Instance.GetMessageFormat("Server Connect");
@@ -774,8 +848,7 @@ namespace IceChat
                             ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
                         }
 
-                        serverSocket = tempSocket;
-                        tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
+                        serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                         return;
                     }
                     
@@ -790,8 +863,8 @@ namespace IceChat
                             if (whichAddressCurrent == whichAddressinList)
                             {
                                 IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
-                                Socket tempSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
+                                serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                                
                                 if (ServerMessage != null)
                                 {
                                     string msg = FormMain.Instance.GetMessageFormat("Server Connect");
@@ -800,9 +873,7 @@ namespace IceChat
                                     ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
                                 }
 
-                                serverSocket = tempSocket;
-                                tempSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
-
+                                serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                                 break;
                             }
                             whichAddressCurrent++;
@@ -812,7 +883,7 @@ namespace IceChat
                         catch (Exception e)
                         {
                             if (ServerError != null)
-                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
+                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString() + ":" + e.StackTrace);
 
                             whichAddressCurrent++;
                             if (whichAddressCurrent > hostEntry.AddressList.Length)
@@ -832,12 +903,25 @@ namespace IceChat
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error:" + se.Message);
+                    ServerError(this, "Socket Exception Error 1:" + se.Message);
 
                 disconnectError = true;
                 ForceDisconnect();
             }
         }
+        
+        private bool RemoteCertificateValidationCallback(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None || sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch)
+            {
+                return true;
+            }
+
+
+            // Do not allow this client to communicate with unauthenticated servers.
+            return false;
+        }
+
 
         internal void ForceDisconnect()
         {
@@ -847,6 +931,7 @@ namespace IceChat
                 {
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
+                    //socketStream.Close();
                 }
             }
             catch
@@ -909,7 +994,7 @@ namespace IceChat
     }
 
     #region Socket Packet Class
-
+    /*
     public class StateObject
     {
         public bool connected = false;	// ID received flag
@@ -921,7 +1006,7 @@ namespace IceChat
         public string id = String.Empty;	// Host or conversation ID
         public DateTime TimeStamp;
     }
-
+    
     public class SocketPacket
     {
         public SocketPacket(Socket s)
@@ -935,7 +1020,7 @@ namespace IceChat
         public System.Net.Sockets.Socket workSocket;
         public byte[] dataBuffer = new byte[1024];
     }
-
+    */
     #endregion
 
 }

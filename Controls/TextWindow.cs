@@ -415,12 +415,18 @@ namespace IceChat
                         if (u.NickName == _linkedWordNick)
                         {
                             popupType = "NickList";
+                            //highlight the nick in the nick list
+                            if (e.Button == MouseButtons.Left)
+                                FormMain.Instance.NickList.SelectNick(_linkedWordNick);
                             break;
                         }
                         else if (u.NickName == _linkedWord)
                         {
                             popupType = "NickList";
                             _linkedWordNick = _linkedWord;
+                            //highlight the nick in the nick list
+                            if (e.Button == MouseButtons.Left)
+                                FormMain.Instance.NickList.SelectNick(_linkedWordNick);
                             break;
                         }
                     }
@@ -606,7 +612,7 @@ namespace IceChat
                         for (int i = 0; i < t.Connection.ServerSetting.StatusModes[1].Length; i++)
                             chan = chan.Replace(t.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                        if (Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
+                        if (chan.Length>0 && Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
                         {
                             FormMain.Instance.ParseOutGoingCommand(t.Connection, "/join " + chan);
                             return;
@@ -648,7 +654,7 @@ namespace IceChat
                                 for (int i = 0; i < c.Connection.ServerSetting.StatusModes[1].Length; i++)
                                     chan = chan.Replace(c.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                                if (Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
+                                if (chan.Length>0 && Array.IndexOf(c.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
                                 {
                                     FormMain.Instance.ParseOutGoingCommand(c.Connection, "/join " + chan);
                                     return;
@@ -657,15 +663,24 @@ namespace IceChat
                         }
                     }
                 }
-                if (this.Parent.GetType() == typeof(ConsoleTab))
+            }
+            if (this.Parent.GetType() == typeof(ConsoleTab))
+            {
+                //console
+                ConsoleTab c = (ConsoleTab)this.Parent;
+                FormMain.Instance.ParseOutGoingCommand(c.Connection, "/lusers");
+            }
+            else if (this.Parent.GetType() == typeof(IceTabPage))
+            {
+                IceTabPage t = (IceTabPage)this.Parent;
+                if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                    FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
+            }
+            else if (this.Parent.GetType() == typeof(Panel))
+            {
+                if (this.Parent.Parent.GetType() == typeof(IceTabPage))
                 {
-                    //console
-                    ConsoleTab c = (ConsoleTab)this.Parent;
-                    FormMain.Instance.ParseOutGoingCommand(c.Connection, "/lusers");
-                }
-                else if (this.Parent.GetType() == typeof(IceTabPage))
-                {
-                    IceTabPage t = (IceTabPage)this.Parent;
+                    IceTabPage t = (IceTabPage)this.Parent.Parent;
                     if (t.WindowStyle == IceTabPage.WindowType.Channel)
                         FormMain.Instance.ParseOutGoingCommand(t.Connection, "/chaninfo");
                 }
@@ -1324,8 +1339,8 @@ namespace IceChat
                             ch = curLine.Substring(i, 1).ToCharArray();
                             switch (ch[0])
                             {
-                                //case boldChar:
-                                //    break;
+                                case boldChar:
+                                    break;
                                 case newColorChar:
                                     buildString.Append(curLine.Substring(i, 5));
                                     if (lastColor.Length == 0)
@@ -1495,7 +1510,7 @@ namespace IceChat
 
                     if (redline == curLine)
                     {
-                        Pen p = new Pen(Color.Red);
+                        Pen p = new Pen(IrcColor.colors[FormMain.Instance.IceChatColors.UnreadTextMarkerColor]);
                         g.DrawLine(p, 0, startY, this.Width, startY);
                     }
 

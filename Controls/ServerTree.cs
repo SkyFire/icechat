@@ -73,6 +73,7 @@ namespace IceChat
             this.Paint += new PaintEventHandler(OnPaint);
             this.FontChanged += new EventHandler(OnFontChanged);
             this.Resize += new EventHandler(OnResize);
+            this.KeyDown += new KeyEventHandler(OnKeyDown);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;
@@ -97,6 +98,31 @@ namespace IceChat
             toolTip = new ToolTip();
             toolTip.AutoPopDelay = 3000;
             Invalidate();
+            
+        }
+        //this is to make the arrow keys work in the user control
+        protected override bool IsInputKey(Keys AKeyData)
+        {
+            return true;
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                selectedNodeIndex--;
+                SelectNodeByIndex(selectedNodeIndex, false);
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                selectedNodeIndex++;
+                SelectNodeByIndex(selectedNodeIndex, false);
+            }
+            else if (e.KeyCode == Keys.Apps)
+            {
+                //right mouse key
+                this.OnMouseUp(new MouseEventArgs(MouseButtons.Right, 1,0,0,0));
+            }
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -310,7 +336,9 @@ namespace IceChat
         {
             try
             {
-                if (nodeNumber <= serverNodes.Count)
+                if (nodeNumber < 0)
+                    selectedNodeIndex = 0;
+                else if (nodeNumber <= serverNodes.Count)
                     selectedNodeIndex = nodeNumber;
                 else
                     selectedNodeIndex = 0;
@@ -1028,7 +1056,7 @@ namespace IceChat
             return ss;
         }
 
-        private void SaveServers(IceChatServers servers)
+        internal void SaveServers(IceChatServers servers)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(IceChatServers));
             TextWriter textWriter = new StreamWriter(FormMain.Instance.ServersFile);
@@ -1058,7 +1086,6 @@ namespace IceChat
             return servers;
         }
         
-
         internal SortedList ServerConnections
         {
             get

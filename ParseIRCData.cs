@@ -260,8 +260,9 @@ namespace IceChat
                                     SendData("PROTOCTL NAMESX");
                                 }
                             }
-
-
+                            break;
+                        case "020": //IRCnet message
+                            ServerMessage(this, JoinString(ircData, 3, true));
                             break;
                         case "042":
                             msg = JoinString(ircData, 4, true) + " " + ircData[3];
@@ -457,7 +458,12 @@ namespace IceChat
                             msg = RemoveColon(ircData[4]) + " " + JoinString(ircData, 5, true);
                             WhoisData(this, ircData[3], msg);
                             break;
-                        
+                        case "671":     //using secure connection
+                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                                return;
+                            msg = JoinString(ircData, 4, true);
+                            WhoisData(this, ircData[3], msg);
+                            break;                        
                         case "321":     //start channel list
                             ChannelListStart(this);
                             break;
@@ -881,25 +887,15 @@ namespace IceChat
                                             {
                                                 //dcc accept, other client accepts the dcc resume
                                                 //PRIVMSG User2 :DCC ACCEPT file.ext port position
-                                                System.Diagnostics.Debug.WriteLine("DCC ACCEPT:" + data);
+                                                //System.Diagnostics.Debug.WriteLine("DCC ACCEPT:" + data);
                                                 msg = msg.Substring(10).Trim();
-                                                System.Diagnostics.Debug.WriteLine("ACCEPT:" + msg);
+                                                //System.Diagnostics.Debug.WriteLine("ACCEPT:" + msg);
                                                 string[] dccData = msg.Split(' ');
-                                                System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
+                                                //System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
                                                 
                                                 if (DCCFile != null)
                                                     DCCFile(this, nick, host, dccData[dccData.Length - 2], "ip", "file", 0, uint.Parse(dccData[dccData.Length - 1]), true);
                                                 
-                                                //DCC ACCEPT::Spyder420!Spyder420@173.217.227.151 PRIVMSG SnerfX :DCC ACCEPT "Spyder420-default(2010-06-04)-OS.zip" 4115 129896
-                                                //ACCEPT:"Spyder420-default(2010-06-04)-OS.zip" 4115 129896
-                                                //length:3
-
-
-                                                //DCC ACCEPT::SugarKick!Ice2009@S01060014d1352fd9.no.shawcable.net PRIVMSG SnerfX_ :DCC ACCEPT file.ext 11097 40960
-                                                //ACCEPT:file.ext 11097 40960
-                                                //length:3
-
-
 
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC CHAT"))
@@ -1179,6 +1175,7 @@ namespace IceChat
                         case "412": //no text to send
                         case "421": //unknown command
                         case "431": //no nickname given
+                        case "470": //forward to other channel
                         case "472": //unknown char to me (channel mode)
                             ServerError(this, JoinString(ircData, 3, false));
                             break;

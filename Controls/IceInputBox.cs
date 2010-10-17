@@ -59,13 +59,13 @@ namespace IceChat
 		{
 			InitializeComponent();
 			_buffer = new ArrayList();
-            this.MouseWheel += new MouseEventHandler(IceInputBox_MouseWheel);
+            this.MouseWheel += new MouseEventHandler(OnMouseWheel);
 
             _nickCompleteNames = new ArrayList();
 
 		}
         
-        private void IceInputBox_MouseWheel(object sender, MouseEventArgs e)
+        private void OnMouseWheel(object sender, MouseEventArgs e)
         {
             //120 -- scroll up
             //see which control has focus in the main program
@@ -103,7 +103,18 @@ namespace IceChat
             }
             else
                 if (FormMain.Instance.CurrentWindowType != IceTabPage.WindowType.ChannelList)
+                {
+                    if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Channel)
+                    {
+                        //check if mousewheel is hovering over nicklist
+                        if (FormMain.Instance.NickList.MouseHasFocus)
+                        {
+                            FormMain.Instance.NickList.ScrollWindow(scrollUp);
+                            return;
+                        }
+                    }
                     FormMain.Instance.CurrentWindow.TextWindow.ScrollWindow(scrollUp);
+                }
         }
 
         private void ScrollConsoleWindowPage(bool scrollUp)
@@ -295,6 +306,11 @@ namespace IceChat
                 else if (e.KeyCode == Keys.P)
                 {
                     FormMain.Instance.iceChatSettingsToolStripMenuItem.PerformClick();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.W)
+                {
+                    FormMain.Instance.closeCurrentWindowToolStripMenuItem.PerformClick();
                     e.Handled = true;
                 }
                 else if (e.KeyCode == Keys.G)

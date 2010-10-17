@@ -116,7 +116,7 @@ namespace IceChat
         {
             if (OnCommand != null)
             {
-                string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); 
+                string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 if (lines.Length == 1)
                 {
                     //just 1 line, add to end of text box
@@ -189,13 +189,22 @@ namespace IceChat
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-
+            //find next search
         }
 
         private void buttonPrevious_Click(object sender, EventArgs e)
         {
-
+            //find previous search
         }
 
+        private void buttonHelp_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            contextHelpMenu.Show(buttonHelp, e.Location);
+        }
+        
+        private void toolStripHelpMenuOnClick(object sender, System.EventArgs e)
+        {
+            OnCommand(this, "//addtext " + ((System.Windows.Forms.ToolStripMenuItem)sender).Tag.ToString());
+        }
     }
 }

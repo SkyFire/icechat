@@ -76,6 +76,7 @@ namespace IceChat
         private int _toolbarBack = 20;
         private int _statusbarBack = 20;
         private int _statusbarFore = 1;
+        private int _unreadTextMarker = 4;
 
         private bool _randomizeNickColors = false;
         private bool _newMessageEnabled = true;
@@ -233,6 +234,10 @@ namespace IceChat
         [XmlElement("PanelHeaderForeColor")]
         public int PanelHeaderForeColor
         { get { return _panelHeaderForeColor; } set { _panelHeaderForeColor = value; } }
+
+        [XmlElement("UnreadTextMarker")]
+        public int UnreadTextMarkerColor
+        { get { return this._unreadTextMarker; } set { this._unreadTextMarker = value; } }
 
         [XmlElement("RandomizeNickColors")]
         public bool RandomizeNickColors

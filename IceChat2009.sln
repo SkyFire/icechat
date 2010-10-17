@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IceChatScript", "Scripting\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IceChatUpdater", "Updater\IceChatUpdater.csproj", "{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MircScriptEngine", "MircScriptEngine\MircScriptEngine.csproj", "{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

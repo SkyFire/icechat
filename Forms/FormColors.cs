@@ -91,6 +91,7 @@ namespace IceChat
             this.picturePanelHeaderBG1.Click += new EventHandler(OnColor_Click);
             this.picturePanelHeaderBG2.Click += new EventHandler(OnColor_Click);
             this.picturePanelHeaderForeColor.Click += new EventHandler(OnColor_Click);
+            this.pictureUnreadTextMarkerColor.Click += new EventHandler(OnColor_Click);
 
             this.pictureToolBar.Click += new EventHandler(OnColor_Click);
             this.pictureMenuBar.Click += new EventHandler(OnColor_Click);
@@ -174,6 +175,9 @@ namespace IceChat
 
             this.picturePanelHeaderForeColor.BackColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.picturePanelHeaderForeColor.Tag = iceChatColors.PanelHeaderForeColor;
+
+            this.pictureUnreadTextMarkerColor.BackColor = IrcColor.colors[iceChatColors.UnreadTextMarkerColor];
+            this.pictureUnreadTextMarkerColor.Tag = iceChatColors.UnreadTextMarkerColor;
 
             this.pictureMenuBar.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
             this.pictureMenuBar.Tag = iceChatColors.MenubarBackColor;
@@ -1071,6 +1075,7 @@ namespace IceChat
             iceChatColors.PanelHeaderBG1 = (int)picturePanelHeaderBG1.Tag;
             iceChatColors.PanelHeaderBG2 = (int)picturePanelHeaderBG2.Tag;
             iceChatColors.PanelHeaderForeColor = (int)picturePanelHeaderForeColor.Tag;
+            iceChatColors.UnreadTextMarkerColor = (int)pictureUnreadTextMarkerColor.Tag;
 
             iceChatColors.MenubarBackColor = (int)pictureMenuBar.Tag;
             iceChatColors.ToolbarBackColor = (int)pictureToolBar.Tag;

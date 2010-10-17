@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
+using System.Management;
 
 using IceChat.Properties;
 using IceChatPlugin;
@@ -273,8 +274,8 @@ namespace IceChat
 
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
-
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - July 28 2010";
+            
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - October 16 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -282,8 +283,9 @@ namespace IceChat
             {
                 errorFile = new StreamWriter(logsFolder + System.IO.Path.DirectorySeparatorChar + "errors.log");
             }
-            catch (IOException)
+            catch (IOException io)
             {
+                System.Diagnostics.Debug.WriteLine("Can not create errors.log:" + io.Message);
             }
 
             if (!iceChatOptions.TimeStamp.EndsWith(" "))
@@ -599,8 +601,8 @@ namespace IceChat
             mainTabControl.TabPages.Add(p);
 
             WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1, false);
-            WindowMessage(null, "Console", "\x00034** This is an Alpha version, not fully functional **", 1, false);
-            WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.63", 1, false);
+            WindowMessage(null, "Console", "\x00034** This is a Beta version, not fully functional, not all options are added **", 1, false);
+            WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
             WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org\x0003 if you wish to help with this project", 1, true);
 
             StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
@@ -909,7 +911,12 @@ namespace IceChat
             else
             {
                 //check what type the current window is
-                if (CurrentWindowType != IceTabPage.WindowType.Console)
+                if (CurrentWindowType == IceTabPage.WindowType.ChannelList)
+                {
+                    //do nothing, send it to the console
+                    mainTabControl.GetTabPage("Console").AddText(connection, data, color, false);
+                }
+                else if (CurrentWindowType != IceTabPage.WindowType.Console)
                 {
                     IceTabPage t = mainTabControl.CurrentTab;
                     if (t != null)
@@ -1354,6 +1361,8 @@ namespace IceChat
         {
             try
             {
+                data = data.Replace("&#x3;", ((char)3).ToString());
+                
                 if (data.StartsWith("//"))
                 {
                     //parse out identifiers
@@ -1591,7 +1600,13 @@ namespace IceChat
                                 }
                             }
                             break;                        
-                        
+                        case "/addtext":
+                            if (data.Length > 0)
+                            {
+                                inputPanel.AppendText(data);
+                                FocusInputBox();
+                            }
+                            break;
                         case "/ame":    //me command for all channels
                             if (connection != null && data.Length > 0)
                             {
@@ -1625,21 +1640,27 @@ namespace IceChat
                         case "/autojoin":
                             if (connection != null)
                             {
-                                foreach (string chan in connection.ServerSetting.AutoJoinChannels)
+                                if (connection.ServerSetting.AutoJoinChannels != null)
                                 {
-                                    if (!chan.StartsWith(";"))
-                                        SendData(connection, "JOIN " + chan);
+                                    foreach (string chan in connection.ServerSetting.AutoJoinChannels)
+                                    {
+                                        if (!chan.StartsWith(";"))
+                                            SendData(connection, "JOIN " + chan);
+                                    }
                                 }
                             }
                             break;
                         case "/autoperform":
                             if (connection != null)
                             {
-                                foreach (string ap in connection.ServerSetting.AutoPerform)
+                                if (connection.ServerSetting.AutoPerform != null)
                                 {
-                                    string autoCommand = ap.Replace("\r", String.Empty);
-                                    if (!autoCommand.StartsWith(";"))
-                                        ParseOutGoingCommand(connection, autoCommand);
+                                    foreach (string ap in connection.ServerSetting.AutoPerform)
+                                    {
+                                        string autoCommand = ap.Replace("\r", String.Empty);
+                                        if (!autoCommand.StartsWith(";"))
+                                            ParseOutGoingCommand(connection, autoCommand);
+                                    }
                                 }
                             }
                             break;
@@ -1833,6 +1854,10 @@ namespace IceChat
                                         {
                                             System.Diagnostics.Debug.WriteLine("try it");
                                             //more to it, maybe a file to send
+                                            //if (!mainTabControl.WindowExists(:
+                                            if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
+                                                AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+
 
                                         }
                                         else
@@ -1962,7 +1987,42 @@ namespace IceChat
                         case "/ignore":
                             if (connection != null)
                             {
+                                if (data.Length > 0)
+                                {
+                                    //check if just a nick/host , no extra params
+                                    if (data.IndexOf(" ") == -1)
+                                    {
+                                        //check if already in ignore list or not
+                                        for (int i = 0; i < connection.ServerSetting.IgnoreList.Length;i++ )
+                                        {
+                                            string checkNick = connection.ServerSetting.IgnoreList[i];
+                                            if (connection.ServerSetting.IgnoreList[i].StartsWith(";"))
+                                                checkNick = checkNick.Substring(1);
+                                            
+                                            if (checkNick.ToLower() == data.ToLower())
+                                            {
+                                                if (connection.ServerSetting.IgnoreList[i].StartsWith(";"))
+                                                    connection.ServerSetting.IgnoreList[i] = checkNick;
+                                                else
+                                                    connection.ServerSetting.IgnoreList[i] = ";" + checkNick;
 
+                                                
+                                                serverTree.SaveServers(serverTree.ServersCollection);
+                                                return;
+                                            }
+                                        }
+
+                                        //no match found, add the new item to the IgnoreList
+                                        System.Collections.Specialized.StringCollection sc = new System.Collections.Specialized.StringCollection();
+                                        foreach (string n in connection.ServerSetting.IgnoreList)
+                                            sc.Add(n);
+                                        sc.Add(data);
+                                        connection.ServerSetting.IgnoreList = new string[sc.Count];
+                                        sc.CopyTo(connection.ServerSetting.IgnoreList, 0);
+                                        sc.Clear();
+                                        serverTree.SaveServers(serverTree.ServersCollection);
+                                    }
+                                }
                             }
                             break;
                         case "/join":
@@ -2129,6 +2189,22 @@ namespace IceChat
                                 else if (CurrentWindowType == IceTabPage.WindowType.Query)
                                 {
                                     RemoveWindow(connection, CurrentWindow.TabCaption);
+                                }
+                            }
+                            break;
+                        case "/partall":
+                            if (connection != null)
+                            {
+                                for (int i = mainTabControl.TabPages.Count - 1; i >= 0; i--)
+                                {
+                                    if (mainTabControl.TabPages[i].WindowStyle == IceTabPage.WindowType.Channel)
+                                    {
+                                        if (mainTabControl.TabPages[i].Connection == connection)
+                                        {
+                                            SendData(connection, "PART " + mainTabControl.TabPages[i].TabCaption);
+                                            RemoveWindow(connection, mainTabControl.TabPages[i].TabCaption);
+                                        }
+                                    }
                                 }
                             }
                             break;
@@ -2594,14 +2670,8 @@ namespace IceChat
             Regex ParseIdent = new Regex(identMatch);
             Match m = ParseIdent.Match(data);
 
-            //StringBuilder sLine = new StringBuilder();
-            //sLine.Append(data);
-            //int oldLen = 0;
-
             while (m.Success)
             {
-                //oldLen = sLine.Length - m.Length;
-                
                 switch (m.Value)
                 {
                     case "$me":
@@ -2671,18 +2741,12 @@ namespace IceChat
                         if (connection != null)
                         {
                             if (connection.ServerSetting.RealServerName.Length > 0)
-                            {
                                 data = ReplaceFirst(data, m.Value, connection.ServerSetting.RealServerName);
-                            }
                             else
-                            {
                                 data = ReplaceFirst(data, m.Value, connection.ServerSetting.ServerName);
-                            }
                         }
                         else
-                        {
                             data = ReplaceFirst(data, m.Value, "$null");
-                        }
                         break;
                     case "$online":
                         if (connection != null)
@@ -2717,8 +2781,11 @@ namespace IceChat
                     case "$osbuild":
                         data = ReplaceFirst(data, m.Value, Environment.OSVersion.Version.Build.ToString());
                         break;
+                    case "$osplatform":
+                        data = ReplaceFirst(data, m.Value, Environment.OSVersion.Platform.ToString());
+                        break;
                     case "$os":
-                        data = ReplaceFirst(data, m.Value, Environment.OSVersion.ToString());
+                        data = ReplaceFirst(data, m.Value, GetOperatingSystemName());
                         break;
                     case "$icepath":
                     case "$icechatexedir":
@@ -2780,15 +2847,88 @@ namespace IceChat
                         break;
                 }
                 m = m.NextMatch();
-                //System.Diagnostics.Debug.WriteLine(sLine.Length + ":" + oldLen + ":" + sLine.ToString());                
-                
-                //m = ParseIdent.Match(sLine.ToString(), sLine.Length - oldLen);
-
             }
 
             return data;
         }
+        private string GetOperatingSystemName()
+        {
+            string OSName = "Unknown";
+            System.OperatingSystem osInfo = System.Environment.OSVersion;
+            switch (osInfo.Platform)
+            {
+                
+                case PlatformID.Unix:
+                    OSName = Environment.OSVersion.ServicePack.ToString();
+                    break;                
+                case PlatformID.Win32NT:
 
+                    switch (osInfo.Version.Major)
+                    {
+                        case 3:
+                            OSName = "Windows NT 3.51";
+                            break;
+                        case 4:
+                            OSName = "Windows NT 4.0";
+                            break;
+                        case 5:
+                            switch (osInfo.Version.Minor)
+                            {
+                                case 0:
+                                    OSName = "Windows 2000";
+                                    break;
+                                case 1:
+                                    OSName = "Windows XP";
+                                    break;
+                                case 2:
+                                    OSName = "Windows 2003";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case 6:
+                            OSName = "Windows Vista";
+                            break;
+                        default:
+                            OSName = "Unknown Win32NT Windows";
+                            break;
+
+                    }
+                    break;
+
+                case PlatformID.Win32S:
+                    break;
+
+                case PlatformID.Win32Windows:
+                    switch (osInfo.Version.Major)
+                    {
+                        case 0:
+                            OSName = "Windows 95";
+                            break;
+                        case 10:
+                            if (osInfo.Version.Revision.ToString() == "2222A")
+                                OSName = "Windows 98 Second Edition";
+                            else
+                                OSName = "Windows 98";
+                            break;
+                        case 90:
+                            OSName = "Windows ME";
+                            break;
+                        default:
+                            OSName = "Unknown Win32 Windows";
+                            break;
+                    }
+                    break;
+                case PlatformID.WinCE:
+                    break;
+                default:
+                    break;
+
+            }
+            return OSName;
+
+        }
         private string ParseIdentifierValue(string data, string dataPassed)
         {
             //split up the data into words
@@ -2882,6 +3022,9 @@ namespace IceChat
                 changedData = data.Split(' ');
 
                 int count = -1;
+                string extra = "";
+                bool askExtra = false;
+
 
                 foreach (string word in parsedData)
                 {
@@ -2889,6 +3032,26 @@ namespace IceChat
 
                     if (word.StartsWith("//") && count == 0)
                         changedData[count] = word.Substring(1);
+
+                    if (askExtra)
+                    {
+                        //continueing a $?= 
+                        extra += " " + word;
+                        changedData[count] = null;
+                        if (extra[extra.Length - 1] == extra[0])
+                        {
+                            askExtra = false;
+                            //ask the question
+                            InputBoxDialog i = new InputBoxDialog();
+                            i.FormCaption = "Enter Value";
+                            i.FormPrompt = extra.Substring(1,extra.Length-2);
+
+                            i.ShowDialog();
+                            if (i.InputResponse.Length > 0)
+                                changedData[count] = i.InputResponse;
+                            i.Dispose();                            
+                        }
+                    }
 
                     //parse out identifiers (start with a $)
                     if (word.StartsWith("$"))
@@ -2898,6 +3061,37 @@ namespace IceChat
 
                             default:
                                 int result;
+                                
+                                if (word.StartsWith("$?=") && word.Length > 5)
+                                {
+                                    //check for 2 quotes (single or double)
+                                    string ask = word.Substring(3);
+                                    //check what kind of a quote it is
+                                    char quote = ask[0];
+                                    if (quote == ask[ask.Length - 1])
+                                    {
+                                        //ask the question
+                                        extra = ask;
+                                        InputBoxDialog i = new InputBoxDialog();
+                                        i.FormCaption = "Enter Value";
+                                        i.FormPrompt = extra.Substring(1, extra.Length - 2);
+
+                                        i.ShowDialog();
+                                        if (i.InputResponse.Length > 0)
+                                            changedData[count] = i.InputResponse;
+                                        else
+                                            changedData[count] = null;
+                                        i.Dispose();
+                                    }
+                                    else
+                                    {
+                                        //go to the next word until we find a quote at the end
+                                        extra = ask;
+                                        askExtra = true;
+                                        changedData[count] = null;
+                                    }
+                                }
+                                
                                 if (word.StartsWith("$read(") && word.IndexOf(')') > word.IndexOf('('))
                                 {
                                     string file = ReturnBracketValue(word);
@@ -2907,8 +3101,7 @@ namespace IceChat
                                         //its a full folder
                                         if (File.Exists(file))
                                         {
-                                            //count the number of lines in the file
-                                            
+                                            //count the number of lines in the file                                            
                                             //load the file in and read a random line from it
                                             string[] lines = File.ReadAllLines(file);
                                             if (lines.Length > 0)
@@ -3100,8 +3293,24 @@ namespace IceChat
             {
                 WriteErrorFile(connection, "ParseIdentifiers" + data, e);
             }
-            return String.Join(" ", changedData);
+            //return String.Join(" ", changedData);
+            return JoinString(changedData);
         }
+        
+        //rejoin an arrayed string into a single string, not adding null values
+        private string JoinString(string[] joinString)
+        {
+            string joined = "";
+            foreach (string j in joinString)
+            {
+                if (j != null)
+                    joined += j + " ";
+            }
+            if (joined.Length > 0)
+                joined = joined.Substring(0, joined.Length - 1);
+            return joined;
+        }
+
         private string ReturnBracketValue(string data)
         {
             //return what is between ( ) brackets
@@ -3408,6 +3617,7 @@ namespace IceChat
         private void debugWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //add the debug window, if it does not exist
+            //System.Diagnostics.Debug.WriteLine(mainTabControl.Focused);
             if (GetWindow(null, "Debug", IceTabPage.WindowType.Debug) == null)
                 AddWindow(null, "Debug", IceTabPage.WindowType.Debug);
         }
@@ -3680,6 +3890,29 @@ namespace IceChat
         private void browseDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ParseOutGoingCommand(null, "//run $icechatdir");
+        }
+
+        private void closeCurrentWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //close the current window
+            mainTabControl.CloseCurrentTab();
+        }
+
+        private void selectNickListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //give the nick list the current focus
+            nickList.Focus();
+        }
+
+        private void selectServerTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //give the server tree the current focus
+            serverTree.Focus();
+        }
+
+        private void selectInputBoxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FocusInputBox();
         }
 
     }

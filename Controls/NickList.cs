@@ -44,7 +44,8 @@ namespace IceChat
         
         //the index of the top item in the nick list
         private int topIndex = 0;
-        
+        private bool mouseFocus = false;
+
         private int headerHeight = 23;
         private int selectedIndex = -1;
         private string headerCaption = "";
@@ -68,9 +69,12 @@ namespace IceChat
             this.Resize += new EventHandler(OnResize);            
             this.FontChanged += new EventHandler(OnFontChanged);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
-            
+            this.KeyDown += new KeyEventHandler(OnKeyDown);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
-            this.DoubleBuffered = true;            
+            this.DoubleBuffered = true;
+
+            this.MouseEnter += new EventHandler(OnMouseEnter);
+            this.MouseLeave += new EventHandler(OnMouseLeave);
 
             SetStyle(ControlStyles.ResizeRedraw |  ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
 
@@ -80,6 +84,46 @@ namespace IceChat
             toolTip.AutoPopDelay = 3000;
 
             popupMenu = new ContextMenuStrip();
+        }
+
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            mouseFocus = false;
+        }
+
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            mouseFocus = true;
+        }
+
+        internal bool MouseHasFocus
+        {
+            get { return mouseFocus; }
+        }
+
+        //this is to make the arrow keys work in the user control
+        protected override bool IsInputKey(Keys AKeyData)
+        {
+            return true;
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                selectedIndex--;
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                selectedIndex++;
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.Apps)
+            {
+                //right mouse key
+                this.OnMouseUp(new MouseEventArgs(MouseButtons.Right, 1, 0, 0, 0));
+            }
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -118,6 +162,20 @@ namespace IceChat
         {
             topIndex = e.NewValue;
             Invalidate();
+        }
+
+        internal void ScrollWindow(bool scrollUp)
+        {
+            if (scrollUp && (topIndex > 0))
+            {                
+                topIndex--;
+                Invalidate();
+            }
+            else if ((topIndex + vScrollBar.LargeChange) < vScrollBar.Maximum)
+            {
+                topIndex++;
+                Invalidate();
+            }
         }
 
         private void OnDoubleClick(object sender, EventArgs e)
@@ -222,87 +280,6 @@ namespace IceChat
                 Invalidate();
             }
             
-            if (e.Button == MouseButtons.Right && selectedIndex != -1)
-            {
-                //show the popup menu
-                foreach (PopupMenuItem p in FormMain.Instance.IceChatPopupMenus.listPopups)
-                {
-                    if (p.PopupType == "NickList")
-                    {
-                        string[] menuItems = p.Menu;
-                        
-                        //build the menu
-                        ToolStripItem t;
-                        
-                        int subMenu = 0;
-
-                        popupMenu.Items.Clear();
-                        
-                        string nick = sortedNicks[selectedIndex].ToString();
-                        //replace any of the modes
-                        for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                            nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
-
-                        foreach (string menu in menuItems)
-                        {
-                            string caption;
-                            string command;
-                            string menuItem = menu;
-                            int menuDepth = 0;
-                            
-                            //get the menu depth
-                            while (menuItem.StartsWith("."))
-                            {
-                                menuItem = menuItem.Substring(1);
-                                menuDepth++;
-                            }
-
-                            if (menu.IndexOf(':') > 0)
-                            {
-                                caption = menuItem.Substring(0,menuItem.IndexOf(':'));
-                                command = menuItem.Substring(menuItem.IndexOf(':') + 1);
-                            }
-                            else
-                            {
-                                caption = menuItem;
-                                command = "";
-                            }
-                            
-                            if (caption.Length > 0)
-                            {
-                                if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
-                                {
-                                    caption = caption.Replace("$chan", currentWindow.TabCaption);
-                                    command = command.Replace("$chan", currentWindow.TabCaption);
-                                }
-                                caption = caption.Replace("$nick", nick);
-                                command = command.Replace("$nick", nick);
-                                
-                                if (caption == "-")
-                                    t = new ToolStripSeparator();
-                                else
-                                {
-                                    t = new ToolStripMenuItem(caption);
-
-                                    //parse out the command/$identifiers                            
-                                    command = command.Replace("$1", nick);
-                                    command = command.Replace("$nick", nick);
-
-                                    t.Click += new EventHandler(OnPopupMenuClick);
-                                    t.Tag = command;
-                                }
-                                if (menuDepth == 0)
-                                    subMenu = popupMenu.Items.Add(t);
-                                else
-                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
-
-                                t = null;
-                            }
-                        }
-                        popupMenu.Show(this, e.Location);
-                    }
-                }
-            }            
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
@@ -532,13 +509,129 @@ namespace IceChat
         }
 
         /// <summary>
-        /// Return focus back to the InputText Box
+        /// Show the popup Menu
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            //FormMain.Instance.FocusInputBox();
+            if (e.Button == MouseButtons.Right && selectedIndex != -1)
+            {
+                //show the popup menu
+                foreach (PopupMenuItem p in FormMain.Instance.IceChatPopupMenus.listPopups)
+                {
+                    if (p.PopupType == "NickList")
+                    {
+                        string[] menuItems = p.Menu;
+
+                        //build the menu
+                        ToolStripItem t;
+
+                        int subMenu = 0;
+
+                        popupMenu.Items.Clear();
+
+                        string nick = sortedNicks[selectedIndex].ToString();
+                        //replace any of the modes
+                        for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
+                            nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                        foreach (string menu in menuItems)
+                        {
+                            string caption;
+                            string command;
+                            string menuItem = menu;
+                            int menuDepth = 0;
+
+                            //get the menu depth
+                            while (menuItem.StartsWith("."))
+                            {
+                                menuItem = menuItem.Substring(1);
+                                menuDepth++;
+                            }
+
+                            if (menu.IndexOf(':') > 0)
+                            {
+                                caption = menuItem.Substring(0, menuItem.IndexOf(':'));
+                                command = menuItem.Substring(menuItem.IndexOf(':') + 1);
+                            }
+                            else
+                            {
+                                caption = menuItem;
+                                command = "";
+                            }
+
+                            if (caption.Length > 0)
+                            {
+                                if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+                                {
+                                    caption = caption.Replace("$chan", currentWindow.TabCaption);
+                                    command = command.Replace("$chan", currentWindow.TabCaption);
+                                }
+                                caption = caption.Replace("$nick", nick);
+                                command = command.Replace("$nick", nick);
+
+                                if (caption == "-")
+                                    t = new ToolStripSeparator();
+                                else
+                                {
+                                    t = new ToolStripMenuItem(caption);
+
+                                    //parse out the command/$identifiers                            
+                                    command = command.Replace("$1", nick);
+                                    command = command.Replace("$nick", nick);
+
+                                    t.Click += new EventHandler(OnPopupMenuClick);
+                                    t.Tag = command;
+                                }
+                                if (menuDepth == 0)
+                                    subMenu = popupMenu.Items.Add(t);
+                                else
+                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+
+                                t = null;
+                            }
+                        }
+                        popupMenu.Show(this, e.Location);
+                    }
+                }
+            }            
+        }
+        
+        internal void SelectNick(string nick)
+        {
+            //select a specific nickname in the nicklist
+            for (int i = 0; i < sortedNicks.Count; i++)
+            {
+                if (nick == sortedNicks[i].ToString())
+                {
+                    //matched
+                    selectedIndex = i;
+                    int p = (selectedIndex / vScrollBar.LargeChange);
+                    
+                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex)
+                        topIndex += (p * vScrollBar.LargeChange);
+                    else if ((topIndex > selectedIndex))
+                        topIndex = (p * vScrollBar.LargeChange);
+
+                    Invalidate();
+                    return;
+                }
+                else if (nick == sortedNicks[i].ToString().Substring(1))
+                {
+                    //matched
+                    selectedIndex = i;
+                    int p = (selectedIndex / vScrollBar.LargeChange);
+                    
+                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex)
+                        topIndex += (p * vScrollBar.LargeChange);
+                    else if ((topIndex > selectedIndex))
+                        topIndex = (p * vScrollBar.LargeChange);
+                    
+                    Invalidate();
+                    return;
+                }
+            }
         }
 
         /// <summary>

@@ -25,25 +25,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 
-namespace IceChatScript
+namespace MircScriptEngine
 {
-    public class IceChatScript
+    public class ScriptEngine
     {
-        public delegate void OutGoingCommandDelegate(string command, object connection);
-        public event OutGoingCommandDelegate OutGoingCommand;
-        
-        public IceChatScript()
-        {
-            //
-        }
-        
-        public void SendCommand(string command, object connection)
-        {
-            System.Diagnostics.Debug.WriteLine("fire send command from script");
-            if (OutGoingCommand != null)
-                OutGoingCommand(command, connection);
-        }
+    
     }
 }

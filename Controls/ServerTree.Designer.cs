@@ -73,10 +73,10 @@
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(180, 57);
             this.panelButtons.TabIndex = 0;
-            this.panelButtons.TabStop = true;
             // 
             // buttonAdd
             // 
+            this.buttonAdd.AccessibleDescription = "Add a new server";
             this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAdd.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonAdd.Location = new System.Drawing.Point(101, 28);
@@ -91,6 +91,7 @@
             // 
             // buttonEdit
             // 
+            this.buttonEdit.AccessibleDescription = "Edit selected server settings";
             this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEdit.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonEdit.Location = new System.Drawing.Point(101, 2);
@@ -105,6 +106,7 @@
             // 
             // buttonDisconnect
             // 
+            this.buttonDisconnect.AccessibleDescription = "Disconnect selected server";
             this.buttonDisconnect.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonDisconnect.Location = new System.Drawing.Point(2, 28);
             this.buttonDisconnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -118,6 +120,7 @@
             // 
             // buttonConnect
             // 
+            this.buttonConnect.AccessibleDescription = "Connect to selected server";
             this.buttonConnect.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonConnect.Location = new System.Drawing.Point(2, 2);
             this.buttonConnect.Margin = new System.Windows.Forms.Padding(2);
@@ -287,6 +290,8 @@
             // 
             // ServerTree
             // 
+            this.AccessibleDescription = "List of servers and channels associated with them once connected";
+            this.AccessibleRole = System.Windows.Forms.AccessibleRole.Pane;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.vScrollBar);

@@ -220,6 +220,8 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
+            this.labelUnreadTextMarkerColor = new System.Windows.Forms.Label();
+            this.pictureUnreadTextMarkerColor = new System.Windows.Forms.PictureBox();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -265,6 +267,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureOperator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControlColors
@@ -925,6 +928,8 @@
             // tabPageBackGround
             // 
             this.tabPageBackGround.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageBackGround.Controls.Add(this.pictureUnreadTextMarkerColor);
+            this.tabPageBackGround.Controls.Add(this.labelUnreadTextMarkerColor);
             this.tabPageBackGround.Controls.Add(this.pictureStatusFore);
             this.tabPageBackGround.Controls.Add(this.labelStatusFore);
             this.tabPageBackGround.Controls.Add(this.pictureStatusBar);
@@ -1492,7 +1497,25 @@
             this.labelCurrent.Name = "labelCurrent";
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
-            this.labelCurrent.Text = "Current:";
+            this.labelCurrent.Text = "Current Selected:";
+                        // labelUnreadTextMarkerColor
+                        // 
+            this.labelUnreadTextMarkerColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelUnreadTextMarkerColor.Location = new System.Drawing.Point(19, 338);
+            this.labelUnreadTextMarkerColor.Name = "labelUnreadTextMarkerColor";
+            this.labelUnreadTextMarkerColor.Size = new System.Drawing.Size(210, 20);
+            this.labelUnreadTextMarkerColor.TabIndex = 112;
+            this.labelUnreadTextMarkerColor.Text = "Unread Text Marker";
+                        // 
+                        // pictureUnreadTextMarkerColor
+                        // 
+            this.pictureUnreadTextMarkerColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureUnreadTextMarkerColor.Location = new System.Drawing.Point(235, 338);
+            this.pictureUnreadTextMarkerColor.Name = "pictureUnreadTextMarkerColor";
+            this.pictureUnreadTextMarkerColor.Size = new System.Drawing.Size(20, 20);
+            this.pictureUnreadTextMarkerColor.TabIndex = 113;
+            this.pictureUnreadTextMarkerColor.TabStop = false;
+            this.pictureUnreadTextMarkerColor.Tag = "Unread Text Marker";
             // 
             // FormColors
             // 
@@ -1536,6 +1559,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabJoin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabMessage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabCurrent)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).EndInit();
             this.tabPageBackGround.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusFore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusBar)).EndInit();
@@ -1614,6 +1638,8 @@
         private System.Windows.Forms.CheckBox checkServerQuit;
         private System.Windows.Forms.CheckBox checkChannelPart;
         private System.Windows.Forms.CheckBox checkChannelJoin;
+        private System.Windows.Forms.PictureBox pictureUnreadTextMarkerColor;
+        private System.Windows.Forms.Label labelUnreadTextMarkerColor;
 
     }
 }

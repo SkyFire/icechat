@@ -215,6 +215,16 @@ namespace IceChat
             return null;
         }
 
+        internal void CloseCurrentTab()
+        {
+            IceTabPage current = GetTabPage(_selectedIndex);
+            if (current != null)
+            {
+                if (this.OnTabClosed != null)
+                    OnTabClosed(SelectedIndex);
+            }
+        }
+
         private void InitializeCustom() 
         {
             this.MouseDown += new MouseEventHandler(OnMouseDown);
@@ -460,12 +470,7 @@ namespace IceChat
 
         private void pnlCloseButton_MouseDown(object sender, MouseEventArgs e)
         {
-            IceTabPage current = GetTabPage(_selectedIndex);
-            if (current != null)
-            {
-                if (this.OnTabClosed != null)
-                    OnTabClosed(SelectedIndex);
-            }
+            CloseCurrentTab();
         }
 
         protected override void OnPaint(PaintEventArgs e) 

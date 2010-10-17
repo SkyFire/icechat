@@ -44,9 +44,23 @@ namespace IceChat
 
             string date = "-" + System.DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (!Directory.Exists(logFolder))
-                Directory.CreateDirectory(logFolder);
+            try
+            {
+                if (!Directory.Exists(logFolder))
+                    Directory.CreateDirectory(logFolder);
+            }
+            catch (NotSupportedException)
+            {
+                //invalid directory name, try display name instead
+                logFolder = FormMain.Instance.LogsFolder + Path.DirectorySeparatorChar + _consoleTab.Connection.ServerSetting.DisplayName;
+                foreach (char c in Path.GetInvalidPathChars())
+                    logFolder = logFolder.Replace(c, '_');
+                
+                if (!Directory.Exists(logFolder))
+                    Directory.CreateDirectory(logFolder);
 
+            }
+            
             if (FormMain.Instance.IceChatOptions.SeperateLogs)
                 logFile = new FileStream(logFolder + Path.DirectorySeparatorChar + "Console" + date + fileExtension, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
             else
