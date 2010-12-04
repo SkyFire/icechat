@@ -78,6 +78,7 @@ namespace IceChat
             this.nickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.channelBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.selectNickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectServerTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -233,6 +234,7 @@ namespace IceChat
             this.nickListToolStripMenuItem,
             this.statusBarToolStripMenuItem,
             this.toolBarToolStripMenuItem,
+            this.channelBarToolStripMenuItem,
             this.toolStripMenuItem3,
             this.selectNickListToolStripMenuItem,
             this.selectServerTreeToolStripMenuItem,
@@ -280,6 +282,16 @@ namespace IceChat
             this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.toolBarToolStripMenuItem.Text = "Tool Bar";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.toolBarToolStripMenuItem_Click);
+            // 
+            // channelBarToolStripMenuItem
+            // 
+            this.channelBarToolStripMenuItem.Checked = true;
+            this.channelBarToolStripMenuItem.CheckOnClick = true;
+            this.channelBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.channelBarToolStripMenuItem.Name = "channelBarToolStripMenuItem";
+            this.channelBarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.channelBarToolStripMenuItem.Text = "Channel Bar";
+            this.channelBarToolStripMenuItem.Click += new System.EventHandler(this.channelBarToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -638,6 +650,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem selectServerTreeToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem selectInputBoxToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem channelBarToolStripMenuItem;
 
 
 

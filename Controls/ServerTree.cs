@@ -519,8 +519,9 @@ namespace IceChat
                             this.clearWindowToolStripMenuItem,
                             this.closeChannelToolStripMenuItem,
                             this.reJoinChannelToolStripMenuItem,
-                            this.channelInformationToolStripMenuItem});
-
+                            this.channelInformationToolStripMenuItem,
+                            this.channelFontToolStripMenuItem});
+                            
                             //add in the popup menu
                             AddPopupMenu("Channel", contextMenuChannel);
 
@@ -1350,6 +1351,15 @@ namespace IceChat
                 FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/chaninfo " + ((IceTabPage)findNode).TabCaption);
         }
 
+        private void channelFontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //popup change font window for channel
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/font " + ((IceTabPage)findNode).TabCaption);
+
+        }
+
         private void clearWindowToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             //clear query window
@@ -1384,6 +1394,7 @@ namespace IceChat
         }
 
         #endregion
+
 
 
     }

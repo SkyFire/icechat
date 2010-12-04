@@ -54,6 +54,7 @@
             this.closeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silenceUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.channelFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
@@ -150,9 +151,10 @@
             this.clearWindowToolStripMenuItem,
             this.closeChannelToolStripMenuItem,
             this.reJoinChannelToolStripMenuItem,
-            this.channelInformationToolStripMenuItem});
+            this.channelInformationToolStripMenuItem,
+            this.channelFontToolStripMenuItem});
             this.contextMenuChannel.Name = "contextMenuChannel";
-            this.contextMenuChannel.Size = new System.Drawing.Size(185, 92);
+            this.contextMenuChannel.Size = new System.Drawing.Size(185, 136);
             // 
             // clearWindowToolStripMenuItem
             // 
@@ -288,6 +290,13 @@
             this.silenceUserToolStripMenuItem.Text = "Silence User";
             this.silenceUserToolStripMenuItem.Click += new System.EventHandler(this.silenceUserToolStripMenuItem_Click);
             // 
+            // channelFontToolStripMenuItem
+            // 
+            this.channelFontToolStripMenuItem.Name = "channelFontToolStripMenuItem";
+            this.channelFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.channelFontToolStripMenuItem.Text = "Channel Font";
+            this.channelFontToolStripMenuItem.Click += new System.EventHandler(this.channelFontToolStripMenuItem_Click);
+            // 
             // ServerTree
             // 
             this.AccessibleDescription = "List of servers and channels associated with them once connected";
@@ -338,5 +347,6 @@
         private System.Windows.Forms.ToolStripMenuItem openLogFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forceDisconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItemBlank;
+        private System.Windows.Forms.ToolStripMenuItem channelFontToolStripMenuItem;
     }
 }

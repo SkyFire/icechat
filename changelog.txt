@@ -1,3 +1,7 @@
+Build Beta 2.1 - December 4 2010
+* Added option to Show/Hide Channel Bar
+
+
 Build Beta 2 - December 4 2010
 * Fixed problem with BeginWrite for Sending Data, added a sendBuffer Queue
 * Fixed SSL Exception Error if the remote certificate is invalid

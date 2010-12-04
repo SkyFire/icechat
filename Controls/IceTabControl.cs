@@ -72,6 +72,8 @@ namespace IceChat
 
         private Panel pnlCloseButton;
 
+        private bool showTabs;
+
         //public event System.EventHandler SelectedIndexChanged;
         public delegate void TabEventHandler(object sender, TabEventArgs e);
         public event TabEventHandler SelectedIndexChanged;
@@ -138,11 +140,20 @@ namespace IceChat
             }
         }
 
+        internal bool ShowTabs
+        {
+            set
+            {
+                this.showTabs = value;
+                //re-draw the panel accordingly
+                this.Refresh();
+            }
+        }
+
         internal IceTabPage CurrentTab
         {
             get
             {
-                //System.Diagnostics.Debug.WriteLine("Current Tab:" + _selectedIndex + ":" + _TabPages.Count);
                 if (_selectedIndex == -1) _selectedIndex = 0;
                 if (_selectedIndex > (_TabPages.Count - 1)) _selectedIndex = 0;
                 return _TabPages[_selectedIndex];
@@ -159,9 +170,7 @@ namespace IceChat
                 if (_TabPages[i] == page)
                 {
                     SelectedIndex = i;
-                    Invalidate();
-                    
-                    
+                    this.Invalidate();
                     if (this.SelectedIndexChanged != null)
                     {
                         TabEventArgs e = new TabEventArgs();
@@ -521,22 +530,28 @@ namespace IceChat
                 Region rsaved = g.Clip;
                 for (int i = 0; i < _TabPages.Count; i++)
                 {
-                    _TabPages[i].Location = new Point(_tabStartXPos, ((_TabRowHeight + 7) * _TotalTabRows));
+                    if (showTabs == true) 
+                        _TabPages[i].Location = new Point(_tabStartXPos, ((_TabRowHeight + 7) * _TotalTabRows));
+                    else
+                        _TabPages[i].Location = new Point(_tabStartXPos, 1);
+   
                     if (!this.Controls.Contains(_TabPages[i]))
-                        this.Controls.Add(_TabPages[i]);
-
-                    DrawTab(g, _TabPages[i], i);
+                         this.Controls.Add(_TabPages[i]);
+                    if (showTabs == true)
+                        DrawTab(g, _TabPages[i], i);
                 }
-
                 g.Clip = rsaved;
 
                 if (GetTabPage(_selectedIndex) != null)
+                {
                     GetTabPage(_selectedIndex).BringToFront();
+                }
 
                 DrawCloseButton();
             }
             catch (Exception e) 
             {
+                System.Diagnostics.Debug.WriteLine("IceChatControl DrawControl Error:" + e.Message);
                 FormMain.Instance.WriteErrorFile(FormMain.Instance.InputPanel.CurrentConnection, "IceTabControl DrawControl",e);
             }
         }
@@ -679,8 +694,6 @@ namespace IceChat
                 {
                     g.DrawString(FormMain.Instance.IceChatLanguage.consoleTabTitle, _tabFont, br, tabTextArea, stringFormat);
                 }
-
-                //g.DrawString((nIndex + 1).ToString(), new Font("Arial", 8.0F), br, recBounds);
             }            
             catch (Exception e) 
             { 
@@ -777,10 +790,14 @@ namespace IceChat
 
 
                 }
+
                 for (int i = 0; i < _TabPages.Count; i++)
                 {
                     _TabPages[i].Width = this.Width;
-                    _TabPages[i].Height = this.Height - ((_TabRowHeight + 7) * _TotalTabRows);
+                    if (showTabs == true)
+                        _TabPages[i].Height = this.Height - ((_TabRowHeight + 7) * _TotalTabRows);
+                    else
+                        _TabPages[i].Height = this.Height;
                 }
             }
             catch (Exception e)
@@ -823,7 +840,7 @@ namespace IceChat
                 _TabPages.Remove((IceTabPage)e.Control);
                 ((IceTabPage)e.Control).Dispose();
                 SelectedIndex = _previousSelectedIndex;
-                Invalidate();
+                this.Invalidate();
                 FormMain.Instance.ServerTree.Invalidate();
             }
         }
@@ -848,7 +865,7 @@ namespace IceChat
                         {
                             SwapTabPages(_dragTab, hover_Tab);
                             _dragTab = setSelectedByClickLocation(e.Location);
-                            Invalidate();
+                            this.Invalidate();
                         }
                     }
                 }
@@ -861,7 +878,7 @@ namespace IceChat
             if (e.Y < _tabSizeRects[0].Y + 3 || e.Y > _tabSizeRects[_tabSizeRects.Count-1].Y + _tabSizeRects[0].Height) 
             {
                 _hoveredIndex = -1;
-                Invalidate();
+                this.Invalidate();
                 return;
             }
 
@@ -882,14 +899,14 @@ namespace IceChat
             if (_hoveredIndex == iHoveredIndexBeforeClick)
                 return;
 
-            Invalidate();
+            this.Invalidate();
 
         }
 
         private void OnMouseLeave(object sender, EventArgs e)
         {
             _hoveredIndex = -1;
-            Invalidate();
+            this.Invalidate();
         }
 
         private void OnMouseDown(object sender, MouseEventArgs e)
@@ -1004,7 +1021,7 @@ namespace IceChat
                 }
             }
 
-            Invalidate();
+            this.Invalidate();
 
             return GetTabPage(_selectedIndex);
         }

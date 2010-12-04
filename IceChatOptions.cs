@@ -292,6 +292,7 @@ namespace IceChat
         private bool _showServerTree = true;
         private bool _showNickList = true;
         private bool _showToolBar = true;
+        private bool _showTabBar = true;
         private bool _disableQueries = false;
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
@@ -454,6 +455,13 @@ namespace IceChat
         {
             get { return this._showToolBar; }
             set { this._showToolBar = value; }
+        }
+
+        [XmlElement("ShowTabBar")]
+        public bool ShowTabBar
+        {
+            get { return this._showTabBar; }
+            set { this._showTabBar = value; }
         }
 
         [XmlElement("ShowServerTree")]

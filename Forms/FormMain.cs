@@ -272,6 +272,9 @@ namespace IceChat
             toolBarToolStripMenuItem.Checked = iceChatOptions.ShowToolBar;
             toolStripMain.Visible = toolBarToolStripMenuItem.Checked;
 
+            channelBarToolStripMenuItem.Checked = iceChatOptions.ShowTabBar;
+            mainTabControl.ShowTabs = iceChatOptions.ShowTabBar;
+
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
@@ -3542,6 +3545,12 @@ namespace IceChat
             iceChatOptions.ShowToolBar = toolBarToolStripMenuItem.Checked;
         }
 
+        private void channelBarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            iceChatOptions.ShowTabBar = channelBarToolStripMenuItem.Checked;
+            mainTabControl.ShowTabs = iceChatOptions.ShowTabBar;
+        }
+
         private void codePlexPageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -3998,6 +4007,7 @@ namespace IceChat
         {
             FocusInputBox();
         }
+
 
     }
 
