@@ -81,6 +81,7 @@ namespace IceChat
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.selectNickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectServerTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectInputBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codePlexPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iceChatHomePageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,7 +112,6 @@ namespace IceChat
             this.panelDockRight = new IceChat.IceDockPanel();
             this.panelDockLeft = new IceChat.IceDockPanel();
             this.inputPanel = new IceChat.InputPanel();
-            this.selectInputBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMainStrip.SuspendLayout();
             this.contextMenuNotify.SuspendLayout();
             this.toolStripMain.SuspendLayout();
@@ -124,7 +124,7 @@ namespace IceChat
             this.menuMainStrip.AccessibleDescription = "Main Menu Bar";
             this.menuMainStrip.AccessibleRole = System.Windows.Forms.AccessibleRole.MenuBar;
             this.menuMainStrip.AllowItemReorder = true;
-            this.menuMainStrip.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menuMainStrip.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuMainStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainToolStripMenuItem,
             this.optionsToolStripMenuItem,
@@ -133,7 +133,7 @@ namespace IceChat
             this.menuMainStrip.Location = new System.Drawing.Point(0, 0);
             this.menuMainStrip.Name = "menuMainStrip";
             this.menuMainStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuMainStrip.Size = new System.Drawing.Size(796, 24);
+            this.menuMainStrip.Size = new System.Drawing.Size(796, 25);
             this.menuMainStrip.TabIndex = 12;
             this.menuMainStrip.Text = "menuStripMain";
             // 
@@ -146,14 +146,14 @@ namespace IceChat
             this.toolStripMenuItem2,
             this.exitToolStripMenuItem});
             this.mainToolStripMenuItem.Name = "mainToolStripMenuItem";
-            this.mainToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.mainToolStripMenuItem.Size = new System.Drawing.Size(49, 21);
             this.mainToolStripMenuItem.Text = "Main";
             // 
             // minimizeToTrayToolStripMenuItem
             // 
             this.minimizeToTrayToolStripMenuItem.Name = "minimizeToTrayToolStripMenuItem";
             this.minimizeToTrayToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.minimizeToTrayToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.minimizeToTrayToolStripMenuItem.Text = "Minimize to Tray";
             this.minimizeToTrayToolStripMenuItem.Click += new System.EventHandler(this.minimizeToTrayToolStripMenuItem_Click);
             // 
@@ -161,7 +161,7 @@ namespace IceChat
             // 
             this.debugWindowToolStripMenuItem.Name = "debugWindowToolStripMenuItem";
             this.debugWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.debugWindowToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.debugWindowToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.debugWindowToolStripMenuItem.Text = "Debug Window";
             this.debugWindowToolStripMenuItem.Click += new System.EventHandler(this.debugWindowToolStripMenuItem_Click);
             // 
@@ -169,19 +169,19 @@ namespace IceChat
             // 
             this.closeCurrentWindowToolStripMenuItem.Name = "closeCurrentWindowToolStripMenuItem";
             this.closeCurrentWindowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.closeCurrentWindowToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.closeCurrentWindowToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.closeCurrentWindowToolStripMenuItem.Text = "Close Current Window";
             this.closeCurrentWindowToolStripMenuItem.Click += new System.EventHandler(this.closeCurrentWindowToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(271, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(252, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -193,14 +193,14 @@ namespace IceChat
             this.iceChatEditorToolStripMenuItem,
             this.pluginsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(66, 21);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // iceChatSettingsToolStripMenuItem
             // 
             this.iceChatSettingsToolStripMenuItem.Name = "iceChatSettingsToolStripMenuItem";
             this.iceChatSettingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.iceChatSettingsToolStripMenuItem.Text = "Program Settings";
             this.iceChatSettingsToolStripMenuItem.Click += new System.EventHandler(this.iceChatSettingsToolStripMenuItem_Click);
             // 
@@ -208,7 +208,7 @@ namespace IceChat
             // 
             this.iceChatColorsToolStripMenuItem.Name = "iceChatColorsToolStripMenuItem";
             this.iceChatColorsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.iceChatColorsToolStripMenuItem.Text = "Colors Settings";
             this.iceChatColorsToolStripMenuItem.Click += new System.EventHandler(this.iceChatColorsToolStripMenuItem_Click);
             // 
@@ -216,14 +216,14 @@ namespace IceChat
             // 
             this.iceChatEditorToolStripMenuItem.Name = "iceChatEditorToolStripMenuItem";
             this.iceChatEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.iceChatEditorToolStripMenuItem.Text = "IceChat Editor";
             this.iceChatEditorToolStripMenuItem.Click += new System.EventHandler(this.iceChatEditorToolStripMenuItem_Click);
             // 
             // pluginsToolStripMenuItem
             // 
             this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.pluginsToolStripMenuItem.Text = "Loaded Plugins";
             // 
             // viewToolStripMenuItem
@@ -238,7 +238,7 @@ namespace IceChat
             this.selectServerTreeToolStripMenuItem,
             this.selectInputBoxToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // serverListToolStripMenuItem
@@ -247,7 +247,7 @@ namespace IceChat
             this.serverListToolStripMenuItem.CheckOnClick = true;
             this.serverListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.serverListToolStripMenuItem.Name = "serverListToolStripMenuItem";
-            this.serverListToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.serverListToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.serverListToolStripMenuItem.Text = "Left Panel";
             this.serverListToolStripMenuItem.Click += new System.EventHandler(this.serverListToolStripMenuItem_Click);
             // 
@@ -257,7 +257,7 @@ namespace IceChat
             this.nickListToolStripMenuItem.CheckOnClick = true;
             this.nickListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.nickListToolStripMenuItem.Name = "nickListToolStripMenuItem";
-            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.nickListToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.nickListToolStripMenuItem.Text = "Right Panel";
             this.nickListToolStripMenuItem.Click += new System.EventHandler(this.nickListToolStripMenuItem_Click);
             // 
@@ -267,7 +267,7 @@ namespace IceChat
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.statusBarToolStripMenuItem.Text = "Status Bar";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.statusBarToolStripMenuItem_Click);
             // 
@@ -277,28 +277,35 @@ namespace IceChat
             this.toolBarToolStripMenuItem.CheckOnClick = true;
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.toolBarToolStripMenuItem.Text = "Tool Bar";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.toolBarToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(198, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(178, 6);
             // 
             // selectNickListToolStripMenuItem
             // 
             this.selectNickListToolStripMenuItem.Name = "selectNickListToolStripMenuItem";
-            this.selectNickListToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.selectNickListToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.selectNickListToolStripMenuItem.Text = "Select Nick List";
             this.selectNickListToolStripMenuItem.Click += new System.EventHandler(this.selectNickListToolStripMenuItem_Click);
             // 
             // selectServerTreeToolStripMenuItem
             // 
             this.selectServerTreeToolStripMenuItem.Name = "selectServerTreeToolStripMenuItem";
-            this.selectServerTreeToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.selectServerTreeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.selectServerTreeToolStripMenuItem.Text = "Select Server Tree";
             this.selectServerTreeToolStripMenuItem.Click += new System.EventHandler(this.selectServerTreeToolStripMenuItem_Click);
+            // 
+            // selectInputBoxToolStripMenuItem
+            // 
+            this.selectInputBoxToolStripMenuItem.Name = "selectInputBoxToolStripMenuItem";
+            this.selectInputBoxToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.selectInputBoxToolStripMenuItem.Text = "Select Input box";
+            this.selectInputBoxToolStripMenuItem.Click += new System.EventHandler(this.selectInputBoxToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -312,69 +319,69 @@ namespace IceChat
             this.toolStripMenuItem1,
             this.browseDataFolderToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // codePlexPageToolStripMenuItem
             // 
             this.codePlexPageToolStripMenuItem.Name = "codePlexPageToolStripMenuItem";
-            this.codePlexPageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.codePlexPageToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.codePlexPageToolStripMenuItem.Text = "CodePlex Page";
             this.codePlexPageToolStripMenuItem.Click += new System.EventHandler(this.codePlexPageToolStripMenuItem_Click);
             // 
             // iceChatHomePageToolStripMenuItem
             // 
             this.iceChatHomePageToolStripMenuItem.Name = "iceChatHomePageToolStripMenuItem";
-            this.iceChatHomePageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.iceChatHomePageToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.iceChatHomePageToolStripMenuItem.Text = "IceChat Home Page";
             this.iceChatHomePageToolStripMenuItem.Click += new System.EventHandler(this.iceChatHomePageToolStripMenuItem_Click);
             // 
             // forumsToolStripMenuItem
             // 
             this.forumsToolStripMenuItem.Name = "forumsToolStripMenuItem";
-            this.forumsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.forumsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.forumsToolStripMenuItem.Text = "Forums";
             this.forumsToolStripMenuItem.Click += new System.EventHandler(this.forumsToolStripMenuItem_Click);
             // 
             // facebookFanPageToolStripMenuItem
             // 
             this.facebookFanPageToolStripMenuItem.Name = "facebookFanPageToolStripMenuItem";
-            this.facebookFanPageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.facebookFanPageToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.facebookFanPageToolStripMenuItem.Text = "Facebook Fan page";
             this.facebookFanPageToolStripMenuItem.Click += new System.EventHandler(this.facebookFanPageToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // checkForUpdateToolStripMenuItem
             // 
             this.checkForUpdateToolStripMenuItem.Name = "checkForUpdateToolStripMenuItem";
-            this.checkForUpdateToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.checkForUpdateToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.checkForUpdateToolStripMenuItem.Text = "Check for Update";
             this.checkForUpdateToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdateToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(203, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(187, 6);
             // 
             // browseDataFolderToolStripMenuItem
             // 
             this.browseDataFolderToolStripMenuItem.Name = "browseDataFolderToolStripMenuItem";
-            this.browseDataFolderToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.browseDataFolderToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.browseDataFolderToolStripMenuItem.Text = "Browse Data Folder";
             this.browseDataFolderToolStripMenuItem.Click += new System.EventHandler(this.browseDataFolderToolStripMenuItem_Click);
             // 
             // splitterLeft
             // 
             this.splitterLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitterLeft.Location = new System.Drawing.Point(181, 49);
+            this.splitterLeft.Location = new System.Drawing.Point(181, 50);
             this.splitterLeft.Name = "splitterLeft";
-            this.splitterLeft.Size = new System.Drawing.Size(3, 359);
+            this.splitterLeft.Size = new System.Drawing.Size(3, 358);
             this.splitterLeft.TabIndex = 15;
             this.splitterLeft.TabStop = false;
             // 
@@ -382,9 +389,9 @@ namespace IceChat
             // 
             this.splitterRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitterRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitterRight.Location = new System.Drawing.Point(618, 49);
+            this.splitterRight.Location = new System.Drawing.Point(618, 50);
             this.splitterRight.Name = "splitterRight";
-            this.splitterRight.Size = new System.Drawing.Size(3, 359);
+            this.splitterRight.Size = new System.Drawing.Size(3, 358);
             this.splitterRight.TabIndex = 16;
             this.splitterRight.TabStop = false;
             // 
@@ -431,7 +438,7 @@ namespace IceChat
             this.toolStripEditor,
             this.toolStripAway,
             this.toolStripSystemTray});
-            this.toolStripMain.Location = new System.Drawing.Point(0, 24);
+            this.toolStripMain.Location = new System.Drawing.Point(0, 25);
             this.toolStripMain.Name = "toolStripMain";
             this.toolStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStripMain.Size = new System.Drawing.Size(796, 25);
@@ -537,29 +544,29 @@ namespace IceChat
             // 
             this.mainTabControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainTabControl.Location = new System.Drawing.Point(184, 49);
+            this.mainTabControl.Location = new System.Drawing.Point(184, 50);
             this.mainTabControl.Margin = new System.Windows.Forms.Padding(0);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = -1;
-            this.mainTabControl.Size = new System.Drawing.Size(434, 359);
+            this.mainTabControl.Size = new System.Drawing.Size(434, 358);
             this.mainTabControl.TabIndex = 20;
             // 
             // panelDockRight
             // 
             this.panelDockRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelDockRight.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelDockRight.Location = new System.Drawing.Point(621, 49);
+            this.panelDockRight.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panelDockRight.Location = new System.Drawing.Point(621, 50);
             this.panelDockRight.Name = "panelDockRight";
-            this.panelDockRight.Size = new System.Drawing.Size(175, 359);
+            this.panelDockRight.Size = new System.Drawing.Size(175, 358);
             this.panelDockRight.TabIndex = 14;
             // 
             // panelDockLeft
             // 
             this.panelDockLeft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelDockLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelDockLeft.Location = new System.Drawing.Point(0, 49);
+            this.panelDockLeft.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panelDockLeft.Location = new System.Drawing.Point(0, 50);
             this.panelDockLeft.Name = "panelDockLeft";
-            this.panelDockLeft.Size = new System.Drawing.Size(181, 359);
+            this.panelDockLeft.Size = new System.Drawing.Size(181, 358);
             this.panelDockLeft.TabIndex = 13;
             // 
             // inputPanel
@@ -570,13 +577,6 @@ namespace IceChat
             this.inputPanel.Name = "inputPanel";
             this.inputPanel.Size = new System.Drawing.Size(796, 26);
             this.inputPanel.TabIndex = 0;
-            // 
-            // selectInputBoxToolStripMenuItem
-            // 
-            this.selectInputBoxToolStripMenuItem.Name = "selectInputBoxToolStripMenuItem";
-            this.selectInputBoxToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
-            this.selectInputBoxToolStripMenuItem.Text = "Select Input box";
-            this.selectInputBoxToolStripMenuItem.Click += new System.EventHandler(this.selectInputBoxToolStripMenuItem_Click);
             // 
             // FormMain
             // 

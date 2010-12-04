@@ -55,6 +55,11 @@ namespace IceChat
             this.checkLogChannel = new System.Windows.Forms.CheckBox();
             this.checkLogConsole = new System.Windows.Forms.CheckBox();
             this.tabFonts = new System.Windows.Forms.TabPage();
+            this.buttonDockTab = new System.Windows.Forms.Button();
+            this.textDockTabFont = new System.Windows.Forms.TextBox();
+            this.labelDockTabsSize = new System.Windows.Forms.Label();
+            this.textDockTabSize = new System.Windows.Forms.TextBox();
+            this.labelDockTabFont = new System.Windows.Forms.Label();
             this.buttonInputFont = new System.Windows.Forms.Button();
             this.buttonServerListFont = new System.Windows.Forms.Button();
             this.textInputFont = new System.Windows.Forms.TextBox();
@@ -86,6 +91,9 @@ namespace IceChat
             this.labelChannelFont = new System.Windows.Forms.Label();
             this.labelConsoleFont = new System.Windows.Forms.Label();
             this.tabDCC = new System.Windows.Forms.TabPage();
+            this.linkWhatisMyIP = new System.Windows.Forms.LinkLabel();
+            this.textDCCLocalIP = new System.Windows.Forms.TextBox();
+            this.labelLocalIP = new System.Windows.Forms.Label();
             this.checkAutoDCCFile = new System.Windows.Forms.CheckBox();
             this.checkIgnoreDCCFile = new System.Windows.Forms.CheckBox();
             this.buttonDCCSendFolder = new System.Windows.Forms.Button();
@@ -138,9 +146,46 @@ namespace IceChat
             this.labelPartEvent = new System.Windows.Forms.Label();
             this.comboJoinEvent = new System.Windows.Forms.ComboBox();
             this.labelJoinEvent = new System.Windows.Forms.Label();
-            this.labelLocalIP = new System.Windows.Forms.Label();
-            this.textDCCLocalIP = new System.Windows.Forms.TextBox();
-            this.linkWhatisMyIP = new System.Windows.Forms.LinkLabel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.button5 = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.button6 = new System.Windows.Forms.Button();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBox12 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.button7 = new System.Windows.Forms.Button();
+            this.textBox13 = new System.Windows.Forms.TextBox();
+            this.textBox14 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.buttonMenuBar = new System.Windows.Forms.Button();
+            this.textMenuBarFont = new System.Windows.Forms.TextBox();
+            this.labelMenuBarFontSize = new System.Windows.Forms.Label();
+            this.textMenuBarSize = new System.Windows.Forms.TextBox();
+            this.labelMenuBarFont = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -212,7 +257,7 @@ namespace IceChat
             this.tabMain.Margin = new System.Windows.Forms.Padding(4);
             this.tabMain.Name = "tabMain";
             this.tabMain.Padding = new System.Windows.Forms.Padding(4);
-            this.tabMain.Size = new System.Drawing.Size(652, 230);
+            this.tabMain.Size = new System.Drawing.Size(652, 260);
             this.tabMain.TabIndex = 0;
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
@@ -294,7 +339,7 @@ namespace IceChat
             this.tabDisplay.Margin = new System.Windows.Forms.Padding(4);
             this.tabDisplay.Name = "tabDisplay";
             this.tabDisplay.Padding = new System.Windows.Forms.Padding(4);
-            this.tabDisplay.Size = new System.Drawing.Size(652, 230);
+            this.tabDisplay.Size = new System.Drawing.Size(652, 260);
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
@@ -361,7 +406,7 @@ namespace IceChat
             this.tabLogging.Location = new System.Drawing.Point(4, 25);
             this.tabLogging.Name = "tabLogging";
             this.tabLogging.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLogging.Size = new System.Drawing.Size(652, 230);
+            this.tabLogging.Size = new System.Drawing.Size(652, 260);
             this.tabLogging.TabIndex = 6;
             this.tabLogging.Text = "Logging";
             this.tabLogging.UseVisualStyleBackColor = true;
@@ -440,6 +485,16 @@ namespace IceChat
             // 
             // tabFonts
             // 
+            this.tabFonts.Controls.Add(this.buttonMenuBar);
+            this.tabFonts.Controls.Add(this.textMenuBarFont);
+            this.tabFonts.Controls.Add(this.labelMenuBarFontSize);
+            this.tabFonts.Controls.Add(this.textMenuBarSize);
+            this.tabFonts.Controls.Add(this.labelMenuBarFont);
+            this.tabFonts.Controls.Add(this.buttonDockTab);
+            this.tabFonts.Controls.Add(this.textDockTabFont);
+            this.tabFonts.Controls.Add(this.labelDockTabsSize);
+            this.tabFonts.Controls.Add(this.textDockTabSize);
+            this.tabFonts.Controls.Add(this.labelDockTabFont);
             this.tabFonts.Controls.Add(this.buttonInputFont);
             this.tabFonts.Controls.Add(this.buttonServerListFont);
             this.tabFonts.Controls.Add(this.textInputFont);
@@ -474,10 +529,54 @@ namespace IceChat
             this.tabFonts.Margin = new System.Windows.Forms.Padding(4);
             this.tabFonts.Name = "tabFonts";
             this.tabFonts.Padding = new System.Windows.Forms.Padding(4);
-            this.tabFonts.Size = new System.Drawing.Size(652, 230);
+            this.tabFonts.Size = new System.Drawing.Size(652, 260);
             this.tabFonts.TabIndex = 2;
             this.tabFonts.Text = "Fonts";
             this.tabFonts.UseVisualStyleBackColor = true;
+            // 
+            // buttonDockTab
+            // 
+            this.buttonDockTab.Location = new System.Drawing.Point(446, 175);
+            this.buttonDockTab.Name = "buttonDockTab";
+            this.buttonDockTab.Size = new System.Drawing.Size(58, 22);
+            this.buttonDockTab.TabIndex = 51;
+            this.buttonDockTab.Text = "Select";
+            this.buttonDockTab.UseVisualStyleBackColor = true;
+            this.buttonDockTab.Click += new System.EventHandler(this.buttonDockTab_Click);
+            // 
+            // textDockTabFont
+            // 
+            this.textDockTabFont.Location = new System.Drawing.Point(98, 175);
+            this.textDockTabFont.Name = "textDockTabFont";
+            this.textDockTabFont.ReadOnly = true;
+            this.textDockTabFont.Size = new System.Drawing.Size(232, 23);
+            this.textDockTabFont.TabIndex = 50;
+            // 
+            // labelDockTabsSize
+            // 
+            this.labelDockTabsSize.AutoSize = true;
+            this.labelDockTabsSize.Location = new System.Drawing.Point(346, 178);
+            this.labelDockTabsSize.Name = "labelDockTabsSize";
+            this.labelDockTabsSize.Size = new System.Drawing.Size(35, 16);
+            this.labelDockTabsSize.TabIndex = 49;
+            this.labelDockTabsSize.Text = "Size";
+            // 
+            // textDockTabSize
+            // 
+            this.textDockTabSize.Location = new System.Drawing.Point(391, 174);
+            this.textDockTabSize.Name = "textDockTabSize";
+            this.textDockTabSize.ReadOnly = true;
+            this.textDockTabSize.Size = new System.Drawing.Size(49, 23);
+            this.textDockTabSize.TabIndex = 48;
+            // 
+            // labelDockTabFont
+            // 
+            this.labelDockTabFont.AutoSize = true;
+            this.labelDockTabFont.Location = new System.Drawing.Point(15, 177);
+            this.labelDockTabFont.Name = "labelDockTabFont";
+            this.labelDockTabFont.Size = new System.Drawing.Size(77, 16);
+            this.labelDockTabFont.TabIndex = 47;
+            this.labelDockTabFont.Text = "Dock Tabs";
             // 
             // buttonInputFont
             // 
@@ -773,6 +872,33 @@ namespace IceChat
             this.tabDCC.Text = "DCC";
             this.tabDCC.UseVisualStyleBackColor = true;
             // 
+            // linkWhatisMyIP
+            // 
+            this.linkWhatisMyIP.AutoSize = true;
+            this.linkWhatisMyIP.Location = new System.Drawing.Point(226, 215);
+            this.linkWhatisMyIP.Name = "linkWhatisMyIP";
+            this.linkWhatisMyIP.Size = new System.Drawing.Size(169, 16);
+            this.linkWhatisMyIP.TabIndex = 63;
+            this.linkWhatisMyIP.TabStop = true;
+            this.linkWhatisMyIP.Text = "What is my IP Address ?";
+            this.linkWhatisMyIP.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkWhatisMyIP_LinkClicked);
+            // 
+            // textDCCLocalIP
+            // 
+            this.textDCCLocalIP.Location = new System.Drawing.Point(15, 232);
+            this.textDCCLocalIP.Name = "textDCCLocalIP";
+            this.textDCCLocalIP.Size = new System.Drawing.Size(184, 23);
+            this.textDCCLocalIP.TabIndex = 62;
+            // 
+            // labelLocalIP
+            // 
+            this.labelLocalIP.AutoSize = true;
+            this.labelLocalIP.Location = new System.Drawing.Point(12, 213);
+            this.labelLocalIP.Name = "labelLocalIP";
+            this.labelLocalIP.Size = new System.Drawing.Size(181, 16);
+            this.labelLocalIP.TabIndex = 61;
+            this.labelLocalIP.Text = "Router/Firewall IP Address";
+            // 
             // checkAutoDCCFile
             // 
             this.checkAutoDCCFile.AutoSize = true;
@@ -943,7 +1069,7 @@ namespace IceChat
             this.tabSounds.Margin = new System.Windows.Forms.Padding(4);
             this.tabSounds.Name = "tabSounds";
             this.tabSounds.Padding = new System.Windows.Forms.Padding(4);
-            this.tabSounds.Size = new System.Drawing.Size(652, 230);
+            this.tabSounds.Size = new System.Drawing.Size(652, 260);
             this.tabSounds.TabIndex = 3;
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
@@ -1014,7 +1140,7 @@ namespace IceChat
             this.tabEmoticon.Location = new System.Drawing.Point(4, 25);
             this.tabEmoticon.Name = "tabEmoticon";
             this.tabEmoticon.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEmoticon.Size = new System.Drawing.Size(652, 230);
+            this.tabEmoticon.Size = new System.Drawing.Size(652, 260);
             this.tabEmoticon.TabIndex = 7;
             this.tabEmoticon.Text = "Emoticons";
             this.tabEmoticon.UseVisualStyleBackColor = true;
@@ -1118,7 +1244,7 @@ namespace IceChat
             this.tabEvents.Location = new System.Drawing.Point(4, 25);
             this.tabEvents.Name = "tabEvents";
             this.tabEvents.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEvents.Size = new System.Drawing.Size(652, 230);
+            this.tabEvents.Size = new System.Drawing.Size(652, 260);
             this.tabEvents.TabIndex = 4;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
@@ -1299,32 +1425,350 @@ namespace IceChat
             this.labelJoinEvent.TabIndex = 0;
             this.labelJoinEvent.Text = "Joins:";
             // 
-            // labelLocalIP
+            // button1
             // 
-            this.labelLocalIP.AutoSize = true;
-            this.labelLocalIP.Location = new System.Drawing.Point(12, 213);
-            this.labelLocalIP.Name = "labelLocalIP";
-            this.labelLocalIP.Size = new System.Drawing.Size(181, 16);
-            this.labelLocalIP.TabIndex = 61;
-            this.labelLocalIP.Text = "Router/Firewall IP Address";
+            this.button1.Location = new System.Drawing.Point(446, 175);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(58, 22);
+            this.button1.TabIndex = 51;
+            this.button1.Text = "Select";
+            this.button1.UseVisualStyleBackColor = true;
             // 
-            // textDCCLocalIP
+            // textBox1
             // 
-            this.textDCCLocalIP.Location = new System.Drawing.Point(15, 232);
-            this.textDCCLocalIP.Name = "textDCCLocalIP";
-            this.textDCCLocalIP.Size = new System.Drawing.Size(184, 23);
-            this.textDCCLocalIP.TabIndex = 62;
+            this.textBox1.Location = new System.Drawing.Point(98, 175);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(232, 20);
+            this.textBox1.TabIndex = 50;
             // 
-            // linkWhatisMyIP
+            // label1
             // 
-            this.linkWhatisMyIP.AutoSize = true;
-            this.linkWhatisMyIP.Location = new System.Drawing.Point(226, 215);
-            this.linkWhatisMyIP.Name = "linkWhatisMyIP";
-            this.linkWhatisMyIP.Size = new System.Drawing.Size(169, 16);
-            this.linkWhatisMyIP.TabIndex = 63;
-            this.linkWhatisMyIP.TabStop = true;
-            this.linkWhatisMyIP.Text = "What is my IP Address ?";
-            this.linkWhatisMyIP.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkWhatisMyIP_LinkClicked);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(346, 178);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(27, 13);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "Size";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(391, 174);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(49, 20);
+            this.textBox2.TabIndex = 48;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 177);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 13);
+            this.label2.TabIndex = 47;
+            this.label2.Text = "Dock Tabs";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(446, 147);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(58, 22);
+            this.button2.TabIndex = 46;
+            this.button2.Text = "Select";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(446, 117);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(58, 22);
+            this.button3.TabIndex = 45;
+            this.button3.Text = "Select";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(98, 147);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.Size = new System.Drawing.Size(232, 20);
+            this.textBox3.TabIndex = 44;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(346, 150);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(27, 13);
+            this.label3.TabIndex = 43;
+            this.label3.Text = "Size";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(391, 146);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.ReadOnly = true;
+            this.textBox4.Size = new System.Drawing.Size(49, 20);
+            this.textBox4.TabIndex = 42;
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(391, 117);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.Size = new System.Drawing.Size(49, 20);
+            this.textBox5.TabIndex = 41;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(346, 120);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(27, 13);
+            this.label4.TabIndex = 40;
+            this.label4.Text = "Size";
+            // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(98, 117);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.ReadOnly = true;
+            this.textBox6.Size = new System.Drawing.Size(232, 20);
+            this.textBox6.TabIndex = 39;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(446, 90);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(58, 22);
+            this.button4.TabIndex = 38;
+            this.button4.Text = "Select";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(391, 89);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.ReadOnly = true;
+            this.textBox7.Size = new System.Drawing.Size(49, 20);
+            this.textBox7.TabIndex = 37;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(346, 92);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(27, 13);
+            this.label5.TabIndex = 36;
+            this.label5.Text = "Size";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(98, 89);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.ReadOnly = true;
+            this.textBox8.Size = new System.Drawing.Size(232, 20);
+            this.textBox8.TabIndex = 35;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(446, 62);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(58, 22);
+            this.button5.TabIndex = 29;
+            this.button5.Text = "Select";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(346, 65);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(27, 13);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Size";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(391, 62);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.ReadOnly = true;
+            this.textBox9.Size = new System.Drawing.Size(49, 20);
+            this.textBox9.TabIndex = 27;
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(98, 62);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.ReadOnly = true;
+            this.textBox10.Size = new System.Drawing.Size(232, 20);
+            this.textBox10.TabIndex = 26;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(446, 34);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(58, 22);
+            this.button6.TabIndex = 25;
+            this.button6.Text = "Select";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(391, 34);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.ReadOnly = true;
+            this.textBox11.Size = new System.Drawing.Size(49, 20);
+            this.textBox11.TabIndex = 24;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(346, 37);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(27, 13);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Size";
+            // 
+            // textBox12
+            // 
+            this.textBox12.Location = new System.Drawing.Point(98, 34);
+            this.textBox12.Name = "textBox12";
+            this.textBox12.ReadOnly = true;
+            this.textBox12.Size = new System.Drawing.Size(232, 20);
+            this.textBox12.TabIndex = 22;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(346, 10);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(27, 13);
+            this.label8.TabIndex = 21;
+            this.label8.Text = "Size";
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(446, 7);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(58, 22);
+            this.button7.TabIndex = 20;
+            this.button7.Text = "Select";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // textBox13
+            // 
+            this.textBox13.Location = new System.Drawing.Point(391, 7);
+            this.textBox13.Name = "textBox13";
+            this.textBox13.ReadOnly = true;
+            this.textBox13.Size = new System.Drawing.Size(49, 20);
+            this.textBox13.TabIndex = 19;
+            // 
+            // textBox14
+            // 
+            this.textBox14.Location = new System.Drawing.Point(98, 7);
+            this.textBox14.Name = "textBox14";
+            this.textBox14.ReadOnly = true;
+            this.textBox14.Size = new System.Drawing.Size(232, 20);
+            this.textBox14.TabIndex = 18;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(15, 149);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(52, 13);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "Input Box";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(15, 120);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(57, 13);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "Server List";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(15, 92);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(48, 13);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Nick List";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(15, 65);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(40, 13);
+            this.label12.TabIndex = 8;
+            this.label12.Text = "Private";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(15, 37);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(46, 13);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "Channel";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(15, 10);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(45, 13);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "Console";
+            // 
+            // buttonMenuBar
+            // 
+            this.buttonMenuBar.Location = new System.Drawing.Point(446, 204);
+            this.buttonMenuBar.Name = "buttonMenuBar";
+            this.buttonMenuBar.Size = new System.Drawing.Size(58, 22);
+            this.buttonMenuBar.TabIndex = 56;
+            this.buttonMenuBar.Text = "Select";
+            this.buttonMenuBar.UseVisualStyleBackColor = true;
+            this.buttonMenuBar.Click += new System.EventHandler(this.buttonMenuBar_Click);
+            // 
+            // textMenuBarFont
+            // 
+            this.textMenuBarFont.Location = new System.Drawing.Point(98, 204);
+            this.textMenuBarFont.Name = "textMenuBarFont";
+            this.textMenuBarFont.ReadOnly = true;
+            this.textMenuBarFont.Size = new System.Drawing.Size(232, 23);
+            this.textMenuBarFont.TabIndex = 55;
+            // 
+            // labelMenuBarFontSize
+            // 
+            this.labelMenuBarFontSize.AutoSize = true;
+            this.labelMenuBarFontSize.Location = new System.Drawing.Point(346, 207);
+            this.labelMenuBarFontSize.Name = "labelMenuBarFontSize";
+            this.labelMenuBarFontSize.Size = new System.Drawing.Size(35, 16);
+            this.labelMenuBarFontSize.TabIndex = 54;
+            this.labelMenuBarFontSize.Text = "Size";
+            // 
+            // textMenuBarSize
+            // 
+            this.textMenuBarSize.Location = new System.Drawing.Point(391, 203);
+            this.textMenuBarSize.Name = "textMenuBarSize";
+            this.textMenuBarSize.ReadOnly = true;
+            this.textMenuBarSize.Size = new System.Drawing.Size(49, 23);
+            this.textMenuBarSize.TabIndex = 53;
+            // 
+            // labelMenuBarFont
+            // 
+            this.labelMenuBarFont.AutoSize = true;
+            this.labelMenuBarFont.Location = new System.Drawing.Point(15, 206);
+            this.labelMenuBarFont.Name = "labelMenuBarFont";
+            this.labelMenuBarFont.Size = new System.Drawing.Size(69, 16);
+            this.labelMenuBarFont.TabIndex = 52;
+            this.labelMenuBarFont.Text = "Menu Bar";
             // 
             // FormSettings
             // 
@@ -1478,5 +1922,50 @@ namespace IceChat
         private System.Windows.Forms.TextBox textDCCLocalIP;
         private System.Windows.Forms.Label labelLocalIP;
         private System.Windows.Forms.LinkLabel linkWhatisMyIP;
+        private System.Windows.Forms.Button buttonDockTab;
+        private System.Windows.Forms.TextBox textDockTabFont;
+        private System.Windows.Forms.Label labelDockTabsSize;
+        private System.Windows.Forms.TextBox textDockTabSize;
+        private System.Windows.Forms.Label labelDockTabFont;
+        private System.Windows.Forms.Button buttonMenuBar;
+        private System.Windows.Forms.TextBox textMenuBarFont;
+        private System.Windows.Forms.Label labelMenuBarFontSize;
+        private System.Windows.Forms.TextBox textMenuBarSize;
+        private System.Windows.Forms.Label labelMenuBarFont;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox12;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.TextBox textBox13;
+        private System.Windows.Forms.TextBox textBox14;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }

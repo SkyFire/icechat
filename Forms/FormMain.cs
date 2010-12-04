@@ -35,7 +35,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
-using System.Management;
+//using System.Management;
 
 using IceChat.Properties;
 using IceChatPlugin;
@@ -87,7 +87,7 @@ namespace IceChat
         private TabPage buddyListTab;
 
         private delegate void AddWindowDelegate(IRCConnection connection, string windowName, IceTabPage.WindowType windowType);
-        private delegate void RemoveTabDelegate(IRCConnection connection, string channel);
+        private delegate void RemoveTabDelegate(IRCConnection connection, string channel, IceTabPage.WindowType windowType);
         private delegate int GetSelectedTabDelegate();
 
         private delegate void StatusTextDelegate(string data);
@@ -275,7 +275,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - October 16 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - December 4 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -375,7 +375,12 @@ namespace IceChat
 
             mainTabControl.SelectedIndexChanged += new IceTabControl.TabEventHandler(TabSelectedIndexChanged);
             mainTabControl.OnTabClosed += new IceTabControl.TabClosedDelegate(mainTabControl_OnTabClosed);
-            
+
+            panelDockLeft.Initialize();
+            panelDockRight.Initialize();
+
+            menuMainStrip.Font = new Font(iceChatFonts.FontSettings[7].FontName, iceChatFonts.FontSettings[7].FontSize);
+
             serverTree.NewServerConnection += new NewServerConnectionDelegate(NewServerConnection);
             serverTree.SaveDefault += new ServerTree.SaveDefaultDelegate(OnDefaultServerSettings);
             CreateDefaultConsoleWindow();
@@ -958,6 +963,10 @@ namespace IceChat
                     else if (t.Connection == connection)
                         return t;
                 }
+                else if (t.WindowStyle == windowType && windowType == IceTabPage.WindowType.ChannelList)
+                {
+                    return t;
+                }
             }
             return null;
         }
@@ -1015,10 +1024,14 @@ namespace IceChat
                 {
                     if (CurrentWindowType == IceTabPage.WindowType.Console)
                         WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4, true);
-                    else
+                    else if (CurrentWindow.WindowStyle != IceTabPage.WindowType.ChannelList && CurrentWindow.WindowStyle != IceTabPage.WindowType.DCCFile)
                     {
                         CurrentWindow.TextWindow.AppendText("Error: Not Connected (" + data + ")", 4);
                         CurrentWindow.TextWindow.ScrollToBottom();
+                    }
+                    else
+                    {
+                        WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4, true);
                     }
                 }
             }
@@ -1191,25 +1204,33 @@ namespace IceChat
         /// </summary>
         /// <param name="connection">Which Connection it is for</param>
         /// <param name="channel">The Channel/Query Window Name</param>
-        internal void RemoveWindow(IRCConnection connection, string channel)
+        internal void RemoveWindow(IRCConnection connection, string windowCaption, IceTabPage.WindowType windowType)
         {
             if (mainTabControl.InvokeRequired)
             {
                 RemoveTabDelegate r = new RemoveTabDelegate(RemoveWindow);
-                mainTabControl.Invoke(r, new object[] { connection, channel } );
+                mainTabControl.Invoke(r, new object[] { connection, windowCaption, windowType });
             }
             else
             {
-				IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+                IceTabPage t = GetWindow(connection, windowCaption, IceTabPage.WindowType.Channel);
 				if (t != null)
                 {
                     mainTabControl.Controls.Remove(t);
                     return;
                 }
 
-                IceTabPage c = GetWindow(connection, channel, IceTabPage.WindowType.Query);
+                IceTabPage c = GetWindow(connection, windowCaption, IceTabPage.WindowType.Query);
                 if (c != null)
+                {
                     mainTabControl.Controls.Remove(c);
+                    return;
+                }
+
+                IceTabPage cl = GetWindow(connection, "", IceTabPage.WindowType.ChannelList);
+                if (cl != null)
+                    mainTabControl.Controls.Remove(cl);
+
             }
         }
 
@@ -1316,7 +1337,7 @@ namespace IceChat
                         if (c.IsConnected)
                             ParseOutGoingCommand(c, "/part " + mainTabControl.GetTabPage(nIndex).TabCaption);
                         else
-                            RemoveWindow(c, mainTabControl.GetTabPage(nIndex).TabCaption);
+                            RemoveWindow(c, mainTabControl.GetTabPage(nIndex).TabCaption, mainTabControl.GetTabPage(nIndex).WindowStyle);
 
                         return;
                     }
@@ -1444,6 +1465,29 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/font":
+                            //change the font of the current window
+                            //check if data is a channel
+                            if (connection != null && data.Length > 0)
+                            {
+                                if (data.IndexOf(' ') == -1)
+                                {
+                                    IceTabPage t = GetWindow(connection, data, IceTabPage.WindowType.Channel);
+                                    if (t != null)
+                                    {
+                                        //bring up a font dialog
+                                        FontDialog fd = new FontDialog();
+                                        //load the current font
+                                        fd.Font = t.TextWindow.Font;
+                                        if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
+                                        {
+                                            t.TextWindow.Font = fd.Font;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        
                         case "/unloadplugin":
                             if (data.Length > 0)
                             {
@@ -1778,22 +1822,31 @@ namespace IceChat
                         case "/close":
                             if (connection != null && data.Length > 0)
                             {
+                                //check if it is a channel list window
+                                if (data == "Channels")
+                                {
+                                    IceTabPage c = GetWindow(connection, "", IceTabPage.WindowType.ChannelList);
+                                    if (c != null)
+                                        RemoveWindow(connection, "", IceTabPage.WindowType.ChannelList);
+                                    return;
+                                }
+
                                 //check if it is a query window
                                 IceTabPage q = GetWindow(connection, data, IceTabPage.WindowType.Query);
                                 if (q != null)
                                 {
-                                    RemoveWindow(connection, q.TabCaption);
+                                    RemoveWindow(connection, q.TabCaption, IceTabPage.WindowType.Query);
                                 }
                                 else if (CurrentWindowType == IceTabPage.WindowType.Query)
                                 {
-                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                    RemoveWindow(connection, CurrentWindow.TabCaption, CurrentWindow.WindowStyle);
                                 }
                             }
                             else if (connection != null)
                             {
                                 //check if current window is channel
                                 if (CurrentWindowType == IceTabPage.WindowType.Query)
-                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                    RemoveWindow(connection, CurrentWindow.TabCaption, CurrentWindow.WindowStyle);
                             }
                             break;
                         case "/ctcp":
@@ -2132,12 +2185,12 @@ namespace IceChat
                                 IceTabPage q = GetWindow(connection, data, IceTabPage.WindowType.Query);
                                 if (q != null)
                                 {
-                                    RemoveWindow(connection, q.TabCaption);
+                                    RemoveWindow(connection, q.TabCaption, IceTabPage.WindowType.Query);
                                     return;
                                 }
                                 else if (CurrentWindowType == IceTabPage.WindowType.Query)
                                 {
-                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                    RemoveWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.Query);
                                     return;
                                 }
 
@@ -2148,7 +2201,7 @@ namespace IceChat
                                     if (Array.IndexOf(connection.ServerSetting.ChannelTypes, data[0]) != -1)
                                     {
                                         SendData(connection, "PART " + data.Substring(0, data.IndexOf(' ')) + " :" + data.Substring(data.IndexOf(' ') + 1));
-                                        RemoveWindow(connection, data.Substring(0, data.IndexOf(' ')));
+                                        RemoveWindow(connection, data.Substring(0, data.IndexOf(' ')), IceTabPage.WindowType.Channel);
                                     }
                                     else
                                     {
@@ -2156,7 +2209,7 @@ namespace IceChat
                                         if (CurrentWindowType == IceTabPage.WindowType.Channel)
                                         {
                                             SendData(connection, "PART " + CurrentWindow.TabCaption + " :" + data);
-                                            RemoveWindow(connection, CurrentWindow.TabCaption);
+                                            RemoveWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.Channel);
                                         }
                                     }
                                 }
@@ -2166,14 +2219,14 @@ namespace IceChat
                                     if (Array.IndexOf(connection.ServerSetting.ChannelTypes, data[0]) != -1)
                                     {
                                         SendData(connection, "PART " + data);
-                                        RemoveWindow(connection, data);
+                                        RemoveWindow(connection, data, IceTabPage.WindowType.Channel);
                                     }
                                     else
                                     {
                                         if (CurrentWindowType == IceTabPage.WindowType.Channel)
                                         {
                                             SendData(connection, "PART " + CurrentWindow.TabCaption + " :" + data);
-                                            RemoveWindow(connection, CurrentWindow.TabCaption);
+                                            RemoveWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.Channel);
                                         }
                                     }
                                 }
@@ -2184,11 +2237,11 @@ namespace IceChat
                                 if (CurrentWindowType == IceTabPage.WindowType.Channel)
                                 {
                                     SendData(connection, "PART " + CurrentWindow.TabCaption);
-                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                    RemoveWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.Channel);
                                 }
                                 else if (CurrentWindowType == IceTabPage.WindowType.Query)
                                 {
-                                    RemoveWindow(connection, CurrentWindow.TabCaption);
+                                    RemoveWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.Query);
                                 }
                             }
                             break;
@@ -2202,11 +2255,22 @@ namespace IceChat
                                         if (mainTabControl.TabPages[i].Connection == connection)
                                         {
                                             SendData(connection, "PART " + mainTabControl.TabPages[i].TabCaption);
-                                            RemoveWindow(connection, mainTabControl.TabPages[i].TabCaption);
+                                            RemoveWindow(connection, mainTabControl.TabPages[i].TabCaption, IceTabPage.WindowType.Channel);
                                         }
                                     }
                                 }
                             }
+                            break;
+                        case "/ping":
+                            if (connection != null && data.Length > 0 && data.IndexOf(' ') == -1)
+                            {
+                                //ctcp nick ping
+                                string msg = GetMessageFormat("Ctcp Send");
+                                msg = msg.Replace("$nick", data); ;
+                                msg = msg.Replace("$ctcp", "PING");
+                                CurrentWindowMessage(connection, msg, 7, true);
+                                SendData(connection, "PRIVMSG " + data + " :PING");
+                            }                            
                             break;
                         case "/query":
                             if (connection != null && data.Length > 0)
@@ -2291,23 +2355,23 @@ namespace IceChat
                                             if (u.Level[i])
                                             {
                                                 if (connection.ServerSetting.StatusModes[0][i] == 'v')
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor.ToString("00"));
                                                 else if (connection.ServerSetting.StatusModes[0][i] == 'h')
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor.ToString("00"));
                                                 else if (connection.ServerSetting.StatusModes[0][i] == 'o')
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor.ToString("00"));
                                                 else if (connection.ServerSetting.StatusModes[0][i] == 'a')
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor.ToString("00"));
                                                 else if (connection.ServerSetting.StatusModes[0][i] == 'q')
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor.ToString("00"));
                                                 else
-                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                                    msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor.ToString("00"));
 
                                                 break;
                                             }
                                         }
                                         if (msg.Contains("$color"))
-                                            msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor);
+                                            msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor.ToString("00"));
 
                                     }
 
@@ -2348,7 +2412,14 @@ namespace IceChat
                                         s.ServerPort = data.Substring(data.IndexOf(' ') + 1);
                                         if (s.ServerPort.IndexOf(' ') > 0)
                                         {
-                                            s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));
+                                            s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));                                            
+                                        }
+                                        //check for + in front of port, SSL Connection
+                                        if (s.ServerPort.StartsWith("+"))
+                                        {
+                                            s.ServerPort = s.ServerPort.Substring(1);
+                                            s.UseSSL = true;
+                                            System.Diagnostics.Debug.WriteLine("use ssl");
                                         }
                                     }
                                     else if (data.Contains(":"))
@@ -2358,6 +2429,12 @@ namespace IceChat
                                         if (s.ServerPort.IndexOf(' ') > 0)
                                         {
                                             s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));
+                                        }
+                                        //check for + in front of port, SSL Connection
+                                        if (s.ServerPort.StartsWith("+"))
+                                        {
+                                            s.ServerPort = s.ServerPort.Substring(1);
+                                            s.UseSSL = true;
                                         }
                                     }
                                     else
@@ -2542,24 +2619,24 @@ namespace IceChat
                                         if (u.Level[i])
                                         {
                                             if (connection.ServerSetting.StatusModes[0][i] == 'v')
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelVoiceColor.ToString("00"));
                                             else if (connection.ServerSetting.StatusModes[0][i] == 'h')
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelHalfOpColor.ToString("00"));
                                             else if (connection.ServerSetting.StatusModes[0][i] == 'o')
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOpColor.ToString("00"));
                                             else if (connection.ServerSetting.StatusModes[0][i] == 'a')
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelAdminColor.ToString("00"));
                                             else if (connection.ServerSetting.StatusModes[0][i] == 'q')
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor.ToString("00"));
                                             else
-                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor);
+                                                msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelOwnerColor.ToString("00"));
 
                                             break;
                                         }
                                     }
 
                                     if (msg.Contains("$color"))
-                                        msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor);
+                                        msg = msg.Replace("$color", ((char)3).ToString() + iceChatColors.ChannelRegularColor.ToString("00"));
                                 }
 
                                 msg = msg.Replace("$status", CurrentWindow.GetNick(nick).ToString().Replace(nick, ""));
@@ -2859,7 +2936,7 @@ namespace IceChat
             {
                 
                 case PlatformID.Unix:
-                    OSName = Environment.OSVersion.ServicePack.ToString();
+                    OSName = Environment.OSVersion.ToString();
                     break;                
                 case PlatformID.Win32NT:
 
@@ -3420,6 +3497,13 @@ namespace IceChat
             //change the nick list
             nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName, iceChatFonts.FontSettings[3].FontSize);
 
+            //change the fonts for the Left and Right Dock Panels
+            panelDockLeft.Initialize();
+            panelDockRight.Initialize();
+            
+            //change the main Menu Bar Font
+            menuMainStrip.Font = new Font(iceChatFonts.FontSettings[7].FontName, iceChatFonts.FontSettings[7].FontSize);
+
             //change the inputbox font
             inputPanel.InputBoxFont = new Font(iceChatFonts.FontSettings[5].FontName, iceChatFonts.FontSettings[5].FontSize);
 
@@ -3930,7 +4014,7 @@ namespace IceChat
         {
             _tabControl = new TabControl();
             _tabControl.Dock = DockStyle.Fill;
-            _tabControl.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //_tabControl.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             _tabControl.Multiline = true;
             _tabControl.TabStop = false;
             _tabControl.DoubleClick += new EventHandler(OnDoubleClick);
@@ -3970,12 +4054,12 @@ namespace IceChat
                 this.Width = _oldDockWidth;
         }
 
-        public bool IsDocked
+        internal bool IsDocked
         {
             get { return _docked; }
         }
 
-        public void DockControl()
+        internal void DockControl()
         {
             if (!_docked)
             {
@@ -3991,7 +4075,7 @@ namespace IceChat
             }
         }
 
-        public TabControl TabControl
+        internal TabControl TabControl
         {
             get { return _tabControl; }
         }
@@ -4009,6 +4093,14 @@ namespace IceChat
                 Panel p = (Panel)_tabControl.SelectedTab.Controls[0];
                 UnDockPanel(p);
             }
+        }
+
+        /// <summary>
+        /// Setup the Tabs Font to the setting
+        /// </summary>
+        internal void Initialize()
+        {
+            _tabControl.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         }
 
         /// <summary>

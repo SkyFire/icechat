@@ -54,9 +54,7 @@ namespace IceChat
             iceChatMessages.MessageSettings = new ServerMessageFormatItem[49];
 
             if (oldMessage.MessageSettings[0] == null || oldMessage.MessageSettings[0].FormattedMessage.Length == 0)
-            {
                 iceChatMessages.MessageSettings[0] = NewMessageFormat("Server Connect", "&#x3;1*** Attempting to connect to $server ($serverip) on port $port");
-            }
             else
                 iceChatMessages.MessageSettings[0] = oldMessage.MessageSettings[0];
 
@@ -267,13 +265,13 @@ namespace IceChat
 
         private void LoadDefaultFontSettings()
         {
-            IceChatFontSetting oldFonts = new IceChatFontSetting(); ;
-            oldFonts.FontSettings = new FontSettingItem[7];
+            IceChatFontSetting oldFonts = new IceChatFontSetting();
+            oldFonts.FontSettings = new FontSettingItem[8];
+
+            iceChatFonts.FontSettings = new FontSettingItem[8];
 
             if (iceChatFonts.FontSettings != null)
                 iceChatFonts.FontSettings.CopyTo(oldFonts.FontSettings, 0);
-
-            iceChatFonts.FontSettings = new FontSettingItem[7];
 
             if (oldFonts.FontSettings[0] == null || iceChatFonts.FontSettings[0].FontName.Length == 0)
                 iceChatFonts.FontSettings[0] = NewFontSetting("Console", "Verdana", 10);
@@ -306,10 +304,14 @@ namespace IceChat
                 iceChatFonts.FontSettings[5] = oldFonts.FontSettings[5];
 
             if (oldFonts.FontSettings[6] == null || iceChatFonts.FontSettings[6].FontName.Length == 0)
-                iceChatFonts.FontSettings[6] = NewFontSetting("ChannelBar", "Verdana", 10);
+                iceChatFonts.FontSettings[6] = NewFontSetting("DockTabs", "Verdana", 10);
             else
                 iceChatFonts.FontSettings[6] = oldFonts.FontSettings[6];
 
+            if (oldFonts.FontSettings[7] == null || iceChatFonts.FontSettings[7].FontName.Length == 0)
+                iceChatFonts.FontSettings[7] = NewFontSetting("MenuBar", "Verdana", 10);
+            else
+                iceChatFonts.FontSettings[7] = oldFonts.FontSettings[7];
 
             oldFonts = null;
 
@@ -478,7 +480,7 @@ namespace IceChat
                 iceChatFonts = (IceChatFontSetting)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
-                if (iceChatFonts.FontSettings.Length < 7)
+                if (iceChatFonts.FontSettings.Length < 8)
                     LoadDefaultFontSettings();
             }
             else

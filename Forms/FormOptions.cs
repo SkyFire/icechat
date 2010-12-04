@@ -113,6 +113,14 @@ namespace IceChat
             textInputFont.Text = iceChatFonts.FontSettings[5].FontName;
             textInputFontSize.Text = iceChatFonts.FontSettings[5].FontSize.ToString();
 
+            textDockTabFont.Font = new Font(iceChatFonts.FontSettings[6].FontName, 10);
+            textDockTabFont.Text = iceChatFonts.FontSettings[6].FontName;
+            textDockTabSize.Text = iceChatFonts.FontSettings[6].FontSize.ToString();
+
+            textMenuBarFont.Font = new Font(iceChatFonts.FontSettings[7].FontName, 10);
+            textMenuBarFont.Text = iceChatFonts.FontSettings[7].FontName;
+            textMenuBarSize.Text = iceChatFonts.FontSettings[7].FontSize.ToString();
+
             //populate the settings
             textTimeStamp.Text = iceChatOptions.TimeStamp;
             checkSaveWindowPosition.Checked = iceChatOptions.SaveWindowPosition;
@@ -262,8 +270,11 @@ namespace IceChat
             iceChatFonts.FontSettings[5].FontName = textInputFont.Text;
             iceChatFonts.FontSettings[5].FontSize = float.Parse(textInputFontSize.Text);
             
-            //icechatFonts.FontSettings[6].FontName = textChannelBarFont.Text;
-            //icechatFonts.FontSettings[6].FontSize = float.Parse(textChannelBarFontSize.Text);
+            iceChatFonts.FontSettings[6].FontName = textDockTabFont.Text;
+            iceChatFonts.FontSettings[6].FontSize = float.Parse(textDockTabSize.Text);
+
+            iceChatFonts.FontSettings[7].FontName = textMenuBarFont.Text;
+            iceChatFonts.FontSettings[7].FontSize = float.Parse(textMenuBarSize.Text);
 
             //dcc settings
             iceChatOptions.DCCChatAutoAccept = checkAutoDCCChat.Checked;
@@ -408,6 +419,39 @@ namespace IceChat
             }
         }
 
+        private void buttonDockTab_Click(object sender, EventArgs e)
+        {
+            FontDialog fd = new FontDialog();
+            fd.AllowVerticalFonts = false;
+            fd.FontMustExist = true;
+            //load the current font
+            fd.Font = new Font(textDockTabFont.Text, float.Parse(textDockTabSize.Text), textDockTabFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
+            {
+                textDockTabFont.Text = fd.Font.Name;
+                textDockTabSize.Text = fd.Font.Size.ToString();
+                textDockTabFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
+            }
+
+        }
+
+        private void buttonMenuBar_Click(object sender, EventArgs e)
+        {
+            FontDialog fd = new FontDialog();
+            fd.AllowVerticalFonts = false;
+            fd.FontMustExist = true;
+            //load the current font
+            fd.Font = new Font(textMenuBarFont.Text, float.Parse(textMenuBarSize.Text), textMenuBarFont.Font.Style);
+            if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
+            {
+                textMenuBarFont.Text = fd.Font.Name;
+                textMenuBarSize.Text = fd.Font.Size.ToString();
+                textMenuBarFont.Font = new Font(fd.Font.Name, 10, fd.Font.Style);
+            }
+
+        }
+
+
         private void buttonAddEmoticon_Click(object sender, EventArgs e)
         {
             //add a new emoticon
@@ -548,5 +592,7 @@ namespace IceChat
             }
             catch { }
         }
+
+
     }
 }

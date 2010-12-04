@@ -1117,5 +1117,205 @@ namespace IceChat
             return ParseIRCCodes.Replace(line, "");
         }
 
+        private string GetDefaultMessage(string MessageName)
+        {
+            string newMessage = "";
+
+            switch (MessageName)
+            {
+                case "Server Connect":
+                    newMessage = "&#x3;1*** Attempting to connect to $server ($serverip) on port $port";
+                    break;
+                case "Server Disconnect":
+                    newMessage = "&#x3;1*** Server disconnected on $server";
+                    break;
+                case "Server Reconnect":
+                    newMessage = "&#x3;1*** Attempting to re-connect to $server";
+                    break;
+                case "Channel Invite":
+                    newMessage = "&#x3;3* $nick invites you to $channel";
+                    break;
+                case "Ctcp Reply":
+                    newMessage = "&#x3;12[$nick $ctcp Reply] : $reply";
+                    break;
+                case "Ctcp Send":
+                    newMessage =  "&#x3;10--> [$nick] $ctcp";
+                    break;
+                case "Ctcp Request":
+                    newMessage = "&#x3;7[$nick] $ctcp";
+                    break;
+                case "Channel Mode":
+                    newMessage = "&#x3;9* $nick sets mode $mode $modeparam for $channel";
+                    break;
+                case "Server Mode":
+                    newMessage = "&#x3;6* Your mode is now $mode";
+                    break;
+                case "Server Notice":
+                    newMessage = "&#x3;4*** $server $message";
+                    break;
+                case "Server Message":
+                    newMessage = "&#x3;4-$server- $message";
+                    break;                
+                case "User Notice":
+                    newMessage = "&#x3;4--$nick-- $message";
+                    break;
+                case "Channel Message":
+                    newMessage =  "&#x3;1<$color$nick&#x3;> $message";
+                    break;
+                case "Self Channel Message":
+                    newMessage = "&#x3;1<$nick> $message";
+                    break;
+                case "Channel Action":
+                    newMessage = "&#x3;5* $nick $message";
+                    break;
+                case "Self Channel Action":
+                    newMessage = "&#x3;4* $nick $message";
+                    break;
+                case "Channel Join":
+                    newMessage = "&#x3;7* $nick ($host) has joined channel $channel";
+                    break;
+                case "Self Channel Join":
+                    newMessage = "&#x3;4* You have joined $channel";
+                    break;
+                case "Channel Part":
+                    newMessage = "&#x3;3* $nick ($host) has left $channel ($reason)";
+                    break;
+                case "Self Channel Part":
+                    newMessage = "&#x3;4* You have left $channel - You will be missed &#x3;10($reason)";
+                    break;
+                case "Server Quit":
+                    newMessage = "&#x3;2* $nick ($host) Quit ($reason)";
+                    break;
+                case "Channel Nick Change":
+                    newMessage = "&#x3;3* $nick is now known as $newnick";
+                    break;
+                case "Self Nick Change":
+                    newMessage = "&#x3;4* You are now known as $newnick";
+                    break;
+                case "Channel Kick":
+                    newMessage = "&#x3;4* $kickee was kicked by $nick($host) &#x3;3 - Reason ($reason)" ;
+                    break;
+                case "Self Channel Kick":
+                    newMessage = "&#x3;4* You were kicked from $channel by $kicker (&#x3;3$reason)";
+                    break;
+                case "Private Message":
+                    newMessage = "&#x3;1<$nick> $message";
+                    break;
+                case "Self Private Message":
+                    newMessage = "&#x3;4<$nick>&#x3;1 $message";
+                    break;
+                case "Private Action":
+                    newMessage = "&#x3;13* $nick $message";
+                    break;
+                case "Self Private Action":
+                    newMessage = "&#x3;12* $nick $message";
+                    break;
+                case "DCC Chat Action":
+                    newMessage = "&#x3;5* $nick $message";
+                    break;
+                case "Self DCC Chat Action":
+                    newMessage = "&#x3;5* $nick $message";
+                    break;
+                case "DCC Chat Message":
+                    newMessage = "&#x3;1<$nick> $message";
+                    break;
+                case "Self DCC Chat Message":
+                    newMessage = "&#x3;4<$nick> $message";
+                    break;
+                case "DCC Chat Request":
+                    newMessage = "&#x3;4* $nick ($host) is requesting a DCC Chat";
+                    break;
+                case "DCC File Send":
+                    newMessage = "&#x3;4* $nick ($host) is trying to send you a file ($file) [$filesize bytes]";
+                    break;
+                case "Channel Topic Change":
+                    newMessage = "&#x3;3* $nick changes topic to: $topic";
+                    break;
+                case "Channel Topic Text":
+                    newMessage =  "&#x3;3Topic: $topic";
+                    break;
+                case "Server MOTD":
+                    newMessage = "&#x3;3$message";
+                    break;
+                case "Channel Notice":
+                    newMessage = "&#x3;5-$nick:$status$channel- $message";
+                    break;
+                case "Channel Other":
+                    newMessage = "&#x3;1$message";
+                    break;
+                case "User Echo":
+                    newMessage = "&#x3;7$message";
+                    break;
+                case "Server Error":
+                    newMessage = "&#x3;4ERROR: $message";
+                    break;
+                case "User Whois":
+                    newMessage = "&#x3;12->> $nick $data";
+                    break;
+                case "User Error":
+                    newMessage = "&#x3;4ERROR: $message";
+                    break;
+                case "DCC Chat Connect":
+                    newMessage = "&#x3;1* DCC Chat Connection Established with $nick";
+                    break;
+                case "DCC Chat Disconnect":
+                    newMessage = "&#x3;1* DCC Chat Disconnected from $nick";
+                    break;
+                case "DCC Chat Outgoing":
+                    newMessage = "&#x3;1* DCC Chat Requested with $nick";
+                    break;
+                case "DCC Chat Timeout":
+                    newMessage = "&#x3;1* DCC Chat with $nick timed out";
+                    break;
+                case "Self Notice":
+                    newMessage = "&#x3;1--> $nick - $message";
+                    break;
+            }
+
+            return newMessage;
+        }
+
+        private void buttonResetBasic_Click(object sender, EventArgs e)
+        {
+            //reset the selected color setting back to the default color
+            if (treeBasicMessages.SelectedNode == null)
+                return;
+
+            if (treeBasicMessages.SelectedNode.Parent == null)
+                return;
+
+            string newMessage = GetDefaultMessage(treeBasicMessages.SelectedNode.Text);
+            if (newMessage.Length > 0)
+            {
+                this.textFormattedBasic.ClearTextWindow();
+                this.textFormattedBasic.AppendText(newMessage, 1);
+            }
+            treeBasicMessages.Select();
+        }
+
+        private void buttonResetAdvanced_Click(object sender, EventArgs e)
+        {
+            if (treeMessages.SelectedNode == null)
+                return;
+
+            if (treeMessages.SelectedNode.Parent == null)
+                return;
+
+            string newMessage = GetDefaultMessage(treeMessages.SelectedNode.Text);
+            if (newMessage.Length > 0)
+            {
+                textRawMessage.Text = newMessage;
+                //replace the color code
+                textRawMessage.Text = textRawMessage.Text.Replace("&#x3;", ((char)3).ToString());
+                //replace the bold code
+                textRawMessage.Text = textRawMessage.Text.Replace("&#x2;", ((char)2).ToString());
+
+                this.textFormattedText.ClearTextWindow();
+                this.textFormattedText.AppendText(newMessage, 1);
+            }
+            treeMessages.Select();
+
+        }
+
     }
 }

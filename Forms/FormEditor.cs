@@ -82,6 +82,9 @@ namespace IceChat
             currentPopup = "NickList";
             currentPopupMenu = nickListToolStripMenuItem;
 
+            //change the menu bat font
+            menuStripMain.Font = new Font(FormMain.Instance.IceChatFonts.FontSettings[7].FontName, FormMain.Instance.IceChatFonts.FontSettings[7].FontSize);
+
             try
             {
 

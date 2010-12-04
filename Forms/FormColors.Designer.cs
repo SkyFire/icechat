@@ -112,12 +112,14 @@
             this.tabPageMessages = new System.Windows.Forms.TabPage();
             this.tabMessages = new System.Windows.Forms.TabControl();
             this.tabBasic = new System.Windows.Forms.TabPage();
+            this.buttonResetBasic = new System.Windows.Forms.Button();
             this.textFormattedBasic = new IceChat.TextWindow();
             this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
             this.labelFormatMessageBasic = new System.Windows.Forms.Label();
             this.labelIRCMessagesBasic = new System.Windows.Forms.Label();
             this.treeBasicMessages = new System.Windows.Forms.TreeView();
             this.tabAdvanced = new System.Windows.Forms.TabPage();
+            this.buttonResetAdvanced = new System.Windows.Forms.Button();
             this.textFormattedText = new IceChat.TextWindow();
             this.textRawMessage = new System.Windows.Forms.TextBox();
             this.labelIRCMessagesAdvanced = new System.Windows.Forms.Label();
@@ -167,6 +169,8 @@
             this.labelIRCEvent = new System.Windows.Forms.Label();
             this.labelTabCurrent = new System.Windows.Forms.Label();
             this.tabPageBackGround = new System.Windows.Forms.TabPage();
+            this.pictureUnreadTextMarkerColor = new System.Windows.Forms.PictureBox();
+            this.labelUnreadTextMarkerColor = new System.Windows.Forms.Label();
             this.pictureStatusFore = new System.Windows.Forms.PictureBox();
             this.labelStatusFore = new System.Windows.Forms.Label();
             this.pictureStatusBar = new System.Windows.Forms.PictureBox();
@@ -216,12 +220,12 @@
             this.labelAdmin = new System.Windows.Forms.Label();
             this.labelChannelUserTypes = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
+            this.tabPageThemes = new System.Windows.Forms.TabPage();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.labelUnreadTextMarkerColor = new System.Windows.Forms.Label();
-            this.pictureUnreadTextMarkerColor = new System.Windows.Forms.PictureBox();
+            this.labelColorThemesHeader = new System.Windows.Forms.Label();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -244,6 +248,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabMessage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabCurrent)).BeginInit();
             this.tabPageBackGround.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusFore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureInputBoxFore)).BeginInit();
@@ -267,7 +272,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureOperator)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).BeginInit();
+            this.tabPageThemes.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlColors
@@ -276,6 +281,7 @@
             this.tabControlColors.Controls.Add(this.tabPageTabBar);
             this.tabControlColors.Controls.Add(this.tabPageBackGround);
             this.tabControlColors.Controls.Add(this.tabPageNickNames);
+            this.tabControlColors.Controls.Add(this.tabPageThemes);
             this.tabControlColors.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlColors.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlColors.Location = new System.Drawing.Point(0, 0);
@@ -288,7 +294,7 @@
             // 
             // tabPageMessages
             // 
-            this.tabPageMessages.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageMessages.BackColor = System.Drawing.Color.Transparent;
             this.tabPageMessages.Controls.Add(this.tabMessages);
             this.tabPageMessages.Location = new System.Drawing.Point(4, 25);
             this.tabPageMessages.Margin = new System.Windows.Forms.Padding(4);
@@ -297,6 +303,7 @@
             this.tabPageMessages.Size = new System.Drawing.Size(740, 385);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
+            this.tabPageMessages.UseVisualStyleBackColor = true;
             // 
             // tabMessages
             // 
@@ -312,6 +319,7 @@
             // tabBasic
             // 
             this.tabBasic.BackColor = System.Drawing.SystemColors.Control;
+            this.tabBasic.Controls.Add(this.buttonResetBasic);
             this.tabBasic.Controls.Add(this.textFormattedBasic);
             this.tabBasic.Controls.Add(this.checkChangeBGBasic);
             this.tabBasic.Controls.Add(this.labelFormatMessageBasic);
@@ -324,6 +332,16 @@
             this.tabBasic.TabIndex = 2;
             this.tabBasic.Text = "Basic";
             // 
+            // buttonResetBasic
+            // 
+            this.buttonResetBasic.Location = new System.Drawing.Point(378, 266);
+            this.buttonResetBasic.Name = "buttonResetBasic";
+            this.buttonResetBasic.Size = new System.Drawing.Size(148, 23);
+            this.buttonResetBasic.TabIndex = 52;
+            this.buttonResetBasic.Text = "Reset to Default";
+            this.buttonResetBasic.UseVisualStyleBackColor = true;
+            this.buttonResetBasic.Click += new System.EventHandler(this.buttonResetBasic_Click);
+            // 
             // textFormattedBasic
             // 
             this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -331,7 +349,7 @@
             this.textFormattedBasic.Location = new System.Drawing.Point(16, 315);
             this.textFormattedBasic.Name = "textFormattedBasic";
             this.textFormattedBasic.SingleLine = true;
-            this.textFormattedBasic.Size = new System.Drawing.Size(510, 20);
+            this.textFormattedBasic.Size = new System.Drawing.Size(605, 23);
             this.textFormattedBasic.TabIndex = 51;
             // 
             // checkChangeBGBasic
@@ -395,6 +413,7 @@
             // tabAdvanced
             // 
             this.tabAdvanced.BackColor = System.Drawing.SystemColors.Control;
+            this.tabAdvanced.Controls.Add(this.buttonResetAdvanced);
             this.tabAdvanced.Controls.Add(this.textFormattedText);
             this.tabAdvanced.Controls.Add(this.textRawMessage);
             this.tabAdvanced.Controls.Add(this.labelIRCMessagesAdvanced);
@@ -410,6 +429,16 @@
             this.tabAdvanced.Size = new System.Drawing.Size(724, 348);
             this.tabAdvanced.TabIndex = 1;
             this.tabAdvanced.Text = "Advanced";
+            // 
+            // buttonResetAdvanced
+            // 
+            this.buttonResetAdvanced.Location = new System.Drawing.Point(380, 215);
+            this.buttonResetAdvanced.Name = "buttonResetAdvanced";
+            this.buttonResetAdvanced.Size = new System.Drawing.Size(148, 23);
+            this.buttonResetAdvanced.TabIndex = 53;
+            this.buttonResetAdvanced.Text = "Reset to Default";
+            this.buttonResetAdvanced.UseVisualStyleBackColor = true;
+            this.buttonResetAdvanced.Click += new System.EventHandler(this.buttonResetAdvanced_Click);
             // 
             // textFormattedText
             // 
@@ -518,7 +547,7 @@
             // 
             // tabPageTabBar
             // 
-            this.tabPageTabBar.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageTabBar.BackColor = System.Drawing.Color.Transparent;
             this.tabPageTabBar.Controls.Add(this.checkOtherMessage);
             this.tabPageTabBar.Controls.Add(this.checkServerMessage);
             this.tabPageTabBar.Controls.Add(this.checkServerQuit);
@@ -563,6 +592,7 @@
             this.tabPageTabBar.Size = new System.Drawing.Size(740, 385);
             this.tabPageTabBar.TabIndex = 3;
             this.tabPageTabBar.Text = "Tab Bar";
+            this.tabPageTabBar.UseVisualStyleBackColor = true;
             // 
             // checkOtherMessage
             // 
@@ -927,7 +957,7 @@
             // 
             // tabPageBackGround
             // 
-            this.tabPageBackGround.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageBackGround.BackColor = System.Drawing.Color.Transparent;
             this.tabPageBackGround.Controls.Add(this.pictureUnreadTextMarkerColor);
             this.tabPageBackGround.Controls.Add(this.labelUnreadTextMarkerColor);
             this.tabPageBackGround.Controls.Add(this.pictureStatusFore);
@@ -970,6 +1000,26 @@
             this.tabPageBackGround.Size = new System.Drawing.Size(740, 385);
             this.tabPageBackGround.TabIndex = 4;
             this.tabPageBackGround.Text = "Other";
+            this.tabPageBackGround.UseVisualStyleBackColor = true;
+            // 
+            // pictureUnreadTextMarkerColor
+            // 
+            this.pictureUnreadTextMarkerColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureUnreadTextMarkerColor.Location = new System.Drawing.Point(235, 338);
+            this.pictureUnreadTextMarkerColor.Name = "pictureUnreadTextMarkerColor";
+            this.pictureUnreadTextMarkerColor.Size = new System.Drawing.Size(20, 20);
+            this.pictureUnreadTextMarkerColor.TabIndex = 113;
+            this.pictureUnreadTextMarkerColor.TabStop = false;
+            this.pictureUnreadTextMarkerColor.Tag = "Unread Text Marker";
+            // 
+            // labelUnreadTextMarkerColor
+            // 
+            this.labelUnreadTextMarkerColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelUnreadTextMarkerColor.Location = new System.Drawing.Point(19, 338);
+            this.labelUnreadTextMarkerColor.Name = "labelUnreadTextMarkerColor";
+            this.labelUnreadTextMarkerColor.Size = new System.Drawing.Size(210, 20);
+            this.labelUnreadTextMarkerColor.TabIndex = 112;
+            this.labelUnreadTextMarkerColor.Text = "Unread Text Marker";
             // 
             // pictureStatusFore
             // 
@@ -1297,7 +1347,7 @@
             // 
             // tabPageNickNames
             // 
-            this.tabPageNickNames.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageNickNames.BackColor = System.Drawing.Color.Transparent;
             this.tabPageNickNames.Controls.Add(this.checkRandomNickColors);
             this.tabPageNickNames.Controls.Add(this.pictureDefault);
             this.tabPageNickNames.Controls.Add(this.pictureVoice);
@@ -1319,6 +1369,7 @@
             this.tabPageNickNames.Size = new System.Drawing.Size(740, 385);
             this.tabPageNickNames.TabIndex = 1;
             this.tabPageNickNames.Text = "Nick List";
+            this.tabPageNickNames.UseVisualStyleBackColor = true;
             // 
             // checkRandomNickColors
             // 
@@ -1454,6 +1505,16 @@
             this.labelOwner.TabIndex = 54;
             this.labelOwner.Text = "~ Channel Owner";
             // 
+            // tabPageThemes
+            // 
+            this.tabPageThemes.Controls.Add(this.labelColorThemesHeader);
+            this.tabPageThemes.Location = new System.Drawing.Point(4, 25);
+            this.tabPageThemes.Name = "tabPageThemes";
+            this.tabPageThemes.Size = new System.Drawing.Size(740, 385);
+            this.tabPageThemes.TabIndex = 5;
+            this.tabPageThemes.Text = "Themes";
+            this.tabPageThemes.UseVisualStyleBackColor = true;
+            // 
             // panelColorPicker
             // 
             this.panelColorPicker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1498,24 +1559,16 @@
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current Selected:";
-                        // labelUnreadTextMarkerColor
-                        // 
-            this.labelUnreadTextMarkerColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelUnreadTextMarkerColor.Location = new System.Drawing.Point(19, 338);
-            this.labelUnreadTextMarkerColor.Name = "labelUnreadTextMarkerColor";
-            this.labelUnreadTextMarkerColor.Size = new System.Drawing.Size(210, 20);
-            this.labelUnreadTextMarkerColor.TabIndex = 112;
-            this.labelUnreadTextMarkerColor.Text = "Unread Text Marker";
-                        // 
-                        // pictureUnreadTextMarkerColor
-                        // 
-            this.pictureUnreadTextMarkerColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureUnreadTextMarkerColor.Location = new System.Drawing.Point(235, 338);
-            this.pictureUnreadTextMarkerColor.Name = "pictureUnreadTextMarkerColor";
-            this.pictureUnreadTextMarkerColor.Size = new System.Drawing.Size(20, 20);
-            this.pictureUnreadTextMarkerColor.TabIndex = 113;
-            this.pictureUnreadTextMarkerColor.TabStop = false;
-            this.pictureUnreadTextMarkerColor.Tag = "Unread Text Marker";
+            // 
+            // labelColorThemesHeader
+            // 
+            this.labelColorThemesHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelColorThemesHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelColorThemesHeader.Location = new System.Drawing.Point(19, 4);
+            this.labelColorThemesHeader.Name = "labelColorThemesHeader";
+            this.labelColorThemesHeader.Size = new System.Drawing.Size(236, 18);
+            this.labelColorThemesHeader.TabIndex = 56;
+            this.labelColorThemesHeader.Text = "IceChat Color Themes";
             // 
             // FormColors
             // 
@@ -1559,8 +1612,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabJoin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabMessage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureTabCurrent)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).EndInit();
             this.tabPageBackGround.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureUnreadTextMarkerColor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusFore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureStatusBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureInputBoxFore)).EndInit();
@@ -1585,6 +1638,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureOperator)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).EndInit();
+            this.tabPageThemes.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1640,6 +1694,10 @@
         private System.Windows.Forms.CheckBox checkChannelJoin;
         private System.Windows.Forms.PictureBox pictureUnreadTextMarkerColor;
         private System.Windows.Forms.Label labelUnreadTextMarkerColor;
+        private System.Windows.Forms.Button buttonResetBasic;
+        private System.Windows.Forms.Button buttonResetAdvanced;
+        private System.Windows.Forms.TabPage tabPageThemes;
+        private System.Windows.Forms.Label labelColorThemesHeader;
 
     }
 }

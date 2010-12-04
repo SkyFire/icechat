@@ -268,8 +268,10 @@ namespace IceChat
         {
             //send the command to the proper window
             if (e.ClickedItem.Tag == null) return;
-
+            
             string command = e.ClickedItem.Tag.ToString();
+
+            ((ContextMenuStrip)(sender)).Close();
 
             if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Console)
             {
@@ -311,7 +313,7 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Close Channel", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
             menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", StaticMethods.LoadResourceImage("refresh.png")));
             menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", StaticMethods.LoadResourceImage("info.png")));
-
+            menu.Items.Add(NewMenuItem("Change Font", "/font $1", StaticMethods.LoadResourceImage("fonts.png")));
             //add then channel popup menu
             AddPopupMenu("Channel", menu);
             return menu;
@@ -328,6 +330,16 @@ namespace IceChat
 
             //add then channel popup menu
             AddPopupMenu("Query", menu);
+            return menu;
+
+        }
+
+        private ContextMenuStrip ChannelListPopupMenu()
+        {
+            ContextMenuStrip menu = new ContextMenuStrip();
+            menu.Items.Add(NewMenuItem("Close Window", "/close $1", StaticMethods.LoadResourceImage("CloseButton.png")));
+
+            AddPopupMenu("ChannelList", menu);
             return menu;
 
         }
@@ -418,7 +430,16 @@ namespace IceChat
                                     command = command.Replace("$1", tw.TabCaption);
                                 }
                             }
-                            
+
+                            if (p.PopupType == "ChannelList")
+                            {
+                                if (tw != null)
+                                {
+                                    caption = caption.Replace("$1", tw.WindowStyle.ToString());
+                                    command = command.Replace("$1", tw.WindowStyle.ToString());
+                                }
+                            }
+
                             if (caption == "-")
                                 t = new ToolStripSeparator();
                             else
@@ -910,12 +931,21 @@ namespace IceChat
                         _popupMenu = ChannelPopupMenu();
                         _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         _popupMenu.Show(this, e.Location);
+
                     }
                     else if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.Query)
                     {
                         _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         _popupMenu.Items.Clear();
                         _popupMenu = QueryPopupMenu();
+                        _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Show(this, e.Location);
+                    }
+                    else if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.ChannelList)
+                    {
+                        _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Items.Clear();
+                        _popupMenu = ChannelListPopupMenu();
                         _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         _popupMenu.Show(this, e.Location);
                     }

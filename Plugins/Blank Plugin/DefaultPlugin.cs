@@ -168,7 +168,49 @@ namespace IceChatPlugin
             return args;
         }
 
+        public PluginArgs ChannelKick(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs ServerNotice(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs UserNotice(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs CtcpMessage(PluginArgs args)
+        {
+            //args.Extra        -- ctcp message 
+            return args;
+        }
+
+        public PluginArgs CtcpReply(PluginArgs args)
+        {
+            //args.Extra        -- ctcp message 
+            return args;
+        }
+
+        public PluginArgs ServerMessage(PluginArgs args)
+        {
+            return args;
+        }
+
+        public void NickChange(PluginArgs args)
+        {
+
+        }
+
         public void ServerRaw(PluginArgs args)
+        {
+
+        }
+
+        public void ServerError(PluginArgs args)
         {
 
         }

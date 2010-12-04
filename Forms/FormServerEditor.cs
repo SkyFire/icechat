@@ -181,6 +181,7 @@ namespace IceChat
             this.textNickservPassword.Text = serverSetting.NickservPassword;
             this.checkAutoStart.Checked = serverSetting.AutoStart;
             this.checkUseSSL.Checked = serverSetting.UseSSL;
+            this.checkInvalidCertificate.Checked = serverSetting.SSLAcceptInvalidCertificate;
 
             if (serverSetting.AutoJoinChannels != null)
             {
@@ -381,6 +382,7 @@ namespace IceChat
             serverSetting.DisableCTCP = checkDisableCTCP.Checked;
             serverSetting.AutoStart = checkAutoStart.Checked;
             serverSetting.UseSSL = checkUseSSL.Checked;
+            serverSetting.SSLAcceptInvalidCertificate = checkInvalidCertificate.Checked;
             serverSetting.Encoding = comboEncoding.Text;
 
             serverSetting.UseProxy = checkUseProxy.Checked;

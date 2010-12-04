@@ -197,6 +197,10 @@ namespace IceChat
         public bool UseSSL
         { get; set; }
 
+        [XmlElement("SSLAcceptInvalidCertificate")]
+        public bool SSLAcceptInvalidCertificate
+        { get; set; }
+
         [XmlElement("UseProxy")]
         public bool UseProxy
         { get; set; }

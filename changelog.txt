@@ -1,3 +1,25 @@
+Build Beta 2 - December 4 2010
+* Fixed problem with BeginWrite for Sending Data, added a sendBuffer Queue
+* Fixed SSL Exception Error if the remote certificate is invalid
+* Fixed problem with $color not parsing properly for single digit color codes
+* Added option for Color Settings to reset color back to default setting
+* Added an option for Server Settings, to allow it to accept invalid SSL certificates (in Extra Settings)
+* Added for /server command, if a + in front of a port, will use SSL
+* Added option to change Font for Docking Tabs
+* Added option to change Font for Main Menu Bar
+* Added option from Channel Popupmenu from Tabbar to change font for just that window
+* Added popupmenu for channel bar for Channel List
+* Added ServerError event to the Plugin Framework
+* Added ServerMessage event to the Plugin Framework
+* Added ServerNotice event to the Plugin Framework
+* Added UserNotice event to the Plugin Framework
+* Added ChannelKick event to the Plugin Framework
+* Added NickChange event to the Plugin Framework
+* Added CtcpMessage event to the Plugin Framework
+* Added CtcpReply event to the Plugin Framework
+
+
+
 Build Beta 1 - October 16 2010
 * Started adding some accessibility features
 * Access Server Tree/Nicklist from Menu and allow cursor keys to scroll through

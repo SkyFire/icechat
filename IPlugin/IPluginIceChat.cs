@@ -59,15 +59,24 @@ namespace IceChatPlugin
 
         PluginArgs ChannelMessage(PluginArgs args);       //return whether default message has been overriden
         PluginArgs ChannelAction(PluginArgs args);
+        PluginArgs ChannelKick(PluginArgs args);
         PluginArgs QueryMessage(PluginArgs args);
         PluginArgs QueryAction(PluginArgs args);
 
         PluginArgs ChannelJoin(PluginArgs args);
         PluginArgs ChannelPart(PluginArgs args);
         PluginArgs ServerQuit(PluginArgs args);
+        PluginArgs ServerMessage(PluginArgs args);
+        PluginArgs ServerNotice(PluginArgs args);
         PluginArgs InputText(PluginArgs args);
+        PluginArgs UserNotice(PluginArgs args);
+        PluginArgs CtcpMessage(PluginArgs args);
+        PluginArgs CtcpReply(PluginArgs args);
 
+        void NickChange(PluginArgs args);
+        void ServerError(PluginArgs args);
         void ServerRaw(PluginArgs args);
+
 
         event OutGoingCommandHandler OnCommand;
 
@@ -83,7 +92,7 @@ namespace IceChatPlugin
         public Form Form;           
         public Object TextWindow;
         public Object Connection;
-
+        
         public string Command;      //if you wish to return back a command
 
         //public bool isHandled;      //if the default text message is over riden

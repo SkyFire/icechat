@@ -33,6 +33,7 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.textAwayNick = new System.Windows.Forms.TextBox();
             this.labelAwayNickName = new System.Windows.Forms.Label();
             this.textAltNickName = new System.Windows.Forms.TextBox();
@@ -123,7 +124,7 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.checkUseSSL = new System.Windows.Forms.CheckBox();
+            this.checkInvalidCertificate = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -215,9 +216,19 @@
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
             // 
+            // checkUseSSL
+            // 
+            this.checkUseSSL.AutoSize = true;
+            this.checkUseSSL.Location = new System.Drawing.Point(370, 35);
+            this.checkUseSSL.Name = "checkUseSSL";
+            this.checkUseSSL.Size = new System.Drawing.Size(145, 20);
+            this.checkUseSSL.TabIndex = 51;
+            this.checkUseSSL.Text = "Connect with SSL";
+            this.checkUseSSL.UseVisualStyleBackColor = true;
+            // 
             // textAwayNick
             // 
-            this.textAwayNick.Location = new System.Drawing.Point(459, 100);
+            this.textAwayNick.Location = new System.Drawing.Point(459, 97);
             this.textAwayNick.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAwayNick.Name = "textAwayNick";
             this.textAwayNick.Size = new System.Drawing.Size(150, 23);
@@ -226,7 +237,7 @@
             // labelAwayNickName
             // 
             this.labelAwayNickName.AutoSize = true;
-            this.labelAwayNickName.Location = new System.Drawing.Point(333, 103);
+            this.labelAwayNickName.Location = new System.Drawing.Point(333, 104);
             this.labelAwayNickName.Name = "labelAwayNickName";
             this.labelAwayNickName.Size = new System.Drawing.Size(117, 16);
             this.labelAwayNickName.TabIndex = 49;
@@ -234,7 +245,7 @@
             // 
             // textAltNickName
             // 
-            this.textAltNickName.Location = new System.Drawing.Point(459, 69);
+            this.textAltNickName.Location = new System.Drawing.Point(459, 63);
             this.textAltNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAltNickName.Name = "textAltNickName";
             this.textAltNickName.Size = new System.Drawing.Size(150, 23);
@@ -243,7 +254,7 @@
             // labelAltNickName
             // 
             this.labelAltNickName.AutoSize = true;
-            this.labelAltNickName.Location = new System.Drawing.Point(351, 72);
+            this.labelAltNickName.Location = new System.Drawing.Point(354, 70);
             this.labelAltNickName.Name = "labelAltNickName";
             this.labelAltNickName.Size = new System.Drawing.Size(99, 16);
             this.labelAltNickName.TabIndex = 47;
@@ -268,7 +279,7 @@
             // 
             // textQuitMessage
             // 
-            this.textQuitMessage.Location = new System.Drawing.Point(115, 159);
+            this.textQuitMessage.Location = new System.Drawing.Point(115, 161);
             this.textQuitMessage.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textQuitMessage.Name = "textQuitMessage";
             this.textQuitMessage.Size = new System.Drawing.Size(228, 23);
@@ -277,7 +288,7 @@
             // labelQuitMessage
             // 
             this.labelQuitMessage.AutoSize = true;
-            this.labelQuitMessage.Location = new System.Drawing.Point(15, 162);
+            this.labelQuitMessage.Location = new System.Drawing.Point(15, 164);
             this.labelQuitMessage.Name = "labelQuitMessage";
             this.labelQuitMessage.Size = new System.Drawing.Size(97, 16);
             this.labelQuitMessage.TabIndex = 45;
@@ -286,7 +297,7 @@
             // labelFullName
             // 
             this.labelFullName.AutoSize = true;
-            this.labelFullName.Location = new System.Drawing.Point(15, 131);
+            this.labelFullName.Location = new System.Drawing.Point(15, 133);
             this.labelFullName.Name = "labelFullName";
             this.labelFullName.Size = new System.Drawing.Size(71, 16);
             this.labelFullName.TabIndex = 43;
@@ -294,7 +305,7 @@
             // 
             // textFullName
             // 
-            this.textFullName.Location = new System.Drawing.Point(115, 128);
+            this.textFullName.Location = new System.Drawing.Point(115, 130);
             this.textFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textFullName.Name = "textFullName";
             this.textFullName.Size = new System.Drawing.Size(228, 23);
@@ -302,7 +313,7 @@
             // 
             // textIdentName
             // 
-            this.textIdentName.Location = new System.Drawing.Point(115, 99);
+            this.textIdentName.Location = new System.Drawing.Point(115, 101);
             this.textIdentName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textIdentName.Name = "textIdentName";
             this.textIdentName.Size = new System.Drawing.Size(150, 23);
@@ -311,7 +322,7 @@
             // labelIdentName
             // 
             this.labelIdentName.AutoSize = true;
-            this.labelIdentName.Location = new System.Drawing.Point(15, 102);
+            this.labelIdentName.Location = new System.Drawing.Point(15, 104);
             this.labelIdentName.Name = "labelIdentName";
             this.labelIdentName.Size = new System.Drawing.Size(84, 16);
             this.labelIdentName.TabIndex = 41;
@@ -335,7 +346,7 @@
             // 
             // textNickName
             // 
-            this.textNickName.Location = new System.Drawing.Point(115, 65);
+            this.textNickName.Location = new System.Drawing.Point(115, 67);
             this.textNickName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textNickName.Name = "textNickName";
             this.textNickName.Size = new System.Drawing.Size(150, 23);
@@ -364,7 +375,7 @@
             // 
             this.labelNickName.AutoSize = true;
             this.labelNickName.ForeColor = System.Drawing.Color.Red;
-            this.labelNickName.Location = new System.Drawing.Point(15, 68);
+            this.labelNickName.Location = new System.Drawing.Point(15, 70);
             this.labelNickName.Name = "labelNickName";
             this.labelNickName.Size = new System.Drawing.Size(76, 16);
             this.labelNickName.TabIndex = 36;
@@ -373,6 +384,7 @@
             // tabPageExtra
             // 
             this.tabPageExtra.BackColor = System.Drawing.Color.Transparent;
+            this.tabPageExtra.Controls.Add(this.checkInvalidCertificate);
             this.tabPageExtra.Controls.Add(this.checkAutoStart);
             this.tabPageExtra.Controls.Add(this.labelServerPassword);
             this.tabPageExtra.Controls.Add(this.textServerPassword);
@@ -451,7 +463,7 @@
             // labelEncoding
             // 
             this.labelEncoding.AutoSize = true;
-            this.labelEncoding.Location = new System.Drawing.Point(12, 170);
+            this.labelEncoding.Location = new System.Drawing.Point(12, 197);
             this.labelEncoding.Name = "labelEncoding";
             this.labelEncoding.Size = new System.Drawing.Size(67, 16);
             this.labelEncoding.TabIndex = 5;
@@ -461,7 +473,7 @@
             // 
             this.comboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboEncoding.FormattingEnabled = true;
-            this.comboEncoding.Location = new System.Drawing.Point(88, 167);
+            this.comboEncoding.Location = new System.Drawing.Point(88, 194);
             this.comboEncoding.Name = "comboEncoding";
             this.comboEncoding.Size = new System.Drawing.Size(147, 24);
             this.comboEncoding.TabIndex = 4;
@@ -1122,15 +1134,15 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // checkUseSSL
+            // checkInvalidCertificate
             // 
-            this.checkUseSSL.AutoSize = true;
-            this.checkUseSSL.Location = new System.Drawing.Point(370, 36);
-            this.checkUseSSL.Name = "checkUseSSL";
-            this.checkUseSSL.Size = new System.Drawing.Size(145, 20);
-            this.checkUseSSL.TabIndex = 51;
-            this.checkUseSSL.Text = "Connect with SSL";
-            this.checkUseSSL.UseVisualStyleBackColor = true;
+            this.checkInvalidCertificate.AutoSize = true;
+            this.checkInvalidCertificate.Location = new System.Drawing.Point(15, 167);
+            this.checkInvalidCertificate.Name = "checkInvalidCertificate";
+            this.checkInvalidCertificate.Size = new System.Drawing.Size(230, 20);
+            this.checkInvalidCertificate.TabIndex = 53;
+            this.checkInvalidCertificate.Text = "Accept invalid SSL certificates";
+            this.checkInvalidCertificate.UseVisualStyleBackColor = true;
             // 
             // FormServers
             // 
@@ -1270,5 +1282,6 @@
         private System.Windows.Forms.Button buttonRemoveBuddy;
         private System.Windows.Forms.Button buttonAddBuddy;
         private System.Windows.Forms.CheckBox checkUseSSL;
+        private System.Windows.Forms.CheckBox checkInvalidCertificate;
     }
 }
