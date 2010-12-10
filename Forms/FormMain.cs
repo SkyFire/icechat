@@ -44,7 +44,7 @@ namespace IceChat
 {
     public partial class FormMain : Form
     {
-        internal static FormMain Instance;
+        public static FormMain Instance;
 
         private string optionsFile;
         private string messagesFile;
@@ -60,7 +60,8 @@ namespace IceChat
         private string logsFolder;
         private string pluginsFolder;
         private string emoticonsFile;
-       
+        private string scriptsFolder;
+
         private List<LanguageItem> languageFiles;
         private LanguageItem currentLanguageFile;
 
@@ -78,6 +79,7 @@ namespace IceChat
         //private System.Threading.Mutex mutex;
 
         private ArrayList loadedPlugins;
+        private ArrayList loadedScripts;
 
         private IdentServer identServer;
         
@@ -176,15 +178,16 @@ namespace IceChat
 
             logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
             pluginsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
+            scriptsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts";
 
             if (!Directory.Exists(pluginsFolder))
                 Directory.CreateDirectory(pluginsFolder);
 
+            if (!Directory.Exists(scriptsFolder))
+                Directory.CreateDirectory(scriptsFolder);
+
             if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures"))
                 Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures");
-
-            if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts"))
-                Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts");
 
             if (!Directory.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds"))
                 Directory.CreateDirectory(currentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds");
@@ -278,7 +281,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - December 4 2010";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - December 9 2010";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -394,9 +397,11 @@ namespace IceChat
                 identServer = new IdentServer();
 
             loadedPlugins = new ArrayList();
+            loadedScripts = new ArrayList();
 
             //load any plugin addons
             LoadPlugins();
+            LoadScripts();
 
             //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -1194,8 +1199,9 @@ namespace IceChat
                     mainTabControl.SelectTab(page);
                     nickList.CurrentWindow = page;
                 }
-                
-                serverTree.Invalidate();
+
+                serverTree.SelectTab(page, false);
+                //serverTree.Invalidate();
 
                 if (page.WindowStyle == IceTabPage.WindowType.Query && iceChatOptions.WhoisNewQuery)
                     ParseOutGoingCommand(page.Connection, "/whois " + page.TabCaption);
@@ -1381,7 +1387,7 @@ namespace IceChat
         /// </summary>
         /// <param name="connection">Which Connection it is for</param>
         /// <param name="data">The Message to Parse</param>
-        internal void ParseOutGoingCommand(IRCConnection connection, string data)
+        public void ParseOutGoingCommand(IRCConnection connection, string data)
         {
             try
             {
@@ -3199,10 +3205,10 @@ namespace IceChat
                                     else
                                     {
                                         //just check in the Scripts Folder
-                                        if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts" + System.IO.Path.DirectorySeparatorChar + file))
+                                        if (File.Exists(scriptsFolder + System.IO.Path.DirectorySeparatorChar + file))
                                         {
                                             //load the file in and read a random line from it
-                                            string[] lines = File.ReadAllLines(currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts" + System.IO.Path.DirectorySeparatorChar + file);
+                                            string[] lines = File.ReadAllLines(scriptsFolder + System.IO.Path.DirectorySeparatorChar + file);
                                             if (lines.Length > 0)
                                             {
                                                 //pick a random line
@@ -3734,7 +3740,60 @@ namespace IceChat
         }
         
         #endregion
-        
+
+        public void LoadScripts()
+        {
+            // loads all script 
+            loadedScripts.Clear();
+
+            if (FormMain.Instance.IceChatOptions.ScriptFiles == null) return;
+
+            System.Diagnostics.Debug.WriteLine(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChat2009.exe");
+
+            foreach (string scriptFile in iceChatOptions.ScriptFiles)
+            {
+                System.Diagnostics.Debug.WriteLine("Load Script " + scriptFile);
+
+                System.CodeDom.Compiler.CodeDomProvider cp = new Microsoft.CSharp.CSharpCodeProvider();
+                string[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
+
+                System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);
+                //par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatScript.dll");
+                par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChat2009.exe");
+                
+                par.GenerateExecutable = false;
+                par.GenerateInMemory = true;
+                par.CompilerOptions = "/target:library";
+                par.IncludeDebugInformation = true;
+                par.TreatWarningsAsErrors = false;
+                par.MainClass = "IceChat.Script";
+
+                System.Diagnostics.Debug.WriteLine("Total References Assemblies " + par.ReferencedAssemblies.Count);
+
+                System.CodeDom.Compiler.CompilerResults err = cp.CompileAssemblyFromSource(par, File.ReadAllText(scriptFile));
+                if (err.Errors.Count > 0)
+                {
+                    foreach (System.CodeDom.Compiler.CompilerError ce in err.Errors)
+                    {                        
+                        FormMain.Instance.WindowMessage(null, "Console", "Script Error: " + ce.ErrorNumber + ":" + ce.ToString(), 4, true);
+                    }
+                    FormMain.Instance.WindowMessage(null, "Console", "ERROR: Script \"" + scriptFile + "\". has " + err.Errors.Count + " errors. Script not loaded", 4, true);
+                    
+                    continue;  // jump to next script without loading this. 
+                }
+                
+                object o = err.CompiledAssembly.CreateInstance("IceChat.Script");
+                FormMain.Instance.WindowMessage(null, "Console", "Script \"" + scriptFile + "\". loaded.", 4, true);
+                loadedScripts.Add(o);
+                // run the loaded event. gives the script a change to initialize.
+                MethodInfo info = o.GetType().GetMethod("script_loaded");
+                if (info != null)
+                {
+                    info.Invoke(o, new object[] { (IntPtr) this.Handle});
+                }
+            }
+        }
+
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(pluginsFolder, "*.DLL");

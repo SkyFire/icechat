@@ -145,7 +145,7 @@ namespace IceChat
 
             _tabCaption = sCaption;
             this.WindowStyle = windowType;
-
+            
             nicks = new Hashtable();
             channelModes = new Hashtable();
             
@@ -912,7 +912,6 @@ namespace IceChat
             }
             else
             {
-                //FormMain.Instance.ServerTree.SelectTab(this);
                 FormMain.Instance.InputPanel.CurrentConnection = null;
                 FormMain.Instance.StatusText("Welcome to IceChat 2009");
             }

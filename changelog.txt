@@ -1,3 +1,9 @@
+Build Beta 2.2 - December 9 2010
+* Fixed problem with trying to add submenu items to a seperator for the Popup Menus
+* Added option to Display Settings to set the Opacity of the Main Window
+* Server Tree shows current window more accurately when creating new windows
+
+
 Build Beta 2.1 - December 4 2010
 * Added option to Show/Hide Channel Bar
 

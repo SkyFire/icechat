@@ -183,6 +183,7 @@ namespace IceChat
             comboChannelMessageEvent.SelectedIndex = iceChatOptions.ChannelMessageEventLocation;
             comboChannelActionEvent.SelectedIndex = iceChatOptions.ChannelActionEventLocation;
 
+            trackTransparency.Value = Convert.ToInt32(FormMain.Instance.Opacity * 100);
 
             ApplyLanguage();
 
@@ -593,6 +594,11 @@ namespace IceChat
             catch { }
         }
 
+        private void trackTransparency_Scroll(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(trackTransparency.Value);
+            FormMain.Instance.Opacity = (double)trackTransparency.Value / 100;
+        }
 
     }
 }

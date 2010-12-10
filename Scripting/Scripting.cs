@@ -24,8 +24,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+//using System.Text;
+//using System.Windows.Forms;
 
 namespace IceChatScript
 {
@@ -35,15 +35,23 @@ namespace IceChatScript
         public event OutGoingCommandDelegate OutGoingCommand;
         
         public IceChatScript()
-        {
-            //
+        {            
+            this.OutGoingCommand += new OutGoingCommandDelegate(IceChatScript_OutGoingCommand);
         }
         
         public void SendCommand(string command, object connection)
         {
-            System.Diagnostics.Debug.WriteLine("fire send command from script");
+            System.Diagnostics.Debug.WriteLine("fire send command from IceChatScript Class");
             if (OutGoingCommand != null)
+            {
+                System.Diagnostics.Debug.WriteLine("run outgoingcommand");
                 OutGoingCommand(command, connection);
+            }
+        }
+
+        void IceChatScript_OutGoingCommand(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("put it out:" + command);
         }
     }
 }

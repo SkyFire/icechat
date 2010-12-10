@@ -49,15 +49,11 @@ namespace IceChat
         private string currentScript;
         private ToolStripMenuItem currentPopupMenu;
 
-        private IceChatScript.IceChatScript icechatScript;
+        //private IceChatScript.IceChatScript icechatScript;
         
         public FormEditor()
         {            
             InitializeComponent();
-
-            icechatScript = new IceChatScript.IceChatScript();
-            icechatScript.OutGoingCommand += new IceChatScript.IceChatScript.OutGoingCommandDelegate(icechatScript_OutGoingCommand);
-            
             popupTypeToolStripMenuItem.Visible = false;
 
             tabControlEditor.SelectedIndexChanged += new EventHandler(tabControlEditor_SelectedIndexChanged);
@@ -87,7 +83,6 @@ namespace IceChat
 
             try
             {
-
                 if (FormMain.Instance.IceChatOptions.ScriptFiles != null)
                 {
                     foreach (string script in FormMain.Instance.IceChatOptions.ScriptFiles)
@@ -310,10 +305,20 @@ namespace IceChat
             //AppDomain domain = AppDomain.CreateDomain("IceChat Script");
             //Assembly a = err.CompiledAssembly;
             //Assembly a = Assembly.LoadFrom(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatScript.dll");
+
+            //Assembly assem = Assembly.GetExecutingAssembly();
+            //Type thisForm = assem.GetType("FormEditor");
+
+            //Object o = Activator.CreateInstance(thisForm);
             
-            
-            object o = err.CompiledAssembly.CreateInstance("IceChat.Script");
+            object o = err.CompiledAssembly.CreateInstance("IceChat.Script");            
+            //Type test = err.CompiledAssembly.GetType("IceChat.Script");
+            //Assembly a = err.CompiledAssembly();
+
             Type test = err.CompiledAssembly.GetType("IceChat.Script");
+            //Type test = err.CompiledAssembly.GetType("IceChatScript.IceChatScript");
+            
+            
             //methodinfo will error if OnText is not found
             MethodInfo[] m = test.GetMethods();
             System.Diagnostics.Debug.WriteLine("show methods");
@@ -322,30 +327,103 @@ namespace IceChat
                 ParameterInfo[] pif = i.GetParameters();
                 System.Diagnostics.Debug.WriteLine(i.Name + ":" + pif.Length + ":" + i.DeclaringType);
             }
-            System.Diagnostics.Debug.WriteLine("show events");
+            System.Diagnostics.Debug.WriteLine("show events:" + test.GetEvents().Length);
             EventInfo[] ee = test.GetEvents();
             foreach (EventInfo eee in ee)
             {
-                System.Diagnostics.Debug.WriteLine(eee.Name);
+                System.Diagnostics.Debug.WriteLine("event name " + eee.Name + ":" + eee.DeclaringType);
             }
 
             EventInfo evt = test.GetEvent("OutGoingCommand");
             if (evt != null)
             {
-                //MethodInfo handler = typeof(FormEditor).GetMethod("SendCommand", BindingFlags.NonPublic | BindingFlags.CreateInstance);
-                //MethodInfo handler = this.GetType().GetMethod("SendCommand");
-                MethodInfo handler = evt.EventHandlerType.GetMethod("SendCommand");
                 
-                //MethodInfo handler = test.GetMethod("SendCommand");
+                
+                //MethodInfo h = typeof(IceChatScript.IceChatScript).GetMethod("SendCommand", BindingFlags.Public | BindingFlags.Instance);
+                Type iceType = Type.GetType("IceChatScript.IceChatScript");
+                //Type iceType =  icechatScript.GetType();
+                //Type iceType = Type.GetType("IceChat.FormEditor");
+                //System.Diagnostics.Debug.WriteLine(evt.EventHandlerType);
+                //MethodInfo mi = typeof(FormEditor).GetMethod("SendCommand", BindingFlags.Public | BindingFlags.Instance);
+                //MethodInfo mi = typeof(IceChatScript.IceChatScript).GetMethod("SendCommand", BindingFlags.Public | BindingFlags.Instance);
+                /*
+                if (mi != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("mi is not null:" + mi.DeclaringType);
+                }
+                 */
+                //IceChatScript.IceChatScript ice = new IceChatScript.IceChatScript();
+                //ice.OutGoingCommand +=new IceChatScript.IceChatScript.OutGoingCommandDelegate(OutGoingCommand);
+
+                MethodInfo mi = this.GetType().GetMethod("SendCommand", BindingFlags.Public | BindingFlags.Instance);
+                if (mi != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("mi is not null:" + mi.DeclaringType);
+                }
+                
+                Delegate del = Delegate.CreateDelegate(evt.EventHandlerType, this, mi);
+                if (del != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("del is not null");
+                }
+                
+                
+                //Delegate del = Delegate.CreateDelegate(evt.EventHandlerType, null, "OutGoingCommand");
+                //MethodInfo addHandler = evt.GetAddMethod();
+                //object[] addHandlerArgs = { del };
+                //addHandler.Invoke(this, addHandlerArgs);
+                
+                //Delegate del = Delegate.CreateDelegate(evt.EventHandlerType, this, "OutGoingCommand");
+                evt.AddEventHandler(o, del);
+                
+                MethodInfo m2 = test.GetMethod("OnText");
+                if (m2 != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("fire ontext");
+                    m2.Invoke(this, new object[] { "this is a test message", "#icechat2009", "Snerf", "icechat@icechat.net", new object() });
+                }
+
+                /*
+                MethodInfo h = typeof(IceChatScript.IceChatScript).GetMethod("SendCommand", BindingFlags.Public | BindingFlags.Instance);
+                if (h != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("not null");
+                    System.Diagnostics.Debug.WriteLine(h.DeclaringType + ":" + h.GetParameters().Length + ":" + h.IsPrivate + ":" + h.IsPublic + ":" + h.IsStatic);
+                    //isPublic is true
+
+                    foreach (ParameterInfo pi in h.GetParameters())
+                    {
+                        System.Diagnostics.Debug.WriteLine("params:" + pi.Name + ":" + pi.ParameterType + ":");
+                    }
+
+                    Delegate del = Delegate.CreateDelegate(evt.EventHandlerType, this, "SendCommand");
+
+                    evt.AddEventHandler(o, del);
+
+                    MethodInfo mi = test.GetMethod("OnText");
+                    if (mi != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("fire ontext");
+                        mi.Invoke(o, new object[] { "this is a test message", "#icechat2009", "Snerf", "icechat@icechat.net", new object() });
+                    }
+
+                }
+                else
+                    System.Diagnostics.Debug.WriteLine("handler null");
+
                 if (handler != null)
                 {
                     System.Diagnostics.Debug.WriteLine(handler.DeclaringType + ":" + handler.GetParameters().Length);                    
                     foreach (ParameterInfo pi in handler.GetParameters())
                     {
-                        System.Diagnostics.Debug.WriteLine(pi.Name + ":" + pi.ParameterType + ":");
+                        System.Diagnostics.Debug.WriteLine("params:" + pi.Name + ":" + pi.ParameterType + ":");
                     }
+                    Type tDel = evt.EventHandlerType;
+                    Delegate del = Delegate.CreateDelegate( tDel , this, handler);
                     
-                    Delegate del = Delegate.CreateDelegate(evt.EventHandlerType,this, handler);
+                    
+                    //Delegate del = Delegate.CreateDelegate(evt.EventHandlerType,this, handler);
+                    
                     evt.AddEventHandler(this, del);
 
                     MethodInfo mi = test.GetMethod("OnText");
@@ -359,17 +437,23 @@ namespace IceChat
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("handler null:" + evt.Name);
-                    /*
+                    
+                    
+                    
                     MethodInfo[] mis = this.GetType().GetMethods();
                     foreach (MethodInfo mi3 in mis)
                     {
                         System.Diagnostics.Debug.WriteLine(mi3.Name);
                     }
-                    */
+                    
                 }
+                */
             }
-            
-            
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("OutGoingCommand Event is null");
+
+            }
             /*
             MethodInfo info = o.GetType().GetMethod("OnText");
             if (info != null)
@@ -415,6 +499,22 @@ namespace IceChat
                 System.Diagnostics.Debug.WriteLine("Invoke Failed");
             */
         }
+
+        void OutGoingCommand(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("out:" + command);            
+        }
+
+        public void OutGoingCommand3(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("out:" + command);
+        }
+
+        public void OutGoingCommand2(string command, object connection)
+        {
+            System.Diagnostics.Debug.WriteLine("out:" + command);
+        }
+
         private void SendCommand1(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("send command args:");
@@ -440,8 +540,9 @@ namespace IceChat
             textScripts.AppendText("    }" + Environment.NewLine);
             textScripts.AppendText("    static public void OnText(string Message, string Channel, string Nick, string Host, object Server)" + Environment.NewLine);
             textScripts.AppendText("    {" + Environment.NewLine);
-            textScripts.AppendText("      MessageBox.Show(\"ONTEXT:\" + Message);" + Environment.NewLine);
+            //textScripts.AppendText("      MessageBox.Show(\"ONTEXT:\" + Message);" + Environment.NewLine);
             textScripts.AppendText("      ice.SendCommand(Message, Server);" + Environment.NewLine);
+            //textScripts.AppendText("      SendCommand(Message, Server);" + Environment.NewLine);
             textScripts.AppendText("    }" + Environment.NewLine);
 
             textScripts.AppendText("   }" + Environment.NewLine);
@@ -472,7 +573,7 @@ namespace IceChat
                     fd.AddExtension = true;
                     fd.AutoUpgradeEnabled = true;
                     fd.Title = "Where do you want to save the file?";
-                    fd.InitialDirectory = FormMain.Instance.CurrentFolder;
+                    fd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts";
                     if (fd.ShowDialog() == DialogResult.OK)
                     {
                         StreamWriter stream = new StreamWriter(fd.FileName);
@@ -500,7 +601,7 @@ namespace IceChat
                 fd.AddExtension = true;
                 fd.AutoUpgradeEnabled = true;
                 fd.Title = "Where do you want to save the file?";
-                fd.InitialDirectory = FormMain.Instance.CurrentFolder;
+                fd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts";
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
                     StreamWriter stream = new StreamWriter(fd.FileName);
@@ -528,7 +629,7 @@ namespace IceChat
                 fd.AutoUpgradeEnabled = true;
                 fd.Filter = "Script file (*.cs)|*.cs";
                 fd.Title = "Which file do you want to open?";
-                fd.InitialDirectory = FormMain.Instance.CurrentFolder;
+                fd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts";
                 
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
@@ -554,19 +655,11 @@ namespace IceChat
             
             
             }
-            /*
-            if (File.Exists("script.txt"))
-            {
-                StreamReader stream = new StreamReader("script.txt");
-                textScripts.Text = stream.ReadToEnd();
-                stream.Close();
-            }
-            */
         }
 
-        private void icechatScript_OutGoingCommand(string command, object connection)
+        public void icechatScript2_OutGoingCommand(string command, object connection)
         {
-            System.Diagnostics.Debug.WriteLine("out:" + command);
+            System.Diagnostics.Debug.WriteLine("outgoing:" + command);
         }
 
 

@@ -587,7 +587,8 @@ namespace IceChat
                                 if (menuDepth == 0)
                                     subMenu = popupMenu.Items.Add(t);
                                 else
-                                    ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
+                                    if (popupMenu.Items[subMenu].GetType() != typeof(ToolStripSeparator))
+                                        ((ToolStripMenuItem)popupMenu.Items[subMenu]).DropDownItems.Add(t);
 
                                 t = null;
                             }

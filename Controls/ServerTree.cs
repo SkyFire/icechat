@@ -211,25 +211,33 @@ namespace IceChat
             if (selectedServerID == 0)
                 return;            
             
-            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
-            if (c != null) 
+            //only disconnect/connect if an actual server is selected, not just any window
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode != null)
             {
-                if (c.IsConnected)
+                if (findNode.GetType() == typeof(ServerSetting))
                 {
-                    FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
-                }
-                else
-                {
-                    //switch to Console
-                    FormMain.Instance.TabMain.SelectedIndex = 0;
-                    c.ConnectSocket();
-                }
-                return;
-            }
 
-            if (NewServerConnection != null)
-                NewServerConnection(GetServerSetting(selectedServerID));
-            
+                    IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+                    if (c != null)
+                    {
+                        if (c.IsConnected)
+                        {
+                            FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
+                        }
+                        else
+                        {
+                            //switch to Console
+                            FormMain.Instance.TabMain.SelectedIndex = 0;
+                            c.ConnectSocket();
+                        }
+                        return;
+                    }
+
+                    if (NewServerConnection != null)
+                        NewServerConnection(GetServerSetting(selectedServerID));
+                }
+            }
         }
 
         private void OnFontChanged(object sender, EventArgs e)
@@ -265,10 +273,25 @@ namespace IceChat
             int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
             int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1 + topIndex;
-            
             g.Dispose();
-
+            
             SelectNodeByIndex(nodeNumber, true);
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                object findNode = FindNodeValue(nodeNumber);
+                if (findNode != null)
+                {
+                    if (findNode.GetType() == typeof(IceTabPage))
+                    {
+                        if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Query)
+                        {
+                            //part the channel/close the query window
+                            FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/part " + ((IceTabPage)findNode).TabCaption);
+                        }
+                    }
+                }
+            }
 
         }
 
@@ -347,7 +370,7 @@ namespace IceChat
 
                 //System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
 
-                Invalidate();
+                this.Invalidate();
                 object findNode = FindNodeValue(selectedNodeIndex);
                 if (findNode != null)
                 {
@@ -393,7 +416,8 @@ namespace IceChat
         internal void SelectTab(object selectedNode, bool RefreshMainTab)
         {
             //System.Diagnostics.Debug.WriteLine("SelectTabTree :" + selectedNode.GetType().ToString());
-            
+            BuildServerNodes();
+
             if (selectedNode.GetType() == typeof(ServerSetting))
             {
                 //System.Diagnostics.Debug.WriteLine("SELECT server setting 1:" + ((ServerSetting)selectedNode).ServerName);
@@ -425,7 +449,7 @@ namespace IceChat
 
             }
             
-            Invalidate();                
+            this.Invalidate();                
         }
         
         private int FindServerNodeMatch(object nodeMatch)
@@ -648,8 +672,10 @@ namespace IceChat
                             if (menuDepth == 0)
                                 subMenu = mainMenu.Items.Add(t);
                             else
-                                ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
-
+                            {
+                                if (mainMenu.Items[subMenu].GetType() != typeof(ToolStripSeparator))
+                                    ((ToolStripMenuItem)mainMenu.Items[subMenu]).DropDownItems.Add(t);
+                            }
                             t = null;
                         }
                     }

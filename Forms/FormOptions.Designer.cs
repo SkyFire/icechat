@@ -41,6 +41,7 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.trackTransparency = new System.Windows.Forms.TrackBar();
             this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.checkWhoisNewQuery = new System.Windows.Forms.CheckBox();
             this.checkNewQueryForegound = new System.Windows.Forms.CheckBox();
@@ -55,6 +56,11 @@ namespace IceChat
             this.checkLogChannel = new System.Windows.Forms.CheckBox();
             this.checkLogConsole = new System.Windows.Forms.CheckBox();
             this.tabFonts = new System.Windows.Forms.TabPage();
+            this.buttonMenuBar = new System.Windows.Forms.Button();
+            this.textMenuBarFont = new System.Windows.Forms.TextBox();
+            this.labelMenuBarFontSize = new System.Windows.Forms.Label();
+            this.textMenuBarSize = new System.Windows.Forms.TextBox();
+            this.labelMenuBarFont = new System.Windows.Forms.Label();
             this.buttonDockTab = new System.Windows.Forms.Button();
             this.textDockTabFont = new System.Windows.Forms.TextBox();
             this.labelDockTabsSize = new System.Windows.Forms.Label();
@@ -181,14 +187,11 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.buttonMenuBar = new System.Windows.Forms.Button();
-            this.textMenuBarFont = new System.Windows.Forms.TextBox();
-            this.labelMenuBarFontSize = new System.Windows.Forms.Label();
-            this.textMenuBarSize = new System.Windows.Forms.TextBox();
-            this.labelMenuBarFont = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackTransparency)).BeginInit();
             this.tabLogging.SuspendLayout();
             this.tabFonts.SuspendLayout();
             this.tabDCC.SuspendLayout();
@@ -330,6 +333,8 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.label15);
+            this.tabDisplay.Controls.Add(this.trackTransparency);
             this.tabDisplay.Controls.Add(this.checkShowUnreadLine);
             this.tabDisplay.Controls.Add(this.checkWhoisNewQuery);
             this.tabDisplay.Controls.Add(this.checkNewQueryForegound);
@@ -343,6 +348,20 @@ namespace IceChat
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
+            // 
+            // trackTransparency
+            // 
+            this.trackTransparency.BackColor = System.Drawing.Color.White;
+            this.trackTransparency.Location = new System.Drawing.Point(15, 208);
+            this.trackTransparency.Maximum = 100;
+            this.trackTransparency.Minimum = 25;
+            this.trackTransparency.Name = "trackTransparency";
+            this.trackTransparency.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.trackTransparency.Size = new System.Drawing.Size(290, 45);
+            this.trackTransparency.TabIndex = 46;
+            this.trackTransparency.TickFrequency = 5;
+            this.trackTransparency.Value = 100;
+            this.trackTransparency.Scroll += new System.EventHandler(this.trackTransparency_Scroll);
             // 
             // checkShowUnreadLine
             // 
@@ -533,6 +552,50 @@ namespace IceChat
             this.tabFonts.TabIndex = 2;
             this.tabFonts.Text = "Fonts";
             this.tabFonts.UseVisualStyleBackColor = true;
+            // 
+            // buttonMenuBar
+            // 
+            this.buttonMenuBar.Location = new System.Drawing.Point(446, 204);
+            this.buttonMenuBar.Name = "buttonMenuBar";
+            this.buttonMenuBar.Size = new System.Drawing.Size(58, 22);
+            this.buttonMenuBar.TabIndex = 56;
+            this.buttonMenuBar.Text = "Select";
+            this.buttonMenuBar.UseVisualStyleBackColor = true;
+            this.buttonMenuBar.Click += new System.EventHandler(this.buttonMenuBar_Click);
+            // 
+            // textMenuBarFont
+            // 
+            this.textMenuBarFont.Location = new System.Drawing.Point(98, 204);
+            this.textMenuBarFont.Name = "textMenuBarFont";
+            this.textMenuBarFont.ReadOnly = true;
+            this.textMenuBarFont.Size = new System.Drawing.Size(232, 23);
+            this.textMenuBarFont.TabIndex = 55;
+            // 
+            // labelMenuBarFontSize
+            // 
+            this.labelMenuBarFontSize.AutoSize = true;
+            this.labelMenuBarFontSize.Location = new System.Drawing.Point(346, 207);
+            this.labelMenuBarFontSize.Name = "labelMenuBarFontSize";
+            this.labelMenuBarFontSize.Size = new System.Drawing.Size(35, 16);
+            this.labelMenuBarFontSize.TabIndex = 54;
+            this.labelMenuBarFontSize.Text = "Size";
+            // 
+            // textMenuBarSize
+            // 
+            this.textMenuBarSize.Location = new System.Drawing.Point(391, 203);
+            this.textMenuBarSize.Name = "textMenuBarSize";
+            this.textMenuBarSize.ReadOnly = true;
+            this.textMenuBarSize.Size = new System.Drawing.Size(49, 23);
+            this.textMenuBarSize.TabIndex = 53;
+            // 
+            // labelMenuBarFont
+            // 
+            this.labelMenuBarFont.AutoSize = true;
+            this.labelMenuBarFont.Location = new System.Drawing.Point(15, 206);
+            this.labelMenuBarFont.Name = "labelMenuBarFont";
+            this.labelMenuBarFont.Size = new System.Drawing.Size(69, 16);
+            this.labelMenuBarFont.TabIndex = 52;
+            this.labelMenuBarFont.Text = "Menu Bar";
             // 
             // buttonDockTab
             // 
@@ -1726,49 +1789,14 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
-            // buttonMenuBar
+            // label15
             // 
-            this.buttonMenuBar.Location = new System.Drawing.Point(446, 204);
-            this.buttonMenuBar.Name = "buttonMenuBar";
-            this.buttonMenuBar.Size = new System.Drawing.Size(58, 22);
-            this.buttonMenuBar.TabIndex = 56;
-            this.buttonMenuBar.Text = "Select";
-            this.buttonMenuBar.UseVisualStyleBackColor = true;
-            this.buttonMenuBar.Click += new System.EventHandler(this.buttonMenuBar_Click);
-            // 
-            // textMenuBarFont
-            // 
-            this.textMenuBarFont.Location = new System.Drawing.Point(98, 204);
-            this.textMenuBarFont.Name = "textMenuBarFont";
-            this.textMenuBarFont.ReadOnly = true;
-            this.textMenuBarFont.Size = new System.Drawing.Size(232, 23);
-            this.textMenuBarFont.TabIndex = 55;
-            // 
-            // labelMenuBarFontSize
-            // 
-            this.labelMenuBarFontSize.AutoSize = true;
-            this.labelMenuBarFontSize.Location = new System.Drawing.Point(346, 207);
-            this.labelMenuBarFontSize.Name = "labelMenuBarFontSize";
-            this.labelMenuBarFontSize.Size = new System.Drawing.Size(35, 16);
-            this.labelMenuBarFontSize.TabIndex = 54;
-            this.labelMenuBarFontSize.Text = "Size";
-            // 
-            // textMenuBarSize
-            // 
-            this.textMenuBarSize.Location = new System.Drawing.Point(391, 203);
-            this.textMenuBarSize.Name = "textMenuBarSize";
-            this.textMenuBarSize.ReadOnly = true;
-            this.textMenuBarSize.Size = new System.Drawing.Size(49, 23);
-            this.textMenuBarSize.TabIndex = 53;
-            // 
-            // labelMenuBarFont
-            // 
-            this.labelMenuBarFont.AutoSize = true;
-            this.labelMenuBarFont.Location = new System.Drawing.Point(15, 206);
-            this.labelMenuBarFont.Name = "labelMenuBarFont";
-            this.labelMenuBarFont.Size = new System.Drawing.Size(69, 16);
-            this.labelMenuBarFont.TabIndex = 52;
-            this.labelMenuBarFont.Text = "Menu Bar";
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(12, 189);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(239, 16);
+            this.label15.TabIndex = 47;
+            this.label15.Text = "Set IceChat Window Transparency";
             // 
             // FormSettings
             // 
@@ -1792,6 +1820,7 @@ namespace IceChat
             this.tabMain.PerformLayout();
             this.tabDisplay.ResumeLayout(false);
             this.tabDisplay.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackTransparency)).EndInit();
             this.tabLogging.ResumeLayout(false);
             this.tabLogging.PerformLayout();
             this.tabFonts.ResumeLayout(false);
@@ -1967,5 +1996,7 @@ namespace IceChat
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TrackBar trackTransparency;
+        private System.Windows.Forms.Label label15;
     }
 }

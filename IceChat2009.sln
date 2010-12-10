@@ -2,17 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IceChat2009", "IceChat2009.csproj", "{C6F37CE4-B0A1-4048-A896-9A28B2A0127D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF} = {9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPluginIceChat", "IPlugin\IPluginIceChat.csproj", "{EC8820CA-B2C2-416B-8A59-2416AA349C4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IceChatScript", "Scripting\IceChatScript.csproj", "{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IceChatUpdater", "Updater\IceChatUpdater.csproj", "{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MircScriptEngine", "MircScriptEngine\MircScriptEngine.csproj", "{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,18 +21,10 @@ Global
 		{EC8820CA-B2C2-416B-8A59-2416AA349C4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC8820CA-B2C2-416B-8A59-2416AA349C4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC8820CA-B2C2-416B-8A59-2416AA349C4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BB1DFE3-37E6-4426-84A4-8EEF7F756BCF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAF95863-E8D3-4EA7-856C-B2C3A88CCF55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
