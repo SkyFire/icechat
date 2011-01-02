@@ -1,3 +1,12 @@
+Build Beta 3 January 1 2011
+* Added /play command to play WAV files in the Sounds folder
+* Added /amsg command to send messages to all open channels for a server
+* Added /joinserv command which can connect to a server and a channel /joinserv irc.server.com #channel
+* Links that start with www now show as links
+* Fixed bug with emoticons on lines that are wrapped
+* The Updater should work properly now, closing IceChat and updating the files properly
+
+
 Build Beta 2.2 - December 9 2010
 * Fixed problem with trying to add submenu items to a seperator for the Popup Menus
 * Added option to Display Settings to set the Opacity of the Main Window

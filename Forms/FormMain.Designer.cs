@@ -88,10 +88,10 @@ namespace IceChat
             this.iceChatHomePageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forumsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.facebookFanPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.browseDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitterLeft = new System.Windows.Forms.Splitter();
             this.splitterRight = new System.Windows.Forms.Splitter();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
@@ -326,10 +326,10 @@ namespace IceChat
             this.iceChatHomePageToolStripMenuItem,
             this.forumsToolStripMenuItem,
             this.facebookFanPageToolStripMenuItem,
-            this.aboutToolStripMenuItem,
-            this.checkForUpdateToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.browseDataFolderToolStripMenuItem});
+            this.browseDataFolderToolStripMenuItem,
+            this.checkForUpdateToolStripMenuItem,
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
             this.helpToolStripMenuItem.Text = "Help";
@@ -362,20 +362,6 @@ namespace IceChat
             this.facebookFanPageToolStripMenuItem.Text = "Facebook Fan page";
             this.facebookFanPageToolStripMenuItem.Click += new System.EventHandler(this.facebookFanPageToolStripMenuItem_Click);
             // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // checkForUpdateToolStripMenuItem
-            // 
-            this.checkForUpdateToolStripMenuItem.Name = "checkForUpdateToolStripMenuItem";
-            this.checkForUpdateToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.checkForUpdateToolStripMenuItem.Text = "Check for Update";
-            this.checkForUpdateToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdateToolStripMenuItem_Click);
-            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -387,6 +373,20 @@ namespace IceChat
             this.browseDataFolderToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.browseDataFolderToolStripMenuItem.Text = "Browse Data Folder";
             this.browseDataFolderToolStripMenuItem.Click += new System.EventHandler(this.browseDataFolderToolStripMenuItem_Click);
+            // 
+            // checkForUpdateToolStripMenuItem
+            // 
+            this.checkForUpdateToolStripMenuItem.Name = "checkForUpdateToolStripMenuItem";
+            this.checkForUpdateToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.checkForUpdateToolStripMenuItem.Text = "Check for Update";
+            this.checkForUpdateToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdateToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // splitterLeft
             // 
@@ -474,6 +474,7 @@ namespace IceChat
             // toolStripQuickConnect
             // 
             this.toolStripQuickConnect.AccessibleDescription = "Bring up Quick Connect Window";
+            this.toolStripQuickConnect.BackColor = System.Drawing.Color.Transparent;
             this.toolStripQuickConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripQuickConnect.Margin = new System.Windows.Forms.Padding(0);
             this.toolStripQuickConnect.Name = "toolStripQuickConnect";

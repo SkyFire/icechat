@@ -415,6 +415,10 @@
       <Project>{EC8820CA-B2C2-416B-8A59-2416AA349C4C}</Project>
       <Name>IPluginIceChat</Name>
     </ProjectReference>
+    <ProjectReference Include="Updater\IceChatUpdater.csproj">
+      <Project>{DF1BEA8C-4DCA-420C-AC3D-620A2DC04750}</Project>
+      <Name>IceChatUpdater</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />

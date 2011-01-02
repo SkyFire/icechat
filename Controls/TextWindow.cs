@@ -1,7 +1,7 @@
 /******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +73,10 @@ namespace IceChat
 
         //private string _wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[a-z0-9-]+\.[a-z0-9\/:@=.+?,#%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
 
+        //works with www.
+        private string _wwwMatch = @"((www\.|(https?|ftp|telnet|file|news|irc):((//)|(\\\\)))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
         //works but no www.
-        private string _wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+        //private string _wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
         private string _emotMatch = "";
         private int _startHighLine = -1;
         private int _startHighChar;
@@ -895,9 +897,6 @@ namespace IceChat
                     _totalLines++;
                 }
 
-                //add line numbers for temp measure
-                //newLine = _totalLines.ToString() + ":" + newLine; 
-
                 _textLines[_totalLines].line = newLine;
 
                 Graphics g = this.CreateGraphics();
@@ -1192,10 +1191,12 @@ namespace IceChat
                     string[] eachEmot = _emotMatch.Split((char)0);
                     for (int i = eachEmot.GetLowerBound(0); i <= eachEmot.GetUpperBound(0); i++)
                     {
+                        // hey there :) how are ya (F) and then (sw) (K)(@) sdkjf slk dfj ;sdlfkjs;dfl ggg
                         line = line.Replace(@eachEmot[i], emotChar + i.ToString("000"));
                     }
                 }
             }
+            //System.Diagnostics.Debug.WriteLine("return:" + line);
             return line;
 
         }
@@ -1316,7 +1317,6 @@ namespace IceChat
                 {
                     try
                     {
-                        //System.Diagnostics.Debug.WriteLine("fits 1 line");
                         _displayLines[line].line = _textLines[currentLine].line;
                         _displayLines[line].textLine = currentLine;
                         _displayLines[line].textColor = _textLines[currentLine].textColor;
@@ -1354,6 +1354,7 @@ namespace IceChat
                                     i = i + 4;
                                     break;
                                 case emotChar:
+                                    buildString.Append(curLine.Substring(i, 4));
                                     i = i + 3;
                                     break;
                                 default:
@@ -1521,10 +1522,10 @@ namespace IceChat
 
                     curForeColor = _displayLines[curLine].textColor;
                     StringBuilder line = new StringBuilder();
-
+                
                     line.Append(_displayLines[curLine].line);
                     curBackColor = _backColor;
-
+                    
                     //check if in a url
                     if (!isInUrl)
                     {
@@ -1543,7 +1544,6 @@ namespace IceChat
                                     //draws an emoticon
                                     //[]001
                                     int emotNumber = Convert.ToInt32(line.ToString().Substring(i + 1, 3));
-
                                     line.Remove(0, 3);
                                     if (!isInUrl)
                                     {

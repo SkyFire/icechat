@@ -1,4 +1,29 @@
-﻿using System;
+﻿/******************************************************************************\
+ * IceChat 2009 Internet Relay Chat Client
+ *
+ * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
+ *                                    <www.icechat.net> 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * Please consult the LICENSE.txt file included with this project for
+ * more details
+ *
+\******************************************************************************/
+
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -6,6 +31,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 
 namespace IceChatUpdater
 {
@@ -45,6 +71,10 @@ namespace IceChatUpdater
             labelCurrent.Text = "Current Version: " + fv.FileVersion;
             double currentVersion = Convert.ToDouble(fv.FileVersion.Replace(".", String.Empty));
             
+            //delete the current update.xml file if it exists
+            if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml"))
+                File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml");
+
             System.Net.WebClient webClient = new System.Net.WebClient();
             webClient.DownloadFile("http://www.icechat.net/update.xml", currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml");
             System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
@@ -74,7 +104,11 @@ namespace IceChatUpdater
         {
             //download the files in the File List box
             System.Net.WebClient webClient = new System.Net.WebClient();
+            this.Cursor = Cursors.WaitCursor;
             
+            System.Collections.ArrayList localFiles = new System.Collections.ArrayList();
+
+
             //webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(webClient_DownloadFileCompleted);            
             //webClient.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
             foreach (string file in listFiles.Items)
@@ -82,15 +116,79 @@ namespace IceChatUpdater
                 string f = System.IO.Path.GetFileName(file);
                 System.Diagnostics.Debug.WriteLine(f);
                 //webClient.DownloadFileAsync(new Uri(file), currentFolder + System.IO.Path.DirectorySeparatorChar + f);
+
+                if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + f))
+                    File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
+
+                localFiles.Add(f);
                 webClient.DownloadFile(file, currentFolder + System.IO.Path.DirectorySeparatorChar + f);                    
-                
+                    
             }
+            
+            this.Cursor = Cursors.Default;
             MessageBox.Show("Completed Download");
+
+            //now see if IceChat is running
+            //and close it
+            
+            buttonDownload.Enabled = false;
+
+            Process[] pArry = Process.GetProcesses();
+
+            foreach (Process p in pArry)
+            {
+                string s = p.ProcessName;
+                s = s.ToLower();
+
+                if (s.CompareTo("icechat2009") == 0)
+                {
+                    if (Path.GetDirectoryName(p.Modules[0].FileName).ToLower() == Application.StartupPath.ToLower())
+                    {
+                        MessageBox.Show("Closing IceChat to update it");
+                        try
+                        {
+                            p.Kill();
+                            //p.CloseMainWindow();
+
+                            //wait a bit and then copy the files to this folder, and VOILA
+                            p.WaitForExit();
+                            
+                            System.Threading.Thread.Sleep(3000);
+                            
+                            foreach (string f in localFiles)
+                            {
+                                if (File.Exists(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f))
+                                    File.Delete(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+
+                                System.Threading.Thread.Sleep(500);
+
+                                //MessageBox.Show(currentFolder + System.IO.Path.DirectorySeparatorChar + f + ":" + Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+                                
+                                File.Copy(currentFolder + System.IO.Path.DirectorySeparatorChar + f, Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+
+                                //delete the files out of the update folder
+                                File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
+                            }
+
+
+
+                        }
+                        catch (Exception ee)
+                        {
+                            MessageBox.Show(ee.Message + ":" + ee.Source);
+                        }
+                        
+                        
+                        MessageBox.Show("Files Updated, you are welcome to Restart IceChat");
+
+                    }
+                }
+            }
+
         }
 
         private void webClient_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
-            //throw new NotImplementedException();
             System.Diagnostics.Debug.WriteLine(e.ProgressPercentage + ":" +e.BytesReceived);
         }
 

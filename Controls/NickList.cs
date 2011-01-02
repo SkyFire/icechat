@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
  * IceChat 2009 Internet Relay Chat Client
  *
- * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -609,10 +609,10 @@ namespace IceChat
                     //matched
                     selectedIndex = i;
                     int p = (selectedIndex / vScrollBar.LargeChange);
-                    
-                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex)
+
+                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex && vScrollBar.Visible)
                         topIndex += (p * vScrollBar.LargeChange);
-                    else if ((topIndex > selectedIndex))
+                    else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
 
                     Invalidate();
@@ -623,10 +623,10 @@ namespace IceChat
                     //matched
                     selectedIndex = i;
                     int p = (selectedIndex / vScrollBar.LargeChange);
-                    
-                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex)
+
+                    if ((topIndex + vScrollBar.LargeChange) < selectedIndex && vScrollBar.Visible)
                         topIndex += (p * vScrollBar.LargeChange);
-                    else if ((topIndex > selectedIndex))
+                    else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
                     
                     Invalidate();
