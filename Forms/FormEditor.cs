@@ -149,9 +149,29 @@ namespace IceChat
 
         }
 
+        private void ReLoadAliases()
+        {
+            if (File.Exists(FormMain.Instance.AliasesFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatAliases));
+                TextReader textReader = new StreamReader(FormMain.Instance.AliasesFile);
+                aliasList = (IceChatAliases)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+            }
+            else
+            {
+                aliasList = new IceChatAliases();
+            }
+        }
+
         private void LoadAliases()
         {
             textAliases.Clear();
+            
+            //reload the aliases from the actual file
+            ReLoadAliases();
+
 
             foreach (AliasItem alias in aliasList.listAliases)
             {
@@ -186,8 +206,26 @@ namespace IceChat
 
         }
 
+        private void ReLoadPopups()
+        {
+            if (File.Exists(FormMain.Instance.PopupsFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatPopupMenus));
+                TextReader textReader = new StreamReader(FormMain.Instance.PopupsFile);
+                popupList = (IceChatPopupMenus)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+            }
+            else
+                popupList = new IceChatPopupMenus();
+
+        }
+
         private string[] LoadPopupMenu(string popupType)
         {
+            //reload the popupmenu's file
+            ReLoadPopups();
+
             foreach (PopupMenuItem p in popupList.listPopups)
             {
                 if (p.PopupType == popupType)

@@ -286,7 +286,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 1 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 2 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -808,6 +808,14 @@ namespace IceChat
             get
             {
                 return aliasesFile;
+            }
+        }
+
+        internal string PopupsFile
+        {
+            get
+            {
+                return popupsFile;
             }
         }
 
@@ -1573,6 +1581,54 @@ namespace IceChat
                                 }
                             }                            
                             break;
+                        case "/reload":
+                            if (data.Length > 0)
+                            {
+                                switch (data)
+                                {
+                                    case "alias":
+                                    case "aliases":
+                                        CurrentWindowMessage(connection, "Aliases file reloaded", 4, true);
+                                        LoadAliases();
+                                        break;
+                                    case "popup":
+                                    case "popups":
+                                        CurrentWindowMessage(connection, "Popups file reloaded", 4, true);
+                                        LoadPopups();
+                                        break;
+                                    case "emoticon":
+                                    case "emoticons":
+                                        CurrentWindowMessage(connection, "Emoticons file reloaded", 4, true);
+                                        LoadEmoticons();
+                                        break;
+                                    case "sound":
+                                    case "sounds":
+                                        CurrentWindowMessage(connection, "Sounds file reloaded", 4, true);
+                                        LoadSounds();
+                                        break;
+                                    case "color":
+                                    case "colors":
+                                        CurrentWindowMessage(connection, "Colors file reloaded", 4, true);
+                                        LoadColors();
+                                        toolStripMain.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
+                                        menuMainStrip.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
+                                        statusStripMain.BackColor = IrcColor.colors[iceChatColors.StatusbarBackColor];
+                                        toolStripStatus.ForeColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
+                                        inputPanel.SetInputBoxColors();
+                                        channelList.SetListColors();
+                                        buddyList.SetListColors();
+                                        break;
+                                    case "font":
+                                    case "fonts":
+                                        CurrentWindowMessage(connection, "Fonts file reloaded", 4, true);
+                                        LoadFonts();
+                                        nickList.Font = new Font(iceChatFonts.FontSettings[3].FontName, iceChatFonts.FontSettings[3].FontSize);
+                                        serverTree.Font = new Font(iceChatFonts.FontSettings[4].FontName, iceChatFonts.FontSettings[4].FontSize);
+                                        menuMainStrip.Font = new Font(iceChatFonts.FontSettings[7].FontName, iceChatFonts.FontSettings[7].FontSize);
+                                        break;
+                                }
+                            }                            
+                            break;                        
                         case "/reloadplugin":
                             if (data.Length > 0)
                             {

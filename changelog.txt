@@ -1,3 +1,8 @@
+Build Beta 3.1 January 2 2011
+* Added /reload command. Command accepts alias,popup,emoticon,sound to reload those config files on the fly
+* Opening editor also reloads aliases and popup files from actual file
+
+
 Build Beta 3 January 1 2011
 * Added /play command to play WAV files in the Sounds folder
 * Added /amsg command to send messages to all open channels for a server
