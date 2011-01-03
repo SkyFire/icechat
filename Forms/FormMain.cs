@@ -2421,13 +2421,22 @@ namespace IceChat
                         case "/play":   //play a WAV sound
                             if (data.Length > 0)
                             {
-                                //check if the WAV file exists in the Sounds Folder
-                                
+                                //check if the WAV file exists in the Sounds Folder                                
                                 if (File.Exists(soundsFolder + System.IO.Path.DirectorySeparatorChar + data))
                                 {
                                     try
                                     {
                                         player.SoundLocation = soundsFolder + System.IO.Path.DirectorySeparatorChar + data;
+                                        player.Play();
+                                    }
+                                    catch { }
+                                }
+                                //check if the entire path was passed for the sound file
+                                else if (File.Exists(data))
+                                {
+                                    try
+                                    {
+                                        player.SoundLocation = @data;
                                         player.Play();
                                     }
                                     catch { }

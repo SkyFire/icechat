@@ -1,3 +1,8 @@
+Build Beta 3.2 January 2 2011
+* /play command now allows for a full path to be sent to it
+* Fixed issues with *nix and aliases and popup files not properly being parsed
+
+
 Build Beta 3.1 January 2 2011
 * Added /reload command. Command accepts alias,popup,emoticon,sound to reload those config files on the fly
 * Opening editor also reloads aliases and popup files from actual file

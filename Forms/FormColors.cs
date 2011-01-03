@@ -341,7 +341,7 @@ namespace IceChat
         {
             currentColorPick = sender;
             colorPicker.SelectedColor = (int)((PictureBox)sender).Tag;
-            labelCurrent.Text = "Current Selected:\r\n" + GetLabelText((PictureBox)sender);            
+            labelCurrent.Text = "Current Selected:" + Environment.NewLine + GetLabelText((PictureBox)sender);            
         }
 
         private string GetLabelText(PictureBox sender)

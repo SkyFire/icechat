@@ -270,7 +270,7 @@ namespace IceChat
                     {
                         //end of multiline alias
                         isMultiLine = false;
-                        multiLineAlias.Command = aliasCommands.Split(new String[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        multiLineAlias.Command = aliasCommands.Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                         aliasList.AddAlias(multiLineAlias);
                         multiLineAlias = null;
                     }
@@ -286,7 +286,7 @@ namespace IceChat
                     else
                     {
                         //add a line to the multiline alias
-                        aliasCommands += alias + "\r\n";
+                        aliasCommands += alias + Environment.NewLine;
                     }
                 }
             }
@@ -708,7 +708,7 @@ namespace IceChat
 		
         private void UpdateCurrentPopupMenus()
         {
-            string[] popups = textPopups.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);
+            string[] popups = textPopups.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
          
             if (currentPopup == "NickList")
                 nickListPopup = popups;

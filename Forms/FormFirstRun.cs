@@ -88,7 +88,7 @@ namespace IceChat
                     case 0:
                         textData.Text = _nickName;
                         labelHeader.Text = "Nick Name";
-                        labelDesc.Text = "Enter a nickname in the field below.\r\nA nickname (or handle) is what you will be known as on IRC. It's similar to your real life name except on IRC, your nickname will be unique. You will be the only person on the network with your chosen nickname. Usually nicknames are limited to 9 characters in length.";
+                        labelDesc.Text = "Enter a nickname in the field below." + Environment.NewLine + "A nickname (or handle) is what you will be known as on IRC. It's similar to your real life name except on IRC, your nickname will be unique. You will be the only person on the network with your chosen nickname. Usually nicknames are limited to 9 characters in length.";
                         labelTip.Text = "Tip: You can change your nickname while connected by typing'/nick NewNick'";
                         labelField.Text = "Nickname:";
                         
@@ -102,7 +102,7 @@ namespace IceChat
                     case 1:
                         _nickName = textData.Text;
                         labelHeader.Text = "Server Name";
-                        labelDesc.Text = "Enter a server in the field below.\r\nIRC is made up of several things called 'servers'. You can think of a server like a building which contains people and rooms (channels). There are hundreds of servers which you can connect to on IRC. Some servers make up single networks. These could be thought of as several buildings all joined together to make one big one.";
+                        labelDesc.Text = "Enter a server in the field below." + Environment.NewLine + "IRC is made up of several things called 'servers'. You can think of a server like a building which contains people and rooms (channels). There are hundreds of servers which you can connect to on IRC. Some servers make up single networks. These could be thought of as several buildings all joined together to make one big one.";
                         labelTip.Text = "Tip: You can use the server editor located at the bottom right or type '/server Address' to connect";
                         labelField.Text = "Server Address:";
 
@@ -117,9 +117,9 @@ namespace IceChat
                         labelHeader.Text = "Done";
                         labelDesc.Text = "Your information has been saved. Simply select a server from the Favorite Server List, and click the 'Connect' button.";
                         labelTip.Text = "Tip: Use the '?' in the bottom left corner beside the Input Box for all your basic needs";
-                        labelDesc.Text += "\r\n\r\nDefault Nick Name: " + _nickName ;
+                        labelDesc.Text += Environment.NewLine + Environment.NewLine + "Default Nick Name: " + _nickName ;
                         if (comboData.Text.Length > 0)
-                            labelDesc.Text += "\r\nDefault Server: " + comboData.Text;
+                            labelDesc.Text += Environment.NewLine + "Default Server: " + comboData.Text;
 
                         labelField.Text = "";
                         textData.Visible = false;

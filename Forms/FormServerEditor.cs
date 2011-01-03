@@ -373,7 +373,7 @@ namespace IceChat
                 serverSetting.BuddyList[i] = b;
             }
 
-            serverSetting.AutoPerform = textAutoPerform.Text.Trim().Split(new String[] { "\r\n" }, StringSplitOptions.None);
+            serverSetting.AutoPerform = textAutoPerform.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
             
             serverSetting.SetModeI = checkModeI.Checked;
             serverSetting.ShowMOTD = checkMOTD.Checked;

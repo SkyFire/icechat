@@ -310,7 +310,7 @@ namespace IceChat
                         if (u != null)
                         {
                             if (u.Host != null)
-                                toolTip.SetToolTip(this, u.Nick + "\r\n" + u.Host);
+                                toolTip.SetToolTip(this, u.Nick + Environment.NewLine + u.Host);
                             else
                                 toolTip.SetToolTip(this, u.Nick);
                         }

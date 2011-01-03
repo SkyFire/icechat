@@ -165,11 +165,11 @@ namespace IceChat
                 if (FormMain.Instance.IceChatOptions.LogFormat == "Plain Text")
                 {
                     message = StripCodes(message);
-                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
+                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + Environment.NewLine), 0, message.Length + 2);
                 }
                 else if (FormMain.Instance.IceChatOptions.LogFormat == "Colored Text")
                 {
-                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + "\r\n"), 0, message.Length + 2);
+                    logFile.Write(System.Text.Encoding.Default.GetBytes(message + Environment.NewLine), 0, message.Length + 2);
                 }
                 else if (FormMain.Instance.IceChatOptions.LogFormat == "HTML")
                 {
