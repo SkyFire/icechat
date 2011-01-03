@@ -536,7 +536,7 @@ namespace IceChat
             }
 
             //get the proper encoding            
-            byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + Environment.NewLine);
+            byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
             {                
                 if (socketStream.CanWrite)

@@ -1063,7 +1063,7 @@ namespace IceChat
                 {
                     if (tl != _displayLines[curLine].textLine)
                     {
-                        buildString.Append(Environment.NewLine);
+                        buildString.Append("\r\n");
                         tl = _displayLines[curLine].textLine;
                     }
                     StringBuilder s = new StringBuilder(StripAllCodes(_displayLines[curLine].line));
