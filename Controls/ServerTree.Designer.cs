@@ -40,6 +40,7 @@
             this.closeChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reJoinChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.channelFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoPerformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,11 +55,15 @@
             this.closeWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silenceUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.channelFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuDCCChat = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
             this.contextMenuQuery.SuspendLayout();
+            this.contextMenuDCCChat.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelButtons
@@ -154,7 +159,7 @@
             this.channelInformationToolStripMenuItem,
             this.channelFontToolStripMenuItem});
             this.contextMenuChannel.Name = "contextMenuChannel";
-            this.contextMenuChannel.Size = new System.Drawing.Size(185, 136);
+            this.contextMenuChannel.Size = new System.Drawing.Size(185, 114);
             // 
             // clearWindowToolStripMenuItem
             // 
@@ -183,6 +188,13 @@
             this.channelInformationToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.channelInformationToolStripMenuItem.Text = "Channel Information";
             this.channelInformationToolStripMenuItem.Click += new System.EventHandler(this.channelInformationToolStripMenuItem_Click);
+            // 
+            // channelFontToolStripMenuItem
+            // 
+            this.channelFontToolStripMenuItem.Name = "channelFontToolStripMenuItem";
+            this.channelFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.channelFontToolStripMenuItem.Text = "Channel Font";
+            this.channelFontToolStripMenuItem.Click += new System.EventHandler(this.channelFontToolStripMenuItem_Click);
             // 
             // autoPerformToolStripMenuItem
             // 
@@ -290,12 +302,35 @@
             this.silenceUserToolStripMenuItem.Text = "Silence User";
             this.silenceUserToolStripMenuItem.Click += new System.EventHandler(this.silenceUserToolStripMenuItem_Click);
             // 
-            // channelFontToolStripMenuItem
+            // contextMenuDCCChat
             // 
-            this.channelFontToolStripMenuItem.Name = "channelFontToolStripMenuItem";
-            this.channelFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.channelFontToolStripMenuItem.Text = "Channel Font";
-            this.channelFontToolStripMenuItem.Click += new System.EventHandler(this.channelFontToolStripMenuItem_Click);
+            this.contextMenuDCCChat.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearWindowDCCChat,
+            this.closeWindowDCCChat,
+            this.disconnectDCCChat});
+            this.contextMenuDCCChat.Name = "contextMenuDCCChat";
+            this.contextMenuDCCChat.Size = new System.Drawing.Size(153, 92);
+            // 
+            // clearWindowDCCChat
+            // 
+            this.clearWindowDCCChat.Name = "clearWindowDCCChat";
+            this.clearWindowDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.clearWindowDCCChat.Text = "Clear window";
+            this.clearWindowDCCChat.Click += new System.EventHandler(this.clearWindowDCCChat_Click);
+            // 
+            // closeWindowDCCChat
+            // 
+            this.closeWindowDCCChat.Name = "closeWindowDCCChat";
+            this.closeWindowDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.closeWindowDCCChat.Text = "Close Window";
+            this.closeWindowDCCChat.Click += new System.EventHandler(this.closeWindowDCCChat_Click);
+            // 
+            // disconnectDCCChat
+            // 
+            this.disconnectDCCChat.Name = "disconnectDCCChat";
+            this.disconnectDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.disconnectDCCChat.Text = "Disconnect";
+            this.disconnectDCCChat.Click += new System.EventHandler(this.disconnectDCCChat_Click);
             // 
             // ServerTree
             // 
@@ -314,6 +349,7 @@
             this.contextMenuChannel.ResumeLayout(false);
             this.contextMenuServer.ResumeLayout(false);
             this.contextMenuQuery.ResumeLayout(false);
+            this.contextMenuDCCChat.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -348,5 +384,9 @@
         private System.Windows.Forms.ToolStripMenuItem forceDisconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItemBlank;
         private System.Windows.Forms.ToolStripMenuItem channelFontToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuDCCChat;
+        private System.Windows.Forms.ToolStripMenuItem clearWindowDCCChat;
+        private System.Windows.Forms.ToolStripMenuItem closeWindowDCCChat;
+        private System.Windows.Forms.ToolStripMenuItem disconnectDCCChat;
     }
 }

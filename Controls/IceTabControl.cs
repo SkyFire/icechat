@@ -343,6 +343,18 @@ namespace IceChat
 
         }
 
+        private ContextMenuStrip DCCChatPopupMenu()
+        {
+            ContextMenuStrip menu = new ContextMenuStrip();
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Close Window", "/close $1", StaticMethods.LoadResourceImage("CloseButton.png")));
+            menu.Items.Add(NewMenuItem("Disconnect", "/disconnect $1", StaticMethods.LoadResourceImage("clear.png")));
+
+            //AddPopupMenu("DCCChat", menu);
+            return menu;
+
+        }
+
         private ContextMenuStrip ChannelListPopupMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
@@ -963,6 +975,14 @@ namespace IceChat
                         _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         _popupMenu.Items.Clear();
                         _popupMenu = ChannelListPopupMenu();
+                        _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Show(this, e.Location);
+                    }
+                    else if (GetTabPage(_selectedIndex).WindowStyle == IceTabPage.WindowType.DCCChat)
+                    {
+                        _popupMenu.ItemClicked -= new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
+                        _popupMenu.Items.Clear();
+                        _popupMenu = DCCChatPopupMenu();
                         _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
                         _popupMenu.Show(this, e.Location);
                     }

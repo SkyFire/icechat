@@ -38,32 +38,36 @@ namespace IceChat
 {
     internal class DccFileStruct
     {
-        public Thread Thread;
-        public TcpClient Socket;
-        public FileStream FileStream;
-        public IPAddress IPAddress;
-        public IRCConnection Connection;
-        
-        public TcpListener PassiveSocket;
-        public Thread PassiveThread;
-        public string passiveID;
+        internal Thread Thread;
+        internal Thread ListenerThread;
+        internal TcpClient Socket;
+        internal TcpListener ListenerSocket;
+        internal FileStream FileStream;
+        internal IPAddress IPAddress;
+        internal IRCConnection Connection;
 
-        public string Nick;
-        public string Host;
-        public string Ip;
-        public string FileName;
-        public string Path;
-        public string Port;
+        internal System.Timers.Timer timeoutTimer;
 
-        public uint FileSize;
-        public uint TotalBytesRead;
-        public uint StartFileSize;
-        public bool Finished;
-        public bool Resume;
-        public long StartTime;
+        internal TcpListener PassiveSocket;
+        internal Thread PassiveThread;
+        internal string passiveID;
 
-        public string Style;        //upload or download
-        public int ListingTag;
+        internal string Nick;
+        internal string Host;
+        internal string Ip;
+        internal string FileName;
+        internal string Path;
+        internal string Port;
+
+        internal uint FileSize;
+        internal uint TotalBytesRead;
+        internal uint StartFileSize;
+        internal bool Finished;
+        internal bool Resume;
+        internal long StartTime;
+
+        internal string Style;        //upload or download
+        internal int ListingTag;
     }
 
     public class IceTabPageDCCFile : IceTabPage
@@ -481,6 +485,115 @@ namespace IceChat
             }
         }
 
+        internal void RequestDCCFile(IRCConnection connection , string nick, string file)
+        {
+            //send out a dccfile request
+            string localIP = IPAddressToLong(connection.ServerSetting.LocalIP).ToString();
+            if (FormMain.Instance.IceChatOptions.DCCLocalIP != null && FormMain.Instance.IceChatOptions.DCCLocalIP.Length > 0)
+            {
+                localIP = IPAddressToLong(IPAddress.Parse(FormMain.Instance.IceChatOptions.DCCLocalIP)).ToString();
+            }
+            Random port = new Random();
+            int p = port.Next(FormMain.Instance.IceChatOptions.DCCPortLower, FormMain.Instance.IceChatOptions.DCCPortUpper);
+
+            DccFileStruct dcc = new DccFileStruct();
+            
+            FileInfo f = new FileInfo(file);
+            dcc.FileSize = (uint)f.Length;
+            dcc.StartFileSize = 0;
+
+            dcc.FileName = file;
+            dcc.Nick = nick;
+            dcc.Style = "Upload";
+            dcc.Connection = connection;
+            dcc.Port = p.ToString();
+            
+            dcc.ListingTag = RandomListingTag();
+            
+            dcc.ListenerSocket = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
+            dcc.ListenerThread = new Thread(new ParameterizedThreadStart(ListenForConnection));  
+            dcc.ListenerThread.Start(dcc);
+
+            dcc.Connection.SendData("PRIVMSG " + dcc.Nick + " :DCC SEND " + Path.GetFileName(dcc.FileName) + " " + localIP + " " + p.ToString() + " " + dcc.FileSize.ToString() + "");
+
+            dcc.timeoutTimer = new System.Timers.Timer();
+            dcc.timeoutTimer.Interval = 1000 * FormMain.Instance.IceChatOptions.DCCChatTimeOut;
+            dcc.timeoutTimer.Elapsed += new System.Timers.ElapsedEventHandler(timeoutTimer_Elapsed);
+            dcc.timeoutTimer.Start();
+
+            AddDCCFile(dcc);
+
+            /*
+            try
+            {
+                string dccPath = FormMain.Instance.IceChatOptions.DCCSendFolder;
+                //check to make sure the folder exists
+                if (!Directory.Exists(dccPath))
+                {
+                    //add a folder browsing dialog here
+                    FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                        dccPath = fbd.SelectedPath;
+                    else
+                    {
+                        //no folder selected, out we go
+                        System.Diagnostics.Debug.WriteLine("No folder selected, non-existant dcc send folder");
+                        FormMain.Instance.WindowMessage(connection, "Console", "DCC File Send Failed : DCC Send Path does not exists", 4, true);
+                        return;
+                    }
+                }
+            }
+            */
+            
+            
+            /*
+            dccSocketListener = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
+            listenThread = new Thread(new ThreadStart(ListenForConnection));
+            listenThread.Start();
+
+            connection.SendData("PRIVMSG " + _tabCaption + " :DCC CHAT chat " + localIP + " " + p.ToString() + "");
+            dccTimeOutTimer = new System.Timers.Timer();
+            dccTimeOutTimer.Interval = 1000 * FormMain.Instance.IceChatOptions.DCCChatTimeOut;
+            dccTimeOutTimer.Elapsed += new System.Timers.ElapsedEventHandler(dccTimeOutTimer_Elapsed);
+            dccTimeOutTimer.Start();
+            */
+        }
+        private void timeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            //dcc send has timed out
+            System.Diagnostics.Debug.WriteLine("dcc send timed out");
+        }
+
+
+        private void ListenForConnection(object dccObject)
+        {
+            DccFileStruct dcc = (DccFileStruct)dccObject;
+            dcc.ListenerSocket.Start();
+            bool keepListening = true;
+
+            while (keepListening)
+            {
+                try
+                {
+                    dcc.Socket = dcc.ListenerSocket.AcceptTcpClient();
+                    System.Diagnostics.Debug.WriteLine("ip:" + dcc.Socket.Client.RemoteEndPoint.ToString());
+                    //ip:96.54.227.190:62487
+                    dcc.Ip = dcc.Socket.Client.RemoteEndPoint.ToString();
+                    dcc.ListenerSocket.Stop();
+                    dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
+                    dcc.Thread.Start(dcc);
+
+                    keepListening = false;
+                }
+                catch (Exception)
+                {
+                    keepListening = false;
+                }
+            }
+        }
+
+
         internal void StartDCCFile(IRCConnection connection, string nick, string host, string ip, string port, string file, uint fileSize)
         {
             DccFileStruct dcc = new DccFileStruct();
@@ -670,9 +783,10 @@ namespace IceChat
         private void GetDCCData(object dccObject)
         {
             DccFileStruct dcc = (DccFileStruct)dccObject;
-            
-            //add it to the Download List
-            AddDCCFile(dcc);
+                            
+            //add it to the Download List            
+            if (dcc.Style == "Download") ;
+                AddDCCFile(dcc);
             
             if (!dcc.Resume)
                 dccFiles.Add(dcc);
@@ -683,37 +797,47 @@ namespace IceChat
             {
                 try
                 {
-                    int buffSize = 0;
-                    byte[] buffer = new byte[8192];
-                    NetworkStream ns = dcc.Socket.GetStream();
-                    buffSize = dcc.Socket.ReceiveBufferSize;
-                    int bytesRead = ns.Read(buffer, 0, buffSize);
-                    //dcc file data
-                    if (bytesRead == 0)
+                    if (dcc.Style == "Download")
                     {
-                        //we have a disconnection/error
-                        break;
-                    }
-                    //write it to the file
-                    if (dcc.FileStream != null)
-                    {
-                        dcc.FileStream.Write(buffer, 0, bytesRead);
-                        dcc.FileStream.Flush();
-                        dcc.TotalBytesRead += (uint)bytesRead;
-
-                        //update the UI progress bar accordingly
-                        UpdateDCCFileProgress(dcc);
-                        if (dcc.TotalBytesRead == dcc.FileSize)
+                        //receieve the file data
+                        int buffSize = 0;
+                        byte[] buffer = new byte[8192];
+                        NetworkStream ns = dcc.Socket.GetStream();
+                        buffSize = dcc.Socket.ReceiveBufferSize;
+                        int bytesRead = ns.Read(buffer, 0, buffSize);
+                        //dcc file data
+                        if (bytesRead == 0)
                         {
-                            System.Diagnostics.Debug.WriteLine("should be finished");
-                            dcc.Finished = true;
+                            //we have a disconnection/error
+                            break;
+                        }
+                        //write it to the file
+                        if (dcc.FileStream != null)
+                        {
+                            dcc.FileStream.Write(buffer, 0, bytesRead);
+                            dcc.FileStream.Flush();
+                            dcc.TotalBytesRead += (uint)bytesRead;
+
+                            //update the UI progress bar accordingly
+                            UpdateDCCFileProgress(dcc);
+                            if (dcc.TotalBytesRead == dcc.FileSize)
+                            {
+                                System.Diagnostics.Debug.WriteLine("should be finished");
+                                dcc.Finished = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("null filestream");
                             break;
                         }
                     }
-                    else
+                    else if (dcc.Style == "Upload")
                     {
-                        System.Diagnostics.Debug.WriteLine("null filestream");
-                        break;
+                        //send out the file data
+                        System.Diagnostics.Debug.WriteLine("GetDCC Data Upload");
+
                     }
                 }
                 catch (SocketException se)

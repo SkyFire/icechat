@@ -431,6 +431,25 @@ namespace IceChat
             }
         }
 
+        internal bool IsConnected
+        {
+            get
+            {
+                if (dccSocket != null)
+                    return dccSocket.Connected;
+                else
+                    return false;
+            }
+        }
+
+        internal void DisconnectDCC()
+        {
+            if (dccSocket != null)
+                dccSocket.Close();
+            else if (dccSocketListener != null)
+                dccSocketListener.Stop();
+        }
+
         internal void RequestDCCChat()
         {
             //send out a dcc chat request
@@ -471,16 +490,23 @@ namespace IceChat
             
             while (keepListening)
             {
-                dccSocket = dccSocketListener.AcceptTcpClient();
-                dccSocketListener.Stop();
-                
-                string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
-                msg = msg.Replace("$nick", _tabCaption);
-                textWindow.AppendText(msg, 1);
+                try
+                {
+                    dccSocket = dccSocketListener.AcceptTcpClient();
+                    dccSocketListener.Stop();
 
-                dccThread = new Thread(new ThreadStart(GetDCCData));
-                dccThread.Start();
-                keepListening = false;
+                    string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
+                    msg = msg.Replace("$nick", _tabCaption);
+                    textWindow.AppendText(msg, 1);
+
+                    dccThread = new Thread(new ThreadStart(GetDCCData));
+                    dccThread.Start();
+                    keepListening = false;
+                }
+                catch (Exception)
+                {
+                    keepListening = false;
+                }
             }
         }
 

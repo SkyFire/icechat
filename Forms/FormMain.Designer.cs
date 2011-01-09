@@ -107,6 +107,7 @@ namespace IceChat
             this.toolStripEditor = new System.Windows.Forms.ToolStripButton();
             this.toolStripAway = new System.Windows.Forms.ToolStripButton();
             this.toolStripSystemTray = new System.Windows.Forms.ToolStripButton();
+            this.toolStripUpdate = new System.Windows.Forms.ToolStripButton();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainTabControl = new IceChat.IceTabControl();
@@ -449,7 +450,8 @@ namespace IceChat
             this.toolStripColors,
             this.toolStripEditor,
             this.toolStripAway,
-            this.toolStripSystemTray});
+            this.toolStripSystemTray,
+            this.toolStripUpdate});
             this.toolStripMain.Location = new System.Drawing.Point(0, 25);
             this.toolStripMain.Name = "toolStripMain";
             this.toolStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -532,6 +534,15 @@ namespace IceChat
             this.toolStripSystemTray.Size = new System.Drawing.Size(75, 22);
             this.toolStripSystemTray.Text = "System Tray";
             this.toolStripSystemTray.Click += new System.EventHandler(this.toolStripSystemTray_Click);
+            // 
+            // toolStripUpdate
+            // 
+            this.toolStripUpdate.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripUpdate.Name = "toolStripUpdate";
+            this.toolStripUpdate.Size = new System.Drawing.Size(100, 22);
+            this.toolStripUpdate.Text = "Update Available";
+            this.toolStripUpdate.Click += new System.EventHandler(this.toolStripUpdate_Click);
             // 
             // statusStripMain
             // 
@@ -652,6 +663,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem selectInputBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem channelBarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripUpdate;
 
 
 

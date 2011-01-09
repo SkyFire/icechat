@@ -567,6 +567,9 @@ namespace IceChat
                                 {
                                     caption = caption.Replace("$chan", currentWindow.TabCaption);
                                     command = command.Replace("$chan", currentWindow.TabCaption);
+
+                                    caption = caption.Replace(" # ", " " + currentWindow.TabCaption + " ");
+                                    command = command.Replace(" # ", " " + currentWindow.TabCaption + " ");
                                 }
                                 caption = caption.Replace("$nick", nick);
                                 command = command.Replace("$nick", nick);

@@ -190,6 +190,12 @@
     <Compile Include="Controls\InputPanel.Designer.cs">
       <DependentUpon>InputPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSplash.Designer.cs">
+      <DependentUpon>FormSplash.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormUserInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -422,8 +428,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Icons\update-menu.png" />
+    <EmbeddedResource Include="Icons\update.png" />
     <EmbeddedResource Include="Forms\FormDCCFileAccept.resx">
       <DependentUpon>FormDCCFileAccept.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSplash.resx">
+      <DependentUpon>FormSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\colors.png" />
     <EmbeddedResource Include="Icons\console.png" />

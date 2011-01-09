@@ -221,11 +221,12 @@
             this.labelChannelUserTypes = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
             this.tabPageThemes = new System.Windows.Forms.TabPage();
+            this.labelColorThemesHeader = new System.Windows.Forms.Label();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.labelColorThemesHeader = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -1507,6 +1508,7 @@
             // 
             // tabPageThemes
             // 
+            this.tabPageThemes.Controls.Add(this.label1);
             this.tabPageThemes.Controls.Add(this.labelColorThemesHeader);
             this.tabPageThemes.Location = new System.Drawing.Point(4, 25);
             this.tabPageThemes.Name = "tabPageThemes";
@@ -1514,6 +1516,16 @@
             this.tabPageThemes.TabIndex = 5;
             this.tabPageThemes.Text = "Themes";
             this.tabPageThemes.UseVisualStyleBackColor = true;
+            // 
+            // labelColorThemesHeader
+            // 
+            this.labelColorThemesHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelColorThemesHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelColorThemesHeader.Location = new System.Drawing.Point(19, 4);
+            this.labelColorThemesHeader.Name = "labelColorThemesHeader";
+            this.labelColorThemesHeader.Size = new System.Drawing.Size(236, 18);
+            this.labelColorThemesHeader.TabIndex = 56;
+            this.labelColorThemesHeader.Text = "IceChat Color Themes";
             // 
             // panelColorPicker
             // 
@@ -1560,15 +1572,14 @@
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current Selected:";
             // 
-            // labelColorThemesHeader
+            // label1
             // 
-            this.labelColorThemesHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelColorThemesHeader.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelColorThemesHeader.Location = new System.Drawing.Point(19, 4);
-            this.labelColorThemesHeader.Name = "labelColorThemesHeader";
-            this.labelColorThemesHeader.Size = new System.Drawing.Size(236, 18);
-            this.labelColorThemesHeader.TabIndex = 56;
-            this.labelColorThemesHeader.Text = "IceChat Color Themes";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(19, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(145, 16);
+            this.label1.TabIndex = 57;
+            this.label1.Text = "Not yet implemented";
             // 
             // FormColors
             // 
@@ -1639,6 +1650,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureAdmin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureOwner)).EndInit();
             this.tabPageThemes.ResumeLayout(false);
+            this.tabPageThemes.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1698,6 +1710,7 @@
         private System.Windows.Forms.Button buttonResetAdvanced;
         private System.Windows.Forms.TabPage tabPageThemes;
         private System.Windows.Forms.Label labelColorThemesHeader;
+        private System.Windows.Forms.Label label1;
 
     }
 }

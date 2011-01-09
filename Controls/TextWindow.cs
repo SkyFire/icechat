@@ -74,7 +74,7 @@ namespace IceChat
         //private string _wwwMatch = @"((www\.|(http|https|ftp|news|file|irc)+\:\/\/)[a-z0-9-]+\.[a-z0-9\/:@=.+?,#%&~-]*[^.|\'|\# |!|\(|?|,| |>|<|;|\)])";
 
         //works with www.
-        private string _wwwMatch = @"((www\.|(https?|ftp|telnet|file|news|irc):((//)|(\\\\)))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
+        private string _wwwMatch = @"((www\.|www\d\.|(https?|ftp|telnet|file|news|irc):((//)|(\\\\)))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
         //works but no www.
         //private string _wwwMatch = @"((https?|ftp|telnet|file|news|irc):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)";
         private string _emotMatch = "";
@@ -500,6 +500,9 @@ namespace IceChat
                                 {
                                     caption = caption.Replace("$chan", windowName);
                                     command = command.Replace("$chan", windowName);
+
+                                    caption = caption.Replace(" # ", " " + windowName + " ");
+                                    command = command.Replace(" # ", " " + windowName + " ");
                                 }
                                 else if (popupType == "Query")
                                 {

@@ -1,3 +1,12 @@
+Build Beta 3.3 January 9 2011
+* Added a Splash Screen
+* www1 links now work as well, with numbers after www
+* Toolbar shows Update Button when an IceChat Update is available
+* # is now parsed in Channel and Nicklist Popups as the current channel
+* Fixed bug with removing a channel key, now just a matter of unchecking the check box
+* Added /aaway command to set /away for all connected servers
+
+
 Build Beta 3.2 January 2 2011
 * /play command now allows for a full path to be sent to it
 * Fixed issues with *nix and aliases and popup files not properly being parsed

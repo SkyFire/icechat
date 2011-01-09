@@ -37,9 +37,18 @@ namespace IceChat
         static void Main(string[] args)
         {
             //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            //AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(ShowAssemblyLoad);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain(args));            
+            FormSplash splash = new FormSplash();
+            splash.Show();
+            Application.Run(new FormMain(args, splash));            
+            //AppDomain.CurrentDomain.AssemblyLoad -= ShowAssemblyLoad;
+        }
+
+        static void ShowAssemblyLoad(object sender, AssemblyLoadEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.LoadedAssembly.GetName().Name + ":"  + e.LoadedAssembly.Location);
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

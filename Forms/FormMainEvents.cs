@@ -596,8 +596,6 @@ namespace IceChat
                     }
                 }
 
-
-
                 if (args.Message.Contains(connection.ServerSetting.NickName))
                 {
                     //check if sounds are disabled for this window
@@ -1449,7 +1447,7 @@ namespace IceChat
                     dccAccept.Show(FormMain.Instance);
 
                 }
-                else if (iceChatOptions.DCCChatAutoAccept)
+                else if (iceChatOptions.DCCFileAutoAccept)
                 {
                     if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
                         AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);

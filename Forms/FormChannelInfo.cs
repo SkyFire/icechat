@@ -219,6 +219,7 @@ namespace IceChat
             string addModes = "";
             string removeModes = "";
             string addModeParams = "";
+            string removeModeParams = "";
 
             if (checkModen.Checked != modeN)
             {
@@ -286,7 +287,10 @@ namespace IceChat
                     addModeParams += textChannelKey.Text;
                 }
                 else
-                    removeModes += "k";
+                {
+                    removeModes += "k";                    
+                    removeModeParams += textChannelKey.Text;
+                }
                 modeK = checkModek.Checked;
             }
 
@@ -300,6 +304,9 @@ namespace IceChat
             if (addModeParams.Length > 0)
                 fullMode = fullMode + " " + addModeParams;
 
+            if (removeModeParams.Length > 0)
+                fullMode = fullMode + " " + removeModeParams;
+    
             if (fullMode.Length > 0)
                 FormMain.Instance.ParseOutGoingCommand(channel.Connection, "/mode " + channel.TabCaption + " " + fullMode);
 

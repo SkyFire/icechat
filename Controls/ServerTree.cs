@@ -531,7 +531,7 @@ namespace IceChat
                         //add in the popup menu
                         AddPopupMenu("Console", contextMenuServer);
 
-                        contextMenuServer.Show(this, new Point(e.X, e.Y));
+                        this.contextMenuServer.Show(this, new Point(e.X, e.Y));
                     }
                     else if (findNode.GetType() == typeof(IceTabPage))
                     {
@@ -549,7 +549,7 @@ namespace IceChat
                             //add in the popup menu
                             AddPopupMenu("Channel", contextMenuChannel);
 
-                            contextMenuChannel.Show(this, new Point(e.X, e.Y));
+                            this.contextMenuChannel.Show(this, new Point(e.X, e.Y));
                         }
                         else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.Query)
                         {
@@ -563,7 +563,11 @@ namespace IceChat
                             //add in the popup menu
                             AddPopupMenu("Query", contextMenuQuery);
 
-                            contextMenuQuery.Show(this, new Point(e.X, e.Y));
+                            this.contextMenuQuery.Show(this, new Point(e.X, e.Y));
+                        }
+                        else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.DCCChat)
+                        {
+                            this.contextMenuDCCChat.Show(this, new Point(e.X, e.Y));
                         }
                     }
                 }
@@ -1419,7 +1423,29 @@ namespace IceChat
                 FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/silence +" + ((IceTabPage)findNode).TabCaption);
         }
 
+        private void clearWindowDCCChat_Click(object sender, EventArgs e)
+        {
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                ((IceTabPage)findNode).TextWindow.ClearTextWindow();
+        }
+
+        private void closeWindowDCCChat_Click(object sender, EventArgs e)
+        {
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/close " + ((IceTabPage)findNode).TabCaption);
+        }
+
+        private void disconnectDCCChat_Click(object sender, EventArgs e)
+        {
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                ((IceTabPage)findNode).DisconnectDCC();
+        }
+
         #endregion
+
 
 
 

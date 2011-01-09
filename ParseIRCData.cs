@@ -955,7 +955,8 @@ namespace IceChat
                                 }
                                 else
                                 {
-                                    ChannelMessage(this, channel, nick, host, msg);
+                                    if (ChannelMessage != null)
+                                        ChannelMessage(this, channel, nick, host, msg);
                                     IALUserData(this, nick, host, channel);
 
                                 }
