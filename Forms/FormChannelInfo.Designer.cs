@@ -52,6 +52,7 @@
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonApply = new System.Windows.Forms.Button();
+            this.buttonRemoveException = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -237,6 +238,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.buttonRemoveException);
             this.tabPage3.Controls.Add(this.listViewExceptions);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
@@ -254,7 +256,7 @@
             this.listViewExceptions.Location = new System.Drawing.Point(8, 6);
             this.listViewExceptions.MultiSelect = false;
             this.listViewExceptions.Name = "listViewExceptions";
-            this.listViewExceptions.Size = new System.Drawing.Size(419, 244);
+            this.listViewExceptions.Size = new System.Drawing.Size(419, 226);
             this.listViewExceptions.TabIndex = 1;
             this.listViewExceptions.UseCompatibleStateImageBehavior = false;
             this.listViewExceptions.View = System.Windows.Forms.View.Details;
@@ -288,6 +290,16 @@
             this.buttonApply.Text = "Apply";
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            // 
+            // buttonRemoveException
+            // 
+            this.buttonRemoveException.Location = new System.Drawing.Point(276, 238);
+            this.buttonRemoveException.Name = "buttonRemoveException";
+            this.buttonRemoveException.Size = new System.Drawing.Size(155, 23);
+            this.buttonRemoveException.TabIndex = 2;
+            this.buttonRemoveException.Text = "Remove Exception";
+            this.buttonRemoveException.UseVisualStyleBackColor = true;
+            this.buttonRemoveException.Click += new System.EventHandler(this.buttonRemoveException_Click);
             // 
             // FormChannelInfo
             // 
@@ -341,5 +353,6 @@
         private System.Windows.Forms.Button buttonApply;
         private System.Windows.Forms.TextBox textChannelKey;
         private System.Windows.Forms.CheckBox checkModek;
+        private System.Windows.Forms.Button buttonRemoveException;
     }
 }

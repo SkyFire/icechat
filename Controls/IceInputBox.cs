@@ -294,6 +294,21 @@ namespace IceChat
 					base.SelectedText = ((char)31).ToString();
 					e.Handled=true;
 				}
+                else if (e.KeyCode == Keys.R)
+                {
+                    base.SelectedText = ((char)22).ToString();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.I)
+                {
+                    base.SelectedText = ((char)29).ToString();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.O)
+                {
+                    base.SelectedText = ((char)15).ToString();
+                    e.Handled = true;
+                }
                 else if (e.KeyCode == Keys.D)
                 {
                     FormMain.Instance.debugWindowToolStripMenuItem.PerformClick();

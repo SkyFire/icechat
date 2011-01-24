@@ -182,6 +182,8 @@ namespace IceChat
             comboTopicEvent.SelectedIndex = iceChatOptions.TopicEventLocation;
             comboChannelMessageEvent.SelectedIndex = iceChatOptions.ChannelMessageEventLocation;
             comboChannelActionEvent.SelectedIndex = iceChatOptions.ChannelActionEventLocation;
+            comboWhoisEvent.SelectedIndex = iceChatOptions.WhoisEventLocation;
+
 
             trackTransparency.Value = Convert.ToInt32(FormMain.Instance.Opacity * 100);
 
@@ -316,6 +318,7 @@ namespace IceChat
             iceChatOptions.TopicEventLocation = comboTopicEvent.SelectedIndex;
             iceChatOptions.ChannelMessageEventLocation = comboChannelMessageEvent.SelectedIndex;
             iceChatOptions.ChannelActionEventLocation = comboChannelActionEvent.SelectedIndex;
+            iceChatOptions.WhoisEventLocation = comboWhoisEvent.SelectedIndex;
 
             if (SaveOptions != null)
                 SaveOptions();
@@ -596,7 +599,7 @@ namespace IceChat
 
         private void trackTransparency_Scroll(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(trackTransparency.Value);
+            //System.Diagnostics.Debug.WriteLine(trackTransparency.Value);
             FormMain.Instance.Opacity = (double)trackTransparency.Value / 100;
         }
 

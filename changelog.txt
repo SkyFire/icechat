@@ -1,3 +1,15 @@
+Build Beta 3.4 January 24 2011
+* Added fix for removing channel mode l
+* Added button to remove channel exceptions
+* Added CTRL-R for reverse text code
+* Added CTRL-O for plain text code
+* Added CTRL-I for italic text code
+* Added parsing for reverse characters
+* Added parsing for italic characters
+* Added parsing for bold characters
+
+
+
 Build Beta 3.3 January 9 2011
 * Added a Splash Screen
 * www1 links now work as well, with numbers after www

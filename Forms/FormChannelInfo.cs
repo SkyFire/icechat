@@ -213,6 +213,16 @@ namespace IceChat
             }
         }
 
+        private void buttonRemoveException_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listViewExceptions.SelectedItems)
+            {
+                FormMain.Instance.ParseOutGoingCommand(channel.Connection, "/mode " + channel.TabCaption + " -e " + eachItem.Text);
+                listViewExceptions.Items.Remove(eachItem);
+            }
+
+        }
+
         private void buttonApply_Click(object sender, EventArgs e)
         {
             //check for new mode settings
@@ -316,5 +326,6 @@ namespace IceChat
                 this.topic = textTopic.Text;
             }
         }
+
     }
 }

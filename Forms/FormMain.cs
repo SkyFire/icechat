@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 using IceChat.Properties;
 using IceChatPlugin;
@@ -101,6 +102,37 @@ namespace IceChat
 
         private System.Media.SoundPlayer player;
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct OSVERSIONINFOEX
+        {
+            public int dwOSVersionInfoSize;
+            public int dwMajorVersion;
+            public int dwMinorVersion;
+            public int dwBuildNumber;
+            public int dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szCSDVersion;
+            public short wServicePackMajor;
+            public short wServicePackMinor;
+            public short wSuiteMask;
+            public byte wProductType;
+            public byte wReserved;
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
+
+        private const int VER_NT_WORKSTATION = 1;
+        private const int VER_NT_DOMAIN_CONTROLLER = 2;
+        private const int VER_NT_SERVER = 3;
+        private const int VER_SUITE_SMALLBUSINESS = 1;
+        private const int VER_SUITE_ENTERPRISE = 2;
+        private const int VER_SUITE_TERMINAL = 16;
+        private const int VER_SUITE_DATACENTER = 128;
+        private const int VER_SUITE_SINGLEUSERTS = 256;
+        private const int VER_SUITE_PERSONAL = 512;
+        private const int VER_SUITE_BLADE = 1024;
+        
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
         /// </summary>
@@ -290,7 +322,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 9 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 24 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -837,7 +869,7 @@ namespace IceChat
             }
         }
 
-        internal string LogsFolder
+        public string LogsFolder
         {
             get
             {
@@ -845,7 +877,7 @@ namespace IceChat
             }
         }
 
-        internal string CurrentFolder
+        public string CurrentFolder
         {
             get
             {
@@ -870,10 +902,11 @@ namespace IceChat
             }
             else
             {
-                if (inputPanel.CurrentConnection != null)
-                    toolStripStatus.Text = inputPanel.CurrentConnection.ServerSetting.ID + ":Status: " + data;
-                else
-                    toolStripStatus.Text = "Status: " + data;
+                toolStripStatus.Text = "Status: " + data;
+                //if (inputPanel.CurrentConnection != null)
+                //    toolStripStatus.Text = inputPanel.CurrentConnection.ServerSetting.ID + ":Status: " + data;
+                //else
+                //    toolStripStatus.Text = "Status: " + data;
             }
         }
 
@@ -3219,6 +3252,14 @@ namespace IceChat
         }
         private string GetOperatingSystemName()
         {
+            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+            osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+
+            if (!GetVersionEx(ref osVersionInfo))
+            {
+                return "";
+            }
+            
             string OSName = "Unknown";
             System.OperatingSystem osInfo = System.Environment.OSVersion;
             switch (osInfo.Platform)
@@ -3246,15 +3287,33 @@ namespace IceChat
                                 case 1:
                                     OSName = "Windows XP";
                                     break;
-                                case 2:
-                                    OSName = "Windows 2003";
+                                case 2:                                    
+                                    OSName = "Windows Server 2003";
                                     break;
                                 default:
                                     break;
                             }
                             break;
                         case 6:
-                            OSName = "Windows Vista";
+                            switch (osInfo.Version.Minor)
+                            {
+                                case 0:
+                                    //producttype == VER_NT_WORKSTATION
+                                    if (osVersionInfo.dwPlatformId != VER_NT_WORKSTATION)
+                                        OSName = "Windows Vista";
+                                    else
+                                    //producttype != VER_NT_WORKSTATION                                    
+                                        OSName = "Windows Server 2008";
+                                    break;
+                                case 1:
+                                    //producttype != VER_NT_WORKSTATION
+                                    if (osVersionInfo.dwPlatformId == VER_NT_WORKSTATION)
+                                        OSName = "Windws Server 2008 R2";
+                                    else
+                                        //producttype == VER_NT_WORKSTATION                                                                        
+                                        OSName = "Windows 7";
+                                    break;
+                            }
                             break;
                         default:
                             OSName = "Unknown Win32NT Windows";

@@ -51,6 +51,7 @@ namespace IceChat
         private const char boldChar = (char)2;
         private const char plainChar = (char)15;
         private const char reverseChar = (char)22;
+        private const char italicChar = (char)29;
 
         private const char newColorChar = '\xFF03';
         private const char emotChar = '\xFF0A';
@@ -1332,10 +1333,15 @@ namespace IceChat
                 }
                 else
                 {
+                    lastColor = "";
                     lineSplit = false;
                     string curLine = _textLines[currentLine].line;
 
                     StringBuilder buildString = new StringBuilder();
+                    
+                    bool bold = false;
+                    bool underline = false;
+                    bool italic = false;
 
                     char[] ch;
                     try
@@ -1346,6 +1352,16 @@ namespace IceChat
                             switch (ch[0])
                             {
                                 case boldChar:
+                                    bold = !bold;
+                                    buildString.Append(ch[0]);
+                                    break;
+                                case italicChar:
+                                    italic = !italic;
+                                    buildString.Append(ch[0]);
+                                    break;
+                                case underlineChar:
+                                    underline = !underline;
+                                    buildString.Append(ch[0]);
                                     break;
                                 case newColorChar:
                                     buildString.Append(curLine.Substring(i, 5));
@@ -1383,6 +1399,11 @@ namespace IceChat
                                         _displayLines[line].previous = true;
                                         buildString = null;
                                         buildString = new StringBuilder();
+
+                                        if (underline) buildString.Append(underlineChar);
+                                        if (bold) buildString.Append(boldChar);
+                                        if (italic) buildString.Append(italicChar);
+                                        System.Diagnostics.Debug.WriteLine("add bold :" + bold);
                                         buildString.Append(ch[0]);
                                     }
                                     else
@@ -1488,8 +1509,8 @@ namespace IceChat
 
                 int lineCounter = 0;
 
-                bool underline = false;
                 bool isInUrl = false;
+
                 Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
 
                 int redline = -1;
@@ -1515,6 +1536,11 @@ namespace IceChat
                     bool highlight = false;
                     bool oldHighlight = false;
 
+                    bool underline = false;
+                    bool reverse = false;
+                    bool italic = false;
+                    bool bold = false;
+
                     if (redline == curLine)
                     {
                         Pen p = new Pen(IrcColor.colors[FormMain.Instance.IceChatColors.UnreadTextMarkerColor]);
@@ -1530,12 +1556,17 @@ namespace IceChat
                     curBackColor = _backColor;
                     
                     //check if in a url
+                    /*
                     if (!isInUrl)
                     {
                         underline = false;
                         font = null;
                         font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
                     }
+                    */
+                    font = null;
+                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
+                    
                     if (line.Length > 0)
                     {
                         do
@@ -1593,7 +1624,7 @@ namespace IceChat
                                     line.Remove(0, 1);
                                     i = -1;
                                     font = null;
-                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Underline);
+                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Underline, GraphicsUnit.Point);
                                     isInUrl = true;
                                     break;
 
@@ -1616,7 +1647,7 @@ namespace IceChat
                                     line.Remove(0, 1);
                                     i = -1;
                                     font = null;
-                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
+                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
                                     isInUrl = false;
                                     break;
                                 case underlineChar:
@@ -1639,7 +1670,132 @@ namespace IceChat
                                     i = -1;
                                     font = null;
                                     underline = !underline;
-                                    font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline);
+                                    FontStyle fs = FontStyle.Regular;
+                                    if (underline) fs = FontStyle.Underline;
+                                    if (italic) fs = fs | FontStyle.Italic;
+                                    if (bold) fs = fs | FontStyle.Bold;
+
+                                    font = new Font(this.Font.Name, this.Font.Size, fs, GraphicsUnit.Point);
+                                    //font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline);
+                                    break;
+                                case italicChar:
+                                    //italic character
+                                    if (curBackColor != _backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+                                    i = -1;
+                                    font = null;
+                                    italic = !italic;
+
+                                    FontStyle fsi = FontStyle.Regular;
+                                    if (underline) fsi = FontStyle.Underline;
+                                    if (italic) fsi = fsi | FontStyle.Italic;
+                                    if (bold) fsi = fsi | FontStyle.Bold;
+
+                                    font = new Font(this.Font.Name, this.Font.Size, fsi, GraphicsUnit.Point);
+                                    break;
+                                case boldChar:
+                                    //bold character, currently ignored
+                                    if (curBackColor != _backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+                                    i = -1;
+                                    font = null;
+                                    bold = !bold;                                    
+
+                                    FontStyle fsb = FontStyle.Regular;
+                                    if (underline) fsb = FontStyle.Underline;
+                                    if (italic) fsb = fsb | FontStyle.Italic;
+                                    if (bold) fsb = fsb | FontStyle.Bold;
+                                    
+                                    font = new Font(this.Font.Name, this.Font.Size, fsb, GraphicsUnit.Point);
+                                    break;
+                                case plainChar:
+                                    //draw with the standard fore and back color
+                                    if (curBackColor != _backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+
+                                    curForeColor = _displayLines[curLine].textColor;
+                                    curBackColor = _backColor;
+
+                                    font = null;
+                                    underline = false;
+                                    italic = false;
+                                    bold = false;
+                                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
+
+                                    i = -1;
+                                    break;
+                                case reverseChar:
+                                    //reverse the fore and back colors
+                                    if (curBackColor != _backColor)
+                                    {
+                                        textSize = (int)g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width + 1;
+                                        Rectangle r = new Rectangle((int)startX, startY, textSize + 1, _lineSize + 1);
+                                        g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
+                                    }
+                                    g.DrawString(buildString.ToString(), font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+
+                                    startX += g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width;   //textSizes[32]
+
+                                    buildString = null;
+                                    buildString = new StringBuilder();
+
+                                    //remove whats drawn from string
+                                    line.Remove(0, i);
+                                    line.Remove(0, 1);
+                                    if (reverse)
+                                    {
+                                        curForeColor = _displayLines[curLine].textColor;
+                                        curBackColor = _backColor;
+                                    }
+                                    else
+                                    {
+                                        curForeColor = _backColor;
+                                        curBackColor = _displayLines[curLine].textColor;
+                                    }
+                                    reverse = !reverse;
+                                    i = -1;
                                     break;
                                 case newColorChar:
                                     //draw whats previously in the string

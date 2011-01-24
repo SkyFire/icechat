@@ -785,7 +785,7 @@ namespace IceChat
             DccFileStruct dcc = (DccFileStruct)dccObject;
                             
             //add it to the Download List            
-            if (dcc.Style == "Download") ;
+            if (dcc.Style == "Download")
                 AddDCCFile(dcc);
             
             if (!dcc.Resume)

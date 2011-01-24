@@ -41,6 +41,7 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.label15 = new System.Windows.Forms.Label();
             this.trackTransparency = new System.Windows.Forms.TrackBar();
             this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
             this.checkWhoisNewQuery = new System.Windows.Forms.CheckBox();
@@ -187,7 +188,8 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
+            this.comboWhoisEvent = new System.Windows.Forms.ComboBox();
+            this.labelWhoisEvent = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -348,6 +350,15 @@ namespace IceChat
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(12, 189);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(239, 16);
+            this.label15.TabIndex = 47;
+            this.label15.Text = "Set IceChat Window Transparency";
             // 
             // trackTransparency
             // 
@@ -1288,6 +1299,8 @@ namespace IceChat
             // 
             // tabEvents
             // 
+            this.tabEvents.Controls.Add(this.comboWhoisEvent);
+            this.tabEvents.Controls.Add(this.labelWhoisEvent);
             this.tabEvents.Controls.Add(this.comboChannelActionEvent);
             this.tabEvents.Controls.Add(this.labelChannelActionEvent);
             this.tabEvents.Controls.Add(this.comboChannelMessageEvent);
@@ -1789,14 +1802,27 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
-            // label15
+            // comboWhoisEvent
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(12, 189);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(239, 16);
-            this.label15.TabIndex = 47;
-            this.label15.Text = "Set IceChat Window Transparency";
+            this.comboWhoisEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWhoisEvent.FormattingEnabled = true;
+            this.comboWhoisEvent.Items.AddRange(new object[] {
+            "In Current",
+            "In Console",
+            "Hide"});
+            this.comboWhoisEvent.Location = new System.Drawing.Point(338, 79);
+            this.comboWhoisEvent.Name = "comboWhoisEvent";
+            this.comboWhoisEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboWhoisEvent.TabIndex = 17;
+            // 
+            // labelWhoisEvent
+            // 
+            this.labelWhoisEvent.AutoSize = true;
+            this.labelWhoisEvent.Location = new System.Drawing.Point(204, 82);
+            this.labelWhoisEvent.Name = "labelWhoisEvent";
+            this.labelWhoisEvent.Size = new System.Drawing.Size(115, 16);
+            this.labelWhoisEvent.TabIndex = 16;
+            this.labelWhoisEvent.Text = "Whois Message:";
             // 
             // FormSettings
             // 
@@ -1998,5 +2024,7 @@ namespace IceChat
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TrackBar trackTransparency;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox comboWhoisEvent;
+        private System.Windows.Forms.Label labelWhoisEvent;
     }
 }

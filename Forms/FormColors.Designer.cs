@@ -130,12 +130,6 @@
             this.labelIdentifiers = new System.Windows.Forms.Label();
             this.labelEditMessage = new System.Windows.Forms.Label();
             this.tabPageTabBar = new System.Windows.Forms.TabPage();
-            this.checkOtherMessage = new System.Windows.Forms.CheckBox();
-            this.checkServerMessage = new System.Windows.Forms.CheckBox();
-            this.checkServerQuit = new System.Windows.Forms.CheckBox();
-            this.checkChannelPart = new System.Windows.Forms.CheckBox();
-            this.checkChannelJoin = new System.Windows.Forms.CheckBox();
-            this.checkNewMessage = new System.Windows.Forms.CheckBox();
             this.pictureTabBackground = new System.Windows.Forms.PictureBox();
             this.labelTabBackground = new System.Windows.Forms.Label();
             this.pictureTabBarHover2 = new System.Windows.Forms.PictureBox();
@@ -221,12 +215,12 @@
             this.labelChannelUserTypes = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
             this.tabPageThemes = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.labelColorThemesHeader = new System.Windows.Forms.Label();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -549,12 +543,6 @@
             // tabPageTabBar
             // 
             this.tabPageTabBar.BackColor = System.Drawing.Color.Transparent;
-            this.tabPageTabBar.Controls.Add(this.checkOtherMessage);
-            this.tabPageTabBar.Controls.Add(this.checkServerMessage);
-            this.tabPageTabBar.Controls.Add(this.checkServerQuit);
-            this.tabPageTabBar.Controls.Add(this.checkChannelPart);
-            this.tabPageTabBar.Controls.Add(this.checkChannelJoin);
-            this.tabPageTabBar.Controls.Add(this.checkNewMessage);
             this.tabPageTabBar.Controls.Add(this.pictureTabBackground);
             this.tabPageTabBar.Controls.Add(this.labelTabBackground);
             this.tabPageTabBar.Controls.Add(this.pictureTabBarHover2);
@@ -594,60 +582,6 @@
             this.tabPageTabBar.TabIndex = 3;
             this.tabPageTabBar.Text = "Tab Bar";
             this.tabPageTabBar.UseVisualStyleBackColor = true;
-            // 
-            // checkOtherMessage
-            // 
-            this.checkOtherMessage.AutoSize = true;
-            this.checkOtherMessage.Location = new System.Drawing.Point(20, 201);
-            this.checkOtherMessage.Name = "checkOtherMessage";
-            this.checkOtherMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkOtherMessage.TabIndex = 106;
-            this.checkOtherMessage.UseVisualStyleBackColor = true;
-            // 
-            // checkServerMessage
-            // 
-            this.checkServerMessage.AutoSize = true;
-            this.checkServerMessage.Location = new System.Drawing.Point(20, 174);
-            this.checkServerMessage.Name = "checkServerMessage";
-            this.checkServerMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkServerMessage.TabIndex = 105;
-            this.checkServerMessage.UseVisualStyleBackColor = true;
-            // 
-            // checkServerQuit
-            // 
-            this.checkServerQuit.AutoSize = true;
-            this.checkServerQuit.Location = new System.Drawing.Point(20, 147);
-            this.checkServerQuit.Name = "checkServerQuit";
-            this.checkServerQuit.Size = new System.Drawing.Size(15, 14);
-            this.checkServerQuit.TabIndex = 104;
-            this.checkServerQuit.UseVisualStyleBackColor = true;
-            // 
-            // checkChannelPart
-            // 
-            this.checkChannelPart.AutoSize = true;
-            this.checkChannelPart.Location = new System.Drawing.Point(20, 120);
-            this.checkChannelPart.Name = "checkChannelPart";
-            this.checkChannelPart.Size = new System.Drawing.Size(15, 14);
-            this.checkChannelPart.TabIndex = 103;
-            this.checkChannelPart.UseVisualStyleBackColor = true;
-            // 
-            // checkChannelJoin
-            // 
-            this.checkChannelJoin.AutoSize = true;
-            this.checkChannelJoin.Location = new System.Drawing.Point(20, 93);
-            this.checkChannelJoin.Name = "checkChannelJoin";
-            this.checkChannelJoin.Size = new System.Drawing.Size(15, 14);
-            this.checkChannelJoin.TabIndex = 102;
-            this.checkChannelJoin.UseVisualStyleBackColor = true;
-            // 
-            // checkNewMessage
-            // 
-            this.checkNewMessage.AutoSize = true;
-            this.checkNewMessage.Location = new System.Drawing.Point(20, 68);
-            this.checkNewMessage.Name = "checkNewMessage";
-            this.checkNewMessage.Size = new System.Drawing.Size(15, 14);
-            this.checkNewMessage.TabIndex = 101;
-            this.checkNewMessage.UseVisualStyleBackColor = true;
             // 
             // pictureTabBackground
             // 
@@ -805,7 +739,7 @@
             // labelTabDefault
             // 
             this.labelTabDefault.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabDefault.Location = new System.Drawing.Point(41, 226);
+            this.labelTabDefault.Location = new System.Drawing.Point(19, 226);
             this.labelTabDefault.Name = "labelTabDefault";
             this.labelTabDefault.Size = new System.Drawing.Size(123, 16);
             this.labelTabDefault.TabIndex = 54;
@@ -884,7 +818,7 @@
             // labelTabOther
             // 
             this.labelTabOther.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabOther.Location = new System.Drawing.Point(41, 199);
+            this.labelTabOther.Location = new System.Drawing.Point(19, 199);
             this.labelTabOther.Name = "labelTabOther";
             this.labelTabOther.Size = new System.Drawing.Size(123, 16);
             this.labelTabOther.TabIndex = 45;
@@ -893,7 +827,7 @@
             // labelTabServer
             // 
             this.labelTabServer.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabServer.Location = new System.Drawing.Point(41, 172);
+            this.labelTabServer.Location = new System.Drawing.Point(19, 172);
             this.labelTabServer.Name = "labelTabServer";
             this.labelTabServer.Size = new System.Drawing.Size(123, 16);
             this.labelTabServer.TabIndex = 44;
@@ -902,7 +836,7 @@
             // labelTabQuit
             // 
             this.labelTabQuit.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabQuit.Location = new System.Drawing.Point(41, 145);
+            this.labelTabQuit.Location = new System.Drawing.Point(19, 145);
             this.labelTabQuit.Name = "labelTabQuit";
             this.labelTabQuit.Size = new System.Drawing.Size(123, 16);
             this.labelTabQuit.TabIndex = 43;
@@ -911,7 +845,7 @@
             // labelTabPart
             // 
             this.labelTabPart.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabPart.Location = new System.Drawing.Point(41, 118);
+            this.labelTabPart.Location = new System.Drawing.Point(19, 118);
             this.labelTabPart.Name = "labelTabPart";
             this.labelTabPart.Size = new System.Drawing.Size(123, 16);
             this.labelTabPart.TabIndex = 42;
@@ -920,7 +854,7 @@
             // labelTabJoin
             // 
             this.labelTabJoin.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabJoin.Location = new System.Drawing.Point(41, 91);
+            this.labelTabJoin.Location = new System.Drawing.Point(19, 91);
             this.labelTabJoin.Name = "labelTabJoin";
             this.labelTabJoin.Size = new System.Drawing.Size(123, 16);
             this.labelTabJoin.TabIndex = 41;
@@ -929,7 +863,7 @@
             // labelTabMessage
             // 
             this.labelTabMessage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.labelTabMessage.Location = new System.Drawing.Point(41, 66);
+            this.labelTabMessage.Location = new System.Drawing.Point(19, 66);
             this.labelTabMessage.Name = "labelTabMessage";
             this.labelTabMessage.Size = new System.Drawing.Size(123, 16);
             this.labelTabMessage.TabIndex = 39;
@@ -1517,6 +1451,15 @@
             this.tabPageThemes.Text = "Themes";
             this.tabPageThemes.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(19, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(145, 16);
+            this.label1.TabIndex = 57;
+            this.label1.Text = "Not yet implemented";
+            // 
             // labelColorThemesHeader
             // 
             this.labelColorThemesHeader.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1571,15 +1514,6 @@
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current Selected:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(145, 16);
-            this.label1.TabIndex = 57;
-            this.label1.Text = "Not yet implemented";
             // 
             // FormColors
             // 
@@ -1698,12 +1632,6 @@
         private System.Windows.Forms.PictureBox pictureStatusFore;
         private System.Windows.Forms.Label labelStatusFore;
         private System.Windows.Forms.CheckBox checkRandomNickColors;
-        private System.Windows.Forms.CheckBox checkNewMessage;
-        private System.Windows.Forms.CheckBox checkOtherMessage;
-        private System.Windows.Forms.CheckBox checkServerMessage;
-        private System.Windows.Forms.CheckBox checkServerQuit;
-        private System.Windows.Forms.CheckBox checkChannelPart;
-        private System.Windows.Forms.CheckBox checkChannelJoin;
         private System.Windows.Forms.PictureBox pictureUnreadTextMarkerColor;
         private System.Windows.Forms.Label labelUnreadTextMarkerColor;
         private System.Windows.Forms.Button buttonResetBasic;

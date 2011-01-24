@@ -367,6 +367,9 @@ namespace IceChat
         /// <param name="data">The Whois data</param>
         private void OnWhoisData(IRCConnection connection, string nick, string data)
         {
+            if (iceChatOptions.WhoisEventLocation == 2) //hide the event
+                return;
+
             string msg = GetMessageFormat("User Whois");
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$data", data);
@@ -375,13 +378,24 @@ namespace IceChat
             IceTabPage t = GetWindow(connection, nick, IceTabPage.WindowType.Query);
             if (t != null)
             {
-                t.TextWindow.AppendText(msg, 1);
-                t.LastMessageType = ServerMessageType.Message;
+                if (iceChatOptions.WhoisEventLocation == 0)
+                {
+                    t.TextWindow.AppendText(msg, 1);
+                    t.LastMessageType = ServerMessageType.Message;
+                }
+                else
+                {
+                    mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
+                }
             }
             else
-            {
-                //send whois data to the current window instead
-                CurrentWindowMessage(connection, msg, 1, false);
+            {                
+                if (iceChatOptions.WhoisEventLocation == 0)
+                    //send whois data to the current window
+                    CurrentWindowMessage(connection, msg, 1, false);
+                else
+                    mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
+
             }
         }
 
@@ -1214,10 +1228,14 @@ namespace IceChat
                                 //check if the mode has a parameter (CHANMODES= from 005)
                                 if (connection.ServerSetting.ChannelModeParams.Contains(mode[i].ToString()))
                                 {
-                                    //mode has parameter
-                                    temp = (string)parametersEnumerator.Current;
-                                    parametersEnumerator.MoveNext();
-                                    chan.UpdateChannelMode(mode[i], temp, addMode);
+                                    //even though mode l requires a param to add it, it does not to remove it
+                                    if (!addMode && mode[i] != 'l')
+                                    {
+                                        //mode has parameter
+                                        temp = (string)parametersEnumerator.Current;
+                                        parametersEnumerator.MoveNext();
+                                    }
+                                        chan.UpdateChannelMode(mode[i], temp, addMode);
                                 }
                                 else
                                     //check if it is an actual channel mode, and not a user mode

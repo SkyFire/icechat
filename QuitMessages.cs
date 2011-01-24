@@ -25,7 +25,7 @@ namespace IceChat
             "Friends help you move. Real friends help you move bodies.",
             "Few women admit their age.  Few men act theirs.",
             "Clap on! , Clap off! Clap@#&$NO CARRIER",
-            "Copywight 2010 Elmer Fudd. All wights wesewved.",
+            "Copywight 2011 Elmer Fudd. All wights wesewved.",
             "I used to think I was indecisive, but now I'm not too sure.",
             "Beware of programmers who carry screwdrivers.",
             "Relax, its only ONES and ZEROS!",
@@ -55,7 +55,8 @@ namespace IceChat
             "Always try to be modest, and be proud about it!",
             "If you think nobody cares, try missing a few payments",
             "Hard work pays off in the future, laziness pays off now",
-            "For Sale: Intergalactic Proton Powered Electrical Tentacled Advertising Droid"};
+            "For Sale: Intergalactic Proton Powered Electrical Tentacled Advertising Droid",
+            "Given the choice between you, I'll take the sea-sick crocodile."};
 
     }
 }

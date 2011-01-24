@@ -637,6 +637,7 @@ namespace IceChat
         public int DccEventLocation
         { get; set; }
 
+
     
     }
     
