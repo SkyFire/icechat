@@ -1,3 +1,10 @@
+Build Beta 3.5 January 29 2011
+* Fix line wrapping for Reverse Code
+* Fix wrapped URL's losing underline
+* Fix hover issue with nicknames with an underscore in them
+
+
+
 Build Beta 3.4 January 24 2011
 * Added fix for removing channel mode l
 * Added button to remove channel exceptions

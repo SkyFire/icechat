@@ -268,6 +268,8 @@ namespace IceChat
                     {
                         t.ClearNicks();
                         t.IsFullyJoined = false;
+                        t.GotNamesList = false;
+                        t.GotWhoList = false;
 
                         t.TextWindow.AppendText(msg, 1);
                         t.LastMessageType = FormMain.ServerMessageType.ServerMessage;

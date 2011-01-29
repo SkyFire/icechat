@@ -637,7 +637,14 @@ namespace IceChat
         public int DccEventLocation
         { get; set; }
 
+        [XmlElement("CurrentTheme")]
+        public string CurrentTheme
+        { get; set; }
 
+        [XmlArray("Themes")]
+        [XmlArrayItem("Item")]
+        public string[] Themes
+        { get; set; }
     
     }
     

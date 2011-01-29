@@ -376,7 +376,7 @@ namespace IceChat
                             }
                             msg = "is " + ircData[4] + "@" + ircData[5] + " (" + JoinString(ircData, 7, true) + ")";
                             WhoisData(this, ircData[3], msg);
-                            IALUserData(this, nick, host, "");
+                            IALUserData(this, nick, ircData[4] + "@" + ircData[5], "");
                             break;
                         case "312":     //whois information server info
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
@@ -556,6 +556,7 @@ namespace IceChat
                             if (t != null)
                             {
                                 //end of who reply, do a channel refresh
+                                t.GotWhoList = true;
                                 if (FormMain.Instance.NickList.CurrentWindow == t)
                                     FormMain.Instance.NickList.RefreshList(t);
 
@@ -567,6 +568,10 @@ namespace IceChat
                             if (t != null)
                             {
                                 IALUserData(this, ircData[7], ircData[4] + "@" + ircData[5], channel);
+                                if (t.GotWhoList)
+                                    if (ServerMessage != null)
+                                        ServerMessage(this, JoinString(ircData, 2, false));
+
                             }
                             break;
                         case "353": //channel user list
@@ -581,14 +586,16 @@ namespace IceChat
                                     return;
                                 }
                             }
-                            
-                            string[] nicks = JoinString(ircData, 5, true).Split(' ');
-                            foreach (string nickName in nicks)
+                            if (!t.GotNamesList)
                             {
-                                if (nickName.Length > 0)
+                                string[] nicks = JoinString(ircData, 5, true).Split(' ');
+                                foreach (string nickName in nicks)
                                 {
-                                    JoinChannel(this, channel, nickName, "", false);
-                                    IALUserData(this, nickName, "", channel);
+                                    if (nickName.Length > 0)
+                                    {
+                                        JoinChannel(this, channel, nickName, "", false);
+                                        IALUserData(this, nickName, "", channel);
+                                    }
                                 }
                             }
                             break;
@@ -602,10 +609,16 @@ namespace IceChat
                             t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
                             if (t != null)
                             {
+                                t.GotNamesList = true;
                                 //send a WHO command to get all the hosts
                                 if (t.Nicks.Count < 200)
+                                {
+                                    t.GotWhoList = false;
                                     SendData("WHO " + t.TabCaption);
-                                
+                                }
+                                else
+                                    t.GotWhoList = true;
+
                                 t.IsFullyJoined = true;
                                 if (FormMain.Instance.NickList.CurrentWindow == t)
                                     FormMain.Instance.NickList.RefreshList(t);

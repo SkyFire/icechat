@@ -31,6 +31,9 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml.Serialization;
+using System.IO;
+
 using IceChatPlugin;
 
 
@@ -38,7 +41,7 @@ namespace IceChat
 {
     public partial class FormColors : Form
     {
-        public delegate void SaveColorsDelegate();        
+        public delegate void SaveColorsDelegate(IceChatColors colors);        
         public event SaveColorsDelegate SaveColors;
 
         private ColorButtonArray colorPicker;
@@ -103,122 +106,8 @@ namespace IceChat
             this.pictureStatusFore.Click += new EventHandler(OnColor_Click);
             
             this.iceChatColors = IceChatColors;
-            
-            this.pictureOwner.BackColor = IrcColor.colors[iceChatColors.ChannelOwnerColor];
-            this.pictureOwner.Tag = iceChatColors.ChannelOwnerColor;
 
-            this.pictureAdmin.BackColor = IrcColor.colors[iceChatColors.ChannelAdminColor];
-            this.pictureAdmin.Tag = iceChatColors.ChannelAdminColor;
-            
-            this.pictureOperator.BackColor = IrcColor.colors[iceChatColors.ChannelOpColor];
-            this.pictureOperator.Tag = iceChatColors.ChannelOpColor;
-            
-            this.pictureHalfOperator.BackColor = IrcColor.colors[iceChatColors.ChannelHalfOpColor];
-            this.pictureHalfOperator.Tag = iceChatColors.ChannelHalfOpColor;
-            
-            this.pictureVoice.BackColor = IrcColor.colors[iceChatColors.ChannelVoiceColor];
-            this.pictureVoice.Tag = iceChatColors.ChannelVoiceColor;
-            
-            this.pictureDefault.BackColor = IrcColor.colors[iceChatColors.ChannelRegularColor];
-            this.pictureDefault.Tag = iceChatColors.ChannelRegularColor;
-
-            this.pictureTabCurrent.BackColor = IrcColor.colors[iceChatColors.TabBarCurrent];
-            this.pictureTabCurrent.Tag = iceChatColors.TabBarCurrent;
-
-            this.pictureTabMessage.BackColor = IrcColor.colors[iceChatColors.TabBarNewMessage];
-            this.pictureTabMessage.Tag = iceChatColors.TabBarNewMessage;
-
-            this.pictureTabJoin.BackColor = IrcColor.colors[iceChatColors.TabBarChannelJoin];
-            this.pictureTabJoin.Tag = iceChatColors.TabBarChannelJoin;
-
-            this.pictureTabPart.BackColor = IrcColor.colors[iceChatColors.TabBarChannelPart];
-            this.pictureTabPart.Tag = iceChatColors.TabBarChannelPart;
-
-            this.pictureTabQuit.BackColor = IrcColor.colors[iceChatColors.TabBarServerQuit];
-            this.pictureTabQuit.Tag = iceChatColors.TabBarServerQuit;
-
-            this.pictureTabServer.BackColor = IrcColor.colors[iceChatColors.TabBarServerMessage];
-            this.pictureTabServer.Tag = iceChatColors.TabBarServerMessage;
-
-            this.pictureTabOther.BackColor = IrcColor.colors[iceChatColors.TabBarOtherMessage];
-            this.pictureTabOther.Tag = iceChatColors.TabBarOtherMessage;
-
-            this.pictureTabDefault.BackColor = IrcColor.colors[iceChatColors.TabBarDefault];
-            this.pictureTabDefault.Tag = iceChatColors.TabBarDefault;
-
-            this.pictureTabBarCurrent1.BackColor = IrcColor.colors[iceChatColors.TabBarCurrentBG1];
-            this.pictureTabBarCurrent1.Tag = iceChatColors.TabBarCurrentBG1;
-            
-            this.pictureTabBarCurrent2.BackColor = IrcColor.colors[iceChatColors.TabBarCurrentBG2];
-            this.pictureTabBarCurrent2.Tag = iceChatColors.TabBarCurrentBG2;
-            
-            this.pictureTabBarOther1.BackColor = IrcColor.colors[iceChatColors.TabBarOtherBG1];
-            this.pictureTabBarOther1.Tag = iceChatColors.TabBarOtherBG1;
-            
-            this.pictureTabBarOther2.BackColor = IrcColor.colors[iceChatColors.TabBarOtherBG2];
-            this.pictureTabBarOther2.Tag = iceChatColors.TabBarOtherBG2;
-
-            this.pictureTabBarHover1.BackColor = IrcColor.colors[iceChatColors.TabBarHoverBG1];
-            this.pictureTabBarHover1.Tag = iceChatColors.TabBarHoverBG1;
-
-            this.pictureTabBarHover2.BackColor = IrcColor.colors[iceChatColors.TabBarHoverBG2];
-            this.pictureTabBarHover2.Tag = iceChatColors.TabBarHoverBG2;
-
-            this.pictureTabBackground.BackColor = IrcColor.colors[iceChatColors.TabbarBackColor];
-            this.pictureTabBackground.Tag = iceChatColors.TabbarBackColor;
-
-            this.picturePanelHeaderBG1.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
-            this.picturePanelHeaderBG1.Tag = iceChatColors.PanelHeaderBG1;
-
-            this.picturePanelHeaderBG2.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG2];
-            this.picturePanelHeaderBG2.Tag = iceChatColors.PanelHeaderBG2;
-
-            this.picturePanelHeaderForeColor.BackColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
-            this.picturePanelHeaderForeColor.Tag = iceChatColors.PanelHeaderForeColor;
-
-            this.pictureUnreadTextMarkerColor.BackColor = IrcColor.colors[iceChatColors.UnreadTextMarkerColor];
-            this.pictureUnreadTextMarkerColor.Tag = iceChatColors.UnreadTextMarkerColor;
-
-            this.pictureMenuBar.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
-            this.pictureMenuBar.Tag = iceChatColors.MenubarBackColor;
-
-            this.pictureToolBar.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
-            this.pictureToolBar.Tag = iceChatColors.ToolbarBackColor;
-
-            this.pictureConsole.BackColor = IrcColor.colors[iceChatColors.ConsoleBackColor];
-            this.pictureConsole.Tag = iceChatColors.ConsoleBackColor;
-
-            this.pictureChannel.BackColor = IrcColor.colors[iceChatColors.ChannelBackColor];
-            this.pictureChannel.Tag = iceChatColors.ChannelBackColor;
-
-            this.pictureQuery.BackColor = IrcColor.colors[iceChatColors.QueryBackColor];
-            this.pictureQuery.Tag = iceChatColors.QueryBackColor;
-
-            this.pictureNickList.BackColor = IrcColor.colors[iceChatColors.NickListBackColor];
-            this.pictureNickList.Tag = iceChatColors.NickListBackColor;
-
-            this.pictureServerList.BackColor = IrcColor.colors[iceChatColors.ServerListBackColor];
-            this.pictureServerList.Tag = iceChatColors.ServerListBackColor;
-
-            this.pictureChannelList.BackColor = IrcColor.colors[iceChatColors.ChannelListBackColor];
-            this.pictureChannelList.Tag = iceChatColors.ChannelListBackColor;
-
-            this.pictureInputBox.BackColor = IrcColor.colors[iceChatColors.InputboxBackColor];
-            this.pictureInputBox.Tag = iceChatColors.InputboxBackColor;
-
-            this.pictureInputBoxFore.BackColor = IrcColor.colors[iceChatColors.InputboxForeColor];
-            this.pictureInputBoxFore.Tag = iceChatColors.InputboxForeColor;
-
-            this.pictureChannelListFore.BackColor = IrcColor.colors[iceChatColors.ChannelListForeColor];
-            this.pictureChannelListFore.Tag = iceChatColors.ChannelListForeColor;
-
-            this.pictureStatusBar.BackColor = IrcColor.colors[iceChatColors.StatusbarBackColor];
-            this.pictureStatusBar.Tag = iceChatColors.StatusbarBackColor;
-
-            this.pictureStatusFore.BackColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
-            this.pictureStatusFore.Tag = iceChatColors.StatusbarForeColor;
-
-            this.checkRandomNickColors.Checked = iceChatColors.RandomizeNickColors;
+            UpdateColorSettings();
 
             messageIdentifiers = new Hashtable();
             AddMessageIdentifiers();
@@ -330,6 +219,13 @@ namespace IceChat
                 ipc.LoadColorsForm(this.tabControlColors);
             }
             ApplyLanguage();
+
+            if (FormMain.Instance.IceChatOptions.Themes != null)
+            {
+                foreach (string theme in FormMain.Instance.IceChatOptions.Themes)
+                    comboTheme.Items.Add(theme);
+            }
+            comboTheme.Text = FormMain.Instance.IceChatOptions.CurrentTheme;    
         }
 
         private void ApplyLanguage()
@@ -1038,7 +934,126 @@ namespace IceChat
             UpdateFormattedText();
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void UpdateColorSettings()
+        {
+            this.pictureOwner.BackColor = IrcColor.colors[iceChatColors.ChannelOwnerColor];
+            this.pictureOwner.Tag = iceChatColors.ChannelOwnerColor;
+
+            this.pictureAdmin.BackColor = IrcColor.colors[iceChatColors.ChannelAdminColor];
+            this.pictureAdmin.Tag = iceChatColors.ChannelAdminColor;
+
+            this.pictureOperator.BackColor = IrcColor.colors[iceChatColors.ChannelOpColor];
+            this.pictureOperator.Tag = iceChatColors.ChannelOpColor;
+
+            this.pictureHalfOperator.BackColor = IrcColor.colors[iceChatColors.ChannelHalfOpColor];
+            this.pictureHalfOperator.Tag = iceChatColors.ChannelHalfOpColor;
+
+            this.pictureVoice.BackColor = IrcColor.colors[iceChatColors.ChannelVoiceColor];
+            this.pictureVoice.Tag = iceChatColors.ChannelVoiceColor;
+
+            this.pictureDefault.BackColor = IrcColor.colors[iceChatColors.ChannelRegularColor];
+            this.pictureDefault.Tag = iceChatColors.ChannelRegularColor;
+
+            this.pictureTabCurrent.BackColor = IrcColor.colors[iceChatColors.TabBarCurrent];
+            this.pictureTabCurrent.Tag = iceChatColors.TabBarCurrent;
+
+            this.pictureTabMessage.BackColor = IrcColor.colors[iceChatColors.TabBarNewMessage];
+            this.pictureTabMessage.Tag = iceChatColors.TabBarNewMessage;
+
+            this.pictureTabJoin.BackColor = IrcColor.colors[iceChatColors.TabBarChannelJoin];
+            this.pictureTabJoin.Tag = iceChatColors.TabBarChannelJoin;
+
+            this.pictureTabPart.BackColor = IrcColor.colors[iceChatColors.TabBarChannelPart];
+            this.pictureTabPart.Tag = iceChatColors.TabBarChannelPart;
+
+            this.pictureTabQuit.BackColor = IrcColor.colors[iceChatColors.TabBarServerQuit];
+            this.pictureTabQuit.Tag = iceChatColors.TabBarServerQuit;
+
+            this.pictureTabServer.BackColor = IrcColor.colors[iceChatColors.TabBarServerMessage];
+            this.pictureTabServer.Tag = iceChatColors.TabBarServerMessage;
+
+            this.pictureTabOther.BackColor = IrcColor.colors[iceChatColors.TabBarOtherMessage];
+            this.pictureTabOther.Tag = iceChatColors.TabBarOtherMessage;
+
+            this.pictureTabDefault.BackColor = IrcColor.colors[iceChatColors.TabBarDefault];
+            this.pictureTabDefault.Tag = iceChatColors.TabBarDefault;
+
+            this.pictureTabBarCurrent1.BackColor = IrcColor.colors[iceChatColors.TabBarCurrentBG1];
+            this.pictureTabBarCurrent1.Tag = iceChatColors.TabBarCurrentBG1;
+
+            this.pictureTabBarCurrent2.BackColor = IrcColor.colors[iceChatColors.TabBarCurrentBG2];
+            this.pictureTabBarCurrent2.Tag = iceChatColors.TabBarCurrentBG2;
+
+            this.pictureTabBarOther1.BackColor = IrcColor.colors[iceChatColors.TabBarOtherBG1];
+            this.pictureTabBarOther1.Tag = iceChatColors.TabBarOtherBG1;
+
+            this.pictureTabBarOther2.BackColor = IrcColor.colors[iceChatColors.TabBarOtherBG2];
+            this.pictureTabBarOther2.Tag = iceChatColors.TabBarOtherBG2;
+
+            this.pictureTabBarHover1.BackColor = IrcColor.colors[iceChatColors.TabBarHoverBG1];
+            this.pictureTabBarHover1.Tag = iceChatColors.TabBarHoverBG1;
+
+            this.pictureTabBarHover2.BackColor = IrcColor.colors[iceChatColors.TabBarHoverBG2];
+            this.pictureTabBarHover2.Tag = iceChatColors.TabBarHoverBG2;
+
+            this.pictureTabBackground.BackColor = IrcColor.colors[iceChatColors.TabbarBackColor];
+            this.pictureTabBackground.Tag = iceChatColors.TabbarBackColor;
+
+            this.picturePanelHeaderBG1.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
+            this.picturePanelHeaderBG1.Tag = iceChatColors.PanelHeaderBG1;
+
+            this.picturePanelHeaderBG2.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG2];
+            this.picturePanelHeaderBG2.Tag = iceChatColors.PanelHeaderBG2;
+
+            this.picturePanelHeaderForeColor.BackColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
+            this.picturePanelHeaderForeColor.Tag = iceChatColors.PanelHeaderForeColor;
+
+            this.pictureUnreadTextMarkerColor.BackColor = IrcColor.colors[iceChatColors.UnreadTextMarkerColor];
+            this.pictureUnreadTextMarkerColor.Tag = iceChatColors.UnreadTextMarkerColor;
+
+            this.pictureMenuBar.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
+            this.pictureMenuBar.Tag = iceChatColors.MenubarBackColor;
+
+            this.pictureToolBar.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
+            this.pictureToolBar.Tag = iceChatColors.ToolbarBackColor;
+
+            this.pictureConsole.BackColor = IrcColor.colors[iceChatColors.ConsoleBackColor];
+            this.pictureConsole.Tag = iceChatColors.ConsoleBackColor;
+
+            this.pictureChannel.BackColor = IrcColor.colors[iceChatColors.ChannelBackColor];
+            this.pictureChannel.Tag = iceChatColors.ChannelBackColor;
+
+            this.pictureQuery.BackColor = IrcColor.colors[iceChatColors.QueryBackColor];
+            this.pictureQuery.Tag = iceChatColors.QueryBackColor;
+
+            this.pictureNickList.BackColor = IrcColor.colors[iceChatColors.NickListBackColor];
+            this.pictureNickList.Tag = iceChatColors.NickListBackColor;
+
+            this.pictureServerList.BackColor = IrcColor.colors[iceChatColors.ServerListBackColor];
+            this.pictureServerList.Tag = iceChatColors.ServerListBackColor;
+
+            this.pictureChannelList.BackColor = IrcColor.colors[iceChatColors.ChannelListBackColor];
+            this.pictureChannelList.Tag = iceChatColors.ChannelListBackColor;
+
+            this.pictureInputBox.BackColor = IrcColor.colors[iceChatColors.InputboxBackColor];
+            this.pictureInputBox.Tag = iceChatColors.InputboxBackColor;
+
+            this.pictureInputBoxFore.BackColor = IrcColor.colors[iceChatColors.InputboxForeColor];
+            this.pictureInputBoxFore.Tag = iceChatColors.InputboxForeColor;
+
+            this.pictureChannelListFore.BackColor = IrcColor.colors[iceChatColors.ChannelListForeColor];
+            this.pictureChannelListFore.Tag = iceChatColors.ChannelListForeColor;
+
+            this.pictureStatusBar.BackColor = IrcColor.colors[iceChatColors.StatusbarBackColor];
+            this.pictureStatusBar.Tag = iceChatColors.StatusbarBackColor;
+
+            this.pictureStatusFore.BackColor = IrcColor.colors[iceChatColors.StatusbarForeColor];
+            this.pictureStatusFore.Tag = iceChatColors.StatusbarForeColor;
+
+            this.checkRandomNickColors.Checked = iceChatColors.RandomizeNickColors;
+        }
+
+        private void UpdateColors()
         {
             iceChatColors.ChannelOwnerColor = (int)pictureOwner.Tag;
             iceChatColors.ChannelAdminColor = (int)pictureAdmin.Tag;
@@ -1055,7 +1070,7 @@ namespace IceChat
             iceChatColors.TabBarServerQuit = (int)pictureTabQuit.Tag;
             iceChatColors.TabBarOtherMessage = (int)pictureTabOther.Tag;
             iceChatColors.TabBarDefault = (int)pictureTabDefault.Tag;
-
+            System.Diagnostics.Debug.WriteLine("console back :" + pictureConsole.Tag);
             iceChatColors.ConsoleBackColor = (int)pictureConsole.Tag;
             iceChatColors.ChannelBackColor = (int)pictureChannel.Tag;
             iceChatColors.QueryBackColor = (int)pictureQuery.Tag;
@@ -1063,7 +1078,7 @@ namespace IceChat
             iceChatColors.ServerListBackColor = (int)pictureServerList.Tag;
             iceChatColors.ChannelListBackColor = (int)pictureChannelList.Tag;
             iceChatColors.InputboxBackColor = (int)pictureInputBox.Tag;
-            
+
             iceChatColors.TabBarCurrentBG1 = (int)pictureTabBarCurrent1.Tag;
             iceChatColors.TabBarCurrentBG2 = (int)pictureTabBarCurrent2.Tag;
             iceChatColors.TabBarOtherBG1 = (int)pictureTabBarOther1.Tag;
@@ -1086,6 +1101,12 @@ namespace IceChat
             iceChatColors.StatusbarForeColor = (int)pictureStatusFore.Tag;
 
             iceChatColors.RandomizeNickColors = checkRandomNickColors.Checked;
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            UpdateColors();
+            //FormMain.Instance.IceChatColors = this.iceChatColors;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -1093,9 +1114,27 @@ namespace IceChat
                 ipc.SaveColorsForm();
             }
 
-
+            //save the icechat themes
+            if (comboTheme.Items.Count > 0)
+            {
+                FormMain.Instance.IceChatOptions.Themes = new string[comboTheme.Items.Count];
+                var i = 0;
+                foreach (string theme in comboTheme.Items)
+                {
+                    FormMain.Instance.IceChatOptions.Themes[i] = theme;
+                    i++;
+                }
+                FormMain.Instance.IceChatOptions.CurrentTheme = comboTheme.Text;
+            }
+            else
+            {
+                FormMain.Instance.IceChatOptions.Themes = new string[1];
+                FormMain.Instance.IceChatOptions.Themes[0] = "Default";
+                FormMain.Instance.IceChatOptions.CurrentTheme = "Default";
+            }
+            
             if (SaveColors != null)
-                SaveColors();
+                SaveColors(this.iceChatColors);
             
 
             this.Close();
@@ -1317,5 +1356,69 @@ namespace IceChat
 
         }
 
+        private void buttonAddTheme_Click(object sender, EventArgs e)
+        {
+            //add the current color settings as a new theme
+            //ask for the new theme
+            InputBoxDialog i = new InputBoxDialog();
+            i.FormPrompt = "New IceChat Theme Name";
+            i.FormCaption = "Add IceChat Theme";
+            if (i.ShowDialog() == DialogResult.OK)
+            {
+                if (i.InputResponse.Length > 0)
+                {
+                    //make file name theme-name.xml
+                    string colorsFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + i.InputResponse + ".xml";
+
+                    UpdateColors();
+
+                    XmlSerializer serializer = new XmlSerializer(typeof(IceChatColors));
+                    TextWriter textWriter = new StreamWriter(colorsFile);
+                    serializer.Serialize(textWriter, iceChatColors);
+                    textWriter.Close();
+                    textWriter.Dispose();
+                    
+                    //add in the theme name into IceChatOptions
+                    comboTheme.Items.Add(i.InputResponse);
+                    //make it the current theme
+                    comboTheme.Text = i.InputResponse;
+                }
+
+            }
+        }
+
+        private void buttonRemoveTheme_Click(object sender, EventArgs e)
+        {
+            //remove the current selected theme
+            if (comboTheme.Text == "Default")
+                return;
+
+        }
+
+        private void comboTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //change the current theme
+            System.Diagnostics.Debug.WriteLine(comboTheme.Text);
+            string themeFile = "";
+            if (comboTheme.Text == "Default")
+                themeFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
+            else
+            {
+                themeFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + comboTheme.Text + ".xml";
+            }
+            
+            if (themeFile.Length > 0 && File.Exists(themeFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatColors));
+                TextReader textReader = new StreamReader(themeFile);
+                iceChatColors = (IceChatColors)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+                
+                FormMain.Instance.IceChatOptions.CurrentTheme = comboTheme.Text;
+                FormMain.Instance.ColorsFile = themeFile;
+                UpdateColorSettings();
+            }
+        }
     }
 }

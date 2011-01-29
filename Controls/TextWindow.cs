@@ -140,6 +140,8 @@ namespace IceChat
             this.Resize += new EventHandler(OnResize);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleClick += new EventHandler(OnDoubleClick);
+            
+            this.BorderStyle = BorderStyle.Fixed3D;
 
             this.DoubleBuffered = true;
 
@@ -209,7 +211,7 @@ namespace IceChat
                             return;
                         }
                         string _linkedWordNick = StripString(_linkedWord);
-
+                        
                         //check if over a nick name
                         if (t.WindowStyle == IceTabPage.WindowType.Channel)
                         {
@@ -599,7 +601,7 @@ namespace IceChat
                         {
                             System.Diagnostics.Process.Start(clickedWord);
                         }
-                        catch (Win32Exception)
+                        catch (Exception)
                         {
                         }
                         return;
@@ -1040,7 +1042,8 @@ namespace IceChat
         {
             //strip all non-alpha numeric chars from string (for nicknames)
             //only allow chars that are allowed in nicks
-            return Regex.Replace(targetString, @"[^A-Za-z0-9_-|\[\]\\\/`\^{}]", "");
+            //return Regex.Replace(targetString, @"[^A-Za-z0-9_-|\[\]\\/`\^{}]", "");
+            return Regex.Replace(targetString, @"[^A-Za-z0-9_\-|\[\]\\\`\^{}]", "");
         }
 
         #endregion
@@ -1342,6 +1345,7 @@ namespace IceChat
                     bool bold = false;
                     bool underline = false;
                     bool italic = false;
+                    bool reverse = false;
 
                     char[] ch;
                     try
@@ -1363,6 +1367,10 @@ namespace IceChat
                                     underline = !underline;
                                     buildString.Append(ch[0]);
                                     break;
+                                case reverseChar:
+                                    reverse = !reverse;
+                                    buildString.Append(ch[0]);
+                                    break;
                                 case newColorChar:
                                     buildString.Append(curLine.Substring(i, 5));
                                     if (lastColor.Length == 0)
@@ -1377,7 +1385,7 @@ namespace IceChat
                                     i = i + 3;
                                     break;
                                 default:
-                                    //check if there needs to be a linewrap
+                                    //check if there needs to be a linewrap                                    
                                     if ((int)g.MeasureString(StripAllCodes(buildString.ToString()), this.Font, 0, stringFormat).Width > displayWidth)
                                     {
                                         if (lineSplit)
@@ -1403,7 +1411,7 @@ namespace IceChat
                                         if (underline) buildString.Append(underlineChar);
                                         if (bold) buildString.Append(boldChar);
                                         if (italic) buildString.Append(italicChar);
-                                        System.Diagnostics.Debug.WriteLine("add bold :" + bold);
+                                        if (reverse) buildString.Append(reverseChar);
                                         buildString.Append(ch[0]);
                                     }
                                     else
@@ -1556,16 +1564,16 @@ namespace IceChat
                     curBackColor = _backColor;
                     
                     //check if in a url
-                    /*
+                    
                     if (!isInUrl)
                     {
-                        underline = false;
+                        //underline = false;
                         font = null;
                         font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
                     }
-                    */
-                    font = null;
-                    font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
+                    
+                    //font = null;
+                    //font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
                     
                     if (line.Length > 0)
                     {

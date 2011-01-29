@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputPanel));
             this.buttonSend = new System.Windows.Forms.Button();
             this.buttonEmoticonPicker = new System.Windows.Forms.Button();
             this.buttonColorPicker = new System.Windows.Forms.Button();
@@ -73,7 +72,6 @@
             // buttonEmoticonPicker
             // 
             this.buttonEmoticonPicker.Dock = System.Windows.Forms.DockStyle.Left;
-            //this.buttonEmoticonPicker.Image = ((System.Drawing.Image)(resources.GetObject("buttonEmoticonPicker.Image")));
             this.buttonEmoticonPicker.Location = new System.Drawing.Point(0, 30);
             this.buttonEmoticonPicker.Name = "buttonEmoticonPicker";
             this.buttonEmoticonPicker.Size = new System.Drawing.Size(28, 23);
@@ -84,7 +82,6 @@
             // buttonColorPicker
             // 
             this.buttonColorPicker.Dock = System.Windows.Forms.DockStyle.Left;
-            //this.buttonColorPicker.Image = ((System.Drawing.Image)(resources.GetObject("buttonColorPicker.Image")));
             this.buttonColorPicker.Location = new System.Drawing.Point(28, 30);
             this.buttonColorPicker.Name = "buttonColorPicker";
             this.buttonColorPicker.Size = new System.Drawing.Size(28, 23);

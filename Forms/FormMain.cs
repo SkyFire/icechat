@@ -322,7 +322,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 24 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 29 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -365,6 +365,36 @@ namespace IceChat
             LoadMessageFormat();
             LoadFonts();
 
+            if (iceChatOptions.CurrentTheme == null)
+                iceChatOptions.CurrentTheme = "Default";
+            else
+            {
+                //load in the new color theme, if it not Default
+                if (iceChatOptions.CurrentTheme != "Default")
+                {
+                    string themeFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + iceChatOptions.CurrentTheme + ".xml";
+                    if (File.Exists(themeFile))
+                    {
+                        XmlSerializer deserializer = new XmlSerializer(typeof(IceChatColors));
+                        TextReader textReader = new StreamReader(themeFile);
+                        iceChatColors = (IceChatColors)deserializer.Deserialize(textReader);
+                        textReader.Close();
+                        textReader.Dispose();
+                        colorsFile = themeFile;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Theme not found:" + themeFile);
+                    }
+                }
+            }
+
+            if (iceChatOptions.Themes == null)
+            {
+                iceChatOptions.Themes = new string[1];
+                iceChatOptions.Themes[0] = "Default";
+            }
+
             channelList = new ChannelList();            
             channelList.Dock = DockStyle.Fill;
             buddyList = new BuddyList();
@@ -387,6 +417,8 @@ namespace IceChat
             serverPanel.Dock = DockStyle.Fill;
             serverPanel.Controls.Add(serverTree);
             serverListTab.Controls.Add(serverPanel);            
+            serverListTab.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
+            serverListTab.ForeColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.panelDockLeft.TabControl.TabPages.Add(serverListTab);
 
             nickListTab = new TabPage("Nick List");
@@ -394,6 +426,8 @@ namespace IceChat
             nickPanel.Dock = DockStyle.Fill;
             nickPanel.Controls.Add(nickList);            
             nickListTab.Controls.Add(nickPanel);
+            nickListTab.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
+            nickListTab.ForeColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.panelDockRight.TabControl.TabPages.Add(nickListTab);
 
             channelListTab = new TabPage("Favorite Channels");
@@ -401,6 +435,8 @@ namespace IceChat
             channelPanel.Dock = DockStyle.Fill;
             channelPanel.Controls.Add(channelList);
             channelListTab.Controls.Add(channelPanel);
+            channelListTab.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
+            channelListTab.ForeColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.panelDockRight.TabControl.TabPages.Add(channelListTab);
 
             buddyListTab = new TabPage("Buddy List");
@@ -408,6 +444,8 @@ namespace IceChat
             buddyPanel.Dock = DockStyle.Fill;
             buddyPanel.Controls.Add(buddyList);
             buddyListTab.Controls.Add(buddyPanel);
+            buddyListTab.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
+            buddyListTab.ForeColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
             this.panelDockRight.TabControl.TabPages.Add(buddyListTab);
 
             panelDockLeft.Width = iceChatOptions.LeftPanelWidth;
@@ -834,6 +872,18 @@ namespace IceChat
             get
             {
                 return this.buddyList;
+            }
+        }
+
+        internal string ColorsFile
+        {
+            get
+            {
+                return colorsFile;
+            }
+            set
+            {
+                colorsFile = value;
             }
         }
 
@@ -1921,6 +1971,15 @@ namespace IceChat
                                 ParseOutGoingCommand(connection, "/mode " + channel + " +b " + host);
                             }
                             break;
+                        case "/browser":
+                            if (data.Length > 0)
+                            {
+                                if (data.StartsWith("http"))
+                                    System.Diagnostics.Process.Start(data);
+                                else
+                                    System.Diagnostics.Process.Start("http://" + data);
+                            }
+                            break;
                         case "/chaninfo":
                             if (connection != null)
                             {
@@ -2878,6 +2937,10 @@ namespace IceChat
                             else
                                 SendData(connection, "VERSION");
                             break;
+                        case "/who":
+                            if (connection != null && data.Length > 0)
+                                SendData(connection, "WHO " + data);
+                            break;
                         case "/whois":
                             if (connection != null && data.Length > 0)
                                 SendData(connection, "WHOIS " + data);
@@ -3171,6 +3234,12 @@ namespace IceChat
                         break;
                     
                     //identifiers that do not require a connection                                
+                    case "$theme":
+                        data = ReplaceFirst(data, m.Value, iceChatOptions.CurrentTheme);
+                        break;
+                    case "$colors":
+                        data = ReplaceFirst(data, m.Value, colorsFile);                        
+                        break;
                     case "$appdata":
                         data = ReplaceFirst(data, m.Value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString());
                         break;
@@ -3948,10 +4017,14 @@ namespace IceChat
 
         }
 
-        private void fc_SaveColors()
+        private void fc_SaveColors(IceChatColors colors)
         {
-            SaveMessageFormat();            
+            SaveMessageFormat();
+            this.iceChatColors = colors;
             SaveColors();
+            
+            System.Diagnostics.Debug.WriteLine(colorsFile);
+            System.Diagnostics.Debug.WriteLine(iceChatColors.ConsoleBackColor);
 
             toolStripMain.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
             menuMainStrip.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];
@@ -4531,7 +4604,7 @@ namespace IceChat
         /// </summary>
         internal void Initialize()
         {
-            _tabControl.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            _tabControl.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));            
         }
 
         /// <summary>

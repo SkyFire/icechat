@@ -502,7 +502,7 @@ namespace IceChat
         private void LoadColors()
         {
             if (File.Exists(colorsFile))
-            {
+            {                
                 XmlSerializer deserializer = new XmlSerializer(typeof(IceChatColors));
                 TextReader textReader = new StreamReader(colorsFile);
                 iceChatColors = (IceChatColors)deserializer.Deserialize(textReader);

@@ -80,6 +80,9 @@ namespace IceChat
         private bool _disableConsoleSelectChangedEvent = false;
         private bool _disableSounds = false;
 
+        private bool gotWhoList = false;
+        private bool gotNamesList = false;
+
         private TcpClient dccSocket;
         private TcpListener dccSocketListener;
         private Thread dccThread;
@@ -439,6 +442,30 @@ namespace IceChat
                     return dccSocket.Connected;
                 else
                     return false;
+            }
+        }
+
+        internal bool GotWhoList
+        {
+            get
+            {
+                return gotWhoList;
+            }
+            set
+            {
+                gotWhoList = value;
+            }
+        }
+
+        internal bool GotNamesList
+        {
+            get
+            {
+                return gotNamesList;
+            }
+            set
+            {
+                gotNamesList = value;
             }
         }
 
@@ -1058,6 +1085,7 @@ namespace IceChat
             this.consoleTab.SelectedIndex = 0;
             this.consoleTab.Size = new System.Drawing.Size(200, 100);
             this.consoleTab.TabIndex = 0;
+            
             // 
             // ConsoleTabWindow
             // 

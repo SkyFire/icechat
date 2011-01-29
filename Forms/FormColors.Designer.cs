@@ -113,14 +113,12 @@
             this.tabMessages = new System.Windows.Forms.TabControl();
             this.tabBasic = new System.Windows.Forms.TabPage();
             this.buttonResetBasic = new System.Windows.Forms.Button();
-            this.textFormattedBasic = new IceChat.TextWindow();
             this.checkChangeBGBasic = new System.Windows.Forms.CheckBox();
             this.labelFormatMessageBasic = new System.Windows.Forms.Label();
             this.labelIRCMessagesBasic = new System.Windows.Forms.Label();
             this.treeBasicMessages = new System.Windows.Forms.TreeView();
             this.tabAdvanced = new System.Windows.Forms.TabPage();
             this.buttonResetAdvanced = new System.Windows.Forms.Button();
-            this.textFormattedText = new IceChat.TextWindow();
             this.textRawMessage = new System.Windows.Forms.TextBox();
             this.labelIRCMessagesAdvanced = new System.Windows.Forms.Label();
             this.checkBGColor = new System.Windows.Forms.CheckBox();
@@ -215,12 +213,18 @@
             this.labelChannelUserTypes = new System.Windows.Forms.Label();
             this.labelOwner = new System.Windows.Forms.Label();
             this.tabPageThemes = new System.Windows.Forms.TabPage();
+            this.labelCurrentTheme = new System.Windows.Forms.Label();
+            this.comboTheme = new System.Windows.Forms.ComboBox();
+            this.buttonRemoveTheme = new System.Windows.Forms.Button();
+            this.buttonAddTheme = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.labelColorThemesHeader = new System.Windows.Forms.Label();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.labelCurrent = new System.Windows.Forms.Label();
+            this.textFormattedBasic = new IceChat.TextWindow();
+            this.textFormattedText = new IceChat.TextWindow();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -337,16 +341,6 @@
             this.buttonResetBasic.UseVisualStyleBackColor = true;
             this.buttonResetBasic.Click += new System.EventHandler(this.buttonResetBasic_Click);
             // 
-            // textFormattedBasic
-            // 
-            this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedBasic.Location = new System.Drawing.Point(16, 315);
-            this.textFormattedBasic.Name = "textFormattedBasic";
-            this.textFormattedBasic.SingleLine = true;
-            this.textFormattedBasic.Size = new System.Drawing.Size(605, 23);
-            this.textFormattedBasic.TabIndex = 51;
-            // 
             // checkChangeBGBasic
             // 
             this.checkChangeBGBasic.Location = new System.Drawing.Point(332, 291);
@@ -434,16 +428,6 @@
             this.buttonResetAdvanced.Text = "Reset to Default";
             this.buttonResetAdvanced.UseVisualStyleBackColor = true;
             this.buttonResetAdvanced.Click += new System.EventHandler(this.buttonResetAdvanced_Click);
-            // 
-            // textFormattedText
-            // 
-            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textFormattedText.Location = new System.Drawing.Point(14, 313);
-            this.textFormattedText.Name = "textFormattedText";
-            this.textFormattedText.SingleLine = true;
-            this.textFormattedText.Size = new System.Drawing.Size(605, 23);
-            this.textFormattedText.TabIndex = 46;
             // 
             // textRawMessage
             // 
@@ -1442,6 +1426,10 @@
             // 
             // tabPageThemes
             // 
+            this.tabPageThemes.Controls.Add(this.labelCurrentTheme);
+            this.tabPageThemes.Controls.Add(this.comboTheme);
+            this.tabPageThemes.Controls.Add(this.buttonRemoveTheme);
+            this.tabPageThemes.Controls.Add(this.buttonAddTheme);
             this.tabPageThemes.Controls.Add(this.label1);
             this.tabPageThemes.Controls.Add(this.labelColorThemesHeader);
             this.tabPageThemes.Location = new System.Drawing.Point(4, 25);
@@ -1451,10 +1439,49 @@
             this.tabPageThemes.Text = "Themes";
             this.tabPageThemes.UseVisualStyleBackColor = true;
             // 
+            // labelCurrentTheme
+            // 
+            this.labelCurrentTheme.AutoSize = true;
+            this.labelCurrentTheme.Location = new System.Drawing.Point(19, 46);
+            this.labelCurrentTheme.Name = "labelCurrentTheme";
+            this.labelCurrentTheme.Size = new System.Drawing.Size(112, 16);
+            this.labelCurrentTheme.TabIndex = 61;
+            this.labelCurrentTheme.Text = "Current Theme:";
+            // 
+            // comboTheme
+            // 
+            this.comboTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboTheme.FormattingEnabled = true;
+            this.comboTheme.Location = new System.Drawing.Point(137, 43);
+            this.comboTheme.Name = "comboTheme";
+            this.comboTheme.Size = new System.Drawing.Size(157, 24);
+            this.comboTheme.TabIndex = 60;
+            this.comboTheme.SelectedIndexChanged += new System.EventHandler(this.comboTheme_SelectedIndexChanged);
+            // 
+            // buttonRemoveTheme
+            // 
+            this.buttonRemoveTheme.Location = new System.Drawing.Point(310, 64);
+            this.buttonRemoveTheme.Name = "buttonRemoveTheme";
+            this.buttonRemoveTheme.Size = new System.Drawing.Size(127, 23);
+            this.buttonRemoveTheme.TabIndex = 59;
+            this.buttonRemoveTheme.Text = "Remove Theme";
+            this.buttonRemoveTheme.UseVisualStyleBackColor = true;
+            this.buttonRemoveTheme.Click += new System.EventHandler(this.buttonRemoveTheme_Click);
+            // 
+            // buttonAddTheme
+            // 
+            this.buttonAddTheme.Location = new System.Drawing.Point(310, 35);
+            this.buttonAddTheme.Name = "buttonAddTheme";
+            this.buttonAddTheme.Size = new System.Drawing.Size(127, 23);
+            this.buttonAddTheme.TabIndex = 58;
+            this.buttonAddTheme.Text = "Add New Theme";
+            this.buttonAddTheme.UseVisualStyleBackColor = true;
+            this.buttonAddTheme.Click += new System.EventHandler(this.buttonAddTheme_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 44);
+            this.label1.Location = new System.Drawing.Point(219, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(145, 16);
             this.label1.TabIndex = 57;
@@ -1514,6 +1541,26 @@
             this.labelCurrent.Size = new System.Drawing.Size(187, 40);
             this.labelCurrent.TabIndex = 23;
             this.labelCurrent.Text = "Current Selected:";
+            // 
+            // textFormattedBasic
+            // 
+            this.textFormattedBasic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textFormattedBasic.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFormattedBasic.Location = new System.Drawing.Point(16, 315);
+            this.textFormattedBasic.Name = "textFormattedBasic";
+            this.textFormattedBasic.SingleLine = true;
+            this.textFormattedBasic.Size = new System.Drawing.Size(605, 23);
+            this.textFormattedBasic.TabIndex = 51;
+            // 
+            // textFormattedText
+            // 
+            this.textFormattedText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textFormattedText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textFormattedText.Location = new System.Drawing.Point(14, 313);
+            this.textFormattedText.Name = "textFormattedText";
+            this.textFormattedText.SingleLine = true;
+            this.textFormattedText.Size = new System.Drawing.Size(605, 23);
+            this.textFormattedText.TabIndex = 46;
             // 
             // FormColors
             // 
@@ -1638,6 +1685,10 @@
         private System.Windows.Forms.Button buttonResetAdvanced;
         private System.Windows.Forms.TabPage tabPageThemes;
         private System.Windows.Forms.Label labelColorThemesHeader;
+        private System.Windows.Forms.Label labelCurrentTheme;
+        private System.Windows.Forms.ComboBox comboTheme;
+        private System.Windows.Forms.Button buttonRemoveTheme;
+        private System.Windows.Forms.Button buttonAddTheme;
         private System.Windows.Forms.Label label1;
 
     }
