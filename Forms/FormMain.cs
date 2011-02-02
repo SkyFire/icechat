@@ -3321,27 +3321,24 @@ namespace IceChat
         }
         private string GetOperatingSystemName()
         {
-            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-            osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-
-            if (!GetVersionEx(ref osVersionInfo))
-            {
-               // return "";
-                System.OperatingSystem osInfo2 = System.Environment.OSVersion;
-                if (osInfo2.Platform == PlatformID.Unix)
-                {
-                    return Environment.OSVersion.ToString();
-                }
-            }
 
             string OSName = "Unknown";
             System.OperatingSystem osInfo = System.Environment.OSVersion;
-            switch (osInfo.Platform)
+
+            if (osInfo.Platform == PlatformID.Unix)
             {
-                
-                case PlatformID.Unix:
-                    OSName = Environment.OSVersion.ToString();
-                    break;                
+                return Environment.OSVersion.ToString();
+            }
+
+            OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+            osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+            if (!GetVersionEx(ref osVersionInfo))
+            {
+               return OSName;
+            }
+            
+            switch (osInfo.Platform)
+            {                
                 case PlatformID.Win32NT:
 
                     switch (osInfo.Version.Major)

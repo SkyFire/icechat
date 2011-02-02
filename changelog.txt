@@ -1,5 +1,5 @@
-Build Beta 3.7 February 2 2011
-* Fix $os identifier for Linux
+Build Beta 3.71 February 2 2011
+* Fix $os identifier for Linux/Unix (now fixed)
 
 Build Beta 3.6 February 2 2011
 * Fix bug with rejoining channels
