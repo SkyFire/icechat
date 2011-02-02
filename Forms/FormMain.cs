@@ -3326,9 +3326,14 @@ namespace IceChat
 
             if (!GetVersionEx(ref osVersionInfo))
             {
-                return "";
+               // return "";
+                System.OperatingSystem osInfo2 = System.Environment.OSVersion;
+                if (osInfo2.Platform == PlatformID.Unix)
+                {
+                    return Environment.OSVersion.ToString();
+                }
             }
-            
+
             string OSName = "Unknown";
             System.OperatingSystem osInfo = System.Environment.OSVersion;
             switch (osInfo.Platform)

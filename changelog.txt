@@ -1,3 +1,6 @@
+Build Beta 3.7 February 2 2011
+* Fix $os identifier for Linux
+
 Build Beta 3.6 February 2 2011
 * Fix bug with rejoining channels
 * Connecting to Socks5 Proxy Server now working
