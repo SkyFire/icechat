@@ -871,6 +871,8 @@ namespace IceChat
             if (t != null)
             {
                 t.IsFullyJoined = false;
+                t.GotNamesList = false;
+                t.GotWhoList = false;
                 t.ClearNicks();
             }
 

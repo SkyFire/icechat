@@ -1,3 +1,10 @@
+Build Beta 3.6 February 2 2011
+* Fix bug with rejoining channels
+* Connecting to Socks5 Proxy Server now working
+* Numbered identifiers ending with a - now parse properly ($1-)
+
+
+
 Build Beta 3.5 January 29 2011
 * Fix line wrapping for Reverse Code
 * Fix wrapped URL's losing underline

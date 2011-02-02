@@ -322,7 +322,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - January 29 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 2 2011 - Groundhog Edition";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -3470,12 +3470,20 @@ namespace IceChat
                              {
                                  //get the numbered identifier value
                                  int identVal = Int32.Parse(word.Substring(1, z - 1));
-
+                                 
                                  if (identVal <= passedData.Length)
                                  {
-                                     //if (word.Substring(z, 1) == "-")
-                                     //    changedData[count] = String.Join(" ", passedData, identVal-1, passedData.GetUpperBound(0));
-                                     //else    
+                                     //System.Diagnostics.Debug.WriteLine(identVal + ":" +  passedData[identVal - 1]);
+                                     //System.Diagnostics.Debug.WriteLine(z + ":" + word.Length);
+                                     //System.Diagnostics.Debug.WriteLine(word.Substring(z,1));
+                                     if (word.Length > z)
+                                         if (word.Substring(z, 1) == "-")
+                                         {
+                                             //System.Diagnostics.Debug.WriteLine("change - " + identVal + ":" + passedData.Length);
+                                             changedData[count] = String.Join(" ", passedData, identVal - 1, passedData.Length - identVal + 1);
+                                             continue;
+                                         }
+                                     //System.Diagnostics.Debug.WriteLine("change normal ");
                                      changedData[count] = passedData[identVal - 1];
                                  }
                                  else

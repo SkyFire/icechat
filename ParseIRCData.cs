@@ -1175,6 +1175,7 @@ namespace IceChat
                         //errors
                         case "404": //can not send to channel
                         case "432": //erroneus nickname
+                        case "438": //nick change too fast
                         case "467": //channel key already set
                         case "468": //only servers can change mode
                         case "482": //not a channel operator

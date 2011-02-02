@@ -55,8 +55,9 @@ namespace IceChat
             "Always try to be modest, and be proud about it!",
             "If you think nobody cares, try missing a few payments",
             "Hard work pays off in the future, laziness pays off now",
-            "For Sale: Intergalactic Proton Powered Electrical Tentacled Advertising Droid",
-            "Given the choice between you, I'll take the sea-sick crocodile."};
+            "For Sale: Intergalactic Proton Powered Electrical Tentacled Advertising Droids",
+            "Given the choice between you, I'll take the sea-sick crocodile.",
+            "The wonderful thing about Tiggers, are that Tiggers are wonderful things."};
 
     }
 }

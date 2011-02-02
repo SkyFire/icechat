@@ -315,6 +315,8 @@ namespace IceChat
             serverSetting.RealServerName = "";
 
             pongTimer.Stop();
+            if (serverSetting.UseProxy)
+                proxyAuthed = false;
 
             //disable and remove all timers
             foreach (object key in ircTimers)
@@ -408,7 +410,9 @@ namespace IceChat
                 FormMain.Instance.ServerTree.Invalidate();
 
                 if (serverSetting.UseProxy)
-                {
+                {                    
+
+                    //socks v5 code
                     byte[] d = new byte[256];
                     ushort nIndex = 0;
                     d[nIndex++] = 0x05;
@@ -428,7 +432,7 @@ namespace IceChat
                     try
                     {
                         socketStream.BeginWrite(d, 0, nIndex, new AsyncCallback(OnSendData), socketStream);
-
+                        
                         if (ServerMessage != null)
                             ServerMessage(this, "Socks 5 Connection Established with " + serverSetting.ProxyIP);
                     }
@@ -452,9 +456,6 @@ namespace IceChat
 
                     whichAddressinList = whichAddressCurrent;
 
-                    //if (ServerMessage != null)
-                    //    ServerMessage(this, "Sending User Registration Information");
-                    
                     this.pongTimer.Start();
                 }
             }
@@ -548,8 +549,6 @@ namespace IceChat
                         if (serverSetting.UseSSL)
                         {
                             sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
-                            //sslStream.Write(bytData);
-                            //sslStream.Flush();
                         }
                         else
                             socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
@@ -577,6 +576,69 @@ namespace IceChat
                 {
                     if (ServerError != null)
                         ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data);
+
+                    disconnectError = true;
+                    ForceDisconnect();
+                }
+            }
+        }
+
+        internal void SendData(byte[] bytData)
+        {
+            //check if the socket is still connected
+            if (serverSocket == null)
+            {
+                if (ServerError != null)
+                    ServerError(this, "Error: You are not Connected (Socket not created) - Can not send");
+                return;
+            }
+
+            if (socketStream == null)
+            {
+                System.Diagnostics.Debug.WriteLine("senddata null stream");
+                return;
+            }
+
+            //get the proper encoding            
+            //byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
+            if (bytData.Length > 0)
+            {
+                if (socketStream.CanWrite)
+                {
+                    try
+                    {
+                        if (serverSetting.UseSSL)
+                        {
+                            sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
+                            //sslStream.Write(bytData);
+                            //sslStream.Flush();
+                        }
+                        else
+                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
+
+                        //raise an event for the debug window
+                        //if (RawServerOutgoingData != null)
+                        //    RawServerOutgoingData(this, data);
+                    }
+                    catch (SocketException se)
+                    {
+                        //some kind of a socket error
+                        if (ServerError != null)
+                            ServerError(this, "You are not Connected - Can not send:" + se.Message);
+
+                        disconnectError = true;
+                        ForceDisconnect();
+                    }
+                    catch (NotSupportedException)
+                    {
+                        //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
+                        //sendBuffer.Enqueue(data);
+                    }
+                }
+                else
+                {
+                    if (ServerError != null)
+                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + bytData.ToString());
 
                     disconnectError = true;
                     ForceDisconnect();
@@ -638,10 +700,10 @@ namespace IceChat
                 if (serverSetting.UseProxy && !proxyAuthed)
                 {
                     string strData = Encoding.GetEncoding(serverSetting.Encoding).GetString(readBuffer);
-
+                    //System.Diagnostics.Debug.WriteLine("proxy data:" + bytesRead);
                     if (bytesRead == 2)
                     {
-                        System.Diagnostics.Debug.WriteLine("got:" + (int)strData[0] + ":" + (int)strData[1]);
+                        //System.Diagnostics.Debug.WriteLine("got:" + (int)strData[0] + ":" + (int)strData[1]);
 
                         if (strData[1] == 0xFF)
                         {
@@ -655,16 +717,19 @@ namespace IceChat
                             proxyData[0] = 0x05;
                             proxyData[1] = 0x01;
                             proxyData[2] = 0x00;
-                            proxyData[3] = 0x03;
+                            proxyData[3] = 0x03;    //0x03 for a domain name
                             proxyData[4] = Convert.ToByte(serverSetting.ServerName.Length);
                             byte[] rawBytes = new byte[serverSetting.ServerName.Length];
                             rawBytes = Encoding.Default.GetBytes(serverSetting.ServerName);
+                            //System.Diagnostics.Debug.WriteLine(rawBytes.Length + ":" + serverSetting.ServerName.Length);
                             rawBytes.CopyTo(proxyData, 5);
                             proxyData[proxyData.Length - 2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
                             proxyData[proxyData.Length - 1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
                             ServerMessage(this, "Sending Proxy Verification");
-
-                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
+                            //System.Diagnostics.Debug.WriteLine(Convert.ToInt16(proxyData[proxyData.Length - 2]));
+                            SendData(proxyData);
+                            
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);                        
                         }
                         else if (strData[1] == 0x02)  //send proxy information with user/pass
                         {
@@ -685,22 +750,41 @@ namespace IceChat
                             proxyData[proxyData.Length - 2] = (byte)((Convert.ToInt32(serverSetting.ServerPort) & 0xFF00) >> 8);
                             proxyData[proxyData.Length - 1] = (byte)(Convert.ToInt32(serverSetting.ServerPort) & 0xFF);
                             ServerMessage(this, "Sending Proxy Verification (user/pass)");
+                            SendData(proxyData);
 
                             socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                         }
                     }
                     else if (bytesRead == 10)
                     {
-                        System.Diagnostics.Debug.WriteLine("got10:" + (int)strData[0] + ":" + (int)strData[1]);
-                        ServerMessage(this, "Socks 5 Connection Successfull");
-                        SendData("NICK " + serverSetting.NickName);
-                        SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
-                        ServerMessage(this, "Sending User Registration Information");
-                        //serverSetting.UseProxy = false;
-                        proxyAuthed = true;
+                        //System.Diagnostics.Debug.WriteLine("got10:" + (int)strData[0] + ":" + (int)strData[1]);
+                        if (strData[1] == 0x00)
+                        {
+                            proxyAuthed = true;
 
-                        readBuffer = new byte[BUFFER_SIZE];
-                        socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
+                            ServerMessage(this, "Socks 5 Connection Successfull");
+
+                            if (serverSetting.Password != null && serverSetting.Password.Length > 0)
+                                SendData("PASS " + serverSetting.Password);
+
+                            //send the USER / NICK stuff
+                            SendData("NICK " + serverSetting.NickName);
+                            SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+
+                            whichAddressinList = whichAddressCurrent;
+                            
+
+                            ServerMessage(this, "Sending User Registration Information");
+
+                            whichAddressinList = whichAddressCurrent;
+
+                            readBuffer = new byte[BUFFER_SIZE];
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
+                        }
+                        else
+                        {
+                            ServerMessage(this, "Socks 5 Connection Error : " + strData[1]);
+                        }
                     }
                 }
                 else
