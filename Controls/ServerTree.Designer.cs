@@ -59,6 +59,7 @@
             this.clearWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.closeWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectDCCChat = new System.Windows.Forms.ToolStripMenuItem();
+            this.noColorModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
@@ -157,9 +158,10 @@
             this.closeChannelToolStripMenuItem,
             this.reJoinChannelToolStripMenuItem,
             this.channelInformationToolStripMenuItem,
-            this.channelFontToolStripMenuItem});
+            this.channelFontToolStripMenuItem,
+            this.noColorModeToolStripMenuItem});
             this.contextMenuChannel.Name = "contextMenuChannel";
-            this.contextMenuChannel.Size = new System.Drawing.Size(185, 114);
+            this.contextMenuChannel.Size = new System.Drawing.Size(185, 158);
             // 
             // clearWindowToolStripMenuItem
             // 
@@ -309,28 +311,35 @@
             this.closeWindowDCCChat,
             this.disconnectDCCChat});
             this.contextMenuDCCChat.Name = "contextMenuDCCChat";
-            this.contextMenuDCCChat.Size = new System.Drawing.Size(153, 92);
+            this.contextMenuDCCChat.Size = new System.Drawing.Size(151, 70);
             // 
             // clearWindowDCCChat
             // 
             this.clearWindowDCCChat.Name = "clearWindowDCCChat";
-            this.clearWindowDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.clearWindowDCCChat.Size = new System.Drawing.Size(150, 22);
             this.clearWindowDCCChat.Text = "Clear window";
             this.clearWindowDCCChat.Click += new System.EventHandler(this.clearWindowDCCChat_Click);
             // 
             // closeWindowDCCChat
             // 
             this.closeWindowDCCChat.Name = "closeWindowDCCChat";
-            this.closeWindowDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.closeWindowDCCChat.Size = new System.Drawing.Size(150, 22);
             this.closeWindowDCCChat.Text = "Close Window";
             this.closeWindowDCCChat.Click += new System.EventHandler(this.closeWindowDCCChat_Click);
             // 
             // disconnectDCCChat
             // 
             this.disconnectDCCChat.Name = "disconnectDCCChat";
-            this.disconnectDCCChat.Size = new System.Drawing.Size(152, 22);
+            this.disconnectDCCChat.Size = new System.Drawing.Size(150, 22);
             this.disconnectDCCChat.Text = "Disconnect";
             this.disconnectDCCChat.Click += new System.EventHandler(this.disconnectDCCChat_Click);
+            // 
+            // noColorModeToolStripMenuItem
+            // 
+            this.noColorModeToolStripMenuItem.Name = "noColorModeToolStripMenuItem";
+            this.noColorModeToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.noColorModeToolStripMenuItem.Text = "No Color Mode";
+            this.noColorModeToolStripMenuItem.Click += new System.EventHandler(this.noColorModeToolStripMenuItem_Click);
             // 
             // ServerTree
             // 
@@ -388,5 +397,6 @@
         private System.Windows.Forms.ToolStripMenuItem clearWindowDCCChat;
         private System.Windows.Forms.ToolStripMenuItem closeWindowDCCChat;
         private System.Windows.Forms.ToolStripMenuItem disconnectDCCChat;
+        private System.Windows.Forms.ToolStripMenuItem noColorModeToolStripMenuItem;
     }
 }

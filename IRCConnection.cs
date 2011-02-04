@@ -68,7 +68,7 @@ namespace IceChat
         private bool proxyAuthed;
         private byte[] readBuffer;
         private const int BUFFER_SIZE = 1024;
-        
+
         public IRCConnection(ServerSetting ss)
         {
             dataBuffer = "";
@@ -823,13 +823,20 @@ namespace IceChat
                             foreach (string Line in Data)
                             {
                                 if (Line.Length > 0)
-                                    ParseData(Line);
+                                {
+                                    string strLine = Line.Replace("\0", string.Empty);
+                                    ParseData(strLine);
+                                }
                             }
                         }
                         else
                         {
                             if (strData.Length > 0)
+                            {
+                                //strip out NULL chars
+                                strData = strData.Replace("\0", string.Empty);
                                 ParseData(strData);
+                            }
                         }
 
                         readBuffer = new byte[BUFFER_SIZE];

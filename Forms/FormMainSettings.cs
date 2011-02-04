@@ -99,7 +99,7 @@ namespace IceChat
                 iceChatMessages.MessageSettings[11] = oldMessage.MessageSettings[11];
 
             if (oldMessage.MessageSettings[12] == null || oldMessage.MessageSettings[12].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[12] = NewMessageFormat("Channel Message", "&#x3;1<$color$nick&#x3;> $message");
+                iceChatMessages.MessageSettings[12] = NewMessageFormat("Channel Message", "&#x3;1<$nick&#x3;> $message");
             else
                 iceChatMessages.MessageSettings[12] = oldMessage.MessageSettings[12];
 

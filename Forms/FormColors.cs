@@ -1199,7 +1199,7 @@ namespace IceChat
                     newMessage = "&#x3;4--$nick-- $message";
                     break;
                 case "Channel Message":
-                    newMessage =  "&#x3;1<$color$nick&#x3;> $message";
+                    newMessage =  "&#x3;1<$nick&#x3;> $message";
                     break;
                 case "Self Channel Message":
                     newMessage = "&#x3;1<$nick> $message";

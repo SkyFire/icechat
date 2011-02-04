@@ -857,7 +857,7 @@ namespace IceChat
                     newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
 
                 if (_noColorMode)
-                    newLine = StripCodes(newLine);
+                    newLine = StripColorCodes(newLine);
                 else
                     newLine = RedefineColorCodes(newLine);
 
@@ -908,7 +908,7 @@ namespace IceChat
                 Graphics g = this.CreateGraphics();
                 //properly measure for bold characters needed
 
-                _textLines[_totalLines].width = (int)g.MeasureString(StripCodes(newLine), this.Font, 0, stringFormat).Width;
+                _textLines[_totalLines].width = (int)g.MeasureString(StripAllCodes(newLine), this.Font, 0, stringFormat).Width;
 
                 g.Dispose();
 
@@ -1280,6 +1280,66 @@ namespace IceChat
                 }
                 m = ParseIRCCodes.Match(sLine.ToString(), sLine.Length - oldLen);
             }
+            return sLine.ToString();
+        }
+
+        private string StripColorCodes(string line)
+        {
+            //redefine the irc server colors to own standard
+            // go from \x0003xx,xx to \x0003xxxx
+            string ParseBackColor = @"\x03([0-9]{1,2}),([0-9]{1,2})";
+            string ParseForeColor = @"\x03[0-9]{1,2}";
+            string ParseColorChar = @"\x03";
+
+            Regex ParseIRCCodes = new Regex(ParseBackColor + "|" + ParseForeColor + "|" + ParseColorChar);
+
+            StringBuilder sLine = new StringBuilder();
+            sLine.Append(line);
+
+            Match m = ParseIRCCodes.Match(sLine.ToString());
+            
+            while (m.Success)
+            {
+                /*
+                oldLen = sLine.Length - 1;
+
+                //drop the color character
+                //sLine.Remove(m.Index, 1);
+                if (Regex.Match(m.Value, ParseBackColor).Success)
+                {
+                    //check if it is 1 or 2 color numbers to remove
+                    //int fc = int.Parse(m.Value.Remove(0, 1));
+                    //string fc2 = m.Value.Substring(1, 2);
+                    //int fc;
+                    //System.Diagnostics.Debug.WriteLine("parseback: " + fc2 + ":" + int.TryParse(fc2, out fc));
+                }
+                else if (Regex.Match(m.Value, ParseForeColor).Success)
+                {
+                    //string fc2 = m.Value.Substring(1, 1);
+                    int fc;
+                    if (m.Value.Length > 2 && int.TryParse(m.Value.Substring(1, 2), out fc))
+                    {
+                        System.Diagnostics.Debug.WriteLine("2 colors:" + m.Value.Length);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("1 colors:" + m.Value.Length + ":" + m.Index + ":" + sLine.ToString().Substring(m.Index));
+
+                    }
+                }
+                else if (Regex.Match(m.Value, ParseColorChar).Success)
+                {
+                    //just strip out the color char
+                    //nothing more needs to be done here
+                }
+                */
+                //System.Diagnostics.Debug.WriteLine(sLine.Length + ":" + oldLen + ":" + sLine.ToString().Substring(m.Index,length));
+                //oldLen = oldLen - length;
+                //int length = m.Length;
+                sLine.Remove(m.Index, m.Length);                
+                m = ParseIRCCodes.Match(sLine.ToString(), m.Index);
+            }
+            
             return sLine.ToString();
         }
 

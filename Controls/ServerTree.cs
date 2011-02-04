@@ -544,7 +544,10 @@ namespace IceChat
                             this.closeChannelToolStripMenuItem,
                             this.reJoinChannelToolStripMenuItem,
                             this.channelInformationToolStripMenuItem,
-                            this.channelFontToolStripMenuItem});
+                            this.channelFontToolStripMenuItem,
+                            this.noColorModeToolStripMenuItem});
+
+                            this.noColorModeToolStripMenuItem.Checked = ((IceTabPage)findNode).TextWindow.NoColorMode;
                             
                             //add in the popup menu
                             AddPopupMenu("Channel", contextMenuChannel);
@@ -1389,6 +1392,17 @@ namespace IceChat
                 FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/font " + ((IceTabPage)findNode).TabCaption);
 
         }
+
+        private void noColorModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //change the channel to No Color Mode or back again
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+            {
+                ((IceTabPage)findNode).TextWindow.NoColorMode = !((IceTabPage)findNode).TextWindow.NoColorMode;
+            }
+        }
+
 
         private void clearWindowToolStripMenuItem1_Click(object sender, EventArgs e)
         {
