@@ -1192,6 +1192,7 @@ namespace IceChat
                         case "421": //unknown command
                         case "431": //no nickname given
                         case "470": //forward to other channel
+                        case "471": //can not join channel (limit enforced)
                         case "472": //unknown char to me (channel mode)
                             ServerError(this, JoinString(ircData, 3, false));
                             break;

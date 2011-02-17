@@ -218,8 +218,19 @@ namespace IceChat
         //replace color codes with HTML codes
         private string ReplaceColorCodes(string line)
         {
+            //replace certain characters with HTML friendly chars
+
+            line = Regex.Replace(line, "&", "&amp;");
+            line = Regex.Replace(line, "'", "&apos;");
+            line = Regex.Replace(line, "\"", "&quot;");
+            line = Regex.Replace(line, @"<", "&lt;");
+            line = Regex.Replace(line, @">", "&gt;");
+            //line = Regex.Replace(line, "\\", "&#x22;");
+
             line = "<div style='float:left; display:block;'>" + line;
-            
+
+            bool inColor = false;
+
             //parse color codes
             Regex parseColors = new Regex("\xFF03[0-9]{4}");
             Match m = parseColors.Match(line);
@@ -227,8 +238,13 @@ namespace IceChat
             {
                 int color = Convert.ToInt32(m.Value.Substring(1,2));
                 string c = System.Drawing.ColorTranslator.ToHtml(IrcColor.colors[color]);
-                line = line.Replace(m.Value, "<span style='color:" + c + ";'>");
-                m = m.NextMatch();  
+                if (inColor)                    
+                    line = line.Replace(m.Value, "</span><span style='color:" + c + ";'>");
+                else
+                    line = line.Replace(m.Value, "<span style='color:" + c + ";'>");
+                m = m.NextMatch();
+
+                inColor = true;
             }
 
             //parse bold codes
@@ -237,12 +253,13 @@ namespace IceChat
             bool isBold = false;
             while (b.Success)
             {
+                //problem here, replaces all the bold chars, not 1 by 1
                 if (isBold)
                     line = line.Replace(b.Value, "</b>");
                 else
                     line = line.Replace(b.Value, "<b>");
                 isBold = !isBold;
-
+                
                 b = b.NextMatch();
             }
 
@@ -260,8 +277,15 @@ namespace IceChat
 
                 u = u.NextMatch();
             }
+            if (isBold)
+                line = line + "</b>";
+            if (isUnderline)
+                line = line + "</u>";
 
-            return line + "</div><br />";
+            if (inColor)
+                line = line + "</span>";
+
+            return line + "</div><br />\r\n";
         }
         
         //strip all the colors codes out

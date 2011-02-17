@@ -322,7 +322,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 3 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 16 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -372,7 +372,7 @@ namespace IceChat
                 //load in the new color theme, if it not Default
                 if (iceChatOptions.CurrentTheme != "Default")
                 {
-                    string themeFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + iceChatOptions.CurrentTheme + ".xml";
+                    string themeFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Colors-" + iceChatOptions.CurrentTheme + ".xml";
                     if (File.Exists(themeFile))
                     {
                         XmlSerializer deserializer = new XmlSerializer(typeof(IceChatColors));
@@ -384,8 +384,25 @@ namespace IceChat
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("Theme not found:" + themeFile);
+                        System.Diagnostics.Debug.WriteLine("Color Theme File not found:" + themeFile);
                     }
+
+                    themeFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Messages-" + iceChatOptions.CurrentTheme + ".xml";
+                    if (File.Exists(themeFile))
+                    {
+                        XmlSerializer deserializer = new XmlSerializer(typeof(IceChatMessageFormat));
+                        TextReader textReader = new StreamReader(themeFile);
+                        iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
+                        textReader.Close();
+                        textReader.Dispose();
+
+                        messagesFile = themeFile;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Messages Theme File not found:" + themeFile);
+                    }
+
                 }
             }
 
@@ -872,6 +889,18 @@ namespace IceChat
             get
             {
                 return this.buddyList;
+            }
+        }
+
+        internal string MessagesFile
+        {
+            get
+            {
+                return messagesFile;
+            }
+            set
+            {
+                messagesFile = value;
             }
         }
 
@@ -1980,6 +2009,38 @@ namespace IceChat
                                     System.Diagnostics.Process.Start("http://" + data);
                             }
                             break;
+                        case "/buddylist":
+                        case "/notify":
+                            //add a nickname to the buddy list
+                            if (connection != null && data.Length > 0 && data.IndexOf(" ") == -1)
+                            {
+                                //check if the nickname is already in the buddy list
+                                if (connection.ServerSetting.BuddyList != null)
+                                {
+                                    foreach (BuddyListItem buddy in connection.ServerSetting.BuddyList)
+                                    {
+                                        if (!buddy.Nick.StartsWith(";"))
+                                            if (buddy.Nick.ToLower() == data.ToLower())
+                                                return;
+                                        else
+                                            if (buddy.Nick.Substring(1).ToLower() == data.ToLower())
+                                                return;
+                                    }
+                                }
+                                //add in the new buddy list item
+                                BuddyListItem b = new BuddyListItem();
+                                b.Nick = data;
+
+                                BuddyListItem[] buddies = connection.ServerSetting.BuddyList;
+                                Array.Resize(ref buddies, buddies.Length + 1);
+                                buddies[buddies.Length - 1] = b;
+
+                                connection.ServerSetting.BuddyList = buddies;
+
+                                serverTree.SaveServers(serverTree.ServersCollection);
+                                
+                            }
+                            break;
                         case "/chaninfo":
                             if (connection != null)
                             {
@@ -2369,13 +2430,12 @@ namespace IceChat
                                         }
 
                                         //no match found, add the new item to the IgnoreList
-                                        System.Collections.Specialized.StringCollection sc = new System.Collections.Specialized.StringCollection();
-                                        foreach (string n in connection.ServerSetting.IgnoreList)
-                                            sc.Add(n);
-                                        sc.Add(data);
-                                        connection.ServerSetting.IgnoreList = new string[sc.Count];
-                                        sc.CopyTo(connection.ServerSetting.IgnoreList, 0);
-                                        sc.Clear();
+                                        string[] ignores = connection.ServerSetting.IgnoreList;
+                                        Array.Resize(ref ignores, ignores.Length + 1);
+                                        ignores[ignores.Length - 1] = data;
+
+                                        connection.ServerSetting.IgnoreList = ignores;
+
                                         serverTree.SaveServers(serverTree.ServersCollection);
                                     }
                                 }
@@ -4027,14 +4087,16 @@ namespace IceChat
 
         }
 
-        private void fc_SaveColors(IceChatColors colors)
+        private void fc_SaveColors(IceChatColors colors, IceChatMessageFormat messages)
         {
-            SaveMessageFormat();
             this.iceChatColors = colors;
             SaveColors();
             
-            System.Diagnostics.Debug.WriteLine(colorsFile);
-            System.Diagnostics.Debug.WriteLine(iceChatColors.ConsoleBackColor);
+            this.iceChatMessages = messages;
+            SaveMessageFormat();
+            
+            //System.Diagnostics.Debug.WriteLine(colorsFile);
+            //System.Diagnostics.Debug.WriteLine(iceChatColors.ConsoleBackColor);
 
             toolStripMain.BackColor = IrcColor.colors[iceChatColors.ToolbarBackColor];
             menuMainStrip.BackColor = IrcColor.colors[iceChatColors.MenubarBackColor];

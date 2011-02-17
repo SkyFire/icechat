@@ -94,20 +94,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Channel Messages");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Server Messages");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Private Messages");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Self Messages");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Ctcp");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DCC");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Other");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Channel Messages");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Server Messages");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Private Messages");
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Self Messages");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Ctcp");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("DCC");
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Other");
             this.tabControlColors = new System.Windows.Forms.TabControl();
             this.tabPageMessages = new System.Windows.Forms.TabPage();
             this.tabMessages = new System.Windows.Forms.TabControl();
@@ -225,6 +211,7 @@
             this.labelCurrent = new System.Windows.Forms.Label();
             this.textFormattedBasic = new IceChat.TextWindow();
             this.textFormattedText = new IceChat.TextWindow();
+            this.buttonLoadTheme = new System.Windows.Forms.Button();
             this.tabControlColors.SuspendLayout();
             this.tabPageMessages.SuspendLayout();
             this.tabMessages.SuspendLayout();
@@ -374,28 +361,6 @@
             this.treeBasicMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeBasicMessages.Location = new System.Drawing.Point(16, 31);
             this.treeBasicMessages.Name = "treeBasicMessages";
-            treeNode1.Name = "";
-            treeNode1.Text = "Channel Messages";
-            treeNode2.Name = "";
-            treeNode2.Text = "Server Messages";
-            treeNode3.Name = "";
-            treeNode3.Text = "Private Messages";
-            treeNode4.Name = "";
-            treeNode4.Text = "Self Messages";
-            treeNode5.Name = "";
-            treeNode5.Text = "Ctcp";
-            treeNode6.Name = "";
-            treeNode6.Text = "DCC";
-            treeNode7.Name = "";
-            treeNode7.Text = "Other";
-            this.treeBasicMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4,
-            treeNode5,
-            treeNode6,
-            treeNode7});
             this.treeBasicMessages.Size = new System.Drawing.Size(352, 258);
             this.treeBasicMessages.TabIndex = 46;
             // 
@@ -461,28 +426,6 @@
             this.treeMessages.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeMessages.Location = new System.Drawing.Point(13, 31);
             this.treeMessages.Name = "treeMessages";
-            treeNode8.Name = "";
-            treeNode8.Text = "Channel Messages";
-            treeNode9.Name = "";
-            treeNode9.Text = "Server Messages";
-            treeNode10.Name = "";
-            treeNode10.Text = "Private Messages";
-            treeNode11.Name = "";
-            treeNode11.Text = "Self Messages";
-            treeNode12.Name = "";
-            treeNode12.Text = "Ctcp";
-            treeNode13.Name = "";
-            treeNode13.Text = "DCC";
-            treeNode14.Name = "";
-            treeNode14.Text = "Other";
-            this.treeMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12,
-            treeNode13,
-            treeNode14});
             this.treeMessages.Size = new System.Drawing.Size(352, 207);
             this.treeMessages.TabIndex = 38;
             // 
@@ -1426,6 +1369,7 @@
             // 
             // tabPageThemes
             // 
+            this.tabPageThemes.Controls.Add(this.buttonLoadTheme);
             this.tabPageThemes.Controls.Add(this.labelCurrentTheme);
             this.tabPageThemes.Controls.Add(this.comboTheme);
             this.tabPageThemes.Controls.Add(this.buttonRemoveTheme);
@@ -1480,12 +1424,12 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(219, 4);
+            this.label1.Location = new System.Drawing.Point(19, 164);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(145, 16);
+            this.label1.Size = new System.Drawing.Size(418, 54);
             this.label1.TabIndex = 57;
-            this.label1.Text = "Not yet implemented";
+            this.label1.Text = "To add a new Theme, first change all the Color/Message settings, then click on \"A" +
+                "dd New Theme\" button and use a new theme name.";
             // 
             // labelColorThemesHeader
             // 
@@ -1561,6 +1505,16 @@
             this.textFormattedText.SingleLine = true;
             this.textFormattedText.Size = new System.Drawing.Size(605, 23);
             this.textFormattedText.TabIndex = 46;
+            // 
+            // buttonLoadTheme
+            // 
+            this.buttonLoadTheme.Location = new System.Drawing.Point(310, 93);
+            this.buttonLoadTheme.Name = "buttonLoadTheme";
+            this.buttonLoadTheme.Size = new System.Drawing.Size(127, 23);
+            this.buttonLoadTheme.TabIndex = 62;
+            this.buttonLoadTheme.Text = "Load Theme";
+            this.buttonLoadTheme.UseVisualStyleBackColor = true;
+            this.buttonLoadTheme.Click += new System.EventHandler(this.buttonLoadTheme_Click);
             // 
             // FormColors
             // 
@@ -1690,6 +1644,7 @@
         private System.Windows.Forms.Button buttonRemoveTheme;
         private System.Windows.Forms.Button buttonAddTheme;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button buttonLoadTheme;
 
     }
 }

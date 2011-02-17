@@ -28,14 +28,16 @@ using System.Text;
 
 namespace IceChat
 {
-    public class User : IComparable
+    public class User
     {
         private string nickName;
         private IRCConnection connection;
         
         public bool[] Level;
         public int nickColor;
-
+        public bool Selected;
+        
+        /*
         public int CompareTo(object obj)
         {
             User u = (User)obj;
@@ -83,8 +85,10 @@ namespace IceChat
                 return this.nickName.CompareTo(u.nickName);
             else
                 return -1;
+        
         }
-
+        */
+        
         public User(string nick, IRCConnection connection)
         {
             this.connection = connection;

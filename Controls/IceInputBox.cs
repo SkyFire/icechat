@@ -338,25 +338,42 @@ namespace IceChat
                 {
                     int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
-                    FormMain.Instance.ServerTree.Invalidate();
+                    FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex], false);
+                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
                 else if (e.KeyCode == Keys.PageUp)
                 {
                     int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
-                    FormMain.Instance.ServerTree.Invalidate();
+                    FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex], false);
+                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
                 else if (e.KeyCode == Keys.PageDown)
                 {
                     int prevIndex = FormMain.Instance.TabMain.SelectedIndex == 0 ? FormMain.Instance.TabMain.TabCount - 1 : FormMain.Instance.TabMain.SelectedIndex - 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex]);
-                    FormMain.Instance.ServerTree.Invalidate();
+                    FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex], false);
+                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
 
 			}
+
+
+            if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != Keys.None)
+            {
+                bool forward = (e.KeyData & Keys.Shift) == Keys.None;
+                if (!forward)
+                {
+                    int prevIndex = FormMain.Instance.TabMain.SelectedIndex == 0 ? FormMain.Instance.TabMain.TabCount - 1 : FormMain.Instance.TabMain.SelectedIndex - 1;
+                    FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex]);
+                    FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex], false);
+                    //FormMain.Instance.ServerTree.Invalidate();
+                    return;
+                }
+            }
 
 			//code below is for the single line Inputbox
 			//UP Key

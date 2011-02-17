@@ -45,6 +45,7 @@ namespace IceChat
         //the index of the top item in the nick list
         private int topIndex = 0;
         private bool mouseFocus = false;
+        private bool controlKeyDown = false;
 
         private int headerHeight = 23;
         private int selectedIndex = -1;
@@ -53,9 +54,72 @@ namespace IceChat
         private ToolTip toolTip;
         private int toolTipNode = -1;
 
-        private ArrayList sortedNicks = null;
-        
+        private ArrayList sortedNickNames = null;
+        private int totalSelected = 0;
+
         private ContextMenuStrip popupMenu;
+
+        internal class Nick : IComparable
+        {
+            public string nick;
+            public string host;
+            public bool selected;
+            public int nickColor;
+            public bool[] Level;
+
+
+            public int CompareTo(object obj)
+            {
+                Nick u = (Nick)obj;
+
+                int compareNickValue = 0;
+                int thisNickValue = 0;
+
+                bool[] userCompareLevel = new bool[u.Level.Length];
+                bool[] thisCompareLevel = new bool[this.Level.Length];
+
+                for (int i = 0; i < userCompareLevel.Length; i++)
+                    userCompareLevel[i] = u.Level[i];
+
+                for (int i = 0; i < thisCompareLevel.Length; i++)
+                    thisCompareLevel[i] = this.Level[i];
+
+                Array.Reverse(userCompareLevel);
+                Array.Reverse(thisCompareLevel);
+
+                for (int i = userCompareLevel.Length - 1; i >= 0; i--)
+                {
+                    if (userCompareLevel[i])
+                    {
+                        compareNickValue = i + 1;
+                        break;
+                    }
+                }
+
+                for (int i = thisCompareLevel.Length - 1; i >= 0; i--)
+                {
+                    if (thisCompareLevel[i])
+                    {
+                        thisNickValue = i + 1;
+                        break;
+                    }
+                }
+
+                if (compareNickValue > thisNickValue)
+                    return 1;
+                else if (compareNickValue == thisNickValue)
+                    return this.nick.CompareTo(u.nick);
+                else
+                    return -1;
+
+            }
+
+            public override string ToString()
+            {
+                return this.nick;
+            }
+
+        }
 
         public NickList()
         {
@@ -70,6 +134,7 @@ namespace IceChat
             this.FontChanged += new EventHandler(OnFontChanged);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
             this.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.KeyUp += new KeyEventHandler(OnKeyUp);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;
 
@@ -109,6 +174,9 @@ namespace IceChat
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Control)
+                controlKeyDown = true;
+            
             if (e.KeyCode == Keys.Up)
             {
                 selectedIndex--;
@@ -124,6 +192,11 @@ namespace IceChat
                 //right mouse key
                 this.OnMouseUp(new MouseEventArgs(MouseButtons.Right, 1, 0, 0, 0));
             }
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            controlKeyDown = false;
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -193,7 +266,8 @@ namespace IceChat
 
             if (selectedIndex >= 0)
             {
-                string nick = sortedNicks[selectedIndex].ToString();
+                //string nick = sortedNicks[selectedIndex].ToString();
+                string nick = ((Nick)sortedNickNames[selectedIndex]).nick;
 
                 //replace any of the modes
                 for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
@@ -260,8 +334,17 @@ namespace IceChat
                 }
             }
             if (e.Y <= headerHeight)
-                return;    
+            {
+                //de-select any previous items
+                DeSelectAllNicks();
 
+                totalSelected = 0;
+
+                Invalidate();
+
+                return;
+            }
+            
             if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //do the math
@@ -272,14 +355,56 @@ namespace IceChat
                 int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + topIndex;
 
                 if (nickNumber < currentWindow.Nicks.Count)
+                {
                     selectedIndex = nickNumber;
+                    bool selected = ((Nick)sortedNickNames[selectedIndex]).selected;
+
+                    if (selected)
+                        totalSelected--;
+                    else
+                        totalSelected++;
+
+                    //if the CTRL-Key is down, we can do a multi-select
+                    if (controlKeyDown)
+                    {
+                        ((Nick)sortedNickNames[selectedIndex]).selected = !selected;
+                        currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = !selected;
+                    }
+                    else
+                    {
+                        if (totalSelected > 1)
+                        {
+                            //deselect all the previous ones
+                            DeSelectAllNicks();
+
+                            totalSelected = 1;
+                        }
+
+                        ((Nick)sortedNickNames[selectedIndex]).selected = !selected;
+                        currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = !selected;
+
+                    }
+                }
                 else
+                {
+                    DeSelectAllNicks();
+                    totalSelected = 0;                
                     selectedIndex = -1;
+                }
 
                 g.Dispose();
                 Invalidate();
             }
             
+        }
+
+        private void DeSelectAllNicks()
+        {
+            for (int i = 0; i < sortedNickNames.Count; i++)
+            {
+                ((Nick)sortedNickNames[i]).selected = false;
+                currentWindow.GetNick(((Nick)sortedNickNames[i]).nick).Selected = false;
+            }
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
@@ -299,22 +424,16 @@ namespace IceChat
                 {
                     if (toolTipNode != nickNumber)
                     {
-                        //User u = currentWindow.GetNick(sortedNicks[nickNumber].ToString());                        
-                        string nick = sortedNicks[nickNumber].ToString();
+                        string nick = ((Nick)sortedNickNames[nickNumber]).nick;
                         for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                             nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                        InternalAddressList u = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[nick]);
-                        
                         toolTip.ToolTipTitle = "User Information";
-                        if (u != null)
-                        {
-                            if (u.Host != null)
-                                toolTip.SetToolTip(this, u.Nick + Environment.NewLine + u.Host);
-                            else
-                                toolTip.SetToolTip(this, u.Nick);
-                        }
-                        
+                        if (((Nick)sortedNickNames[nickNumber]).host.Length > 0)
+                            toolTip.SetToolTip(this, nick + Environment.NewLine + ((Nick)sortedNickNames[nickNumber]).host);
+                        else
+                            toolTip.SetToolTip(this, nick);
+
                         toolTipNode = nickNumber;
                     }
                 }
@@ -334,6 +453,45 @@ namespace IceChat
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
             FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, command);
+        }
+
+        private void PopulateNicks()
+        {
+            if (sortedNickNames != null)
+            {
+                sortedNickNames.Clear();
+                sortedNickNames = null;
+            }
+            
+            sortedNickNames = new ArrayList();
+            
+            try
+            {
+                foreach (User nick in currentWindow.Nicks.Values)
+                {
+                    Nick n = new Nick();
+                    n.nick = nick.ToString();
+                    n.selected = nick.Selected;
+                    n.nickColor = nick.nickColor;
+                    n.Level = nick.Level;
+
+                    //System.Diagnostics.Debug.WriteLine(n.nick + ":" + nick.Level.Length + ":" + n.Level.Length);
+                    if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(nick.NickName))
+                        n.host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[nick.NickName]).Host;
+                    else
+                        n.host = "";
+                    
+                    sortedNickNames.Add(n);
+
+                }
+                
+                sortedNickNames.Sort();
+                 
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.Source);
+            }
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
@@ -391,22 +549,24 @@ namespace IceChat
 
                 if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                 {
-                    if (sortedNicks != null)
-                        sortedNicks = null;
+                    //if (sortedNicks != null)
+                    //    sortedNicks = null;
 
-                    sortedNicks = new ArrayList(currentWindow.Nicks.Values);
-                    sortedNicks.Sort();
+                    //sortedNicks = new ArrayList(currentWindow.Nicks.Values);
+                    //sortedNicks.Sort();
+
+                    PopulateNicks();
 
                     int currentY = listR.Y;
                     int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
-                    string host = "";
+                    //string host = "";
 
                     int randColor = -1;
 
-                    for (int i = topIndex; i < sortedNicks.Count; i++)
+                    for (int i = topIndex; i < sortedNickNames.Count; i++)
                     {
                         Brush b = null;
-                        User u = currentWindow.GetNick(sortedNicks[i].ToString());
+                        User u = currentWindow.GetNick(((Nick)sortedNickNames[i]).nick);
                         if (FormMain.Instance.IceChatColors.RandomizeNickColors)
                         {
                             randColor++;
@@ -462,25 +622,29 @@ namespace IceChat
                                 b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
                         }
                         //check if selected, if so, draw the selector bar
-                        if (i == selectedIndex)
+                        //if (i == selectedIndex)
+                        if (((Nick)sortedNickNames[i]).selected)
                         {
                             g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
                             b = null;
                             b = new SolidBrush(SystemColors.HighlightText);
                         }
+                        
                         //draw the nickname
-                        g.DrawString(sortedNicks[i].ToString(), this.Font, b, 2, currentY);
+                        g.DrawString(((Nick)sortedNickNames[i]).nick, this.Font, b, 2, currentY);
+                        
                         //draw the host
                         if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
                         {
-                            host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
-                            if (host.Length > 0)
-                                g.DrawString(host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
+                            //host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
+                            if (((Nick)sortedNickNames[i]).host.Length > 0)
+                                g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }
+                        
                         currentY += _lineSize;
                         if (currentY >= (listR.Height + listR.Y))
                         {
-                            vScrollBar.Maximum = sortedNicks.Count - 2;
+                            vScrollBar.Maximum = sortedNickNames.Count - 2;
                             vScrollBar.LargeChange = ((listR.Height - _lineSize) / _lineSize);
                             break;
                         }
@@ -531,7 +695,7 @@ namespace IceChat
 
                         popupMenu.Items.Clear();
 
-                        string nick = sortedNicks[selectedIndex].ToString();
+                        string nick = sortedNickNames[selectedIndex].ToString();
                         //replace any of the modes
                         for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                             nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
@@ -605,11 +769,13 @@ namespace IceChat
         internal void SelectNick(string nick)
         {
             //select a specific nickname in the nicklist
-            for (int i = 0; i < sortedNicks.Count; i++)
+            for (int i = 0; i < sortedNickNames.Count; i++)
             {
-                if (nick == sortedNicks[i].ToString())
+                if (nick == sortedNickNames[i].ToString())
                 {
                     //matched
+                    DeSelectAllNicks();
+
                     selectedIndex = i;
                     int p = (selectedIndex / vScrollBar.LargeChange);
 
@@ -617,13 +783,18 @@ namespace IceChat
                         topIndex += (p * vScrollBar.LargeChange);
                     else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
+
+                    ((Nick)sortedNickNames[selectedIndex]).selected = true;
+                    currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = true;
 
                     Invalidate();
                     return;
                 }
-                else if (nick == sortedNicks[i].ToString().Substring(1))
+                else if (nick == sortedNickNames[i].ToString().Substring(1))
                 {
                     //matched
+                    DeSelectAllNicks();
+
                     selectedIndex = i;
                     int p = (selectedIndex / vScrollBar.LargeChange);
 
@@ -631,7 +802,10 @@ namespace IceChat
                         topIndex += (p * vScrollBar.LargeChange);
                     else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
-                    
+
+                    ((Nick)sortedNickNames[selectedIndex]).selected = true;
+                    currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = true;
+
                     Invalidate();
                     return;
                 }
@@ -763,9 +937,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     User u = currentWindow.GetNick(nick);
                     if (u != null)
                     {
@@ -790,9 +964,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     User u = currentWindow.GetNick(nick);
                     if (u != null)
                     {
@@ -817,9 +991,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                         nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -836,9 +1010,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     User u = currentWindow.GetNick(nick);
                     if (u != null)
                     {
@@ -863,9 +1037,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                         nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -879,9 +1053,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                         nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -895,9 +1069,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                         nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -911,9 +1085,9 @@ namespace IceChat
         {
             if (selectedIndex >= 0)
             {
-                if (selectedIndex < sortedNicks.Count)
+                if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNicks[selectedIndex].ToString();
+                    string nick = sortedNickNames[selectedIndex].ToString();
                     for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                         nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 

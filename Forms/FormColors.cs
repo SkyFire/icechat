@@ -41,7 +41,7 @@ namespace IceChat
 {
     public partial class FormColors : Form
     {
-        public delegate void SaveColorsDelegate(IceChatColors colors);        
+        public delegate void SaveColorsDelegate(IceChatColors colors, IceChatMessageFormat messages);        
         public event SaveColorsDelegate SaveColors;
 
         private ColorButtonArray colorPicker;
@@ -132,92 +132,15 @@ namespace IceChat
             textFormattedBasic.NoEmoticons = true;
 
             //populate Message Settings            
-            if (iceChatMessages.MessageSettings != null)
-            {
-                foreach (ServerMessageFormatItem msg in iceChatMessages.MessageSettings)
-                {
-                    if (msg.MessageName.StartsWith("Channel"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;                        
-                        treeMessages.Nodes[0].Nodes.Add(t);
 
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;                        
-                        treeBasicMessages.Nodes[0].Nodes.Add(t2);
-                    }
-                    else if (msg.MessageName.StartsWith("Server"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[1].Nodes.Add(t);
-
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[1].Nodes.Add(t2);
-                    }
-                    else if (msg.MessageName.StartsWith("Private"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[2].Nodes.Add(t);
-                        
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[2].Nodes.Add(t2);
-
-                    }
-                    else if (msg.MessageName.StartsWith("Self"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[3].Nodes.Add(t);
-
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[3].Nodes.Add(t2);
-                    }
-                    else if (msg.MessageName.StartsWith("Ctcp"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[4].Nodes.Add(t);
-
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[4].Nodes.Add(t2);
-                    }
-                    else if (msg.MessageName.StartsWith("DCC"))
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[5].Nodes.Add(t);
-
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[5].Nodes.Add(t2);
-                    }
-                    else
-                    {
-                        TreeNode t = new TreeNode(msg.MessageName);
-                        t.Tag = msg.FormattedMessage;
-                        treeMessages.Nodes[6].Nodes.Add(t);
-
-                        TreeNode t2 = new TreeNode(msg.MessageName);
-                        t2.Tag = msg.FormattedMessage;
-                        treeBasicMessages.Nodes[6].Nodes.Add(t2);
-                    }
-                }
-            }
-
-            treeMessages.ExpandAll();
-            treeBasicMessages.ExpandAll();    
+            UpdateMessageSettings();
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
                 ipc.LoadColorsForm(this.tabControlColors);
             }
+
             ApplyLanguage();
 
             if (FormMain.Instance.IceChatOptions.Themes != null)
@@ -528,7 +451,6 @@ namespace IceChat
 
         private void colorPicker_OnClick(int colorSelected)
         {
-
             if (tabControlColors.SelectedTab.Text == "Messages")
             {
                 //check if we are in basic or advanced
@@ -614,23 +536,6 @@ namespace IceChat
                     ((PictureBox)currentColorPick).Tag = colorSelected;
                 }
             }
-
-
-            /*
-            if (this.panelColorPicker.Tag.ToString() == "TextHighLite")
-            {
-                if (textHighLightWord.Text.Substring(0, 1) == "")
-                {
-                    if (PublicIRC.IsNumeric(textHighLightWord.Text.Substring(1, 2)))
-                        textHighLightWord.Text = "" + colorSelected.ToString() + textHighLightWord.Text.Substring(3);
-                    else
-                        textHighLightWord.Text = "" + colorSelected.ToString() + textHighLightWord.Text.Substring(2);
-                }
-                else
-                    textHighLightWord.Text = "" + colorSelected.ToString() + textHighLightWord.Text;
-            }
-
-            */
         }
 
         private void treeBasicMessages_AfterSelect(object sender, TreeViewEventArgs e)
@@ -934,6 +839,129 @@ namespace IceChat
             UpdateFormattedText();
         }
 
+        private void UpdateMessageSettings()
+        {
+            treeMessages.Nodes.Clear();
+            treeBasicMessages.Nodes.Clear();
+
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Channel Messages");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Server Messages");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Private Messages");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Self Messages");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Ctcp");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("DCC");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Other");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Channel Messages");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Server Messages");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Private Messages");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Self Messages");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Ctcp");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("DCC");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Other");
+
+            this.treeBasicMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6,
+            treeNode7});
+
+            this.treeMessages.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12,
+            treeNode13,
+            treeNode14});
+
+            if (iceChatMessages.MessageSettings != null)
+            {
+                foreach (ServerMessageFormatItem msg in iceChatMessages.MessageSettings)
+                {
+                    if (msg.MessageName.StartsWith("Channel"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[0].Nodes.Add(t);
+                        if (msg.MessageName == "Channel Message")
+                            System.Diagnostics.Debug.WriteLine(msg.MessageName + ":" + msg.FormattedMessage);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[0].Nodes.Add(t2);
+                    }
+                    else if (msg.MessageName.StartsWith("Server"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[1].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[1].Nodes.Add(t2);
+                    }
+                    else if (msg.MessageName.StartsWith("Private"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[2].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[2].Nodes.Add(t2);
+
+                    }
+                    else if (msg.MessageName.StartsWith("Self"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[3].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[3].Nodes.Add(t2);
+                    }
+                    else if (msg.MessageName.StartsWith("Ctcp"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[4].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[4].Nodes.Add(t2);
+                    }
+                    else if (msg.MessageName.StartsWith("DCC"))
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[5].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[5].Nodes.Add(t2);
+                    }
+                    else
+                    {
+                        TreeNode t = new TreeNode(msg.MessageName);
+                        t.Tag = msg.FormattedMessage;
+                        treeMessages.Nodes[6].Nodes.Add(t);
+
+                        TreeNode t2 = new TreeNode(msg.MessageName);
+                        t2.Tag = msg.FormattedMessage;
+                        treeBasicMessages.Nodes[6].Nodes.Add(t2);
+                    }
+                }
+            }
+
+            treeMessages.ExpandAll();
+            treeBasicMessages.ExpandAll();    
+
+        }
+
         private void UpdateColorSettings()
         {
             this.pictureOwner.BackColor = IrcColor.colors[iceChatColors.ChannelOwnerColor];
@@ -1070,7 +1098,7 @@ namespace IceChat
             iceChatColors.TabBarServerQuit = (int)pictureTabQuit.Tag;
             iceChatColors.TabBarOtherMessage = (int)pictureTabOther.Tag;
             iceChatColors.TabBarDefault = (int)pictureTabDefault.Tag;
-            System.Diagnostics.Debug.WriteLine("console back :" + pictureConsole.Tag);
+
             iceChatColors.ConsoleBackColor = (int)pictureConsole.Tag;
             iceChatColors.ChannelBackColor = (int)pictureChannel.Tag;
             iceChatColors.QueryBackColor = (int)pictureQuery.Tag;
@@ -1108,6 +1136,8 @@ namespace IceChat
             UpdateColors();
             //FormMain.Instance.IceChatColors = this.iceChatColors;
 
+            //FormMain.Instance.MessageFormats = this.iceChatMessages;
+
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
@@ -1134,7 +1164,7 @@ namespace IceChat
             }
             
             if (SaveColors != null)
-                SaveColors(this.iceChatColors);
+                SaveColors(this.iceChatColors, this.iceChatMessages);
             
 
             this.Close();
@@ -1368,7 +1398,7 @@ namespace IceChat
                 if (i.InputResponse.Length > 0)
                 {
                     //make file name theme-name.xml
-                    string colorsFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + i.InputResponse + ".xml";
+                    string colorsFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Colors-" + i.InputResponse + ".xml";
 
                     UpdateColors();
 
@@ -1377,7 +1407,16 @@ namespace IceChat
                     serializer.Serialize(textWriter, iceChatColors);
                     textWriter.Close();
                     textWriter.Dispose();
-                    
+
+
+                    string messageFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Messages-" + i.InputResponse + ".xml";
+
+                    XmlSerializer serializer2 = new XmlSerializer(typeof(IceChatMessageFormat));
+                    TextWriter textWriter2 = new StreamWriter(messageFile);
+                    serializer2.Serialize(textWriter2, iceChatMessages);
+                    textWriter2.Close();
+                    textWriter2.Dispose();
+
                     //add in the theme name into IceChatOptions
                     comboTheme.Items.Add(i.InputResponse);
                     //make it the current theme
@@ -1393,32 +1432,99 @@ namespace IceChat
             if (comboTheme.Text == "Default")
                 return;
 
+            //theme files are not deleted
+
+            //remove the theme
+            comboTheme.Items.Remove(comboTheme.SelectedItem);
+
+            comboTheme.SelectedIndex = 0;
         }
 
         private void comboTheme_SelectedIndexChanged(object sender, EventArgs e)
         {
             //change the current theme
-            System.Diagnostics.Debug.WriteLine(comboTheme.Text);
-            string themeFile = "";
+            System.Diagnostics.Debug.WriteLine("Change theme to " + comboTheme.Text);
+            string themeColorsFile = "";
+            string themeMessagesFile = "";
+
             if (comboTheme.Text == "Default")
-                themeFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
+            {
+                themeColorsFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatColors.xml";
+                themeMessagesFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatMessages.xml";
+            }
             else
             {
-                themeFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Theme-" + comboTheme.Text + ".xml";
+                themeColorsFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Colors-" + comboTheme.Text + ".xml";
+                themeMessagesFile = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Messages-" + comboTheme.Text + ".xml";
             }
             
-            if (themeFile.Length > 0 && File.Exists(themeFile))
+            if (themeColorsFile.Length > 0 && File.Exists(themeColorsFile))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(IceChatColors));
-                TextReader textReader = new StreamReader(themeFile);
-                iceChatColors = (IceChatColors)deserializer.Deserialize(textReader);
+                TextReader textReader = new StreamReader(themeColorsFile);
+                this.iceChatColors = (IceChatColors)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
                 
                 FormMain.Instance.IceChatOptions.CurrentTheme = comboTheme.Text;
-                FormMain.Instance.ColorsFile = themeFile;
+                System.Diagnostics.Debug.WriteLine("Update Colors");
+                FormMain.Instance.ColorsFile = themeColorsFile;
                 UpdateColorSettings();
             }
+
+            if (themeMessagesFile.Length > 0 && File.Exists(themeMessagesFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatMessageFormat));
+                TextReader textReader = new StreamReader(themeMessagesFile);
+                this.iceChatMessages = (IceChatMessageFormat)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+                
+                FormMain.Instance.MessagesFile = themeMessagesFile;
+                System.Diagnostics.Debug.WriteLine("Update Messages:" + themeMessagesFile);
+                UpdateMessageSettings();
+
+            }
+        }
+
+        private void buttonLoadTheme_Click(object sender, EventArgs e)
+        {
+            //load a new theme file(s)
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.DefaultExt = ".xml";
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.AddExtension = true;
+            ofd.AutoUpgradeEnabled = true;
+            ofd.Filter = "XML file (*.xml)|*.xml";
+            ofd.Title = "Which Theme File do you want to load?";
+            ofd.InitialDirectory = FormMain.Instance.CurrentFolder;
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string themeName = "";
+                if (System.IO.Path.GetFileName(ofd.FileName).StartsWith("Colors-"))
+                {
+                    //get the theme name
+                    string f = System.IO.Path.GetFileName(ofd.FileName).Substring(7);
+                    themeName = f.Substring(0, f.Length - 4);
+                }
+
+                if (System.IO.Path.GetFileName(ofd.FileName).StartsWith("Messages-"))
+                {
+                    //get the theme name
+                    string f = System.IO.Path.GetFileName(ofd.FileName).Substring(9);
+                    themeName = f.Substring(0, f.Length - 4);
+                }
+
+                if (themeName.Length > 0)
+                {
+                    //add the new theme name
+                    comboTheme.Items.Add(themeName);
+                }
+            }
+
+        
         }
     }
 }

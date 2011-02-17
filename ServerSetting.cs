@@ -201,6 +201,10 @@ namespace IceChat
         public bool SSLAcceptInvalidCertificate
         { get; set; }
 
+        [XmlElement("UseIPv6")]
+        public bool UseIPv6
+        { get; set; }
+
         [XmlElement("UseProxy")]
         public bool UseProxy
         { get; set; }
@@ -225,6 +229,7 @@ namespace IceChat
         [XmlElement("ProxyPass")]
         public string ProxyPass
         { get; set; }
+
 
         //these are all temporary server settings, not saved to the XML file
 
