@@ -1,3 +1,11 @@
+Build Beta 4.1 February 17 2011
+* Adding a new buddy with /buddylist now should update the BuddyList much quicker
+* Automatically detect Unicode Text, no need to select Server Encoding
+* Using the nicklist buttons with selected nicks, now fixed
+* Can select multiple nicks for Voice/Op/Halfop with nicklist buttons
+
+
+
 Build Beta 4 February 16 2011
 * Added Color Themes
 * Fixed properly selecting nicks in nicklist

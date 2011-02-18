@@ -208,6 +208,12 @@ namespace IceChat
 
                                     }
                                 }
+                                //parse MAX MODES set
+                                if (ircData[i].Length > 6)
+                                {
+                                    if (ircData[i].StartsWith("MODES="))
+                                        serverSetting.MaxModes = Convert.ToInt32(ircData[i].Substring(6));
+                                }
 
                                 //parse STATUSMSG symbols
                                 if (ircData[i].Length > 10)

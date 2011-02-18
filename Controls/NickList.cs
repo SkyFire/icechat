@@ -67,7 +67,6 @@ namespace IceChat
             public int nickColor;
             public bool[] Level;
 
-
             public int CompareTo(object obj)
             {
                 Nick u = (Nick)obj;
@@ -118,7 +117,6 @@ namespace IceChat
             {
                 return this.nick;
             }
-
         }
 
         public NickList()
@@ -935,72 +933,172 @@ namespace IceChat
 
         private void buttonOp_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    User u = currentWindow.GetNick(nick);
-                    if (u != null)
+                    int totalSelected = 0;
+                    string addModes = "";
+                    string removeModes = "";
+                    string addNicks = "";
+                    string removeNicks = "";
+                    for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        //check if opped or not
-                        for (int y = 0; y < u.Level.Length; y++)
+                        if (((Nick)sortedNickNames[i]).selected == true)
                         {
-                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                            if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                if (u.Level[y])
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -o " + u.NickName);
-                                else
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +o " + u.NickName);
+                                Nick u = ((Nick)sortedNickNames[i]);
+                                string nickName = u.nick;
+                                for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                                {
+                                    if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                        nickName = nickName.Substring(1);
+                                }
+
+                                if (u != null)
+                                {
+                                    totalSelected++;
+
+                                    //check if voiced or not
+                                    for (int y = 0; y < u.Level.Length; y++)
+                                    {
+                                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                                        {
+                                            if (u.Level[y])
+                                            {
+                                                removeModes += "o";
+                                                removeNicks += " " + nickName;
+                                            }
+                                            else
+                                            {
+                                                addModes += "o";
+                                                addNicks += " " + nickName;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    string totalModes = "";
+                    if (addModes.Length > 0)
+                        totalModes += "+" + addModes;
+                    if (removeModes.Length > 0)
+                        totalModes += "-" + removeModes;
+                    if (addNicks.Length > 0)
+                        totalModes += addNicks;
+                    if (removeNicks.Length > 0)
+                        totalModes += removeNicks;
+
+                    if (totalModes.Length > 0)
+                        FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " " + totalModes);
+
                 }
             }
+
             FormMain.Instance.FocusInputBox();
         }
 
         private void buttonVoice_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    User u = currentWindow.GetNick(nick);
-                    if (u != null)
+                    int totalSelected = 0;
+                    string addModes = "";
+                    string removeModes = "";
+                    string addNicks = "";
+                    string removeNicks = "";
+                    for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        //check if voiced or not
-                        for (int y = 0; y < u.Level.Length; y++)
+                        if (((Nick)sortedNickNames[i]).selected == true)
                         {
-                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                            if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                if (u.Level[y])
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -v " + u.NickName);
-                                else
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +v " + u.NickName);
+                                Nick u = ((Nick)sortedNickNames[i]);
+                                string nickName = u.nick;
+                                for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                                {
+                                    if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                        nickName = nickName.Substring(1);
+                                }
+
+                                if (u != null)
+                                {
+                                    totalSelected++;
+
+                                    //check if voiced or not
+                                    for (int y = 0; y < u.Level.Length; y++)
+                                    {
+                                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'v')
+                                        {
+                                            if (u.Level[y])
+                                            {
+                                                removeModes += "v";
+                                                removeNicks += " " + nickName;                                                                            
+                                            } 
+                                            else
+                                            {
+                                                addModes += "v";
+                                                addNicks += " " + nickName;                                                                            
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    string totalModes = "";
+                    if (addModes.Length > 0)
+                        totalModes += "+" + addModes;
+                    if (removeModes.Length > 0)
+                        totalModes += "-" + removeModes;
+                    if (addNicks.Length > 0)
+                        totalModes += addNicks;
+                    if (removeNicks.Length > 0)
+                        totalModes += removeNicks;
+
+                    if (totalModes.Length > 0)
+                        FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " " + totalModes);
                 }
             }
+            
             FormMain.Instance.FocusInputBox();
         }
 
         private void buttonQuery_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                    for (int i = 0; i < sortedNickNames.Count; i++)
+                    {
+                        if (((Nick)sortedNickNames[i]).selected == true)
+                        {
+                            Nick u = ((Nick)sortedNickNames[i]);
+                            string nickName = u.nick;
+                            for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                            {
+                                if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                    nickName = nickName.Substring(1);
+                            }
 
-                    if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query))
-                        FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nick, IceTabPage.WindowType.Query);
-                    else
-                        FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nick, IceTabPage.WindowType.Query));
+
+                            if (!FormMain.Instance.TabMain.WindowExists(FormMain.Instance.CurrentWindow.Connection, nickName, IceTabPage.WindowType.Query))
+                                FormMain.Instance.AddWindow(FormMain.Instance.CurrentWindow.Connection, nickName, IceTabPage.WindowType.Query);
+                            else
+                                FormMain.Instance.TabMain.SelectTab(FormMain.Instance.GetWindow(currentWindow.Connection, nickName, IceTabPage.WindowType.Query));
+
+                            return;
+                        }
+                    }
                 }
             }
             FormMain.Instance.FocusInputBox();
@@ -1008,24 +1106,98 @@ namespace IceChat
 
         private void buttonHop_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    User u = currentWindow.GetNick(nick);
-                    if (u != null)
+                    int totalSelected = 0;
+                    string addModes = "";
+                    string removeModes = "";
+                    string addNicks = "";
+                    string removeNicks = "";
+                    for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        //check if voiced or not
-                        for (int y = 0; y < u.Level.Length; y++)
+                        if (((Nick)sortedNickNames[i]).selected == true)
                         {
-                            if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                            if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                if (u.Level[y])
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " -h " + u.NickName);
-                                else
-                                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +h " + u.NickName);
+                                Nick u = ((Nick)sortedNickNames[i]);
+                                string nickName = u.nick;
+                                for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                                {
+                                    if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                        nickName = nickName.Substring(1);
+                                }
+
+                                if (u != null)
+                                {
+                                    totalSelected++;
+
+                                    //check if voiced or not
+                                    for (int y = 0; y < u.Level.Length; y++)
+                                    {
+                                        if (currentWindow.Connection.ServerSetting.StatusModes[0][y] == 'h')
+                                        {
+                                            if (u.Level[y])
+                                            {
+                                                removeModes += "h";
+                                                removeNicks += " " + nickName;
+                                            }
+                                            else
+                                            {
+                                                addModes += "h";
+                                                addNicks += " " + nickName;
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                        }
+                    }
+                    string totalModes = "";
+                    if (addModes.Length > 0)
+                        totalModes += "+" + addModes;
+                    if (removeModes.Length > 0)
+                        totalModes += "-" + removeModes;
+                    if (addNicks.Length > 0)
+                        totalModes += addNicks;
+                    if (removeNicks.Length > 0)
+                        totalModes += removeNicks;
+
+                    if (totalModes.Length > 0)
+                        FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " " + totalModes);
+
+                }
+            }
+
+            FormMain.Instance.FocusInputBox();
+        }
+
+        private void buttonInfo_Click(object sender, EventArgs e)
+        {
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            {
+                //check for all the selected nicks in the nick list
+                if (selectedIndex < sortedNickNames.Count)
+                {
+                    for (int i = 0; i < sortedNickNames.Count; i++)
+                    {
+                        if (((Nick)sortedNickNames[i]).selected == true)
+                        {
+                            Nick u = ((Nick)sortedNickNames[i]);
+                            string nickName = u.nick;
+                            for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                            {
+                                if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                    nickName = nickName.Substring(1);
+                            }
+
+
+                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nickName);
+                            
+                            FormMain.Instance.FocusInputBox();
+                            return;                            
                         }
                     }
                 }
@@ -1033,33 +1205,32 @@ namespace IceChat
             FormMain.Instance.FocusInputBox();
         }
 
-        private void buttonInfo_Click(object sender, EventArgs e)
-        {
-            if (selectedIndex >= 0)
-            {
-                if (selectedIndex < sortedNickNames.Count)
-                {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
-
-                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/userinfo " + nick);
-                }
-            }
-            FormMain.Instance.FocusInputBox();
-        }
-
         private void buttonBan_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                    for (int i = 0; i < sortedNickNames.Count; i++)
+                    {
+                        if (((Nick)sortedNickNames[i]).selected == true)
+                        {
+                            Nick u = ((Nick)sortedNickNames[i]);
+                            string nickName = u.nick;
+                            for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                            {
+                                if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                    nickName = nickName.Substring(1);
+                            }
 
-                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nick); ;
+
+                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nickName); ;
+
+                            FormMain.Instance.FocusInputBox();
+                            return;
+                        }
+                    }
                 }
             }
             FormMain.Instance.FocusInputBox();
@@ -1067,15 +1238,30 @@ namespace IceChat
 
         private void buttonKick_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0 && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                    for (int i = 0; i < sortedNickNames.Count; i++)
+                    {
+                        if (((Nick)sortedNickNames[i]).selected == true)
+                        {
+                            Nick u = ((Nick)sortedNickNames[i]);
+                            string nickName = u.nick;
+                            for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                            {
+                                if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                    nickName = nickName.Substring(1);
+                            }
 
-                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nick); ;
+
+                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nickName); ;
+
+                            FormMain.Instance.FocusInputBox();
+                            return;
+                        }
+                    }
                 }
             }
             FormMain.Instance.FocusInputBox();
@@ -1083,15 +1269,30 @@ namespace IceChat
 
         private void buttonWhois_Click(object sender, EventArgs e)
         {
-            if (selectedIndex >= 0)
+            if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
+                //check for all the selected nicks in the nick list
                 if (selectedIndex < sortedNickNames.Count)
                 {
-                    string nick = sortedNickNames[selectedIndex].ToString();
-                    for (int i = 0; i < FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
-                        nick = nick.Replace(FormMain.Instance.CurrentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                    for (int i = 0; i < sortedNickNames.Count; i++)
+                    {
+                        if (((Nick)sortedNickNames[i]).selected == true)
+                        {
+                            Nick u = ((Nick)sortedNickNames[i]);
+                            string nickName = u.nick;
+                            for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
+                            {
+                                if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
+                                    nickName = nickName.Substring(1);
+                            }
 
-                    FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nick); ;
+
+                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/whois " + nickName); ;
+
+                            FormMain.Instance.FocusInputBox();
+                            return;
+                        }
+                    }
                 }
             }
             FormMain.Instance.FocusInputBox();

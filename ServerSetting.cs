@@ -72,6 +72,7 @@ namespace IceChat
         private bool _setModeI = true;
         private int _pongTimerMinutes = 30;
         private int _maxNickLength = 15;
+        private int _maxModes = 5;
 
         [XmlAttribute("ServerID")]
         public int ID
@@ -271,6 +272,10 @@ namespace IceChat
         public char[] ChannelTypes
         { get; set; }
         
+        //maximum setable modes
+        public int MaxModes
+        { get { return this._maxModes; } set { this._maxModes = value; } }
+
         //allow the MOTD to show if /motd command is used, but ShowMOTD is disabled
         [XmlIgnore()]
         public bool ForceMOTD

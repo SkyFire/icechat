@@ -322,7 +322,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 16 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 17 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -2038,7 +2038,8 @@ namespace IceChat
                                 connection.ServerSetting.BuddyList = buddies;
 
                                 serverTree.SaveServers(serverTree.ServersCollection);
-                                
+
+                                connection.BuddyListCheck();
                             }
                             break;
                         case "/chaninfo":

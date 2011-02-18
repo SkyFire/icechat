@@ -104,7 +104,7 @@ namespace IceChat
             reconnectTimer.Dispose();
         }
 
-        private void BuddyListCheck()
+        internal void BuddyListCheck()
         {
             if (serverSetting.BuddyListEnable)
             {

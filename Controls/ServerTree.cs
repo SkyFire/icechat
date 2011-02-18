@@ -1209,7 +1209,7 @@ namespace IceChat
         private void OnSaveDefaultServer()
         {
             if (SaveDefault != null)
-                SaveDefault();
+                SaveDefault();            
         }
         
         private void OnSaveServer(ServerSetting s, bool removeServer)
