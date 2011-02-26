@@ -371,6 +371,7 @@ namespace IceChat
                 //System.Diagnostics.Debug.WriteLine("select by index :" + selectedNodeIndex + ":" + nodeNumber);
 
                 this.Invalidate();
+                
                 object findNode = FindNodeValue(selectedNodeIndex);
                 if (findNode != null)
                 {
@@ -388,11 +389,13 @@ namespace IceChat
                                 if (c.Connection.ServerSetting == ((ServerSetting)findNode))
                                 {
                                     //found the connection, switch to this tab in the Console Tab Window
+                                    selectedServerID = c.Connection.ServerSetting.ID;
                                     FormMain.Instance.TabMain.GetTabPage("Console").SelectConsoleTab(c);
                                     return;
                                 }
                             }
                         }
+                        
                         //select the default console window
                         FormMain.Instance.TabMain.GetTabPage("Console").ConsoleTab.SelectedIndex = 0;
                         return;
@@ -1295,6 +1298,7 @@ namespace IceChat
             IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
             if (c != null)
             {
+                c.AttemptReconnect = false;
                 c.ForceDisconnect();
             }
         }

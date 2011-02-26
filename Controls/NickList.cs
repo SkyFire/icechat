@@ -398,6 +398,8 @@ namespace IceChat
 
         private void DeSelectAllNicks()
         {
+            if (sortedNickNames == null) return;
+
             for (int i = 0; i < sortedNickNames.Count; i++)
             {
                 ((Nick)sortedNickNames[i]).selected = false;
@@ -933,6 +935,8 @@ namespace IceChat
 
         private void buttonOp_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1003,6 +1007,7 @@ namespace IceChat
 
         private void buttonVoice_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
 
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
@@ -1073,6 +1078,8 @@ namespace IceChat
 
         private void buttonQuery_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1106,6 +1113,8 @@ namespace IceChat
 
         private void buttonHop_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1176,6 +1185,8 @@ namespace IceChat
 
         private void buttonInfo_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1207,6 +1218,8 @@ namespace IceChat
 
         private void buttonBan_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1238,6 +1251,8 @@ namespace IceChat
 
         private void buttonKick_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list
@@ -1256,7 +1271,7 @@ namespace IceChat
                             }
 
 
-                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nickName); ;
+                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/kick " + currentWindow.TabCaption + " " + nickName);
 
                             FormMain.Instance.FocusInputBox();
                             return;
@@ -1269,6 +1284,8 @@ namespace IceChat
 
         private void buttonWhois_Click(object sender, EventArgs e)
         {
+            if (currentWindow == null) return;
+
             if (currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
             {
                 //check for all the selected nicks in the nick list

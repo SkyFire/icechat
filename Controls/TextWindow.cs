@@ -30,7 +30,6 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-//using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace IceChat
@@ -565,6 +564,7 @@ namespace IceChat
             if (((ToolStripMenuItem)sender).Tag == null) return;
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
+            if (command.Length == 0) return;
 
             if (this.Parent.GetType() == typeof(ConsoleTab))
             {
@@ -610,7 +610,16 @@ namespace IceChat
                     //check if it is a irc:// link
                     if (clickedWord.StartsWith("irc://"))
                     {
-                        FormMain.Instance.ParseOutGoingCommand(null, "/server " + clickedWord.Substring(6).TrimEnd());
+                        //check if a channel was specified
+                        string server = clickedWord.Substring(6).TrimEnd();
+                        if (server.IndexOf("/") != -1)
+                        {
+                            string host = server.Split('/')[0];
+                            string channel = server.Split('/')[1];
+                            FormMain.Instance.ParseOutGoingCommand(null, "/joinserv " + host + " #" + channel);
+                        }
+                        else
+                            FormMain.Instance.ParseOutGoingCommand(null, "/server " + clickedWord.Substring(6).TrimEnd());
                         return;
                     }
 
@@ -856,10 +865,14 @@ namespace IceChat
                 if (!_singleLine && _showTimeStamp)
                     newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
 
+                System.Diagnostics.Debug.WriteLine("NEWLINE1:" + newLine);
+
                 if (_noColorMode)
                     newLine = StripColorCodes(newLine);
                 else
                     newLine = RedefineColorCodes(newLine);
+
+                System.Diagnostics.Debug.WriteLine("NEWLINE2:" + newLine);
 
                 if (_logClass != null)
                     _logClass.WriteLogFile(newLine);
@@ -867,6 +880,9 @@ namespace IceChat
                 _totalLines++;
 
                 newLine = ParseEmoticons(newLine);
+
+                System.Diagnostics.Debug.WriteLine("NEWLINE3:" + newLine);
+
 
                 if (_singleLine) _totalLines = 1;
 
@@ -1290,22 +1306,23 @@ namespace IceChat
             string ParseForeColor = @"\x03[0-9]{1,2}";
             string ParseColorChar = @"\x03";
             string ParseBoldChar = @"\x02";
-            string ParseUnderlineChar = @"\x31";
-            string ParseReverseChar = @"\x22";
-
-            Regex ParseIRCCodes = new Regex(ParseBackColor + "|" + ParseForeColor + "|" + ParseColorChar + "|" + ParseBoldChar + "|" + ParseUnderlineChar + "|" + ParseReverseChar);
+            string ParseUnderlineChar = @"\x1F";    //code 31
+            string ParseReverseChar = @"\x16";      //code 22
+            string ParseItalicChar = @"\x1D";      //code 29
 
             StringBuilder sLine = new StringBuilder();
             sLine.Append(line);
 
+            Regex ParseIRCCodes = new Regex(ParseBackColor + "|" + ParseForeColor + "|" + ParseColorChar + "|" + ParseBoldChar + "|" + ParseUnderlineChar + "|" + ParseReverseChar + "|" + ParseItalicChar);
+
             Match m = ParseIRCCodes.Match(sLine.ToString());
             
             while (m.Success)
-            {
+            {                
                 sLine.Remove(m.Index, m.Length);                
                 m = ParseIRCCodes.Match(sLine.ToString(), m.Index);
             }
-            
+
             return sLine.ToString();
         }
 
@@ -1350,6 +1367,7 @@ namespace IceChat
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine("FORMAT  :" + _textLines[currentLine].line);
                         _displayLines[line].line = _textLines[currentLine].line;
                         _displayLines[line].textLine = currentLine;
                         _displayLines[line].textColor = _textLines[currentLine].textColor;

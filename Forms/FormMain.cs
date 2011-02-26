@@ -302,6 +302,8 @@ namespace IceChat
             this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
             this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
 
+            this.toolStripMain.VisibleChanged += new EventHandler(toolStripMain_VisibleChanged);
+
             serverListToolStripMenuItem.Checked = iceChatOptions.ShowServerTree;
             panelDockLeft.Visible = serverListToolStripMenuItem.Checked;
             splitterLeft.Visible = serverListToolStripMenuItem.Checked;
@@ -322,7 +324,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 17 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 26 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -515,15 +517,20 @@ namespace IceChat
                     NewServerConnection(s);
             }
 
-            splash.Close();
-            splash.Dispose();
-
             WindowMessage(null, "Console", "Current Data Folder: " + currentFolder, 4, true);
 
             //check for an update
             checkForUpdate();
+
+            splash.Close();
+            splash.Dispose();
+
         }
 
+        private void toolStripMain_VisibleChanged(object sender, EventArgs e)
+        {
+            toolBarToolStripMenuItem.Checked =toolStripMain.Visible;
+        }
         
         /// <summary>
         /// Save Default Server Settings
@@ -719,7 +726,7 @@ namespace IceChat
             WindowMessage(null, "Console", "\x00034Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version, 1, false);
             WindowMessage(null, "Console", "\x00034** This is a Beta version, not fully functional, not all options are added **", 1, false);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
-            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org\x0003 if you wish to help with this project", 1, true);
+            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org/icechat2009\x0003 if you wish to help with this project", 1, true);
 
             StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
         }
@@ -1169,15 +1176,15 @@ namespace IceChat
                 else
                 {
                     if (CurrentWindowType == IceTabPage.WindowType.Console)
-                        WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4, true);
+                        WindowMessage(connection, "Console", "Error: Not Connected to Server (" + data + ")", 4, true);
                     else if (CurrentWindow.WindowStyle != IceTabPage.WindowType.ChannelList && CurrentWindow.WindowStyle != IceTabPage.WindowType.DCCFile)
                     {
-                        CurrentWindow.TextWindow.AppendText("Error: Not Connected (" + data + ")", 4);
+                        CurrentWindow.TextWindow.AppendText("Error: Not Connected to Server (" + data + ")", 4);
                         CurrentWindow.TextWindow.ScrollToBottom();
                     }
                     else
                     {
-                        WindowMessage(connection, "Console", "Error: Not Connected (" + data + ")", 4, true);
+                        WindowMessage(connection, "Console", "Error: Not Connected to Server (" + data + ")", 4, true);
                     }
                 }
             }
@@ -1447,6 +1454,8 @@ namespace IceChat
                         StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
                     else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
                         StatusText(t.Connection.ServerSetting.NickName + " in DCC chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
+                    else if (CurrentWindowType == IceTabPage.WindowType.ChannelList)
+                        StatusText(t.Connection.ServerSetting.NickName + " in Channel List {" + t.Connection.ServerSetting.RealServerName + "}");
                     
                     CurrentWindow.LastMessageType = ServerMessageType.Default;
                     t = null;
@@ -1545,7 +1554,7 @@ namespace IceChat
             try
             {
                 data = data.Replace("&#x3;", ((char)3).ToString());
-                
+
                 if (data.StartsWith("//"))
                 {
                     //parse out identifiers
@@ -2365,7 +2374,10 @@ namespace IceChat
                             break;
                         case "/forcequit":
                             if (connection != null)
+                            {
+                                connection.AttemptReconnect = false;
                                 connection.ForceDisconnect();
+                            }
                             break;
                         case "/google":
                             if (data.Length > 0)
@@ -2396,11 +2408,15 @@ namespace IceChat
                         case "/icechat":
                             if (connection != null)
                                 ParseOutGoingCommand(connection, "/me is using " + Settings.Default.ProgramID + " " + Settings.Default.Version);
+                            else
+                                ParseOutGoingCommand(connection, "/echo using " + Settings.Default.ProgramID + " " + Settings.Default.Version);
                             break;
                         case "/icepath":
                             //To get current Folder and paste it into /me
                             if (connection != null)
                                 ParseOutGoingCommand(connection, "/me Build Path = " + Directory.GetCurrentDirectory());
+                            else
+                                ParseOutGoingCommand(connection, "/echo Build Path = " + Directory.GetCurrentDirectory());
                             break;
                         case "/ignore":
                             if (connection != null)
@@ -2454,18 +2470,41 @@ namespace IceChat
                                 {
                                     //get the channel
                                     temp = data.Substring(0, data.IndexOf(' '));
-                                    data = data.Substring(temp.Length + 1);
-
-                                    if (data.IndexOf(' ') > 0)
+                                    //check if temp is a channel or not
+                                    if (Array.IndexOf(connection.ServerSetting.ChannelTypes, temp[0]) == -1)
                                     {
-                                        //there is a kick reason
-                                        string msg = data.Substring(data.IndexOf(' ') + 1);
-                                        data = data.Substring(0, data.IndexOf(' '));
-                                        SendData(connection, "KICK " + temp + " " + data + " :" + msg);
+                                        //temp is not a channel, substitute with current channel
+                                        //make sure we are in a channel
+                                        if (CurrentWindow.WindowStyle == IceTabPage.WindowType.Channel)
+                                        {
+                                            temp = CurrentWindow.TabCaption;
+                                            if (data.IndexOf(' ') > 0)
+                                            {
+                                                //there is a kick reason
+                                                string msg = data.Substring(data.IndexOf(' ') + 1);
+                                                data = data.Substring(0, data.IndexOf(' '));
+                                                SendData(connection, "KICK " + temp + " " + data + " :" + msg);
+                                            }
+                                            else
+                                            {
+                                                SendData(connection, "KICK " + temp + " " + data);
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        SendData(connection, "KICK " + temp + " " + data);
+                                        data = data.Substring(temp.Length + 1);
+                                        if (data.IndexOf(' ') > 0)
+                                        {
+                                            //there is a kick reason
+                                            string msg = data.Substring(data.IndexOf(' ') + 1);
+                                            data = data.Substring(0, data.IndexOf(' '));
+                                            SendData(connection, "KICK " + temp + " " + data + " :" + msg);
+                                        }
+                                        else
+                                        {
+                                            SendData(connection, "KICK " + temp + " " + data);
+                                        }
                                     }
                                 }
                             }
@@ -2861,7 +2900,7 @@ namespace IceChat
                                         {
                                             s.ServerPort = s.ServerPort.Substring(1);
                                             s.UseSSL = true;
-                                            System.Diagnostics.Debug.WriteLine("use ssl");
+                                            s.SSLAcceptInvalidCertificate = true;
                                         }
                                     }
                                     else if (data.Contains(":"))
@@ -2877,6 +2916,7 @@ namespace IceChat
                                         {
                                             s.ServerPort = s.ServerPort.Substring(1);
                                             s.UseSSL = true;
+                                            s.SSLAcceptInvalidCertificate = true;
                                         }
                                     }
                                     else
@@ -3373,6 +3413,12 @@ namespace IceChat
                         pc.NextValue();
                         TimeSpan ts2 = TimeSpan.FromSeconds(pc.NextValue());
                         data = ReplaceFirst(data, m.Value, GetDuration(ts2.TotalSeconds));
+                        break;
+                    case "$mono":
+                        if (StaticMethods.IsRunningOnMono())
+                            data = ReplaceFirst(data, m.Value, (string)typeof(object).Assembly.GetType("Mono.Runtime").InvokeMember("GetDisplayName", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding, null, null, null));
+                        else
+                            data = ReplaceFirst(data, m.Value, "Mono.Runtime not detected");
                         break;
                 }
                 m = m.NextMatch();
@@ -4510,7 +4556,11 @@ namespace IceChat
 
                 FormFloat formFloat = new FormFloat(ref p, this, tp.Text);
                 formFloat.Show();
-                formFloat.Left = Cursor.Position.X - (formFloat.Width /2);
+                if (Cursor.Position.X - (formFloat.Width / 2) > 0)
+                    formFloat.Left = Cursor.Position.X - (formFloat.Width / 2);
+                else
+                    formFloat.Left = 0;
+
                 formFloat.Top = Cursor.Position.Y;
             }
         }

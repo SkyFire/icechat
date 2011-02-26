@@ -47,12 +47,12 @@
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buttonRemoveException = new System.Windows.Forms.Button();
             this.listViewExceptions = new System.Windows.Forms.ListView();
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonApply = new System.Windows.Forms.Button();
-            this.buttonRemoveException = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -61,6 +61,9 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
@@ -186,6 +189,8 @@
             // 
             // textTopic
             // 
+            this.textTopic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textTopic.Location = new System.Drawing.Point(6, 6);
             this.textTopic.Name = "textTopic";
             this.textTopic.Size = new System.Drawing.Size(425, 23);
@@ -205,6 +210,7 @@
             // 
             // buttonRemoveBan
             // 
+            this.buttonRemoveBan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRemoveBan.Location = new System.Drawing.Point(324, 238);
             this.buttonRemoveBan.Name = "buttonRemoveBan";
             this.buttonRemoveBan.Size = new System.Drawing.Size(107, 23);
@@ -215,6 +221,9 @@
             // 
             // listViewBans
             // 
+            this.listViewBans.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewBans.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
@@ -248,8 +257,22 @@
             this.tabPage3.Text = "Exception List";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // buttonRemoveException
+            // 
+            this.buttonRemoveException.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRemoveException.Location = new System.Drawing.Point(276, 238);
+            this.buttonRemoveException.Name = "buttonRemoveException";
+            this.buttonRemoveException.Size = new System.Drawing.Size(155, 23);
+            this.buttonRemoveException.TabIndex = 2;
+            this.buttonRemoveException.Text = "Remove Exception";
+            this.buttonRemoveException.UseVisualStyleBackColor = true;
+            this.buttonRemoveException.Click += new System.EventHandler(this.buttonRemoveException_Click);
+            // 
             // listViewExceptions
             // 
+            this.listViewExceptions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewExceptions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
             this.columnHeader4});
@@ -273,6 +296,7 @@
             // 
             // buttonClose
             // 
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.Location = new System.Drawing.Point(348, 318);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(93, 27);
@@ -283,6 +307,7 @@
             // 
             // buttonApply
             // 
+            this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonApply.Location = new System.Drawing.Point(249, 318);
             this.buttonApply.Name = "buttonApply";
             this.buttonApply.Size = new System.Drawing.Size(93, 27);
@@ -290,16 +315,6 @@
             this.buttonApply.Text = "Apply";
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
-            // 
-            // buttonRemoveException
-            // 
-            this.buttonRemoveException.Location = new System.Drawing.Point(276, 238);
-            this.buttonRemoveException.Name = "buttonRemoveException";
-            this.buttonRemoveException.Size = new System.Drawing.Size(155, 23);
-            this.buttonRemoveException.TabIndex = 2;
-            this.buttonRemoveException.Text = "Remove Exception";
-            this.buttonRemoveException.UseVisualStyleBackColor = true;
-            this.buttonRemoveException.Click += new System.EventHandler(this.buttonRemoveException_Click);
             // 
             // FormChannelInfo
             // 

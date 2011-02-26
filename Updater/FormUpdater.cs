@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace IceChatUpdater
 {
@@ -115,8 +116,7 @@ namespace IceChatUpdater
             {
                 string f = System.IO.Path.GetFileName(file);
                 System.Diagnostics.Debug.WriteLine(f);
-                //webClient.DownloadFileAsync(new Uri(file), currentFolder + System.IO.Path.DirectorySeparatorChar + f);
-
+                //webClient.DownloadFileAsync(new Uri(file), currentFolder + System.IO.Path.DirectorySeparatorChar + f);                
                 if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + f))
                     File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
 
@@ -155,22 +155,6 @@ namespace IceChatUpdater
                             
                             System.Threading.Thread.Sleep(3000);
                             
-                            foreach (string f in localFiles)
-                            {
-                                if (File.Exists(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f))
-                                    File.Delete(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-
-                                System.Threading.Thread.Sleep(500);
-
-                                //MessageBox.Show(currentFolder + System.IO.Path.DirectorySeparatorChar + f + ":" + Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-                                
-                                File.Copy(currentFolder + System.IO.Path.DirectorySeparatorChar + f, Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-
-                                //delete the files out of the update folder
-                                File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
-                            }
-
-
 
                         }
                         catch (Exception ee)
@@ -178,12 +162,28 @@ namespace IceChatUpdater
                             MessageBox.Show(ee.Message + ":" + ee.Source);
                         }
                         
-                        
-                        MessageBox.Show("Files Updated, you are welcome to Restart IceChat");
-
                     }
                 }
             }
+
+            foreach (string f in localFiles)
+            {
+                if (File.Exists(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f))
+                    File.Delete(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+
+                System.Threading.Thread.Sleep(500);
+
+                //MessageBox.Show(currentFolder + System.IO.Path.DirectorySeparatorChar + f + ":" + Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+
+                File.Copy(currentFolder + System.IO.Path.DirectorySeparatorChar + f, Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
+
+                //delete the files out of the update folder
+                File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
+            }
+
+
+            MessageBox.Show("Files Updated, you are welcome to Restart IceChat");
+
 
         }
 

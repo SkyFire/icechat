@@ -1358,6 +1358,7 @@ namespace IceChat
             {
                 this.textFormattedBasic.ClearTextWindow();
                 this.textFormattedBasic.AppendText(newMessage, 1);
+                this.treeBasicMessages.SelectedNode.Tag = newMessage;
             }
             treeBasicMessages.Select();
         }
@@ -1381,6 +1382,7 @@ namespace IceChat
 
                 this.textFormattedText.ClearTextWindow();
                 this.textFormattedText.AppendText(newMessage, 1);
+                this.treeMessages.SelectedNode.Tag = newMessage;
             }
             treeMessages.Select();
 

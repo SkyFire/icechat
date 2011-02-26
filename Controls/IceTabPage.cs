@@ -938,7 +938,24 @@ namespace IceChat
         {
             _disableConsoleSelectChangedEvent = true;
             consoleTab.SelectedTab = c;
+            StatusChange();
             _disableConsoleSelectChangedEvent = false;
+        }
+
+        private void StatusChange()
+        {
+            FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
+
+            if (((ConsoleTab)consoleTab.SelectedTab).Connection.IsConnected)
+            {
+                if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName != null)
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName);
+                else
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName);
+            }
+            else
+                FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected (" + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + ")");
+
         }
 
         private void OnTabConsoleSelectedIndexChanged(object sender, EventArgs e)
@@ -947,17 +964,7 @@ namespace IceChat
             
             if (consoleTab.TabPages.IndexOf(consoleTab.SelectedTab) != 0 && !_disableConsoleSelectChangedEvent)
             {
-                FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
-
-                if (((ConsoleTab)consoleTab.SelectedTab).Connection.IsConnected)
-                {
-                    if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName != null)
-                        FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName);
-                    else
-                        FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName);
-                }
-                else
-                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected (" + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + ")");
+                StatusChange();
                 
                 //highlite the proper item in the server tree
                 FormMain.Instance.ServerTree.SelectTab(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting, false);

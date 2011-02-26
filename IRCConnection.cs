@@ -178,7 +178,7 @@ namespace IceChat
             }
             catch(SocketException ee)
             {
-                System.Diagnostics.Debug.WriteLine(ee.Message + ":" + ee.StackTrace);
+                System.Diagnostics.Debug.WriteLine(ee.Message);
             }
         }
 
@@ -279,7 +279,10 @@ namespace IceChat
                     }
                 }
             }
-            ServerMessage(this, msg);
+            if (ServerMessage != null)
+                ServerMessage(this, msg);
+
+            System.Diagnostics.Debug.WriteLine("OnDisconnect Fired");
 
             FormMain.Instance.ServerTree.Invalidate();
 
@@ -359,7 +362,7 @@ namespace IceChat
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error 2:" + e.Message + ":" + e.StackTrace);
+                    ServerError(this, "Socket Exception Error: " + e.Message);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -367,8 +370,8 @@ namespace IceChat
             }
 
 
-            System.Diagnostics.Debug.WriteLine("connected");
-            System.Diagnostics.Debug.WriteLine("create networkstream 2");
+            //System.Diagnostics.Debug.WriteLine("connected");
+            //System.Diagnostics.Debug.WriteLine("create networkstream 2");
             socketStream = new NetworkStream(serverSocket, true);
             if (serverSetting.UseSSL)
             {
@@ -383,6 +386,11 @@ namespace IceChat
                     if (ServerError != null)
                         ServerError(this, "Authentication Error :" + ae.Message.ToString());
                 }
+                catch (Exception e)
+                {
+                    if (ServerError != null)
+                        ServerError(this, "Exception Error :" + e.Message.ToString());
+                }
             }
 
             try
@@ -391,7 +399,6 @@ namespace IceChat
                 {
                     if (sslStream != null && sslStream.CanRead)
                     {
-                        System.Diagnostics.Debug.WriteLine("start beginread SSL");
                         readBuffer = new byte[BUFFER_SIZE];                        
                         sslStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
@@ -400,7 +407,6 @@ namespace IceChat
                 {
                     if (socketStream != null && socketStream.CanRead)
                     {
-                        System.Diagnostics.Debug.WriteLine("start beginread");
                         readBuffer = new byte[BUFFER_SIZE];
                         socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
@@ -875,23 +881,25 @@ namespace IceChat
                     else
                     {
                         //connection lost                    
+                        disconnectError = true;
+                        ForceDisconnect();
+                        
                         if (ServerError != null)
                             ServerError(this, "Connection Lost");
 
-                        disconnectError = true;
-                        ForceDisconnect();
                     }
                 }
             }
             catch (SocketException se)
             {
-                ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
+                //ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
+                ServerError(this, "Socket Exception OnReceiveData Error:" + se.Message.ToString());
                 disconnectError = true;
                 ForceDisconnect();
             }
             catch (Exception e)
             {
-                ServerError(this, "Exception OnReceiveData Error:" + e.Source + ":" + e.Message.ToString() + ":" + e.StackTrace);
+                ServerError(this, "Exception OnReceiveData Error:" + e.Message.ToString());
                 disconnectError = true;
                 ForceDisconnect();
             }                 
@@ -1036,7 +1044,7 @@ namespace IceChat
                         catch (Exception e)
                         {
                             if (ServerError != null)
-                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString() + ":" + e.StackTrace);
+                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
 
                             whichAddressCurrent++;
                             if (whichAddressCurrent > hostEntry.AddressList.Length)
@@ -1056,7 +1064,7 @@ namespace IceChat
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error 1:" + se.Message + ":" + se.StackTrace);
+                    ServerError(this, "Socket Exception Error 1:" + se.Message);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -1087,14 +1095,13 @@ namespace IceChat
                 {
                     serverSocket.Shutdown(SocketShutdown.Both);
                     serverSocket.BeginDisconnect(false, new AsyncCallback(OnDisconnect), serverSocket);
-                    //socketStream.Close();
                 }
             }
             catch
             {
             }
 
-            if (FormMain.Instance.IceChatOptions.ReconnectServer)
+            if (FormMain.Instance.IceChatOptions.ReconnectServer && this.attemptReconnect)
             {
                 if (ServerMessage != null)
                     ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");

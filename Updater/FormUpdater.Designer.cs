@@ -36,6 +36,7 @@
             this.buttonDownload = new System.Windows.Forms.Button();
             this.labelUpdate = new System.Windows.Forms.Label();
             this.labelNoUpdate = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // labelCurrent
@@ -79,7 +80,7 @@
             // labelFolder
             // 
             this.labelFolder.AutoSize = true;
-            this.labelFolder.Location = new System.Drawing.Point(12, 171);
+            this.labelFolder.Location = new System.Drawing.Point(13, 214);
             this.labelFolder.Name = "labelFolder";
             this.labelFolder.Size = new System.Drawing.Size(46, 16);
             this.labelFolder.TabIndex = 4;
@@ -118,11 +119,19 @@
             this.labelNoUpdate.Text = "Your are running Latest Version";
             this.labelNoUpdate.Visible = false;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(16, 170);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(386, 23);
+            this.progressBar1.TabIndex = 8;
+            // 
             // FormUpdater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(593, 196);
+            this.ClientSize = new System.Drawing.Size(593, 239);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.labelNoUpdate);
             this.Controls.Add(this.labelUpdate);
             this.Controls.Add(this.buttonDownload);
@@ -153,6 +162,7 @@
         private System.Windows.Forms.Button buttonDownload;
         private System.Windows.Forms.Label labelUpdate;
         private System.Windows.Forms.Label labelNoUpdate;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

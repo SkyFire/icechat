@@ -110,6 +110,9 @@
             // 
             // listChannels
             // 
+            this.listChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.listChannels.FormattingEnabled = true;
             this.listChannels.ItemHeight = 16;
             this.listChannels.Location = new System.Drawing.Point(12, 202);
@@ -119,6 +122,7 @@
             // 
             // buttonClose
             // 
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.Location = new System.Drawing.Point(261, 324);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
@@ -129,6 +133,8 @@
             // 
             // textNick
             // 
+            this.textNick.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textNick.Location = new System.Drawing.Point(114, 6);
             this.textNick.Name = "textNick";
             this.textNick.ReadOnly = true;
@@ -137,6 +143,8 @@
             // 
             // textHost
             // 
+            this.textHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textHost.Location = new System.Drawing.Point(114, 35);
             this.textHost.Name = "textHost";
             this.textHost.ReadOnly = true;
@@ -145,6 +153,8 @@
             // 
             // textFullName
             // 
+            this.textFullName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textFullName.Location = new System.Drawing.Point(114, 64);
             this.textFullName.Name = "textFullName";
             this.textFullName.ReadOnly = true;
@@ -153,6 +163,8 @@
             // 
             // textIdleTime
             // 
+            this.textIdleTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textIdleTime.Location = new System.Drawing.Point(114, 93);
             this.textIdleTime.Name = "textIdleTime";
             this.textIdleTime.ReadOnly = true;
@@ -161,6 +173,8 @@
             // 
             // textClient
             // 
+            this.textClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textClient.Location = new System.Drawing.Point(114, 122);
             this.textClient.Name = "textClient";
             this.textClient.ReadOnly = true;
@@ -170,6 +184,8 @@
             // 
             // textLogonTime
             // 
+            this.textLogonTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.textLogonTime.Location = new System.Drawing.Point(114, 151);
             this.textLogonTime.Name = "textLogonTime";
             this.textLogonTime.ReadOnly = true;

@@ -307,7 +307,7 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Clear", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
             menu.Items.Add(NewMenuItem("Clear All", "/clear all console", StaticMethods.LoadResourceImage("clear.png")));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(NewMenuItem("Quit Server", "/quit", StaticMethods.LoadResourceImage("disconected.png")));
+            menu.Items.Add(NewMenuItem("Quit Server", "//quit", StaticMethods.LoadResourceImage("disconected.png")));
             
             //add the console popup menu
             AddPopupMenu("Console", menu);

@@ -346,9 +346,22 @@ namespace IceChat
 
                     mainTabControl.GetTabPage("Console").AddText(connection, error, 4, false);
 
-                    //send it to the current window as well
-                    if (CurrentWindowType != IceTabPage.WindowType.Console)
-                        CurrentWindowMessage(connection, error, 4, false);
+                    //send it to all open channels
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                        {
+                            if (t.Connection == connection)
+                            {
+                                t.TextWindow.AppendText(error, 4);
+                                t.LastMessageType = ServerMessageType.ServerMessage;
+                            }
+                        }
+                    }
+
+                    
+                    //if (CurrentWindowType != IceTabPage.WindowType.Console)
+                    //    CurrentWindowMessage(connection, error, 4, false);
 
                     mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
 
@@ -1318,6 +1331,7 @@ namespace IceChat
         private void OnRawServerData(IRCConnection connection, string data)
         {
             //check if a Debug Window is open
+            System.Diagnostics.Debug.WriteLine("RAW:" + data);
             IceTabPage t = GetWindow(null, "Debug", IceTabPage.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText(connection.ServerSetting.ID + ":" + data, 1);

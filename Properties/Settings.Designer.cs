@@ -37,7 +37,7 @@ namespace IceChat.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Beta 4.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Beta 5")]
         public string Version {
             get {
                 return ((string)(this["Version"]));

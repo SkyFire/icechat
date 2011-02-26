@@ -842,7 +842,7 @@ namespace IceChat
                 }
                 catch (SocketException se)
                 {
-                    System.Diagnostics.Debug.WriteLine("GetDCCData Socket Exception:" + se.Message + ":" + se.StackTrace);
+                    System.Diagnostics.Debug.WriteLine("GetDCCData Socket Exception:" + se.Message);
                 }
                 catch (Exception ex)
                 {

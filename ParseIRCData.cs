@@ -277,28 +277,32 @@ namespace IceChat
                         case "219": //end of stats
                             ServerMessage(this, JoinString(ircData, 4, true));
                             break;
-                        case "221": //:port80b.se.quakenet.org 221 Snerf2 +i
+                        case "221": //:port80b.se.quakenet.org 221 Snerf +i
                             ServerMessage(this, RemoveColon(ircData[0]) + " sets mode for " + ircData[2] + " " + ircData[3]);                            
-                            break;
-                        
+                            break;                        
                         case "251": //there are x users on x servers
                         case "255": //I have x users and x servers
                             ServerMessage(this, JoinString(ircData, 3, true));
                             break;
-
                         case "250": //highest connection count
+                            msg = JoinString(ircData, 3, true);
+                            ServerMessage(this, msg);
+                            break;
                         case "252": //operators online
                         case "253": //unknown connections
                         case "254": //channels formed
                             msg = "There are " + ircData[3] + " " + JoinString(ircData, 4, true);
                             ServerMessage(this, msg);
                             break;
-
                         case "265": //current local users / max
                         case "266": //current global users / max
-                            msg = JoinString(ircData, 3, true);
+                            if (ircData[5].StartsWith(":"))
+                                msg = JoinString(ircData, 5, true);
+                            else
+                                msg = JoinString(ircData, 3, true);    
                             ServerMessage(this, msg);
                             break;
+                        
                         case "302": //parse out a userhost
                             msg = JoinString(ircData, 3, true);
                             if (msg.Length == 0) return;
@@ -449,7 +453,11 @@ namespace IceChat
                         case "338":     //whois information
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
                                 return;
-                            msg = JoinString(ircData, 4, false);
+                            if (ircData[6].StartsWith(":"))
+                                msg = JoinString(ircData, 6, true) + " " + ircData[4] + " " + ircData[5];
+                            else
+                                msg = JoinString(ircData, 5, true) + " " + ircData[4];
+                            //msg = JoinString(ircData, 4, false);
                             WhoisData(this, ircData[3], msg);
                             break;                        
                         case "378":     //whois information
@@ -464,6 +472,7 @@ namespace IceChat
                             msg = RemoveColon(ircData[4]) + " " + JoinString(ircData, 5, true);
                             WhoisData(this, ircData[3], msg);
                             break;
+                        case "275":
                         case "671":     //using secure connection
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
                                 return;
@@ -701,7 +710,7 @@ namespace IceChat
                                         if (tw.Connection == this)
                                         {
                                             if (this.serverSetting.AutoJoinDelay)
-                                                OutGoingCommand(this, "/timer rejoin 5 1 /join " + tw.TabCaption);
+                                                OutGoingCommand(this, "/timer rejoin 6 1 /join " + tw.TabCaption);
                                             else
                                                 SendData("JOIN " + tw.TabCaption);
                                         }
@@ -719,7 +728,7 @@ namespace IceChat
                                     if (!chan.StartsWith(";"))
                                     {
                                         if (this.serverSetting.AutoJoinDelay)
-                                            OutGoingCommand(this, "/timer autojoin 5 1 /join " + chan);
+                                            OutGoingCommand(this, "/timer autojoin 6 1 /join " + chan);
                                         else
                                             SendData("JOIN " + chan);
                                     }
@@ -1177,7 +1186,9 @@ namespace IceChat
                         case "AUTH":    //NOTICE AUTH
                             ServerMessage(this, JoinString(ircData, 2, true));
                             break;
-
+                        case "501": //unknown MODE
+                            ServerMessage(this, JoinString(ircData, 3, true));                            
+                            break;
                         //errors
                         case "404": //can not send to channel
                         case "432": //erroneus nickname

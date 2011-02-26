@@ -256,7 +256,7 @@
             // 
             this.toolStripMenuItem10.Name = "toolStripMenuItem10";
             this.toolStripMenuItem10.Size = new System.Drawing.Size(176, 22);
-            this.toolStripMenuItem10.Tag = "/quit";
+            this.toolStripMenuItem10.Tag = "//quit";
             this.toolStripMenuItem10.Text = "Quit a server";
             this.toolStripMenuItem10.Click += new System.EventHandler(this.toolStripHelpMenuOnClick);
             // 

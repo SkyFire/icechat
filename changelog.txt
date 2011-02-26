@@ -1,3 +1,16 @@
+Build Beta 5 February 26 2011
+* Fix bug crash while attempting to connect with SSL to an NON-SSL Server Port
+* Fix bug with popup menus running a blank command
+* Fix problem with connecting servers not being properly selected from Server Tree
+* Fix nicklist buttons causing crash when clicked in the Console
+* Fix /kick command now works if you dont specify a channel, uses current channel
+* Fix irc:// links with channel specified now properly joins the channel
+* Fix UserInfo and Channel Info windows now have text areas stretch with window resizing
+* Remove extra messages from server timeouts and disconnects
+* On a server error, sends the message to the console and now all open channels
+* Using /server with + port (for SSL) enables the Accept Invalid SSL Certifiates option
+
+
 Build Beta 4.1 February 17 2011
 * Adding a new buddy with /buddylist now should update the BuddyList much quicker
 * Automatically detect Unicode Text, no need to select Server Encoding
