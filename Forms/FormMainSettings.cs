@@ -104,7 +104,7 @@ namespace IceChat
                 iceChatMessages.MessageSettings[12] = oldMessage.MessageSettings[12];
 
             if (oldMessage.MessageSettings[13] == null || oldMessage.MessageSettings[13].FormattedMessage.Length == 0)
-                iceChatMessages.MessageSettings[13] = NewMessageFormat("Self Channel Message", "&#x3;1<$nick> $message");
+                iceChatMessages.MessageSettings[13] = NewMessageFormat("Self Channel Message", "&#x3;1<$nick&#x3;> $message");
             else
                 iceChatMessages.MessageSettings[13] = oldMessage.MessageSettings[13];
 

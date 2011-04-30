@@ -53,7 +53,7 @@ namespace IceChat
                 identServer.Start();
 
                 //System.Diagnostics.Debug.WriteLine("Ident Server Started");
-                
+
                 while (true)
                 {
                     TcpClient client = identServer.AcceptTcpClient();
@@ -66,6 +66,10 @@ namespace IceChat
             catch (ThreadAbortException)
             {
                 //FormMain.Instance.WriteErrorFile("IdentServer ThreadAbort Error:" + ex.Message, ex.StackTrace);
+            }
+            catch (SocketException)
+            {
+                System.Diagnostics.Debug.WriteLine("socket exception listen error");
             }
             catch (Exception)
             {
@@ -139,6 +143,10 @@ namespace IceChat
                     if (identThread.IsAlive)
                         identThread.Join(1000);
 
+            }
+            catch (SocketException)
+            {
+                System.Diagnostics.Debug.WriteLine("ident stop error");
             }
             catch (Exception)
             {

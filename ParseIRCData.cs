@@ -674,7 +674,10 @@ namespace IceChat
                                 serverSetting.ForceMOTD = false;
                                 return;
                             }
-                            
+
+                            if (fullyConnected)
+                                return;
+
                             ServerMessage(this, "You have successfully connected to " + serverSetting.RealServerName);
 
                             if (serverSetting.SetModeI)
@@ -811,6 +814,8 @@ namespace IceChat
                                                 string[] dccData = msg.Split(' ');
                                                 //sometimes the filenames can be include in quotes
                                                 System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
+                                                //PRIVMSG Snerf :DCC SEND serial.txt 1614209982 20052 71
+
                                                 if (dccData.Length > 4)
                                                 {
                                                     uint uresult;
@@ -901,7 +906,7 @@ namespace IceChat
                                                 if (DCCFile != null)
                                                     DCCFile(this, nick, host, dccData[2], dccData[1], dccData[0], uint.Parse(dccData[3]), 0, false);
                                                 else
-                                                    ServerError(this, "Invalid DCC File send from " + nick);
+                                                    ServerError(this, "Invalid DCC File send from " + nick, true);
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC RESUME"))
                                             {
@@ -1080,7 +1085,10 @@ namespace IceChat
                                         foreach (System.Net.IPAddress address in addresslist)
                                             this.serverSetting.LocalIP = address;
                                     }
-                                    catch { }
+                                    catch (Exception)
+                                    {
+                                        //can not parse the mode
+                                    }
 
                                 }
                                 //user mode
@@ -1111,9 +1119,10 @@ namespace IceChat
                             }
                             break;
 
+                            //80072 Snerf!IceChat09@Light-EAFED777.no.shawcable.net PART #Chat
                         case "PART":
                             channel = RemoveColon(ircData[2]);
-
+                            System.Diagnostics.Debug.WriteLine(channel + ":" + nick + ":" + serverSetting.NickName);
                             tempValue = JoinString(ircData, 3, true); //part reason
                             //check if it is our own nickname
                             if (nick.ToLower() == serverSetting.NickName.ToLower())
@@ -1197,7 +1206,7 @@ namespace IceChat
                         case "468": //only servers can change mode
                         case "482": //not a channel operator
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            ServerError(this, msg);
+                            ServerError(this, msg, true);
                             break;
                         case "401": //no such nick
                         case "402": //no such server
@@ -1211,17 +1220,17 @@ namespace IceChat
                         case "470": //forward to other channel
                         case "471": //can not join channel (limit enforced)
                         case "472": //unknown char to me (channel mode)
-                            ServerError(this, JoinString(ircData, 3, false));
+                            ServerError(this, JoinString(ircData, 3, false), true);
                             break;
                         case "473": //can not join channel invite only
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            ServerError(this, msg);
+                            ServerError(this, msg, true);
                             break;
                         case "442": //you're not in that channel
                         case "474": //Cannot join channel (+b)
                         case "475": //Cannot join channel (+k)
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            ServerError(this, msg);                            
+                            ServerError(this, msg, true);                            
                             break;  
 
                         case "433": //nickname in use
@@ -1257,7 +1266,7 @@ namespace IceChat
                             break;
                         case "465": //no open proxies
                         case "513": //if you can not connect, type /quote PONG ...
-                            ServerError(this, JoinString(ircData, 3, true));                            
+                            ServerError(this, JoinString(ircData, 3, true), true);                            
                             break;
                         
                         default:

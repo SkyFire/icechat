@@ -68,8 +68,10 @@ namespace IceChat
         private string _serverPort = "6667";
         private string _displayName = "";
         private string _realServerName = "";
+        private string _networkName = "";
         private string _encoding = System.Text.Encoding.Default.WebName.ToString();
         private bool _setModeI = true;
+        private bool _autoDecode = true;
         private int _pongTimerMinutes = 30;
         private int _maxNickLength = 15;
         private int _maxModes = 5;
@@ -246,7 +248,7 @@ namespace IceChat
         //the NetWork name obtained from NETWORK 005 Reply
         [XmlIgnore()]
         public string NetworkName
-        { get; set; }
+        { get { return this._networkName; } set { this._networkName = value; } }
 
         //the channel modes which have parameters from CHANMODES 005 Reply
         [XmlIgnore()]
@@ -319,6 +321,10 @@ namespace IceChat
         public bool DisableSounds
         { get; set; }
 
+        [XmlIgnore()]
+        public bool AutoDecode
+        { get { return this._autoDecode; } set { this._autoDecode = value; } }
+        
     }
     
     public class InternalAddressList

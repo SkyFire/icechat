@@ -119,7 +119,7 @@ namespace IceChat
             switch (ctcp)
             {
                 case "VERSION":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + " : " + GetOperatingSystemName() + ((char)1).ToString());
                     break;
                 case "PING":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "PING " + System.Environment.TickCount.ToString() + ((char)1).ToString());
@@ -321,7 +321,7 @@ namespace IceChat
         /// </summary>
         /// <param name="connection">Which Connection it came from</param>
         /// <param name="message">Error Message</param>
-        private void OnServerError(IRCConnection connection, string message)
+        private void OnServerError(IRCConnection connection, string message, bool current)
         {
             string[] msgs = message.Split('\n');
             foreach (string msg in msgs)
@@ -345,25 +345,35 @@ namespace IceChat
                     }
 
                     mainTabControl.GetTabPage("Console").AddText(connection, error, 4, false);
+                    mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
 
-                    //send it to all open channels
-                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    if (current == true)
                     {
-                        if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                        CurrentWindowMessage(connection, error, 4, false);
+                    }
+                    else
+                    {
+                        //send it to all open channels
+                        foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
                         {
-                            if (t.Connection == connection)
+                            if (t.WindowStyle == IceTabPage.WindowType.Channel)
                             {
-                                t.TextWindow.AppendText(error, 4);
-                                t.LastMessageType = ServerMessageType.ServerMessage;
+                                if (t.Connection == connection)
+                                {
+                                    t.TextWindow.AppendText(error, 4);
+                                    t.LastMessageType = ServerMessageType.ServerMessage;
+                                }
+                            }
+                            else if (t.WindowStyle == IceTabPage.WindowType.Query)
+                            {
+                                if (t.Connection == connection)
+                                {
+                                    t.TextWindow.AppendText(error, 4);
+                                    t.LastMessageType = ServerMessageType.ServerMessage;
+                                }
                             }
                         }
                     }
-
-                    
-                    //if (CurrentWindowType != IceTabPage.WindowType.Console)
-                    //    CurrentWindowMessage(connection, error, 4, false);
-
-                    mainTabControl.GetTabPage("Console").LastMessageType = ServerMessageType.ServerMessage;
 
                     if (!connection.ServerSetting.DisableSounds)
                         PlaySoundFile("conmsg");
@@ -898,7 +908,11 @@ namespace IceChat
             }
 
             mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
+            
+            if (t != null)
+                RemoveWindow(connection, channel, IceTabPage.WindowType.Channel);
 
+    
         }
 
         /// <summary>
@@ -951,11 +965,16 @@ namespace IceChat
         {
             try
             {
+                string network = "";
+                if (connection.ServerSetting.NetworkName.Length > 0)
+                    network = " (" + connection.ServerSetting.NetworkName + ")";
+
+
                 if (CurrentWindowType == IceTabPage.WindowType.Console)
                 {
                     if (inputPanel.CurrentConnection == connection)
                     {
-                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName);
+                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName + network);
 
                         if (connection.ServerSetting.NickName == newnick)
                         {
@@ -1001,7 +1020,7 @@ namespace IceChat
                                     if ((inputPanel.CurrentConnection == connection) && (CurrentWindowType == IceTabPage.WindowType.Channel))
                                     {
                                         if (CurrentWindow == t)
-                                            StatusText(t.Connection.ServerSetting.NickName + " in " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}");
+                                            StatusText(t.Connection.ServerSetting.NickName + " in " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                                     }
                                 }
                                 else
@@ -1060,7 +1079,7 @@ namespace IceChat
                                 if ((inputPanel.CurrentConnection == connection) && (CurrentWindowType == IceTabPage.WindowType.Query))
                                 {
                                     if (CurrentWindow == t)
-                                        StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + t.Connection.ServerSetting.RealServerName + "}");
+                                        StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + " on {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                                 }
 
                                 if (nickList.CurrentWindow == t)
@@ -1262,8 +1281,12 @@ namespace IceChat
                     }
                     if (inputPanel.CurrentConnection == connection)
                     {
+                        string network = "";
+                        if (connection.ServerSetting.NetworkName.Length > 0)
+                            network = " (" + connection.ServerSetting.NetworkName + ")";
+
                         if (mainTabControl.CurrentTab == chan)
-                            StatusText(connection.ServerSetting.NickName + " in " + chan.TabCaption + " [" + chan.ChannelModes + "] {" + chan.Connection.ServerSetting.RealServerName + "}");
+                            StatusText(connection.ServerSetting.NickName + " in " + chan.TabCaption + " [" + chan.ChannelModes + "] {" + chan.Connection.ServerSetting.RealServerName + "}" + network);
                     }
                 }
             }
@@ -1331,7 +1354,6 @@ namespace IceChat
         private void OnRawServerData(IRCConnection connection, string data)
         {
             //check if a Debug Window is open
-            System.Diagnostics.Debug.WriteLine("RAW:" + data);
             IceTabPage t = GetWindow(null, "Debug", IceTabPage.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText(connection.ServerSetting.ID + ":" + data, 1);

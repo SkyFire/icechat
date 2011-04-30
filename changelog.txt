@@ -1,3 +1,14 @@
+Build Beta 5.1  April 30, 2011
+* Added DCC File changes submitted
+* Fixed issue with Server Errors showing in all windows, not in proper places
+* Added /closequery and /closeallquery for closing all Query Windows for current server or all
+* Added a Mute All Sounds item to the Options Menu to disable playing any sounds
+* Added $+ identifier for joining 2 words together
+* Added option to Minimize to Tray
+* Added if IceChat is closed on Tray, it will restart on Tray
+
+
+
 Build Beta 5 February 26 2011
 * Fix bug crash while attempting to connect with SSL to an NON-SSL Server Port
 * Fix bug with popup menus running a blank command

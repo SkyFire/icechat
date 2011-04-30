@@ -40,7 +40,7 @@ namespace IceChat
         private NetworkStream socketStream = null;
         private SslStream sslStream = null;
 
-        private string dataBuffer;
+        private string dataBuffer = "";
         private Queue<string> sendBuffer;
 
         private bool disconnectError = false;
@@ -71,7 +71,6 @@ namespace IceChat
 
         public IRCConnection(ServerSetting ss)
         {
-            dataBuffer = "";
             commandQueue = new ArrayList();
             sendBuffer = new Queue<string>();
             serverSetting = ss;
@@ -176,9 +175,9 @@ namespace IceChat
                 //reconnectTimer.Start();            
             
             }
-            catch(SocketException ee)
+            catch(SocketException se)
             {
-                System.Diagnostics.Debug.WriteLine(ee.Message);
+                System.Diagnostics.Debug.WriteLine(se.Message);
             }
         }
 
@@ -282,8 +281,6 @@ namespace IceChat
             if (ServerMessage != null)
                 ServerMessage(this, msg);
 
-            System.Diagnostics.Debug.WriteLine("OnDisconnect Fired");
-
             FormMain.Instance.ServerTree.Invalidate();
 
             if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
@@ -351,18 +348,18 @@ namespace IceChat
             if (serverSocket == null)
             {
                 if (ServerError != null)
-                    ServerError(this, "Null Socket - Can not Connect");
+                    ServerError(this, "Null Socket - Can not Connect", false);
                 return;
             }
             
             try
             {                
                 serverSocket.EndConnect(ar);
-            }            
+            }
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error: " + e.Message);
+                    ServerError(this, "Socket Exception Error: " + e.Message, false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -384,12 +381,12 @@ namespace IceChat
                 catch (System.Security.Authentication.AuthenticationException ae)
                 {
                     if (ServerError != null)
-                        ServerError(this, "Authentication Error :" + ae.Message.ToString());
+                        ServerError(this, "Authentication Error :" + ae.Message.ToString(), false);
                 }
                 catch (Exception e)
                 {
                     if (ServerError != null)
-                        ServerError(this, "Exception Error :" + e.Message.ToString());
+                        ServerError(this, "Exception Error :" + e.Message.ToString(), false);
                 }
             }
 
@@ -469,7 +466,7 @@ namespace IceChat
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error:" + se.Message.ToString() + ":" + se.ErrorCode);
+                    ServerError(this, "Socket Exception Error:" + se.Message.ToString() + ":" + se.ErrorCode, false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -477,7 +474,7 @@ namespace IceChat
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Exception Error:" + e.Message.ToString());
+                    ServerError(this, "Exception Error:" + e.Message.ToString(), false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -534,7 +531,7 @@ namespace IceChat
             if (serverSocket == null)
             {
                 if (ServerError != null)
-                    ServerError(this, "Error: You are not Connected (Socket not created) - Can not send");
+                    ServerError(this, "Error: You are not Connected (Socket not created) - Can not send", false);
                 return;
             }
 
@@ -567,7 +564,7 @@ namespace IceChat
                     {
                         //some kind of a socket error
                         if (ServerError != null)
-                            ServerError(this, "You are not Connected - Can not send:" + se.Message);
+                            ServerError(this, "You are not Connected - Can not send:" + se.Message, false);
 
                         disconnectError = true;
                         ForceDisconnect();
@@ -581,7 +578,7 @@ namespace IceChat
                 else
                 {
                     if (ServerError != null)
-                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data);
+                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data, false);
 
                     disconnectError = true;
                     ForceDisconnect();
@@ -595,7 +592,7 @@ namespace IceChat
             if (serverSocket == null)
             {
                 if (ServerError != null)
-                    ServerError(this, "Error: You are not Connected (Socket not created) - Can not send");
+                    ServerError(this, "Error: You are not Connected (Socket not created) - Can not send", false);
                 return;
             }
 
@@ -629,7 +626,7 @@ namespace IceChat
                     {
                         //some kind of a socket error
                         if (ServerError != null)
-                            ServerError(this, "You are not Connected - Can not send:" + se.Message);
+                            ServerError(this, "You are not Connected - Can not send:" + se.Message, false);
 
                         disconnectError = true;
                         ForceDisconnect();
@@ -643,7 +640,7 @@ namespace IceChat
                 else
                 {
                     if (ServerError != null)
-                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + bytData.ToString());
+                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + bytData.ToString(), false);
 
                     disconnectError = true;
                     ForceDisconnect();
@@ -677,10 +674,15 @@ namespace IceChat
                     SendData(sendBuffer.Dequeue());
 
             }
+            catch (SocketException se)
+            {
+                if (ServerError != null)
+                    ServerError(this, "SendData Socket Error:" + se.Message.ToString(), false);
+            }
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "SendData Error:" + e.Message.ToString());
+                    ServerError(this, "SendData Error:" + e.Message.ToString(), false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -713,7 +715,7 @@ namespace IceChat
                         if (strData[1] == 0xFF)
                         {
                             if (ServerError != null)
-                                ServerError(this, "Proxy Server Error: None of the authentication method was accepted by proxy server.");
+                                ServerError(this, "Proxy Server Error: None of the authentication method was accepted by proxy server.", false);
                             ForceDisconnect();
                         }
                         else if (strData[1] == 0x00)  //send proxy information
@@ -800,7 +802,7 @@ namespace IceChat
 
                         string strData = "";
                         //check if AutoDetect of Encoding is enabled
-                        if (true)
+                        if (this.serverSetting.AutoDecode)
                         {
                             UTF8Encoding enc = new UTF8Encoding(false, true);
                             try
@@ -811,7 +813,6 @@ namespace IceChat
                             {
                                 strData = Encoding.GetEncoding("Windows-1252").GetString(readBuffer);
                             }
-
                         }
                         else
                         {
@@ -885,7 +886,7 @@ namespace IceChat
                         ForceDisconnect();
                         
                         if (ServerError != null)
-                            ServerError(this, "Connection Lost");
+                            ServerError(this, "Connection Lost", false);
 
                     }
                 }
@@ -893,13 +894,13 @@ namespace IceChat
             catch (SocketException se)
             {
                 //ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
-                ServerError(this, "Socket Exception OnReceiveData Error:" + se.Message.ToString());
+                ServerError(this, "Socket Exception OnReceiveData Error:" + se.Message.ToString(), false);
                 disconnectError = true;
                 ForceDisconnect();
             }
             catch (Exception e)
             {
-                ServerError(this, "Exception OnReceiveData Error:" + e.Message.ToString());
+                ServerError(this, "Exception OnReceiveData Error:" + e.Message.ToString(), false);
                 disconnectError = true;
                 ForceDisconnect();
             }                 
@@ -1044,7 +1045,7 @@ namespace IceChat
                         catch (Exception e)
                         {
                             if (ServerError != null)
-                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString());
+                                ServerError(this, "Connect - Exception Error:" + e.Message.ToString(), false);
 
                             whichAddressCurrent++;
                             if (whichAddressCurrent > hostEntry.AddressList.Length)
@@ -1064,7 +1065,7 @@ namespace IceChat
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error 1:" + se.Message);
+                    ServerError(this, "Socket Exception Error 1:" + se.Message, false);
 
                 disconnectError = true;
                 ForceDisconnect();

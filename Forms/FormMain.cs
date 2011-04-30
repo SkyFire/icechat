@@ -101,6 +101,7 @@ namespace IceChat
         private delegate void CurrentWindowMessageDelegate(IRCConnection connection, string data, int color, bool scrollToBottom);
 
         private System.Media.SoundPlayer player;
+        private bool muteAllSounds;
 
         [StructLayout(LayoutKind.Sequential)]
         private struct OSVERSIONINFOEX
@@ -324,11 +325,11 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - February 26 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 30 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
-
+            
             try
             {
                 errorFile = new StreamWriter(logsFolder + System.IO.Path.DirectorySeparatorChar + "errors.log");
@@ -491,6 +492,7 @@ namespace IceChat
             CreateDefaultConsoleWindow();
 
             this.FormClosing += new FormClosingEventHandler(FormMainClosing);
+            this.Resize += new EventHandler(FormMainResize);
 
             if (iceChatOptions.IdentServer)
                 identServer = new IdentServer();
@@ -520,11 +522,36 @@ namespace IceChat
             WindowMessage(null, "Console", "Current Data Folder: " + currentFolder, 4, true);
 
             //check for an update
-            checkForUpdate();
+            //checkForUpdate();
 
             splash.Close();
             splash.Dispose();
 
+            this.Activated += new EventHandler(FormMainActivated);
+
+        }
+
+        private void FormMainActivated(object sender, EventArgs e)
+        {
+            if (iceChatOptions.IsOnTray == true)
+            {
+                minimizeToTrayToolStripMenuItem.PerformClick();
+            }
+            
+            //remove the event handler, because it only needs to be run once, on startup
+            this.Activated -= FormMainActivated;
+        }
+
+        private void FormMainResize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                if (iceChatOptions.MinimizeToTray)
+                {
+                    this.notifyIcon.Visible = true;
+                    this.Hide();
+                }
+            }
         }
 
         private void toolStripMain_VisibleChanged(object sender, EventArgs e)
@@ -670,7 +697,7 @@ namespace IceChat
             if (iceChatOptions.SaveWindowPosition)
             {
                 //save the window position , as long as its not minimized
-                if (this.WindowState != FormWindowState.Minimized)
+                if (this.WindowState != FormWindowState.Minimized && this.notifyIcon.Visible == false)
                 {
                     iceChatOptions.WindowLocation = this.Location;
                     iceChatOptions.WindowSize = this.Size;
@@ -679,6 +706,8 @@ namespace IceChat
                     if (!panelDockLeft.IsDocked)
                         iceChatOptions.LeftPanelWidth = panelDockLeft.Width;
                 }
+
+                iceChatOptions.IsOnTray = this.notifyIcon.Visible;
 
                 SaveOptions();
             }
@@ -699,7 +728,7 @@ namespace IceChat
         internal void PlaySoundFile(string key)
         {
             IceChatSounds.soundEntry sound = IceChatSounds.getSound(key);
-            if (sound != null)
+            if (sound != null && !muteAllSounds)
             {
                 string file = sound.getSoundFile();
                 if (file != null && file.Length > 0)
@@ -727,6 +756,10 @@ namespace IceChat
             WindowMessage(null, "Console", "\x00034** This is a Beta version, not fully functional, not all options are added **", 1, false);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
             WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org/icechat2009\x0003 if you wish to help with this project", 1, true);
+
+
+            //WindowMessage(null, "Console", "\x00033\x0002If you want a fully working version of IceChat, visit http://www.icechat.net and download IceChat 7.70", 1, false);
+            //WindowMessage(null, "Console", "\x00033If you want a fully working version of IceChat, visit http://www.icechat.net and download IceChat 7.70", 1, false);
 
             StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
         }
@@ -1447,15 +1480,18 @@ namespace IceChat
                     IceTabPage t = mainTabControl.CurrentTab;
                     nickList.RefreshList(t);
                     inputPanel.CurrentConnection = t.Connection;
-
+                    string network = "";
+                    
+                    if (CurrentWindowType != IceTabPage.WindowType.Debug && CurrentWindowType != IceTabPage.WindowType.DCCFile && CurrentWindowType !=  IceTabPage.WindowType.Window && t.Connection.ServerSetting.NetworkName.Length > 0)
+                        network = " (" + t.Connection.ServerSetting.NetworkName + ")";
                     if (CurrentWindowType == IceTabPage.WindowType.Channel)
-                        StatusText(t.Connection.ServerSetting.NickName + " in channel " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}");
+                        StatusText(t.Connection.ServerSetting.NickName + " in channel " + t.TabCaption + " [" + t.ChannelModes + "] {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                     else if (CurrentWindowType == IceTabPage.WindowType.Query)
-                        StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
+                        StatusText(t.Connection.ServerSetting.NickName + " in private chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                     else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
-                        StatusText(t.Connection.ServerSetting.NickName + " in DCC chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}");
+                        StatusText(t.Connection.ServerSetting.NickName + " in DCC chat with " + t.TabCaption + " {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                     else if (CurrentWindowType == IceTabPage.WindowType.ChannelList)
-                        StatusText(t.Connection.ServerSetting.NickName + " in Channel List {" + t.Connection.ServerSetting.RealServerName + "}");
+                        StatusText(t.Connection.ServerSetting.NickName + " in Channel List for {" + t.Connection.ServerSetting.RealServerName + "}" + network);
                     
                     CurrentWindow.LastMessageType = ServerMessageType.Default;
                     t = null;
@@ -1471,19 +1507,25 @@ namespace IceChat
                 nickList.RefreshList();
                 nickList.Header = iceChatLanguage.consoleTabTitle; 
                 if (mainTabControl.GetTabPage("Console").ConsoleTab.SelectedIndex != 0)
-                {
+                {                    
                     inputPanel.CurrentConnection = mainTabControl.GetTabPage("Console").CurrentConnection;
+
+                    string network = "";
+                    if (inputPanel.CurrentConnection.ServerSetting.NetworkName.Length > 0)
+                        network = " (" + inputPanel.CurrentConnection.ServerSetting.NetworkName + ")";
+
                     if (inputPanel.CurrentConnection.IsConnected)
-                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName);
+                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName + network);
                     else
-                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected (" + inputPanel.CurrentConnection.ServerSetting.ServerName + ")");
+                        StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected from " + inputPanel.CurrentConnection.ServerSetting.ServerName + network);
+                    
                     if (!e.IsHandled)
                         serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
                 }
                 else
                 {
                     inputPanel.CurrentConnection = null;
-                    StatusText("Welcome to IceChat 2009");
+                    StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
                 }
             }
 
@@ -1611,6 +1653,7 @@ namespace IceChat
                             if (data.Length > 0)
                             {
                                 //bg windowtype imagefile
+                                //bg windowtype windowname imagefile
                                 //if imagefile is blank, erase background image
                                 string window = data.Split(' ')[0];
                                 string file = "";
@@ -1620,17 +1663,32 @@ namespace IceChat
                                 switch (window.ToLower())
                                 {
                                     case "console":
-                                        if (CurrentWindowType == IceTabPage.WindowType.Console)
+                                        if (file.Length > 0 && File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
+                                            mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                        else
+                                            mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = "";
+                                        break;
+                                    case "channel":
+                                        //get the channel name
+                                        if (file.IndexOf(' ') > -1)
                                         {
-                                            if (file.IndexOf(System.IO.Path.DirectorySeparatorChar) > -1)
-                                                mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = file;
-                                            else
+                                            string channel = file.Split(' ')[0];
+                                            file = file.Substring(channel.Length + 1);
+                                            IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+                                            if (t != null)
                                             {
                                                 if (File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
-                                                    mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                                    t.TextWindow.BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
                                                 else
-                                                    mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = "";
+                                                    t.TextWindow.BackGroundImage = "";
                                             }
+                                        }
+                                        else
+                                        {
+                                            //only a channel name specified, no file, erase the image
+                                            IceTabPage t = GetWindow(connection, file, IceTabPage.WindowType.Channel);
+                                            if (t != null)
+                                                t.TextWindow.BackGroundImage = "";
                                         }
                                         break;
                                 }
@@ -1660,6 +1718,7 @@ namespace IceChat
                                 }
                             }
                             break;                        
+                        
                         case "/loadplugin":
                             if (data.Length > 0)
                             {
@@ -2140,7 +2199,6 @@ namespace IceChat
                                         RemoveWindow(connection, "", IceTabPage.WindowType.ChannelList);
                                     return;
                                 }
-
                                 //check if it is a query window
                                 IceTabPage q = GetWindow(connection, data, IceTabPage.WindowType.Query);
                                 if (q != null)
@@ -2176,6 +2234,33 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/closequery":
+                            if (connection != null)
+                            {
+                                for (int i = mainTabControl.TabPages.Count - 1; i >= 0; i--)
+                                {
+                                    if (mainTabControl.TabPages[i].WindowStyle == IceTabPage.WindowType.Query)
+                                    {
+                                        if (mainTabControl.TabPages[i].Connection == connection)
+                                        {
+                                            RemoveWindow(connection, mainTabControl.TabPages[i].TabCaption, IceTabPage.WindowType.Query);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case "/closeallquery":
+                            if (connection != null)
+                            {
+                                for (int i = mainTabControl.TabPages.Count - 1; i >= 0; i--)
+                                {
+                                    if (mainTabControl.TabPages[i].WindowStyle == IceTabPage.WindowType.Query)
+                                    {
+                                        RemoveWindow(connection, mainTabControl.TabPages[i].TabCaption, IceTabPage.WindowType.Query);
+                                    }
+                                }
+                            }
+                            break;
                         case "/ctcp":
                             if (connection != null && data.IndexOf(' ') > 0)
                             {
@@ -2201,7 +2286,7 @@ namespace IceChat
                                 string dccType = data.Substring(0, data.IndexOf(' ')).ToUpper();
                                 //get who it is being sent to
                                 string nick = data.Substring(data.IndexOf(' ') + 1);
-                                System.Diagnostics.Debug.WriteLine(dccType + ":" + nick);
+                                
                                 switch (dccType)
                                 {
                                     case "CHAT":
@@ -2226,6 +2311,8 @@ namespace IceChat
                                             else
                                             {
                                                 mainTabControl.SelectTab(GetWindow(connection, nick, IceTabPage.WindowType.DCCChat));
+                                                serverTree.SelectTab(mainTabControl.CurrentTab, false);
+
                                                 //see if it is connected or not
                                                 IceTabPage dcc = GetWindow(connection, nick, IceTabPage.WindowType.DCCChat);
                                                 if (dcc != null)
@@ -2244,26 +2331,22 @@ namespace IceChat
                                         break;
                                     case "SEND":
                                         //was a filename specified, if not try and select one
+                                        string file;
                                         if (nick.IndexOf(' ') > 0)
                                         {
-                                            string file = nick.Substring(nick.IndexOf(' ') + 1);
+                                            file = nick.Substring(nick.IndexOf(' ') + 1);
                                             nick = nick.Substring(0,nick.IndexOf(' '));
                                             
                                             //see if the file exists
                                             if (!File.Exists(file))
                                             {
                                                 //file does not exists, just quit
-
-                                                return;
+                                                //try from the dccsend folder
+                                                if (File.Exists(iceChatOptions.DCCSendFolder + Path.DirectorySeparatorChar + file))
+                                                    file=iceChatOptions.DCCSendFolder + Path.DirectorySeparatorChar + file;
+                                                else
+                                                    return;
                                             }
-                                            
-                                            //more to it, maybe a file to send                                            
-                                            if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
-                                                AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
-
-                                            IceTabPage t = GetWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
-                                            if (t != null)
-                                                ((IceTabPageDCCFile)t).RequestDCCFile(connection, nick, file);
                                         }
                                         else
                                         {
@@ -2276,9 +2359,21 @@ namespace IceChat
                                             {
                                                 //returns the full path
                                                 System.Diagnostics.Debug.WriteLine(dialog.FileName);
+                                                file = dialog.FileName;
                                             }
+                                            else
+                                                return;
 
                                         }
+
+                                        //more to it, maybe a file to send                                            
+                                        if (!mainTabControl.WindowExists(null, "DCC Files", IceTabPage.WindowType.DCCFile))
+                                            AddWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+
+                                        IceTabPage tt = GetWindow(null, "DCC Files", IceTabPage.WindowType.DCCFile);
+                                        if (tt != null)
+                                            ((IceTabPageDCCFile)tt).RequestDCCFile(connection, nick, file);                                        
+
                                         break;
                                 }
                             }                            
@@ -2542,7 +2637,7 @@ namespace IceChat
                             }
                             break;
                         case "/msg":
-                            if (connection != null && data.Length > 0 && data.IndexOf(' ') > -1)
+                            if (connection != null && data.IndexOf(' ') > -1)
                             {
                                 string nick = data.Substring(0, data.IndexOf(' '));
                                 string msg2 = data.Substring(data.IndexOf(' ') + 1);
@@ -2563,7 +2658,24 @@ namespace IceChat
                                     msg = color + "*" + nick + "* " + data.Substring(data.IndexOf(' ') + 1); ;
                                 }
                                  
-                                CurrentWindowMessage(connection, msg, 1, true);
+                                //check if the nick has a query window open
+                                IceTabPage q = GetWindow(connection, nick, IceTabPage.WindowType.Query);
+                                if (q != null)
+                                {
+                                    string nmsg = GetMessageFormat("Self Private Message");
+                                    nmsg = nmsg.Replace("$nick", connection.ServerSetting.NickName).Replace("$message", msg2);
+
+                                    q.TextWindow.AppendText(nmsg, 1);
+                                    q.LastMessageType = ServerMessageType.Message;
+                                    
+                                    if (q != CurrentWindow)
+                                        CurrentWindowMessage(connection, msg, 1, true);
+                                    
+                                }
+                                else
+                                    CurrentWindowMessage(connection, msg, 1, true);
+
+
                             }
                             break;
                         case "/nick":
@@ -2571,7 +2683,7 @@ namespace IceChat
                                 SendData(connection, "NICK " + data);
                             break;
                         case "/notice":
-                            if (connection != null && data.Length > 0 && data.IndexOf(' ') > -1)
+                            if (connection != null && data.IndexOf(' ') > -1)
                             {
                                 string nick = data.Substring(0, data.IndexOf(' '));
                                 string msg = data.Substring(data.IndexOf(' ') + 1);
@@ -2721,6 +2833,7 @@ namespace IceChat
                                     AddWindow(connection, nick, IceTabPage.WindowType.Query);
                                 
                                 mainTabControl.SelectTab(GetWindow(connection, nick, IceTabPage.WindowType.Query));
+                                serverTree.SelectTab(mainTabControl.CurrentTab, false);
 
                                 if (msg.Length > 0)
                                 {
@@ -3623,6 +3736,9 @@ namespace IceChat
                 //parse out the $1,$2.. identifiers
                 data = ParseIdentifierValue(data, dataPassed);
 
+                //$+ is a joiner identifier, great for joining 2 words together
+                data = data.Replace(" $+ ", string.Empty);
+
                 //split up the data into words
                 string[] parsedData = data.Split(' ');
 
@@ -3988,7 +4104,9 @@ namespace IceChat
 
         private void NotifyIconMouseDoubleClick(object sender, MouseEventArgs e)
         {
+            iceChatOptions.IsOnTray = false;
             Show();
+            this.WindowState = FormWindowState.Normal;
             notifyIcon.Visible = false;
         }
 
@@ -4267,6 +4385,7 @@ namespace IceChat
 
         private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            iceChatOptions.IsOnTray = false;
             this.Show();
             this.notifyIcon.Visible = false;
         }
@@ -4325,6 +4444,9 @@ namespace IceChat
                 }
                 
                 object o = err.CompiledAssembly.CreateInstance("IceChat.Script");
+                if (o == null)
+                    continue;
+
                 FormMain.Instance.WindowMessage(null, "Console", "Script \"" + scriptFile + "\". loaded.", 4, true);
                 loadedScripts.Add(o);
                 // run the loaded event. gives the script a change to initialize.
@@ -4623,6 +4745,13 @@ namespace IceChat
         private void selectInputBoxToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FocusInputBox();
+        }
+
+        private void muteAllSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //mute all sounds
+            muteAllSounds = !muteAllSounds;
+            muteAllSoundsToolStripMenuItem.Checked = muteAllSounds;
         }
 
 

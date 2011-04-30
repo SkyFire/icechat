@@ -865,14 +865,14 @@ namespace IceChat
                 if (!_singleLine && _showTimeStamp)
                     newLine = DateTime.Now.ToString(FormMain.Instance.IceChatOptions.TimeStamp) + newLine;
 
-                System.Diagnostics.Debug.WriteLine("NEWLINE1:" + newLine);
+                //System.Diagnostics.Debug.WriteLine("NEWLINE1:" + newLine);
 
                 if (_noColorMode)
                     newLine = StripColorCodes(newLine);
                 else
                     newLine = RedefineColorCodes(newLine);
 
-                System.Diagnostics.Debug.WriteLine("NEWLINE2:" + newLine);
+                //System.Diagnostics.Debug.WriteLine("NEWLINE2:" + newLine);
 
                 if (_logClass != null)
                     _logClass.WriteLogFile(newLine);
@@ -881,8 +881,7 @@ namespace IceChat
 
                 newLine = ParseEmoticons(newLine);
 
-                System.Diagnostics.Debug.WriteLine("NEWLINE3:" + newLine);
-
+                //System.Diagnostics.Debug.WriteLine("NEWLINE3:" + newLine);
 
                 if (_singleLine) _totalLines = 1;
 
@@ -1367,7 +1366,7 @@ namespace IceChat
                 {
                     try
                     {
-                        System.Diagnostics.Debug.WriteLine("FORMAT  :" + _textLines[currentLine].line);
+                        //System.Diagnostics.Debug.WriteLine("FORMAT  :" + _textLines[currentLine].line);
                         _displayLines[line].line = _textLines[currentLine].line;
                         _displayLines[line].textLine = currentLine;
                         _displayLines[line].textColor = _textLines[currentLine].textColor;
@@ -1391,6 +1390,9 @@ namespace IceChat
                     bool italic = false;
                     bool reverse = false;
 
+                    int boldPos = 0;
+                    int underlinePos = 0;
+
                     char[] ch;
                     try
                     {
@@ -1402,6 +1404,7 @@ namespace IceChat
                                 case boldChar:
                                     bold = !bold;
                                     buildString.Append(ch[0]);
+                                    boldPos = i;                                   
                                     break;
                                 case italicChar:
                                     italic = !italic;
@@ -1410,10 +1413,19 @@ namespace IceChat
                                 case underlineChar:
                                     underline = !underline;
                                     buildString.Append(ch[0]);
+                                    underlinePos = i;
                                     break;
                                 case reverseChar:
                                     reverse = !reverse;
                                     buildString.Append(ch[0]);
+                                    break;
+                                case plainChar:
+                                    underline = false;
+                                    italic = false;
+                                    bold = false;
+                                    reverse = false;
+                                    boldPos = i;
+                                    underlinePos = i;
                                     break;
                                 case newColorChar:
                                     buildString.Append(curLine.Substring(i, 5));
@@ -1432,8 +1444,23 @@ namespace IceChat
                                     //check if there needs to be a linewrap                                    
                                     if ((int)g.MeasureString(StripAllCodes(buildString.ToString()), this.Font, 0, stringFormat).Width > displayWidth)
                                     {
+                                        //check for line wrapping
+                                        int lastSpace = buildString.ToString().LastIndexOf(' ');
+                                        if (lastSpace > (buildString.Length * 4 /5))
+                                        {
+                                            int intNewPos = i - (buildString.Length - lastSpace) + 1;
+
+                                            buildString.Remove(lastSpace, buildString.Length - lastSpace);
+                                            
+                                            //check for bold and underline accordingly
+
+
+                                            i = intNewPos;
+                                            ch = curLine.Substring(i, 1).ToCharArray();
+                                        }
+                                        
                                         if (lineSplit)
-                                            _displayLines[line].line = lastColor + buildString;
+                                            _displayLines[line].line = lastColor + buildString.ToString();
                                         else
                                             _displayLines[line].line = buildString.ToString();
 
@@ -1449,6 +1476,7 @@ namespace IceChat
                                         }
                                         line++;
                                         _displayLines[line].previous = true;
+                                        
                                         buildString = null;
                                         buildString = new StringBuilder();
 
@@ -1761,6 +1789,7 @@ namespace IceChat
                                     break;
                                 case boldChar:
                                     //bold character, currently ignored
+                                    /*
                                     if (curBackColor != _backColor)
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, stringFormat).Width + 1;
@@ -1787,6 +1816,7 @@ namespace IceChat
                                     if (bold) fsb = fsb | FontStyle.Bold;
                                     
                                     font = new Font(this.Font.Name, this.Font.Size, fsb, GraphicsUnit.Point);
+                                    */
                                     break;
                                 case plainChar:
                                     //draw with the standard fore and back color

@@ -368,8 +368,8 @@ namespace IceChat
         private ToolStripMenuItem NewMenuItem(string caption, string command, Bitmap icon)
         {
             ToolStripMenuItem t = new ToolStripMenuItem(caption);
-            if (icon != null)
-                t.Image = icon;
+            //if (icon != null)
+            //    t.Image = icon;
             t.Tag = command;
             return t;
         }

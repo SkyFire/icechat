@@ -65,7 +65,7 @@ namespace IceChat
 
     public delegate void ServerMessageDelegate(IRCConnection connection, string message);
     public delegate void ServerMOTDDelegate(IRCConnection connection, string message);    
-    public delegate void ServerErrorDelegate(IRCConnection connection, string message);
+    public delegate void ServerErrorDelegate(IRCConnection connection, string message, bool current);
     public delegate void WhoisDataDelegate(IRCConnection connection, string nick, string data);
     public delegate void CtcpMessageDelegate(IRCConnection connection, string nick, string ctcp, string message);
     public delegate void CtcpReplyDelegate(IRCConnection connection, string nick, string ctcp, string message);

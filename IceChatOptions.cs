@@ -297,6 +297,8 @@ namespace IceChat
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
         private bool _showUnreadLine = false;
+        private bool _minimizeTray = false;
+        private bool _isOnTray = false;
 
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
@@ -305,6 +307,7 @@ namespace IceChat
         private int _dccPortUpper = 10000;
         private string _dccReceiveFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private string _dccSendFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private int _dccBufferSize = 1024;
 
         private string _language = "English";
         private string _identName = "IceChat09";
@@ -506,6 +509,20 @@ namespace IceChat
             set { this._showUnreadLine = value; }
         }
 
+        [XmlElement("MinimizeToTray")]
+        public bool MinimizeToTray
+        {
+            get { return this._minimizeTray; }
+            set { this._minimizeTray = value; }
+        }
+
+        [XmlElement("IsOnTray")]
+        public bool IsOnTray
+        {
+            get { return this._isOnTray; }
+            set { this._isOnTray = value; }
+        }
+
         [XmlElement("Language")]
         public string Language
         {
@@ -567,6 +584,13 @@ namespace IceChat
         [XmlElement("DCCLocalIP")]
         public string DCCLocalIP
         { get; set; }
+
+        [XmlElement("DCCBufferSize")]
+        public int DCCBufferSize
+        {
+            get { return this._dccBufferSize; }
+            set { this._dccBufferSize = value; }
+        }
 
         [XmlArray("ScriptFiles")]
         [XmlArrayItem("Item")]

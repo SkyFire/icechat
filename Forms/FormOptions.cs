@@ -151,6 +151,7 @@ namespace IceChat
             checkNewQueryForegound.Checked = iceChatOptions.NewQueryForegound;
             checkWhoisNewQuery.Checked = iceChatOptions.WhoisNewQuery;
             checkShowUnreadLine.Checked = iceChatOptions.ShowUnreadLine;
+            checkMinimizeTray.Checked = iceChatOptions.MinimizeToTray;
 
             //dcc settings
             checkAutoDCCChat.Checked = iceChatOptions.DCCChatAutoAccept;
@@ -163,6 +164,7 @@ namespace IceChat
             textDCCReceiveFolder.Text = iceChatOptions.DCCReceiveFolder;
             textDCCSendFolder.Text = iceChatOptions.DCCSendFolder;
             textDCCLocalIP.Text = iceChatOptions.DCCLocalIP;
+            comboBufferSize.Text = iceChatOptions.DCCBufferSize.ToString();
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -252,6 +254,7 @@ namespace IceChat
             iceChatOptions.WhoisNewQuery = checkWhoisNewQuery.Checked;
 
             iceChatOptions.ShowUnreadLine = checkShowUnreadLine.Checked;
+            iceChatOptions.MinimizeToTray = checkMinimizeTray.Checked;
             iceChatOptions.Language = ((LanguageItem)comboBoxLanguage.SelectedItem).LanguageName;
 
             //set all the fonts
@@ -290,6 +293,7 @@ namespace IceChat
             iceChatOptions.DCCReceiveFolder = textDCCReceiveFolder.Text;
             iceChatOptions.DCCSendFolder = textDCCSendFolder.Text;
             iceChatOptions.DCCLocalIP = textDCCLocalIP.Text;
+            iceChatOptions.DCCBufferSize = Convert.ToInt32(comboBufferSize.Text);
 
             //save the emoticons
             iceChatEmoticons.listEmoticons.Clear();

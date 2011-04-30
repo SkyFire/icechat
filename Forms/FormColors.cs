@@ -1232,7 +1232,7 @@ namespace IceChat
                     newMessage =  "&#x3;1<$nick&#x3;> $message";
                     break;
                 case "Self Channel Message":
-                    newMessage = "&#x3;1<$nick> $message";
+                    newMessage = "&#x3;1<$nick&#x3;> $message";
                     break;
                 case "Channel Action":
                     newMessage = "&#x3;5* $nick $message";

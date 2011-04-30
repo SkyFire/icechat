@@ -98,6 +98,8 @@ namespace IceChat
             this.labelChannelFont = new System.Windows.Forms.Label();
             this.labelConsoleFont = new System.Windows.Forms.Label();
             this.tabDCC = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.comboBufferSize = new System.Windows.Forms.ComboBox();
             this.linkWhatisMyIP = new System.Windows.Forms.LinkLabel();
             this.textDCCLocalIP = new System.Windows.Forms.TextBox();
             this.labelLocalIP = new System.Windows.Forms.Label();
@@ -137,6 +139,8 @@ namespace IceChat
             this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
             this.imageListEmoticons = new System.Windows.Forms.ImageList(this.components);
             this.tabEvents = new System.Windows.Forms.TabPage();
+            this.comboWhoisEvent = new System.Windows.Forms.ComboBox();
+            this.labelWhoisEvent = new System.Windows.Forms.Label();
             this.comboChannelActionEvent = new System.Windows.Forms.ComboBox();
             this.labelChannelActionEvent = new System.Windows.Forms.Label();
             this.comboChannelMessageEvent = new System.Windows.Forms.ComboBox();
@@ -188,8 +192,7 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.comboWhoisEvent = new System.Windows.Forms.ComboBox();
-            this.labelWhoisEvent = new System.Windows.Forms.Label();
+            this.checkMinimizeTray = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -207,7 +210,7 @@ namespace IceChat
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonSave.Location = new System.Drawing.Point(449, 297);
+            this.buttonSave.Location = new System.Drawing.Point(449, 294);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(4);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(103, 32);
@@ -221,7 +224,7 @@ namespace IceChat
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancel.Location = new System.Drawing.Point(560, 297);
+            this.buttonCancel.Location = new System.Drawing.Point(560, 294);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
@@ -326,7 +329,7 @@ namespace IceChat
             // labelTimeStamp
             // 
             this.labelTimeStamp.AutoSize = true;
-            this.labelTimeStamp.ForeColor = System.Drawing.Color.Black;
+            this.labelTimeStamp.ForeColor = System.Drawing.SystemColors.ControlText;
             this.labelTimeStamp.Location = new System.Drawing.Point(12, 11);
             this.labelTimeStamp.Name = "labelTimeStamp";
             this.labelTimeStamp.Size = new System.Drawing.Size(86, 16);
@@ -335,6 +338,7 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.checkMinimizeTray);
             this.tabDisplay.Controls.Add(this.label15);
             this.tabDisplay.Controls.Add(this.trackTransparency);
             this.tabDisplay.Controls.Add(this.checkShowUnreadLine);
@@ -918,6 +922,8 @@ namespace IceChat
             // 
             // tabDCC
             // 
+            this.tabDCC.Controls.Add(this.label16);
+            this.tabDCC.Controls.Add(this.comboBufferSize);
             this.tabDCC.Controls.Add(this.linkWhatisMyIP);
             this.tabDCC.Controls.Add(this.textDCCLocalIP);
             this.tabDCC.Controls.Add(this.labelLocalIP);
@@ -945,6 +951,29 @@ namespace IceChat
             this.tabDCC.TabIndex = 8;
             this.tabDCC.Text = "DCC";
             this.tabDCC.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(433, 212);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(143, 16);
+            this.label16.TabIndex = 65;
+            this.label16.Text = "Buffer Size in bytes:";
+            // 
+            // comboBufferSize
+            // 
+            this.comboBufferSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBufferSize.FormattingEnabled = true;
+            this.comboBufferSize.Items.AddRange(new object[] {
+            "1024",
+            "2048",
+            "4096",
+            "8192"});
+            this.comboBufferSize.Location = new System.Drawing.Point(436, 231);
+            this.comboBufferSize.Name = "comboBufferSize";
+            this.comboBufferSize.Size = new System.Drawing.Size(121, 24);
+            this.comboBufferSize.TabIndex = 64;
             // 
             // linkWhatisMyIP
             // 
@@ -1324,6 +1353,28 @@ namespace IceChat
             this.tabEvents.TabIndex = 4;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
+            // 
+            // comboWhoisEvent
+            // 
+            this.comboWhoisEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWhoisEvent.FormattingEnabled = true;
+            this.comboWhoisEvent.Items.AddRange(new object[] {
+            "In Current",
+            "In Console",
+            "Hide"});
+            this.comboWhoisEvent.Location = new System.Drawing.Point(338, 79);
+            this.comboWhoisEvent.Name = "comboWhoisEvent";
+            this.comboWhoisEvent.Size = new System.Drawing.Size(121, 24);
+            this.comboWhoisEvent.TabIndex = 17;
+            // 
+            // labelWhoisEvent
+            // 
+            this.labelWhoisEvent.AutoSize = true;
+            this.labelWhoisEvent.Location = new System.Drawing.Point(204, 82);
+            this.labelWhoisEvent.Name = "labelWhoisEvent";
+            this.labelWhoisEvent.Size = new System.Drawing.Size(115, 16);
+            this.labelWhoisEvent.TabIndex = 16;
+            this.labelWhoisEvent.Text = "Whois Message:";
             // 
             // comboChannelActionEvent
             // 
@@ -1802,33 +1853,21 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
-            // comboWhoisEvent
+            // checkMinimizeTray
             // 
-            this.comboWhoisEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboWhoisEvent.FormattingEnabled = true;
-            this.comboWhoisEvent.Items.AddRange(new object[] {
-            "In Current",
-            "In Console",
-            "Hide"});
-            this.comboWhoisEvent.Location = new System.Drawing.Point(338, 79);
-            this.comboWhoisEvent.Name = "comboWhoisEvent";
-            this.comboWhoisEvent.Size = new System.Drawing.Size(121, 24);
-            this.comboWhoisEvent.TabIndex = 17;
-            // 
-            // labelWhoisEvent
-            // 
-            this.labelWhoisEvent.AutoSize = true;
-            this.labelWhoisEvent.Location = new System.Drawing.Point(204, 82);
-            this.labelWhoisEvent.Name = "labelWhoisEvent";
-            this.labelWhoisEvent.Size = new System.Drawing.Size(115, 16);
-            this.labelWhoisEvent.TabIndex = 16;
-            this.labelWhoisEvent.Text = "Whois Message:";
+            this.checkMinimizeTray.AutoSize = true;
+            this.checkMinimizeTray.Location = new System.Drawing.Point(15, 142);
+            this.checkMinimizeTray.Name = "checkMinimizeTray";
+            this.checkMinimizeTray.Size = new System.Drawing.Size(135, 20);
+            this.checkMinimizeTray.TabIndex = 48;
+            this.checkMinimizeTray.Text = "Minimize to Tray";
+            this.checkMinimizeTray.UseVisualStyleBackColor = true;
             // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(660, 333);
+            this.ClientSize = new System.Drawing.Size(660, 330);
             this.Controls.Add(this.tabControlOptions);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
@@ -2026,5 +2065,8 @@ namespace IceChat
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox comboWhoisEvent;
         private System.Windows.Forms.Label labelWhoisEvent;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ComboBox comboBufferSize;
+        private System.Windows.Forms.CheckBox checkMinimizeTray;
     }
 }

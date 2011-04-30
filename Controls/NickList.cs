@@ -240,11 +240,13 @@ namespace IceChat
             if (scrollUp && (topIndex > 0))
             {                
                 topIndex--;
+                vScrollBar.Value--;
                 Invalidate();
             }
             else if ((topIndex + vScrollBar.LargeChange) < vScrollBar.Maximum)
             {
                 topIndex++;
+                vScrollBar.Value++;
                 Invalidate();
             }
         }
@@ -306,7 +308,6 @@ namespace IceChat
                         vScrollBar.Value -= 2;
                     }
                 }
-
                 topIndex = vScrollBar.Value;
                 Invalidate();
             }
@@ -420,7 +421,7 @@ namespace IceChat
                 //find the nickname number, add 1 to it to make it a non-zero value
                 int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + topIndex;
 
-                if (nickNumber < currentWindow.Nicks.Count)
+                if (nickNumber < sortedNickNames.Count)
                 {
                     if (toolTipNode != nickNumber)
                     {

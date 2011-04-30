@@ -499,7 +499,7 @@ namespace IceChat
             dccTimeOutTimer.Start();
         }
 
-        private void dccTimeOutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        internal void dccTimeOutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             string msg = FormMain.Instance.GetMessageFormat("DCC Chat Timeout");
             msg = msg.Replace("$nick", _tabCaption);
@@ -946,15 +946,19 @@ namespace IceChat
         {
             FormMain.Instance.InputPanel.CurrentConnection = ((ConsoleTab)consoleTab.SelectedTab).Connection;
 
+            string network = "";
+            if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NetworkName.Length > 0)
+                network = " (" + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NetworkName + ")";
+
             if (((ConsoleTab)consoleTab.SelectedTab).Connection.IsConnected)
             {
                 if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName != null)
-                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName);
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName + network);
                 else
-                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName);
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
             }
             else
-                FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected (" + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + ")");
+                FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected from " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
 
         }
 
@@ -973,7 +977,7 @@ namespace IceChat
             else
             {
                 FormMain.Instance.InputPanel.CurrentConnection = null;
-                FormMain.Instance.StatusText("Welcome to IceChat 2009");
+                FormMain.Instance.StatusText("Welcome to " + IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version);
             }
             
         }

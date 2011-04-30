@@ -197,6 +197,7 @@ namespace IceChatPlugin
 
         public PluginArgs ServerMessage(PluginArgs args)
         {
+            
             return args;
         }
 
