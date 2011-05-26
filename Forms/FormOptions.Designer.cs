@@ -41,6 +41,9 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.textMaximumLines = new System.Windows.Forms.TextBox();
+            this.labelMaxLines = new System.Windows.Forms.Label();
+            this.checkMinimizeTray = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
             this.trackTransparency = new System.Windows.Forms.TrackBar();
             this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
@@ -192,7 +195,6 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.checkMinimizeTray = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -338,6 +340,8 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.textMaximumLines);
+            this.tabDisplay.Controls.Add(this.labelMaxLines);
             this.tabDisplay.Controls.Add(this.checkMinimizeTray);
             this.tabDisplay.Controls.Add(this.label15);
             this.tabDisplay.Controls.Add(this.trackTransparency);
@@ -354,6 +358,34 @@ namespace IceChat
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
+            // 
+            // textMaximumLines
+            // 
+            this.textMaximumLines.Location = new System.Drawing.Point(173, 162);
+            this.textMaximumLines.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textMaximumLines.Name = "textMaximumLines";
+            this.textMaximumLines.Size = new System.Drawing.Size(60, 23);
+            this.textMaximumLines.TabIndex = 49;
+            // 
+            // labelMaxLines
+            // 
+            this.labelMaxLines.AutoSize = true;
+            this.labelMaxLines.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.labelMaxLines.Location = new System.Drawing.Point(12, 165);
+            this.labelMaxLines.Name = "labelMaxLines";
+            this.labelMaxLines.Size = new System.Drawing.Size(148, 16);
+            this.labelMaxLines.TabIndex = 50;
+            this.labelMaxLines.Text = "Number of Text Lines";
+            // 
+            // checkMinimizeTray
+            // 
+            this.checkMinimizeTray.AutoSize = true;
+            this.checkMinimizeTray.Location = new System.Drawing.Point(15, 142);
+            this.checkMinimizeTray.Name = "checkMinimizeTray";
+            this.checkMinimizeTray.Size = new System.Drawing.Size(135, 20);
+            this.checkMinimizeTray.TabIndex = 48;
+            this.checkMinimizeTray.Text = "Minimize to Tray";
+            this.checkMinimizeTray.UseVisualStyleBackColor = true;
             // 
             // label15
             // 
@@ -1853,16 +1885,6 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
-            // checkMinimizeTray
-            // 
-            this.checkMinimizeTray.AutoSize = true;
-            this.checkMinimizeTray.Location = new System.Drawing.Point(15, 142);
-            this.checkMinimizeTray.Name = "checkMinimizeTray";
-            this.checkMinimizeTray.Size = new System.Drawing.Size(135, 20);
-            this.checkMinimizeTray.TabIndex = 48;
-            this.checkMinimizeTray.Text = "Minimize to Tray";
-            this.checkMinimizeTray.UseVisualStyleBackColor = true;
-            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2068,5 +2090,7 @@ namespace IceChat
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ComboBox comboBufferSize;
         private System.Windows.Forms.CheckBox checkMinimizeTray;
+        private System.Windows.Forms.TextBox textMaximumLines;
+        private System.Windows.Forms.Label labelMaxLines;
     }
 }

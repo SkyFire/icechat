@@ -152,6 +152,7 @@ namespace IceChat
             checkWhoisNewQuery.Checked = iceChatOptions.WhoisNewQuery;
             checkShowUnreadLine.Checked = iceChatOptions.ShowUnreadLine;
             checkMinimizeTray.Checked = iceChatOptions.MinimizeToTray;
+            textMaximumLines.Text = iceChatOptions.MaximumTextLines.ToString();
 
             //dcc settings
             checkAutoDCCChat.Checked = iceChatOptions.DCCChatAutoAccept;
@@ -252,6 +253,8 @@ namespace IceChat
             iceChatOptions.DisableQueries = checkDisableQueries.Checked;
             iceChatOptions.NewQueryForegound = checkNewQueryForegound.Checked;
             iceChatOptions.WhoisNewQuery = checkWhoisNewQuery.Checked;
+
+            iceChatOptions.MaximumTextLines = Convert.ToInt32(textMaximumLines.Text);
 
             iceChatOptions.ShowUnreadLine = checkShowUnreadLine.Checked;
             iceChatOptions.MinimizeToTray = checkMinimizeTray.Checked;

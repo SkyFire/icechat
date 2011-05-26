@@ -160,6 +160,7 @@ namespace IceChat
             msg = msg.Replace("$message", message);
 
             PluginArgs args = new PluginArgs(CurrentWindow.TextWindow, "", nick, "", msg);
+            args.Extra = message;
             args.Connection = connection;
 
             foreach (IPluginIceChat ipc in loadedPlugins)
@@ -210,6 +211,7 @@ namespace IceChat
             msg = msg.Replace("$message", message);
 
             PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", "", connection.ServerSetting.RealServerName, msg);
+            args.Extra = message;
             args.Connection = connection;
 
             foreach (IPluginIceChat ipc in loadedPlugins)
@@ -249,6 +251,7 @@ namespace IceChat
             msg = msg.Replace("$message", message);
 
             PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", "", connection.ServerSetting.RealServerName, msg);
+            args.Extra = message;
             args.Connection = connection;
 
             foreach (IPluginIceChat ipc in loadedPlugins)
@@ -337,6 +340,7 @@ namespace IceChat
                     error = error.Replace("$message", msg);
 
                     PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", "",connection.ServerSetting.RealServerName, error);
+                    args.Extra = message;
                     args.Connection = mainTabControl.GetTabPage("Console").Connection;
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
@@ -444,6 +448,7 @@ namespace IceChat
                 msg = msg.Replace("$message", message);
 
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
+                args.Extra = message;
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
@@ -482,6 +487,7 @@ namespace IceChat
                 msg = msg.Replace("$message", message);
 
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
+                args.Extra = message;
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
@@ -528,6 +534,7 @@ namespace IceChat
                 msg = msg.Replace("$message", message);
 
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
+                args.Extra = message;
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
@@ -613,6 +620,7 @@ namespace IceChat
                 msg = msg.Replace("$message", message);
 
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
+                args.Extra = message;
                 args.Connection = connection;
                 
                 foreach (IPluginIceChat ipc in loadedPlugins)
@@ -620,6 +628,7 @@ namespace IceChat
                     args = ipc.ChannelMessage(args);
                 }
 
+                /*
                 foreach (object o in loadedScripts)
                 {
                     MethodInfo info = o.GetType().GetMethod("OnText");
@@ -632,6 +641,7 @@ namespace IceChat
                             args.Message = retval;
                     }
                 }
+                */
 
                 if (args.Message.Contains(connection.ServerSetting.NickName))
                 {
@@ -759,6 +769,7 @@ namespace IceChat
                     {
                         args = ipc.ChannelJoin(args);
                     }
+
                     if (iceChatOptions.JoinEventLocation == 0)
                     {
                         //send to the channel window
@@ -939,6 +950,7 @@ namespace IceChat
                 msg = msg.Replace("$reason", reason);
 
                 PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, channel, nick, kickUser, msg);
+                args.Extra = reason;
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)

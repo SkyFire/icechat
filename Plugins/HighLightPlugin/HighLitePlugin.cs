@@ -62,7 +62,7 @@ namespace IceChatPlugin
             //set your default values here
             m_Name = "HighLite Plugin";
             m_Author = "Snerf";
-            m_Version = "1.1";
+            m_Version = "1.2";
         }
 
         public string Name
@@ -121,15 +121,22 @@ namespace IceChatPlugin
 
         public void MainProgramLoaded()
         {
+            //
 
         }
 
         public void LoadSettingsForm(TabControl SettingsTab)
         {
-
+            //
 
         }
-        
+
+        public void LoadEditorForm(TabControl ScriptsTab)
+        {
+            //
+
+        }
+
         public void LoadColorsForm(TabControl OptionsTab)
         {
             //when the Options Form gets loaded, ability to add tabs
@@ -249,6 +256,12 @@ namespace IceChatPlugin
         {
             //
         }
+
+        public void SaveEditorForm()
+        {
+            //
+        }
+
         private void ShowHighLites()
         {
             foreach (HighLiteItem hli in iceChatHighLites.listHighLites)

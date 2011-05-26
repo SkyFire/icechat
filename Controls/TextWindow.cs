@@ -108,7 +108,7 @@ namespace IceChat
 
         private delegate void ScrollValueDelegate(int value);
 
-        private readonly int _maxTextLines = 500;
+        private int _maxTextLines = 500;
 
         private Logging _logClass;
 
@@ -149,6 +149,7 @@ namespace IceChat
 
             LoadTextSizes();
 
+            this._maxTextLines = FormMain.Instance.IceChatOptions.MaximumTextLines;
 
             if (FormMain.Instance != null && FormMain.Instance.IceChatEmoticons != null)
             {
@@ -785,6 +786,11 @@ namespace IceChat
             set { _noEmoticons = value; }
         }
 
+        internal int MaximumTextLines
+        {
+            set { _maxTextLines = value; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -841,6 +847,7 @@ namespace IceChat
                     _unreadMarker = 0;
                     _unreadReset = false;
                 }
+                
                 ++_unreadMarker;
 
                 newLine = newLine.Replace("\n", " ");
@@ -886,7 +893,7 @@ namespace IceChat
                 if (_singleLine) _totalLines = 1;
 
                 //check if 500 lines, and trim if so
-                if (_totalLines >= (_maxTextLines - 5))
+                if (_totalLines >= (_maxTextLines - 50))
                 {
                     //System.Diagnostics.Debug.WriteLine("Reset Lines back to " + Max_textLines + ":" + totalLines);
                     int x = 1;
@@ -1177,7 +1184,10 @@ namespace IceChat
                 {
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = newValue + vScrollBar.LargeChange - 1;
-                    if (newValue <= vScrollBar.Value + (vScrollBar.LargeChange - 1))
+
+                    //System.Diagnostics.Debug.WriteLine(newValue + ":" + vScrollBar.Value + ":" + (vScrollBar.Value + (vScrollBar.LargeChange - 1)));
+                    //if (newValue <= vScrollBar.Value + (vScrollBar.LargeChange - 1))
+                    if (newValue <= vScrollBar.Value + 5)
                         vScrollBar.Value = newValue;
                 }
             }

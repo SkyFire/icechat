@@ -52,8 +52,10 @@ namespace IceChatPlugin
 
         void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab);
         void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab);
+        void LoadEditorForm(System.Windows.Forms.TabControl ScriptsTab);
         void SaveColorsForm();
         void SaveSettingsForm();
+        void SaveEditorForm();
 
         void MainProgramLoaded();       //the main icechat form/program has loaded
 

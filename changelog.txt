@@ -1,3 +1,9 @@
+Build Beta 5.2 May 25, 2011
+* Added setting for maximum number of text lines
+* Changes to Plugins to allow tabs to be added to Editor
+
+
+
 Build Beta 5.1  April 30, 2011
 * Added DCC File changes submitted
 * Fixed issue with Server Errors showing in all windows, not in proper places
@@ -6,6 +12,7 @@ Build Beta 5.1  April 30, 2011
 * Added $+ identifier for joining 2 words together
 * Added option to Minimize to Tray
 * Added if IceChat is closed on Tray, it will restart on Tray
+* Added basic word wrapping
 
 
 

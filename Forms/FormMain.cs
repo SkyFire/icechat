@@ -325,7 +325,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - April 30 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 25 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -4131,6 +4131,7 @@ namespace IceChat
             foreach (ConsoleTab c in mainTabControl.GetTabPage("Console").ConsoleTab.TabPages)
             {
                 ((TextWindow)c.Controls[0]).Font = new Font(iceChatFonts.FontSettings[0].FontName, iceChatFonts.FontSettings[0].FontSize);
+                ((TextWindow)c.Controls[0]).MaximumTextLines = iceChatOptions.MaximumTextLines;
             }
             
             //do all the Channel and Query Tabs Windows
@@ -4141,6 +4142,15 @@ namespace IceChat
 
                 if (t.WindowStyle == IceTabPage.WindowType.Query)
                     t.TextWindow.Font = new Font(iceChatFonts.FontSettings[2].FontName, iceChatFonts.FontSettings[2].FontSize);
+
+                if (t.WindowStyle == IceTabPage.WindowType.DCCChat)
+                    t.TextWindow.Font = new Font(iceChatFonts.FontSettings[2].FontName, iceChatFonts.FontSettings[2].FontSize);
+
+                if (t.WindowStyle == IceTabPage.WindowType.Window)
+                    t.TextWindow.Font = new Font(iceChatFonts.FontSettings[1].FontName, iceChatFonts.FontSettings[1].FontSize);
+
+                if (t.WindowStyle != IceTabPage.WindowType.Console)
+                    t.TextWindow.MaximumTextLines = iceChatOptions.MaximumTextLines;
             }
             
             //change the server list
@@ -4410,7 +4420,7 @@ namespace IceChat
             loadedScripts.Clear();
 
             if (FormMain.Instance.IceChatOptions.ScriptFiles == null) return;
-
+            /*
             foreach (string scriptFile in iceChatOptions.ScriptFiles)
             {
                 System.Diagnostics.Debug.WriteLine("Load Script " + scriptFile);
@@ -4456,6 +4466,7 @@ namespace IceChat
                     info.Invoke(o, new object[] { (IntPtr) this.Handle});
                 }
             }
+            */
         }
 
         private void LoadPlugins()

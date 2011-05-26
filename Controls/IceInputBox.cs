@@ -339,7 +339,6 @@ namespace IceChat
                     int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
                     FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex], false);
-                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
                 else if (e.KeyCode == Keys.PageUp)
@@ -347,7 +346,6 @@ namespace IceChat
                     int nextIndex = FormMain.Instance.TabMain.TabCount == FormMain.Instance.TabMain.SelectedIndex + 1 ? 0 : FormMain.Instance.TabMain.SelectedIndex + 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex]);
                     FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[nextIndex], false);
-                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
                 else if (e.KeyCode == Keys.PageDown)
@@ -355,7 +353,6 @@ namespace IceChat
                     int prevIndex = FormMain.Instance.TabMain.SelectedIndex == 0 ? FormMain.Instance.TabMain.TabCount - 1 : FormMain.Instance.TabMain.SelectedIndex - 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex]);
                     FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex], false);
-                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
 
@@ -370,7 +367,6 @@ namespace IceChat
                     int prevIndex = FormMain.Instance.TabMain.SelectedIndex == 0 ? FormMain.Instance.TabMain.TabCount - 1 : FormMain.Instance.TabMain.SelectedIndex - 1;
                     FormMain.Instance.TabMain.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex]);
                     FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex], false);
-                    //FormMain.Instance.ServerTree.Invalidate();
                     return;
                 }
             }

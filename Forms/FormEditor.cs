@@ -33,6 +33,8 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Reflection;
 
+using IceChatPlugin;
+
 namespace IceChat
 {
     public partial class FormEditor : Form
@@ -106,7 +108,13 @@ namespace IceChat
             {
                 FormMain.Instance.WriteErrorFile("FormEditor LoadScripts", fe);
             }
-            
+
+            //load any plugin addons
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                ipc.LoadEditorForm(this.tabControlEditor);
+            }
+
             ApplyLanguage();
         }
 
@@ -295,7 +303,13 @@ namespace IceChat
 
             //save the current popup menu
             UpdateCurrentPopupMenus();
-                       
+
+            //save any plugin addons for the Script Editor
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                ipc.SaveEditorForm();
+            }
+           
             this.Close();
         }
 

@@ -299,6 +299,7 @@ namespace IceChat
         private bool _showUnreadLine = false;
         private bool _minimizeTray = false;
         private bool _isOnTray = false;
+        private int _maxTextLines = 500;
 
         private int _panelRightWidth = 200;
         private int _panelLeftWidth = 175;
@@ -521,6 +522,13 @@ namespace IceChat
         {
             get { return this._isOnTray; }
             set { this._isOnTray = value; }
+        }
+
+        [XmlElement("MaximumTextLines")]
+        public int MaximumTextLines
+        {
+            get { return this._maxTextLines; }
+            set { this._maxTextLines = value; }
         }
 
         [XmlElement("Language")]
