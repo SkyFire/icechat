@@ -269,8 +269,18 @@ namespace IceChat
             }
             else if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Query || FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.DCCChat)
             {
-                this.Text += FormMain.Instance.CurrentWindow.TabCaption;
+                if (this.Text.IndexOf(' ') == -1)
+                    _partialNick = this.Text;
+                else
+                    _partialNick = this.Text.Substring(this.Text.LastIndexOf(' ') + 1);
+ 
+                if (_partialNick.Length == 0)
+                    this.Text += FormMain.Instance.CurrentWindow.TabCaption;
+                else
+                    this.Text = this.Text.Substring(0,this.Text.Length - _partialNick.Length) + FormMain.Instance.CurrentWindow.TabCaption;
+                
                 this.SelectionStart = this.Text.Length;
+
             }
         }
 

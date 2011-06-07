@@ -69,10 +69,5 @@ namespace IceChat
             this.Close();
         }
 
-        private void buttonReLoad_Click(object sender, EventArgs e)
-        {
-            FormMain.Instance.ReloadPlugin(menuItem);
-            this.Close();
-        }
     }
 }

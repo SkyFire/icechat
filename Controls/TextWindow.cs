@@ -788,7 +788,16 @@ namespace IceChat
 
         internal int MaximumTextLines
         {
-            set { _maxTextLines = value; }
+            set { 
+                
+                _maxTextLines = value;
+                
+                _displayLines = new DisplayLine[_maxTextLines * 4];
+                _textLines = new TextLine[_maxTextLines];
+
+                LoadTextSizes();
+                
+            }
         }
 
         #endregion
@@ -888,32 +897,29 @@ namespace IceChat
 
                 newLine = ParseEmoticons(newLine);
 
-                //System.Diagnostics.Debug.WriteLine("NEWLINE3:" + newLine);
-
                 if (_singleLine) _totalLines = 1;
 
-                //check if 500 lines, and trim if so
-                if (_totalLines >= (_maxTextLines - 50))
+                if (_totalLines >= (_maxTextLines - 10))
                 {
-                    //System.Diagnostics.Debug.WriteLine("Reset Lines back to " + Max_textLines + ":" + totalLines);
                     int x = 1;
-                    for (int i = _totalLines - (_maxTextLines - 50); i <= _totalLines - 1; i++)
+                    for (int i = _totalLines - (_totalLines - 50); i <= _totalLines - 1; i++)
                     {
                         _textLines[x].totalLines = _textLines[i].totalLines;
                         _textLines[x].width = _textLines[i].width;
                         _textLines[x].line = _textLines[i].line;
+                        
                         _textLines[x].textColor = _textLines[i].textColor;
                         x++;
                     }
-
-                    for (int i = (_maxTextLines - 49); i < _maxTextLines; i++)
+                    
+                    for (int i = (_totalLines - 49); i < _totalLines; i++)
                     {
                         _textLines[i].totalLines = 0;
                         _textLines[i].line = "";
                         _textLines[i].width = 0;
                     }
 
-                    _totalLines = _maxTextLines - 50;
+                    _totalLines = _totalLines - 50;
 
                     if (this.Height != 0)
                     {

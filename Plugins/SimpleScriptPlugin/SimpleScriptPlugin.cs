@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections;
 using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace IceChatPlugin
@@ -63,7 +64,7 @@ namespace IceChatPlugin
             //set your default values here
             m_Name = "Simple Script Plugin";
             m_Author = "Snerf";
-            m_Version = "1.0";
+            m_Version = "1.1";
         }
 
         public string Name
@@ -141,10 +142,10 @@ namespace IceChatPlugin
             columnChannelMatch = new ColumnHeader();
             columnEventType = new ColumnHeader();
 
-            columnTextMatch.Width = 0;
-            columnChannelMatch.Width = 250;
+            columnTextMatch.Width = 200;
+            columnChannelMatch.Width = 200;
             columnEventType.Text = "Script Event";
-            columnEventType.Width = 250;
+            columnEventType.Width = 200;
             columnCommand.Width = 0;
 
             tabPageHighlight.SuspendLayout();
@@ -185,7 +186,8 @@ namespace IceChatPlugin
             listScripts.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             columnEventType,
             columnCommand,
-            columnChannelMatch, columnTextMatch});
+            columnTextMatch, 
+            columnChannelMatch });
 
 
             listScripts.FullRowSelect = true;
@@ -249,8 +251,8 @@ namespace IceChatPlugin
                 ScriptItem scr = new ScriptItem();
                 scr.ScriptEvent = item.Text;
                 scr.Command = item.SubItems[1].Text;
-                scr.ChannelMatch = item.SubItems[2].Text;
-                scr.TextMatch = item.SubItems[3].Text;
+                scr.TextMatch = item.SubItems[2].Text;
+                scr.ChannelMatch = item.SubItems[3].Text;
                 scr.Enabled = item.Checked;
                 iceChatScripts.AddScriptItem(scr);
             }
@@ -264,8 +266,8 @@ namespace IceChatPlugin
             {
                 ListViewItem lvi = this.listScripts.Items.Add(scr.ScriptEvent);
                 lvi.SubItems.Add(scr.Command);
-                lvi.SubItems.Add(scr.ChannelMatch);
                 lvi.SubItems.Add(scr.TextMatch);
+                lvi.SubItems.Add(scr.ChannelMatch);
                 lvi.Checked = scr.Enabled;
             }
         }
@@ -301,8 +303,8 @@ namespace IceChatPlugin
 
                 scr.ScriptEvent = item.Text;
                 scr.Command = item.SubItems[1].Text;
-                scr.ChannelMatch = item.SubItems[2].Text;
-                scr.TextMatch = item.SubItems[3].Text;
+                scr.TextMatch = item.SubItems[2].Text;
+                scr.ChannelMatch = item.SubItems[3].Text;
                 scr.Enabled = item.Checked;
 
                 FormScriptItem fi = new FormScriptItem(scr, item.Index);
@@ -333,8 +335,8 @@ namespace IceChatPlugin
             {
                 ListViewItem lvi = this.listScripts.Items.Add(scr.ScriptEvent);
                 lvi.SubItems.Add(scr.Command);
-                lvi.SubItems.Add(scr.ChannelMatch);
                 lvi.SubItems.Add(scr.TextMatch);
+                lvi.SubItems.Add(scr.ChannelMatch);
                 lvi.Checked = true;
             }
         }
@@ -347,8 +349,8 @@ namespace IceChatPlugin
                 {
                     item.Text= scr.ScriptEvent;
                     item.SubItems[1].Text = scr.Command;
-                    item.SubItems[2].Text = scr.ChannelMatch;
-                    item.SubItems[3].Text = scr.TextMatch;
+                    item.SubItems[2].Text = scr.TextMatch;
+                    item.SubItems[3].Text = scr.ChannelMatch;
                     item.Checked = scr.Enabled;
                     break;
                 }
@@ -367,11 +369,13 @@ namespace IceChatPlugin
                         case "Channel Message":
                         case "Channel Action":
                             //use a regex match of sorts down the road
-                            if (String.Compare(scr.ChannelMatch, args.Channel, true) == 0)
+                            Regex regChannel = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
+                            if (regChannel.IsMatch(args.Channel))
                             {
-                                if (String.Compare(scr.TextMatch, args.Extra, true) == 0)
+                                Regex regMatch = new Regex(scr.TextMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
+                                if (regMatch.IsMatch(args.Extra))                                
                                 {
-                                    command = scr.Command.Replace("$chan", scr.ChannelMatch);
+                                    command = scr.Command.Replace("$chan", args.Channel);
                                     command = command.Replace("$match", scr.TextMatch);
                                     command = command.Replace("$message", args.Extra);
 
@@ -381,13 +385,15 @@ namespace IceChatPlugin
                                         OnCommand(this, args);
 
                                 }
-                            }
+                            }                            
                             break;
                         case "Private Message":
                         case "Private Action":
-                            if (String.Compare(scr.ChannelMatch, args.Channel, true) == 0)
+                            Regex regChannel2 = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
+                            if (regChannel2.IsMatch(args.Channel))
                             {
-                                if (String.Compare(scr.TextMatch, args.Extra, true) == 0)
+                                Regex regMatch = new Regex(scr.TextMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
+                                if (regMatch.IsMatch(args.Extra))
                                 {
                                     command = scr.Command.Replace("$chan", scr.ChannelMatch);
                                     command = scr.Command.Replace("$nick", scr.ChannelMatch);
@@ -404,7 +410,8 @@ namespace IceChatPlugin
                         
                             break;                        
                         case "Channel Join":
-                            if (String.Compare(scr.ChannelMatch, args.Channel, true) == 0)
+                            Regex regChannel3 = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
+                            if (regChannel3.IsMatch(args.Channel))
                             {
                                 command = scr.Command.Replace("$chan", scr.ChannelMatch);
                                 command = scr.Command.Replace("$nick", scr.ChannelMatch);

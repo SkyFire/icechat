@@ -325,7 +325,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - May 25 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 7 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -1826,6 +1826,7 @@ namespace IceChat
                                 }
                             }                            
                             break;                        
+                        /*
                         case "/reloadplugin":
                             if (data.Length > 0)
                             {
@@ -1900,7 +1901,8 @@ namespace IceChat
                                 }
                             }
                             break;                        
-                        case "/addtext":
+                         */
+                         case "/addtext":
                             if (data.Length > 0)
                             {
                                 inputPanel.AppendText(data);
@@ -4469,6 +4471,71 @@ namespace IceChat
             */
         }
 
+
+        private void loadPlugin(String fileName)
+        {
+            string args = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+            args = args.Substring(0, args.Length - 4);
+
+            Type ObjType = null;
+            try
+            {
+                // load it
+                Assembly ass = null;
+                ass = Assembly.LoadFile(fileName);
+                //System.Diagnostics.Debug.WriteLine(ass.ToString());
+                if (ass != null)
+                {
+                    ObjType = ass.GetType("IceChatPlugin.Plugin");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("assembly is null");
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins Cast", ex);
+            }
+            try
+            {
+                // OK Lets create the object as we have the Report Type
+                if (ObjType != null)
+                {
+                    //System.Diagnostics.Debug.WriteLine("create instance of " + args);
+
+                    IPluginIceChat ipi = (IPluginIceChat)Activator.CreateInstance(ObjType);
+
+                    ipi.MainForm = this;
+                    ipi.MainMenuStrip = this.MainMenuStrip;
+                    ipi.CurrentFolder = currentFolder;
+
+                    WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
+
+                    //add the menu items
+                    ToolStripMenuItem t = new ToolStripMenuItem(ipi.Name);
+                    t.Tag = ipi;
+                    t.ToolTipText = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+                    t.Click += new EventHandler(OnPluginMenuItemClick);
+                    pluginsToolStripMenuItem.DropDownItems.Add(t);
+
+                    ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
+                    ipi.Initialize();
+                    loadedPlugins.Add(ipi);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("obj type is null:" + args);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins", ex);
+            }
+
+
+        }
+
         private void LoadPlugins()
         {
             string[] pluginFiles = Directory.GetFiles(pluginsFolder, "*.DLL");
@@ -4480,64 +4547,9 @@ namespace IceChat
                 string args = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
                 args = args.Substring(0, args.Length - 4);
                 
-                //System.Diagnostics.Debug.WriteLine(args);
                 if (!args.ToUpper().StartsWith("IPLUGIN"))
                 {
-                    Type ObjType = null;
-                    try
-                    {
-                        // load it
-                        Assembly ass = null;
-                        ass = Assembly.LoadFile(pluginFiles[i]);
-                        //System.Diagnostics.Debug.WriteLine(ass.ToString());
-                        if (ass != null)
-                        {
-                            ObjType = ass.GetType("IceChatPlugin.Plugin");
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("assembly is null");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins Cast", ex);
-                    }
-                    try
-                    {
-                        // OK Lets create the object as we have the Report Type
-                        if (ObjType != null)
-                        {
-                            //System.Diagnostics.Debug.WriteLine("create instance of " + args);
-
-                            IPluginIceChat ipi = (IPluginIceChat)Activator.CreateInstance(ObjType);
-                            
-                            ipi.MainForm = this;
-                            ipi.MainMenuStrip = this.MainMenuStrip;
-                            ipi.CurrentFolder = currentFolder;
-                            
-                            WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
-                            
-                            //add the menu items
-                            ToolStripMenuItem t = new ToolStripMenuItem(ipi.Name);
-                            t.Tag = ipi;
-                            t.ToolTipText = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
-                            t.Click += new EventHandler(OnPluginMenuItemClick);
-                            pluginsToolStripMenuItem.DropDownItems.Add(t);
-
-                            ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
-                            ipi.Initialize();
-                            loadedPlugins.Add(ipi);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("obj type is null:" + args);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins", ex);
-                    }
+                    loadPlugin(pluginFiles[i]);
                 }
             }
         }
@@ -4556,12 +4568,14 @@ namespace IceChat
         {
             ParseOutGoingCommand(null, "/unloadplugin " + menuItem.ToolTipText);
         }
-
+        
+        /*
         internal void ReloadPlugin(ToolStripMenuItem menuItem)
         {
             ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
         }
-
+        */
+        
         /// <summary>
         /// Write out to the errors file, specific to the Connection
         /// </summary>
@@ -4570,7 +4584,7 @@ namespace IceChat
         /// <param name="e"></param>
         internal void WriteErrorFile(IRCConnection connection, string method, Exception e)
         {
-            System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
+            //System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
             System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e, true);
             WindowMessage(connection, "Console", "Error:" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber(), 4, true);
             
@@ -4765,6 +4779,38 @@ namespace IceChat
             muteAllSoundsToolStripMenuItem.Checked = muteAllSounds;
         }
 
+        private void loadAPluginToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //bring up a dialog box to open a new Plugin DLL File
+            FileDialog fd = new OpenFileDialog();
+            fd.DefaultExt = ".dll";
+            fd.CheckFileExists = true;
+            fd.CheckPathExists = true;
+            fd.AddExtension = true;
+            fd.AutoUpgradeEnabled = true;
+            fd.Filter = "Plugin file (*.dll)|*.dll";
+            fd.Title = "Which plugin file do you want to open?";
+            fd.InitialDirectory = this.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
+
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                //urrentScript = fd.FileName;
+                //need to make sure the plugin is not already loaded
+
+                //pluginsToolStripMenuItem.DropDownItems.Add(t);
+                foreach (ToolStripItem item in pluginsToolStripMenuItem.DropDownItems)
+                {
+                    //System.Diagnostics.Debug.WriteLine(item.ToolTipText + ":" + fd.FileName + ":" + System.IO.Path.GetFileName(fd.FileName));
+                    if (item.ToolTipText.ToLower() == System.IO.Path.GetFileName(fd.FileName).ToLower())
+                    {
+                        return;
+
+                    }
+                }
+                loadPlugin(fd.FileName);
+
+            }
+        }
 
     }
 

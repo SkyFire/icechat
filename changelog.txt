@@ -1,3 +1,9 @@
+Build Beta 5.3 June 7, 2011
+* Fix bug with screen clearing when buffer got full
+* Rewove 'unload plugin' from Plugins, and allow to load a plugin from menu
+
+
+
 Build Beta 5.2 May 25, 2011
 * Added setting for maximum number of text lines
 * Changes to Plugins to allow tabs to be added to Editor

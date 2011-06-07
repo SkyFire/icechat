@@ -74,6 +74,7 @@ namespace IceChat
             this.iceChatEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.muteAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadAPluginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.serverListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -213,24 +214,24 @@ namespace IceChat
             this.iceChatSettingsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.MenuText;
             this.iceChatSettingsToolStripMenuItem.Name = "iceChatSettingsToolStripMenuItem";
             this.iceChatSettingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.iceChatSettingsToolStripMenuItem.Text = "Program Settings";
+            this.iceChatSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.iceChatSettingsToolStripMenuItem.Text = "Program Settings...";
             this.iceChatSettingsToolStripMenuItem.Click += new System.EventHandler(this.iceChatSettingsToolStripMenuItem_Click);
             // 
             // iceChatColorsToolStripMenuItem
             // 
             this.iceChatColorsToolStripMenuItem.Name = "iceChatColorsToolStripMenuItem";
             this.iceChatColorsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.iceChatColorsToolStripMenuItem.Text = "Colors Settings";
+            this.iceChatColorsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.iceChatColorsToolStripMenuItem.Text = "Colors Settings...";
             this.iceChatColorsToolStripMenuItem.Click += new System.EventHandler(this.iceChatColorsToolStripMenuItem_Click);
             // 
             // iceChatEditorToolStripMenuItem
             // 
             this.iceChatEditorToolStripMenuItem.Name = "iceChatEditorToolStripMenuItem";
             this.iceChatEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.iceChatEditorToolStripMenuItem.Text = "IceChat Editor";
+            this.iceChatEditorToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.iceChatEditorToolStripMenuItem.Text = "IceChat Editor...";
             this.iceChatEditorToolStripMenuItem.Click += new System.EventHandler(this.iceChatEditorToolStripMenuItem_Click);
             // 
             // muteAllSoundsToolStripMenuItem
@@ -238,15 +239,25 @@ namespace IceChat
             this.muteAllSoundsToolStripMenuItem.BackColor = System.Drawing.SystemColors.Menu;
             this.muteAllSoundsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.MenuText;
             this.muteAllSoundsToolStripMenuItem.Name = "muteAllSoundsToolStripMenuItem";
-            this.muteAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.muteAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.muteAllSoundsToolStripMenuItem.Text = "Mute all Sounds";
             this.muteAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.muteAllSoundsToolStripMenuItem_Click);
             // 
             // pluginsToolStripMenuItem
             // 
+            this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadAPluginToolStripMenuItem});
             this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.pluginsToolStripMenuItem.Text = "Loaded Plugins";
+            // 
+            // loadAPluginToolStripMenuItem
+            // 
+            this.loadAPluginToolStripMenuItem.Name = "loadAPluginToolStripMenuItem";
+            this.loadAPluginToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.loadAPluginToolStripMenuItem.Text = "Load a Plugin...";
+            this.loadAPluginToolStripMenuItem.ToolTipText = "Load a new Plugin";
+            this.loadAPluginToolStripMenuItem.Click += new System.EventHandler(this.loadAPluginToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -444,19 +455,19 @@ namespace IceChat
             this.restoreToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.contextMenuNotify.Name = "contextMenuNotify";
-            this.contextMenuNotify.Size = new System.Drawing.Size(112, 48);
+            this.contextMenuNotify.Size = new System.Drawing.Size(114, 48);
             // 
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(111, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(113, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
@@ -488,12 +499,12 @@ namespace IceChat
             this.contextMenuToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hideToolStripMenuItem});
             this.contextMenuToolBar.Name = "contextMenuToolBar";
-            this.contextMenuToolBar.Size = new System.Drawing.Size(97, 26);
+            this.contextMenuToolBar.Size = new System.Drawing.Size(100, 26);
             // 
             // hideToolStripMenuItem
             // 
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(96, 22);
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
             this.hideToolStripMenuItem.Text = "Hide";
             this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
             // 
@@ -689,6 +700,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem channelBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripUpdate;
         private System.Windows.Forms.ToolStripMenuItem muteAllSoundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadAPluginToolStripMenuItem;
 
 
 
