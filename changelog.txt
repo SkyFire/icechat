@@ -1,7 +1,11 @@
+Build Beta 5.4 June 9, 2011
+* Fix bug with screen buffer clearing randomly
+* Fix and finalize the Simple Script Plugin
+
+
 Build Beta 5.3 June 7, 2011
 * Fix bug with screen clearing when buffer got full
-* Rewove 'unload plugin' from Plugins, and allow to load a plugin from menu
-
+* Remove 'unload plugin' from Plugins, and allow to load a plugin from menu
 
 
 Build Beta 5.2 May 25, 2011

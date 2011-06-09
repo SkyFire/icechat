@@ -767,6 +767,7 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
+                        //mainTabControl.GetTabPage("Console").AddText(connection, "Channel Join :" + args.Channel, 4, false);
                         args = ipc.ChannelJoin(args);
                     }
 
@@ -1418,7 +1419,11 @@ namespace IceChat
             {
                 InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[oldnick];
                 connection.ServerSetting.IAL.Remove(oldnick);
-                ial.Nick = newnick;
+
+                if (connection.ServerSetting.IAL.ContainsKey(newnick))
+                    connection.ServerSetting.IAL.Remove(newnick);
+                
+                ial.Nick = newnick;                
                 connection.ServerSetting.IAL.Add(newnick, ial);
             }
         }

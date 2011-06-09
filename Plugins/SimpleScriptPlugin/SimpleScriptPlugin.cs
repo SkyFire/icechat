@@ -362,7 +362,7 @@ namespace IceChatPlugin
             foreach (ScriptItem scr in iceChatScripts.listScripts)
             {
                 string command = "";
-                if (scr.Enabled)
+                if (scr.Enabled && eventType == scr.ScriptEvent)
                 {
                     switch (scr.ScriptEvent)
                     {
@@ -370,7 +370,7 @@ namespace IceChatPlugin
                         case "Channel Action":
                             //use a regex match of sorts down the road
                             Regex regChannel = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
-                            if (regChannel.IsMatch(args.Channel))
+                            if (args.Channel != null && regChannel.IsMatch(args.Channel))
                             {
                                 Regex regMatch = new Regex(scr.TextMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
                                 if (regMatch.IsMatch(args.Extra))                                
@@ -390,7 +390,7 @@ namespace IceChatPlugin
                         case "Private Message":
                         case "Private Action":
                             Regex regChannel2 = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
-                            if (regChannel2.IsMatch(args.Channel))
+                            if (args.Channel != null && regChannel2.IsMatch(args.Channel))
                             {
                                 Regex regMatch = new Regex(scr.TextMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
                                 if (regMatch.IsMatch(args.Extra))
@@ -410,8 +410,8 @@ namespace IceChatPlugin
                         
                             break;                        
                         case "Channel Join":
-                            Regex regChannel3 = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);
-                            if (regChannel3.IsMatch(args.Channel))
+                            Regex regChannel3 = new Regex(scr.ChannelMatch.Replace(@".", @"\.").Replace(@"*", @".*"), RegexOptions.IgnoreCase);                           
+                            if (args.Channel != null && regChannel3.IsMatch(args.Channel))
                             {
                                 command = scr.Command.Replace("$chan", scr.ChannelMatch);
                                 command = scr.Command.Replace("$nick", scr.ChannelMatch);

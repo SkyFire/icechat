@@ -1118,11 +1118,9 @@ namespace IceChat
                                 IALUserData(this, nick, host, channel);
                             }
                             break;
-
-                            //80072 Snerf!IceChat09@Light-EAFED777.no.shawcable.net PART #Chat
+                        
                         case "PART":
                             channel = RemoveColon(ircData[2]);
-                            System.Diagnostics.Debug.WriteLine(channel + ":" + nick + ":" + serverSetting.NickName);
                             tempValue = JoinString(ircData, 3, true); //part reason
                             //check if it is our own nickname
                             if (nick.ToLower() == serverSetting.NickName.ToLower())

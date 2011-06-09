@@ -128,9 +128,6 @@ namespace IceChat
             stringFormat = StringFormat.GenericTypographic;
             stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
-            _displayLines = new DisplayLine[_maxTextLines * 4];
-            _textLines = new TextLine[_maxTextLines];
-
             this.MouseUp += new MouseEventHandler(OnMouseUp);
             this.MouseDown += new MouseEventHandler(OnMouseDown);
             this.MouseMove += new MouseEventHandler(OnMouseMove);
@@ -150,6 +147,9 @@ namespace IceChat
             LoadTextSizes();
 
             this._maxTextLines = FormMain.Instance.IceChatOptions.MaximumTextLines;
+
+            _displayLines = new DisplayLine[_maxTextLines * 4];
+            _textLines = new TextLine[_maxTextLines];
 
             if (FormMain.Instance != null && FormMain.Instance.IceChatEmoticons != null)
             {
@@ -902,6 +902,9 @@ namespace IceChat
                 if (_totalLines >= (_maxTextLines - 10))
                 {
                     int x = 1;
+
+                    //System.Diagnostics.Debug.WriteLine("clean up text " + _totalLines);
+
                     for (int i = _totalLines - (_totalLines - 50); i <= _totalLines - 1; i++)
                     {
                         _textLines[x].totalLines = _textLines[i].totalLines;
@@ -921,6 +924,8 @@ namespace IceChat
 
                     _totalLines = _totalLines - 50;
 
+                    //System.Diagnostics.Debug.WriteLine("cleaned " + _totalLines);
+
                     if (this.Height != 0)
                     {
                         _totaldisplayLines = FormatLines(_totalLines, 1, 0);
@@ -930,6 +935,8 @@ namespace IceChat
 
                     _totalLines++;
                 }
+
+                //System.Diagnostics.Debug.WriteLine(_totalLines + ":" + _maxTextLines + ":" + _textLines.Length);                
 
                 _textLines[_totalLines].line = newLine;
 

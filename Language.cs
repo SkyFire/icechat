@@ -115,7 +115,7 @@ namespace IceChat
             quickConnectErrorNoNick = "Please Enter a Nick Name";
 
             // about dialog
-            aboutText = "IceChat 2009 is an IRC (Internet Relay Chat) program. It is used to connect to an unlimited amount of IRC Servers simultaneoulsy and chat in channels with other IRC users.  Version 2009 is a complete rewrite of the program , using a tabbed interface, and written in C#. It is also now Open Source.";
+            aboutText = "IceChat 2009 is an IRC (Internet Relay Chat) program. It is used to connect to an unlimited amount of IRC Servers simultaneously and chat in channels with other IRC users.  Version 2009 is a complete rewrite of the program , using a tabbed interface, and written in C#. It is also now Open Source.";
         }
 
         [XmlElement("Name")]

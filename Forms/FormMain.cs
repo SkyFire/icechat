@@ -37,6 +37,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+
 using IceChat.Properties;
 using IceChatPlugin;
 
@@ -325,7 +326,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 7 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 9 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -1715,6 +1716,7 @@ namespace IceChat
                                     pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
                                     WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
                                     plugin.Dispose();
+                                    
                                 }
                             }
                             break;                        
@@ -1729,7 +1731,7 @@ namespace IceChat
                                 {
                                     //reload the plugin
                                     ass = Assembly.LoadFile(pluginsFolder + System.IO.Path.DirectorySeparatorChar + data);
-
+                                    
                                     //System.Diagnostics.Debug.WriteLine(ass.ToString());
                                     if (ass != null)
                                     {
