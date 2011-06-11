@@ -196,8 +196,41 @@ namespace IceChat
                                     if (ircData[i].Substring(0, 10) == "CHANMODES=")
                                     {
                                         //CHANMODES=b,k,l,imnpstrDducCNMT
-                                        string[] modes = ircData[i].Substring(ircData[i].IndexOf("=") + 1).Split(',');
                                         
+                                        /*
+                                        CHANMODES=A,B,C,D
+
+                                        The CHANMODES token specifies the modes that may be set on a channel.
+                                        These modes are split into four categories, as follows:
+
+                                        Type A: Modes that add or remove an address to or from a list.
+                                        These modes always take a parameter when sent by the server to a
+                                        client; when sent by a client, they may be specified without a
+                                        parameter, which requests the server to display the current
+                                        contents of the corresponding list on the channel to the client.
+                                        Type B: Modes that change a setting on the channel. These modes
+                                        always take a parameter.
+                                        Type C: Modes that change a setting on the channel. These modes
+                                        take a parameter only when set; the parameter is absent when the
+                                        mode is removed both in the client's and server's MODE command.
+                                        Type D: Modes that change a setting on the channel. These modes
+                                        never take a parameter.
+                                        */
+                                        
+                                        //CHANMODES=b,k,l,imnpstrDducCNMT
+                                        //CHANMODES=bouv,k,lOMN,cdejimnpqrstzAJLRU
+                                        string[] modes = ircData[i].Substring(ircData[i].IndexOf("=") + 1).Split(',');
+                                        if (modes.Length == 4)
+                                        {
+                                            serverSetting.ChannelModeAddress = modes[0];
+                                            serverSetting.ChannelModeParam = modes[1];
+                                            serverSetting.ChannelModeParamNotRemove = modes[2];
+                                            serverSetting.ChannelModeNoParam = modes[3];
+
+                                        }
+                                        
+                                        //System.Diagnostics.Debug.WriteLine(modes.Length);
+                                        /*
                                         for (int j = 0; j < modes.Length; j++)
                                         {
                                             if (j != (modes.Length - 1))
@@ -205,7 +238,7 @@ namespace IceChat
                                             else
                                                 serverSetting.ChannelModeNoParams = modes[j];
                                         }
-
+                                        */
                                     }
                                 }
                                 //parse MAX MODES set
@@ -266,6 +299,18 @@ namespace IceChat
                                     SendData("PROTOCTL NAMESX");
                                 }
                             }
+                            break;
+                        
+                        //vampire.webmaster.com- :vampire.webmaster.com 007 Snerf vampire.webmaster.com 1307687376 :Fri, 10 Jun 2011 06:29:36 0000
+                        case "007":
+                            DateTime date5 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                            date5 = date5.AddSeconds(Convert.ToDouble(ircData[4]));
+
+                            msg = ircData[3] + " " + date5.ToShortTimeString() + " " + JoinString(ircData, 5, true);
+                            ServerMessage(this, msg);
+                            break;
+                        case "014":
+                            ServerMessage(this, JoinString(ircData, 3, false));
                             break;
                         case "020": //IRCnet message
                             ServerMessage(this, JoinString(ircData, 3, true));
@@ -444,6 +489,12 @@ namespace IceChat
                             msg = JoinString(ircData, 5, true) + " " + ircData[4];
                             WhoisData(this, ircData[3], msg);
                             break;
+                        case "334":
+                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                                return;
+                            msg = JoinString(ircData, 4, false);
+                            WhoisData(this, ircData[3], msg);                            
+                            break;
                         case "335":     //whois information
                             if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
                                 return;
@@ -543,6 +594,9 @@ namespace IceChat
                             }                            
                             msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
                             GenericChannelMessage(this, channel, msg);
+                            break;
+                        case "343":
+                            ServerMessage(this, JoinString(ircData, 3, false));                                                        
                             break;
                         case "348": //channel exception list
                             channel = ircData[3];
@@ -659,6 +713,10 @@ namespace IceChat
                             ServerMessage(this, msg);                            
                             break;
                         case "368": //end of channel ban list
+                            break;
+
+                        case "377":
+                            ServerMessage(this, JoinString(ircData, 6, true));
                             break;
                         case "372": //motd
                         case "375":
@@ -1114,8 +1172,8 @@ namespace IceChat
                             }
                             else
                             {
-                                JoinChannel(this, channel, nick, host, true);
                                 IALUserData(this, nick, host, channel);
+                                JoinChannel(this, channel, nick, host, true);
                             }
                             break;
                         
@@ -1159,8 +1217,8 @@ namespace IceChat
                                 serverSetting.NickName = tempValue;
                             }
 
-                            ChangeNick(this, nick, tempValue, HostFromFullHost(ircData[0]));
                             IALUserChange(this, nick, tempValue);
+                            ChangeNick(this, nick, tempValue, HostFromFullHost(ircData[0]));
 
                             break;
 
@@ -1203,6 +1261,8 @@ namespace IceChat
                         case "467": //channel key already set
                         case "468": //only servers can change mode
                         case "482": //not a channel operator
+                        case "485": //cant join channel
+                        case "493": //user doesnt want message
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             ServerError(this, msg, true);
                             break;

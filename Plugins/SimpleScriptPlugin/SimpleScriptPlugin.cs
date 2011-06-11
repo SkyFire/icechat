@@ -396,7 +396,7 @@ namespace IceChatPlugin
                                 if (regMatch.IsMatch(args.Extra))
                                 {
                                     command = scr.Command.Replace("$chan", scr.ChannelMatch);
-                                    command = scr.Command.Replace("$nick", scr.ChannelMatch);
+                                    command = command.Replace("$nick", scr.ChannelMatch);
                                     command = command.Replace("$match", scr.TextMatch);
                                     command = command.Replace("$message", args.Extra);
 
@@ -414,7 +414,7 @@ namespace IceChatPlugin
                             if (args.Channel != null && regChannel3.IsMatch(args.Channel))
                             {
                                 command = scr.Command.Replace("$chan", scr.ChannelMatch);
-                                command = scr.Command.Replace("$nick", scr.ChannelMatch);
+                                command = command.Replace("$nick", scr.ChannelMatch);
                                 command = command.Replace("$match", scr.TextMatch);
                                 command = command.Replace("$message", args.Extra);
 

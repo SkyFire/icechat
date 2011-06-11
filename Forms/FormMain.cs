@@ -326,7 +326,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 9 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 11 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -2125,7 +2125,7 @@ namespace IceChat
                                         FormChannelInfo fci = new FormChannelInfo(t);
                                         SendData(connection, "MODE " + t.TabCaption + " +b");
                                         //check if mode (e) exists for Exception List
-                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                        if (connection.ServerSetting.ChannelModeParam.Contains("e"))
                                             SendData(connection, "MODE " + t.TabCaption + " +e");
                                         SendData(connection, "TOPIC :" + t.TabCaption);
                                         fci.ShowDialog(this);
@@ -2139,7 +2139,7 @@ namespace IceChat
                                         FormChannelInfo fci = new FormChannelInfo(CurrentWindow);
                                         SendData(connection, "MODE " + CurrentWindow.TabCaption + " +b");
                                         //check if mode (e) exists for Exception List
-                                        if (connection.ServerSetting.ChannelModeParams.Contains("e"))
+                                        if (connection.ServerSetting.ChannelModeParam.Contains("e"))
                                             SendData(connection, "MODE " + CurrentWindow.TabCaption + " +e");
                                         SendData(connection, "TOPIC :" + CurrentWindow.TabCaption);
                                         fci.ShowDialog(this);

@@ -623,7 +623,6 @@ namespace IceChat
                                 b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
                         }
                         //check if selected, if so, draw the selector bar
-                        //if (i == selectedIndex)
                         if (((Nick)sortedNickNames[i]).selected)
                         {
                             g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
@@ -635,9 +634,12 @@ namespace IceChat
                         g.DrawString(((Nick)sortedNickNames[i]).nick, this.Font, b, 2, currentY);
                         
                         //draw the host
+                        System.Diagnostics.Debug.WriteLine("drawing:" + ((Nick)sortedNickNames[i]).nick + ":" + u.NickName + ":" + currentWindow.TabCaption);
                         if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
                         {
                             //host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
+                            string host = ((Nick)sortedNickNames[i]).host;
+                            System.Diagnostics.Debug.WriteLine(u.NickName + ":" + ((Nick)sortedNickNames[i]).nick + ":" + host);
                             if (((Nick)sortedNickNames[i]).host.Length > 0)
                                 g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }

@@ -1,3 +1,9 @@
+Build Beta 6 June 11, 2011
+* Fix bug with parsing channel modes on some networks
+* Fix bug with losing the host for nicks in the nick list
+
+
+
 Build Beta 5.4 June 9, 2011
 * Fix bug with screen buffer clearing randomly
 * Fix and finalize the Simple Script Plugin

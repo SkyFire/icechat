@@ -252,12 +252,21 @@ namespace IceChat
 
         //the channel modes which have parameters from CHANMODES 005 Reply
         [XmlIgnore()]
-        public string ChannelModeParams
+        public string ChannelModeParam
         { get; set; }
 
         [XmlIgnore()]
-        public string ChannelModeNoParams
+        public string ChannelModeNoParam
         { get; set; }
+
+        [XmlIgnore()]
+        public string ChannelModeAddress
+        { get; set; }
+
+        [XmlIgnore()]
+        public string ChannelModeParamNotRemove
+        { get; set; }
+
 
         //the STATUSMG 005 Reply
         [XmlIgnore()]

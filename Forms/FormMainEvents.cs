@@ -1261,33 +1261,107 @@ namespace IceChat
                                 break;
                             default:
                                 //check if it's a status mode which can vary by server
-                                temp = (string)parametersEnumerator.Current;
+                                //temp = (string)parametersEnumerator.Current;
+                                bool isChecked = false;
+
                                 for (int j = 0; j < connection.ServerSetting.StatusModes[0].Length; j++)
                                 {
                                     if (mode[i] == connection.ServerSetting.StatusModes[0][j])
                                     {
-                                        chan.UpdateNick(temp, connection.ServerSetting.StatusModes[1][j].ToString(), addMode);
-                                        parametersEnumerator.MoveNext();
+                                        temp = (string)parametersEnumerator.Current;
+                                        //make sure its not an address
+                                        if (temp.IndexOf("@") == -1)
+                                        {
+                                            chan.UpdateNick(temp, connection.ServerSetting.StatusModes[1][j].ToString(), addMode);
+                                            parametersEnumerator.MoveNext();
+                                            isChecked = true;
+                                        }
                                         break;
                                     }
                                 }
 
+                                if (!isChecked)
+                                {
+                                    for (int j = 0; j < connection.ServerSetting.ChannelModeAddress.Length ; j++)
+                                    {
+                                        if (mode[i] == connection.ServerSetting.ChannelModeAddress[j])
+                                        {
+                                            temp = (string)parametersEnumerator.Current;
+                                            chan.UpdateNick(temp, connection.ServerSetting.ChannelModeAddress[j].ToString(), addMode);
+                                            parametersEnumerator.MoveNext();
+                                            isChecked = true;
+                                            break;
+                                        }
+                                    }
+                                }                                
+                                
+                                if (!isChecked)
+                                {
+                                    for (int j = 0; j < connection.ServerSetting.ChannelModeParam.Length; j++)
+                                    {
+                                        if (mode[i] == connection.ServerSetting.ChannelModeParam[j])
+                                        {
+                                            temp = (string)parametersEnumerator.Current;
+                                            chan.UpdateChannelMode(mode[i], temp, addMode);
+                                            parametersEnumerator.MoveNext();
+                                            isChecked = true;
+                                            break;                                            
+                                        }
+                                    }
+                                }
+                                
+                                if (!isChecked)
+                                {
+                                    for (int j = 0; j < connection.ServerSetting.ChannelModeParamNotRemove.Length; j++)
+                                    {
+                                        if (mode[i] == connection.ServerSetting.ChannelModeParamNotRemove[j])
+                                        {
+                                            if (addMode)
+                                            {
+                                                temp = (string)parametersEnumerator.Current;
+                                                chan.UpdateChannelMode(mode[i], temp, addMode);
+                                                parametersEnumerator.MoveNext();
+                                            }
+                                            else
+                                            {
+                                                chan.UpdateChannelMode(mode[i], addMode);
+                                            }
+                                            isChecked = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                if (!isChecked)
+                                {
+                                    for (int j = 0; j < connection.ServerSetting.ChannelModeNoParam.Length; j++)
+                                    {
+                                        if (mode[i] == connection.ServerSetting.ChannelModeNoParam[j])
+                                        {
+                                            chan.UpdateChannelMode(mode[i], addMode);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                /*
                                 //check if the mode has a parameter (CHANMODES= from 005)
-                                if (connection.ServerSetting.ChannelModeParams.Contains(mode[i].ToString()))
+                                if (connection.ServerSetting.ChannelModeParam.Contains(mode[i].ToString()))
                                 {
                                     //even though mode l requires a param to add it, it does not to remove it
-                                    if (!addMode && mode[i] != 'l')
+                                    //if (!addMode && mode[i] != 'l')
                                     {
                                         //mode has parameter
                                         temp = (string)parametersEnumerator.Current;
                                         parametersEnumerator.MoveNext();
                                     }
-                                        chan.UpdateChannelMode(mode[i], temp, addMode);
+                                    chan.UpdateChannelMode(mode[i], temp, addMode);
                                 }
                                 else
                                     //check if it is an actual channel mode, and not a user mode
-                                    if (connection.ServerSetting.ChannelModeNoParams.Contains(mode[i].ToString()))
+                                    if (connection.ServerSetting.ChannelModeNoParam.Contains(mode[i].ToString()))
                                         chan.UpdateChannelMode(mode[i], addMode);
+                                */
                                 break;
 
                         }
@@ -1388,7 +1462,6 @@ namespace IceChat
                 t.TextWindow.AppendText("-" + connection.ServerSetting.ID + ":" + data, 1);
         }
 
-
         private void OnIALUserData(IRCConnection connection, string nick, string host, string channel)
         {
             //internal addresslist userdata            
@@ -1401,13 +1474,14 @@ namespace IceChat
             if (!connection.ServerSetting.IAL.ContainsKey(nick))
             {
                 connection.ServerSetting.IAL.Add(nick, ial);
-                //System.Diagnostics.Debug.WriteLine("add ial " + nick);
+                System.Diagnostics.Debug.WriteLine("add ial " + nick + ":" + host);
             }
             else
             {
-                //System.Diagnostics.Debug.WriteLine("update ial " + nick);
+                System.Diagnostics.Debug.WriteLine("update ial " + nick + ":" + host);
                 ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
-                ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
+                if (host.Length > 0)
+                    ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
             }
 
         }
@@ -1416,14 +1490,15 @@ namespace IceChat
         {
             //change a nickname in the IAL list
             if (connection.ServerSetting.IAL.ContainsKey(oldnick))
-            {
+            {                
                 InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[oldnick];
                 connection.ServerSetting.IAL.Remove(oldnick);
-
-                if (connection.ServerSetting.IAL.ContainsKey(newnick))
-                    connection.ServerSetting.IAL.Remove(newnick);
                 
-                ial.Nick = newnick;                
+                if (connection.ServerSetting.IAL.ContainsKey(newnick))
+                {
+                    connection.ServerSetting.IAL.Remove(newnick);
+                }
+                ial.Nick = newnick;
                 connection.ServerSetting.IAL.Add(newnick, ial);
             }
         }
