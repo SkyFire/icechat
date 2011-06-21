@@ -116,6 +116,7 @@ namespace IceChat
             this.panelDockRight = new IceChat.IceDockPanel();
             this.panelDockLeft = new IceChat.IceDockPanel();
             this.inputPanel = new IceChat.InputPanel();
+            this.downloadPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMainStrip.SuspendLayout();
             this.contextMenuNotify.SuspendLayout();
             this.toolStripMain.SuspendLayout();
@@ -361,6 +362,7 @@ namespace IceChat
             this.iceChatHomePageToolStripMenuItem,
             this.forumsToolStripMenuItem,
             this.facebookFanPageToolStripMenuItem,
+            this.downloadPluginsToolStripMenuItem,
             this.toolStripMenuItem1,
             this.browseDataFolderToolStripMenuItem,
             this.checkForUpdateToolStripMenuItem,
@@ -637,6 +639,13 @@ namespace IceChat
             this.inputPanel.Size = new System.Drawing.Size(796, 26);
             this.inputPanel.TabIndex = 0;
             // 
+            // downloadPluginsToolStripMenuItem
+            // 
+            this.downloadPluginsToolStripMenuItem.Name = "downloadPluginsToolStripMenuItem";
+            this.downloadPluginsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.downloadPluginsToolStripMenuItem.Text = "Download Plugins";
+            this.downloadPluginsToolStripMenuItem.Click += new System.EventHandler(this.downloadPluginsToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.Window;
@@ -701,6 +710,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripButton toolStripUpdate;
         private System.Windows.Forms.ToolStripMenuItem muteAllSoundsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadAPluginToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadPluginsToolStripMenuItem;
 
 
 

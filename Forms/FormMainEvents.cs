@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -46,20 +46,268 @@ namespace IceChat
         private delegate void ShowDCCFileAcceptDelegate(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume);
         private delegate void ShowDCCPassiveAcceptDelegate(IRCConnection connection, string nick, string host, string ip, string file, uint fileSize, uint filePos, bool resume, string id);
 
-        /// <summary>
-        /// Show updates for Buddy List
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="buddyList"></param>
-        private void OnBuddyListRefresh(IRCConnection connection, BuddyListItem[] buddyList)
+        private void OnChannelInfoTopicSet(IRCConnection connection, string channel, string nick, string time)
         {
-            this.buddyList.ClearBuddyList(connection);
-
-            foreach (BuddyListItem buddy in buddyList)
+            IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
             {
-                this.buddyList.UpdateBuddy(connection, buddy);
+                if (t.HasChannelInfo)
+                {
+                    t.ChannelInfoForm.ChannelTopicSetBy(nick, time);
+                }
+            }                            
+        }
+
+        private void OnChannelInfoAddException(IRCConnection connection, string channel, string host, string bannedBy)
+        {
+            IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                if (t.HasChannelInfo)
+                {
+                    t.ChannelInfoForm.AddChannelException(host, bannedBy);
+                }
             }
         }
+
+        private void OnChannelInfoAddBan(IRCConnection connection, string channel, string host, string bannedBy)
+        {
+            IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                if (t.HasChannelInfo)
+                {
+                    t.ChannelInfoForm.AddChannelBan(host, bannedBy);
+                }
+            }        
+        }
+
+
+        private bool OnUserInfoWindowExists(IRCConnection connection, string nick)
+        {
+            if (connection.UserInfoWindow != null)
+            {
+                if (connection.UserInfoWindow.Text.ToLower() == "user information: " + nick.ToLower())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void OnUserInfoIdleLogon(IRCConnection connection, string nick, string idleTime, string logonTime)
+        {
+            if (connection.UserInfoWindow != null)
+            {
+                ((FormUserInfo)connection.UserInfoWindow).IdleTime(idleTime);
+                ((FormUserInfo)connection.UserInfoWindow).LogonTime(logonTime);
+            }
+        }
+
+        private void OnUserInfoHostFullName(IRCConnection connection, string nick, string host, string full)
+        {
+            if (connection.UserInfoWindow != null)
+            {
+                ((FormUserInfo)connection.UserInfoWindow).HostName(host);
+                ((FormUserInfo)connection.UserInfoWindow).FullName(full);
+            }
+        }
+
+        private void OnUserInfoAddChannels(IRCConnection connection, string nick, string[] channels)
+        {
+            if (connection.UserInfoWindow != null)
+            {
+                foreach (string chan in channels)
+                    ((FormUserInfo)connection.UserInfoWindow).Channel(chan);
+            }
+        }
+
+        private bool OnChannelInfoWindowExists(IRCConnection connection, string channel)
+        {
+            IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                return t.HasChannelInfo;
+            }
+            return false;
+        }
+
+        private void OnStatusText(IRCConnection connection, string statusText)
+        {
+            //update the status bar
+            if (CurrentWindowType == IceTabPage.WindowType.Console)
+            {
+                if (InputPanel.CurrentConnection == connection)
+                {
+                    StatusText(statusText);
+                }
+            }
+        }
+
+        private void OnAutoPerform(IRCConnection connection, string[] commands)
+        {
+            string autoCommand;
+            foreach (string command in commands)
+            {
+                autoCommand = command.Replace("\r", String.Empty);
+                if (!autoCommand.StartsWith(";"))
+                    ParseOutGoingCommand(connection, autoCommand);
+            }
+        }
+
+        private void OnAutoRejoin(IRCConnection connection)
+        {
+            foreach (IceTabPage tw in mainTabControl.TabPages)
+            {
+                if (tw.WindowStyle == IceTabPage.WindowType.Channel)
+                {
+                    if (tw.Connection == connection)
+                    {
+                        if (connection.ServerSetting.AutoJoinDelay)
+                            ParseOutGoingCommand(connection, "/timer rejoin 6 1 /join " + tw.TabCaption);
+                        else
+                            connection.SendData("JOIN " + tw.TabCaption);
+                    }
+                }
+            }
+        }
+
+        private void OnAutoJoin(IRCConnection connection, string[] channels)
+        {            
+            foreach (string chan in channels)
+            {
+                if (!chan.StartsWith(";"))
+                {
+                    if (connection.ServerSetting.AutoJoinDelay)
+                        ParseOutGoingCommand(connection, "/timer autojoin 6 1 /join " + chan);
+                    else
+                        connection.SendData("JOIN " + chan);
+                }
+            }
+        }
+
+        private void OnEndofNames(IRCConnection connection, string channel)
+        {
+            IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                t.GotNamesList = true;
+                //send a WHO command to get all the hosts
+                if (t.Nicks.Count < 200)
+                {
+                    t.GotWhoList = false;
+                    connection.SendData("WHO " + t.TabCaption);
+                }
+                else
+                    t.GotWhoList = true;
+
+                t.IsFullyJoined = true;
+                if (nickList.CurrentWindow == t)
+                    nickList.RefreshList(t);
+            }
+
+        }
+
+        private void OnBuddyList(IRCConnection connection, string[] buddies)
+        {
+            foreach (BuddyListItem b in connection.ServerSetting.BuddyList)
+            {
+                if (b.IsOnSent && !b.IsOnReceived)
+                {
+                    bool isFound = false;
+                    foreach (string buddy in buddies)
+                    {
+                        //this nick is connected
+                        if (b.Nick.ToLower() == buddy.ToLower())
+                        {
+                            b.Connected = true;
+                            b.IsOnReceived = true;
+                            isFound = true;
+                        }
+                    }
+                    if (!isFound)
+                    {
+                        b.Connected = false;
+                        b.IsOnReceived = true;
+                    }
+                }
+            }
+
+            if (connection.buddiesIsOnSent == connection.ServerSetting.BuddyList.Length)
+            {
+                //reset all the isonsent values
+                foreach (BuddyListItem buddy in connection.ServerSetting.BuddyList)
+                {
+                    buddy.IsOnSent = false;
+                    buddy.IsOnReceived = false;
+                }
+                connection.buddiesIsOnSent = 0;
+
+                //send a user event to refresh the buddy list for this server
+                //if (BuddyListRefresh != null)
+                //    BuddyListRefresh(this, serverSetting.BuddyList);
+
+                this.buddyList.ClearBuddyList(connection);
+
+                foreach (BuddyListItem buddy in connection.ServerSetting.BuddyList)
+                {
+                    this.buddyList.UpdateBuddy(connection, buddy);
+                }
+
+            }
+        }
+
+        private void OnEndofWhoReply(IRCConnection connection, string channel)
+        {
+            IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                //end of who reply, do a channel refresh
+                t.GotWhoList = true;
+                if (nickList.CurrentWindow == t)
+                    nickList.RefreshList(t);
+
+            }
+        }
+        
+        private void OnWhoReply(IRCConnection connection, string channel, string nick, string host, string message)
+        {
+            IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                OnIALUserData(connection, nick, host, channel);
+                if (t.GotWhoList)
+                    OnServerMessage(connection, message);
+
+            }
+        }
+
+        private void OnChannelUserList(IRCConnection connection, string channel, string[] nicks, string message)
+        {
+            IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+            if (t != null)
+            {
+                if (t.IsFullyJoined)
+                {
+                    //just show the message to the console
+                    OnServerMessage(connection, message);
+                    return;
+                }
+                if (!t.GotNamesList)
+                {
+                    foreach (string nickName in nicks)
+                    {
+                        if (nickName.Length > 0)
+                        {
+                            OnChannelJoin(connection, channel, nickName, "", false);
+                            OnIALUserData(connection, nickName, "", channel);
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// Show a reply to a CTCP Message we have sent out
@@ -353,7 +601,8 @@ namespace IceChat
 
                     if (current == true)
                     {
-                        CurrentWindowMessage(connection, error, 4, false);
+                        if (CurrentWindowType != IceTabPage.WindowType.Console)
+                            CurrentWindowMessage(connection, error, 4, false);
                     }
                     else
                     {
@@ -1474,12 +1723,13 @@ namespace IceChat
             if (!connection.ServerSetting.IAL.ContainsKey(nick))
             {
                 connection.ServerSetting.IAL.Add(nick, ial);
-                System.Diagnostics.Debug.WriteLine("add ial " + nick + ":" + host);
+                //System.Diagnostics.Debug.WriteLine("add ial " + nick + ":" + host);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("update ial " + nick + ":" + host);
-                ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
+                //System.Diagnostics.Debug.WriteLine("update ial " + nick + ":" + host);
+                if (channel.Length > 0)
+                    ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
                 if (host.Length > 0)
                     ((InternalAddressList)connection.ServerSetting.IAL[nick]).Host = host;
             }

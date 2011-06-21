@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
- * Copyright (C) 2010 Paul Vanderzee <snerf@icechat.net>
+ * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections;
 using System.IO;
-
 
 namespace IceChatPlugin
 {
@@ -111,12 +110,7 @@ namespace IceChatPlugin
         public void Initialize()
         {
             highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
-            //currentFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            //if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml"))
-            //else
-            //    highlitesFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
             LoadHighLites();
-
         }
 
         public void MainProgramLoaded()
@@ -366,9 +360,9 @@ namespace IceChatPlugin
                 if (hli.Enabled)
                 {
                     //string match = hli.Match.Replace("$chan", t.WindowName);
-                    //match = match.Replace("$me", t.Connection.ServerSetting.NickName);
                     string match = hli.Match;
-
+                    //match = match.Replace("$me", t.Connection.ServerSetting.NickName);
+                    
                     if (message.IndexOf(match, StringComparison.InvariantCultureIgnoreCase) > -1)
                     {
                         if (message.StartsWith(((char)3).ToString()))
@@ -405,7 +399,7 @@ namespace IceChatPlugin
 
         public PluginArgs ChannelMessage(PluginArgs args)
         {
-            args.Message = CheckTextHighLite(args.Message);
+            args.Message = CheckTextHighLite(args.Message);            
             return args;
         }
 

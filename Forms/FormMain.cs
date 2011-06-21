@@ -1,5 +1,5 @@
 /******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -326,7 +326,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 11 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 20 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -736,8 +736,13 @@ namespace IceChat
                 {
                     try
                     {
-                        player.SoundLocation = @file;
-                        player.Play();
+                        if (iceChatOptions.SoundUseExternalCommand && iceChatOptions.SoundExternalCommand.Length > 0)
+                            ParseOutGoingCommand(inputPanel.CurrentConnection, iceChatOptions.SoundExternalCommand + " " + file);                        
+                        else    
+                            ParseOutGoingCommand(inputPanel.CurrentConnection, "/play " + file);
+                        
+                        //player.SoundLocation = @file;
+                        //player.Play();
                     }
                     catch { }
                 }
@@ -1277,11 +1282,31 @@ namespace IceChat
             c.IALUserPart += new IALUserPartDelegate(OnIALUserPart);
             c.IALUserQuit += new IALUserQuitDelegate(OnIALUserQuit);
 
-            c.BuddyListRefresh += new BuddyListRefreshDelegate(OnBuddyListRefresh);
-
+            c.BuddyListData += new BuddyListDelegate(OnBuddyList);
             c.RawServerIncomingData += new RawServerIncomingDataDelegate(OnRawServerData);
             c.RawServerOutgoingData += new RawServerOutgoingDataDelegate(OnRawServerOutgoingData);
+
+            c.AutoJoin += new AutoJoinDelegate(OnAutoJoin);
+            c.AutoRejoin += new AutoRejoinDelegate(OnAutoRejoin);
+            c.AutoPerform += new AutoPerformDelegate(OnAutoPerform);
+
+            c.EndofNames += new EndofNamesDelegate(OnEndofNames);
+            c.EndofWhoReply += new EndofWhoReplyDelegate(OnEndofWhoReply);
+            c.WhoReply += new WhoReplyDelegate(OnWhoReply);
+            c.ChannelUserList += new ChannelUserListDelegate(OnChannelUserList);
+
+            c.StatusText += new IceChat.StatusTextDelegate(OnStatusText);
             
+            c.UserInfoWindowExists += new UserInfoWindowExistsDelegate(OnUserInfoWindowExists);
+            c.UserInfoHostFullName += new UserInfoHostFullnameDelegate(OnUserInfoHostFullName);
+            c.UserInfoIdleLogon += new UserInfoIdleLogonDelegate(OnUserInfoIdleLogon);
+            c.UserInfoAddChannels += new UserInfoAddChannelsDelegate(OnUserInfoAddChannels);
+
+            c.ChannelInfoWindowExists += new ChannelInfoWindowExistsDelegate(OnChannelInfoWindowExists);
+            c.ChannelInfoAddBan += new ChannelInfoAddBanDelegate(OnChannelInfoAddBan);
+            c.ChannelInfoAddException += new ChannelInfoAddExceptionDelegate(OnChannelInfoAddException);
+            c.ChannelInfoTopicSet += new ChannelInfoTopicSetDelegate(OnChannelInfoTopicSet);
+
             OnAddConsoleTab(c);
 
             mainTabControl.SelectTab(mainTabControl.GetTabPage("Console"));
@@ -1351,8 +1376,9 @@ namespace IceChat
                 else if (page.WindowStyle == IceTabPage.WindowType.Debug)
                 {
                     page.TextWindow.NoColorMode = true;
-                    page.TextWindow.Font = new Font("Verdana", 10);
+                    page.TextWindow.Font = new Font("Verdana", 10);                    
                     page.TextWindow.SetLogFile();
+                    page.TextWindow.SetDebugWindow();
                 }
                 
                 //find the last window index for this connection
@@ -1597,6 +1623,16 @@ namespace IceChat
             try
             {
                 data = data.Replace("&#x3;", ((char)3).ToString());
+
+                PluginArgs args = new PluginArgs(inputPanel.CurrentConnection);
+                args.Extra = data;
+
+                foreach (IPluginIceChat ipc in loadedPlugins)
+                {
+                    args = ipc.InputText(args);
+                }
+
+                data = args.Extra;
 
                 if (data.StartsWith("//"))
                 {
@@ -2794,7 +2830,7 @@ namespace IceChat
                             }                            
                             break;
                         case "/play":   //play a WAV sound
-                            if (data.Length > 0)
+                            if (data.Length > 4 && data.ToLower().EndsWith(".wav"))
                             {
                                 //check if the WAV file exists in the Sounds Folder                                
                                 if (File.Exists(soundsFolder + System.IO.Path.DirectorySeparatorChar + data))
@@ -3296,16 +3332,8 @@ namespace IceChat
         /// <param name="sender"></param>
         /// <param name="data"></param>
         private void inputPanel_OnCommand(object sender, string data)
-        {
-            PluginArgs args = new PluginArgs(inputPanel.CurrentConnection);
-            args.Extra = data;
-            
-            foreach (IPluginIceChat ipc in loadedPlugins)
-            {
-                args = ipc.InputText(args);
-            }              
-                        
-            ParseOutGoingCommand(inputPanel.CurrentConnection, args.Extra);
+        {                        
+            ParseOutGoingCommand(inputPanel.CurrentConnection, data);
             if (CurrentWindowType == IceTabPage.WindowType.Console)
                 mainTabControl.CurrentTab.CurrentConsoleWindow().ScrollToBottom();
             else if (CurrentWindowType != IceTabPage.WindowType.DCCFile && CurrentWindowType != IceTabPage.WindowType.ChannelList)
@@ -4246,6 +4274,15 @@ namespace IceChat
             try
             {
                 System.Diagnostics.Process.Start("http://www.facebook.com/IceChat");
+            }
+            catch { }
+        }
+
+        private void downloadPluginsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://www.icechat.net/site/downloads/?category=6");
             }
             catch { }
         }

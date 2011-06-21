@@ -125,6 +125,8 @@ namespace IceChat
             this.checkIgnoreDCCChat = new System.Windows.Forms.CheckBox();
             this.checkAutoDCCChat = new System.Windows.Forms.CheckBox();
             this.tabSounds = new System.Windows.Forms.TabPage();
+            this.textExternalPlayCommand = new System.Windows.Forms.TextBox();
+            this.checkExternalPlayCommand = new System.Windows.Forms.CheckBox();
             this.buttonTest = new System.Windows.Forms.Button();
             this.buttonChooseSound = new System.Windows.Forms.Button();
             this.textSound = new System.Windows.Forms.TextBox();
@@ -1194,6 +1196,8 @@ namespace IceChat
             // 
             // tabSounds
             // 
+            this.tabSounds.Controls.Add(this.textExternalPlayCommand);
+            this.tabSounds.Controls.Add(this.checkExternalPlayCommand);
             this.tabSounds.Controls.Add(this.buttonTest);
             this.tabSounds.Controls.Add(this.buttonChooseSound);
             this.tabSounds.Controls.Add(this.textSound);
@@ -1208,6 +1212,23 @@ namespace IceChat
             this.tabSounds.TabIndex = 3;
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
+            // 
+            // textExternalPlayCommand
+            // 
+            this.textExternalPlayCommand.Location = new System.Drawing.Point(230, 230);
+            this.textExternalPlayCommand.Name = "textExternalPlayCommand";
+            this.textExternalPlayCommand.Size = new System.Drawing.Size(100, 23);
+            this.textExternalPlayCommand.TabIndex = 8;
+            // 
+            // checkExternalPlayCommand
+            // 
+            this.checkExternalPlayCommand.AutoSize = true;
+            this.checkExternalPlayCommand.Location = new System.Drawing.Point(15, 233);
+            this.checkExternalPlayCommand.Name = "checkExternalPlayCommand";
+            this.checkExternalPlayCommand.Size = new System.Drawing.Size(209, 20);
+            this.checkExternalPlayCommand.TabIndex = 7;
+            this.checkExternalPlayCommand.Text = "Use External Play Command";
+            this.checkExternalPlayCommand.UseVisualStyleBackColor = true;
             // 
             // buttonTest
             // 
@@ -2092,5 +2113,7 @@ namespace IceChat
         private System.Windows.Forms.CheckBox checkMinimizeTray;
         private System.Windows.Forms.TextBox textMaximumLines;
         private System.Windows.Forms.Label labelMaxLines;
+        private System.Windows.Forms.TextBox textExternalPlayCommand;
+        private System.Windows.Forms.CheckBox checkExternalPlayCommand;
     }
 }

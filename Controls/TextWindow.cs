@@ -1,5 +1,5 @@
 /******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -150,6 +150,7 @@ namespace IceChat
 
             _displayLines = new DisplayLine[_maxTextLines * 4];
             _textLines = new TextLine[_maxTextLines];
+
 
             if (FormMain.Instance != null && FormMain.Instance.IceChatEmoticons != null)
             {
@@ -579,6 +580,7 @@ namespace IceChat
             }
 
         }
+
         private void OnDoubleClick(object sender, EventArgs e)
         {
             MouseEventArgs me = e as MouseEventArgs;
@@ -798,6 +800,12 @@ namespace IceChat
                 LoadTextSizes();
                 
             }
+        }
+
+        internal void SetDebugWindow()
+        {
+            //disable doubleclick when this is a Debug Text Window
+            this.DoubleClick -= OnDoubleClick;
         }
 
         #endregion

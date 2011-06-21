@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="ProgramID" Type="System.String" Scope="User">
-      <Value Profile="(Default)">IceChat 2009</Value>
+      <Value Profile="(Default)">IceChat 9</Value>
     </Setting>
     <Setting Name="Version" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Beta 6</Value>
+      <Value Profile="(Default)">Beta 7</Value>
     </Setting>
   </Settings>
 </SettingsFile>

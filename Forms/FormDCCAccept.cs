@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 

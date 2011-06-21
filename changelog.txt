@@ -1,7 +1,13 @@
+Build Beta 7 June 20, 2011
+* Added option to use external command for playing sound files, can be specified in plugin
+* More code fixes to un-bind connection class from main form
+* Fix double click crash in Debug Window
+* Start showing as IceChat 9, not IceChat 2009
+
+
 Build Beta 6 June 11, 2011
 * Fix bug with parsing channel modes on some networks
 * Fix bug with losing the host for nicks in the nick list
-
 
 
 Build Beta 5.4 June 9, 2011

@@ -1,5 +1,5 @@
 /******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -129,6 +129,9 @@ namespace IceChat
             checkLogQuery.Checked = iceChatOptions.LogQuery;
             checkSeperateLogs.Checked = iceChatOptions.SeperateLogs;
             comboLogFormat.Text = iceChatOptions.LogFormat;
+
+            checkExternalPlayCommand.Checked = iceChatOptions.SoundUseExternalCommand;
+            textExternalPlayCommand.Text = iceChatOptions.SoundExternalCommand;
 
             if (iceChatEmoticons != null)
             {
@@ -327,6 +330,9 @@ namespace IceChat
             iceChatOptions.ChannelActionEventLocation = comboChannelActionEvent.SelectedIndex;
             iceChatOptions.WhoisEventLocation = comboWhoisEvent.SelectedIndex;
 
+            iceChatOptions.SoundUseExternalCommand = checkExternalPlayCommand.Checked;
+            iceChatOptions.SoundExternalCommand = textExternalPlayCommand.Text;
+
             if (SaveOptions != null)
                 SaveOptions();
 
@@ -517,7 +523,7 @@ namespace IceChat
                     ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds";
 
                 ofd.RestoreDirectory = true;
-                ofd.Filter = "Sounds (*.wav)|*.wav";
+                ofd.Filter = "Sounds (*.wav,* .mp3)|*.wav;*.mp3";
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                     textSound.Text = ofd.FileName;

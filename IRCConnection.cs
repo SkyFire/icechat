@@ -1,5 +1,5 @@
 /******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -48,7 +48,7 @@ namespace IceChat
 
         private System.Timers.Timer reconnectTimer;
         private System.Timers.Timer buddyListTimer;
-        private int buddiesIsOnSent = 0;
+        internal int buddiesIsOnSent = 0;
 
         private ServerSetting serverSetting;
         private bool fullyConnected = false;

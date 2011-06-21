@@ -1,5 +1,5 @@
 /******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace IceChat
 {
@@ -86,12 +87,32 @@ namespace IceChat
         internal event IALUserPartDelegate IALUserPart;
         internal event IALUserQuitDelegate IALUserQuit;
 
-        internal event BuddyListRefreshDelegate BuddyListRefresh;
+        internal event BuddyListDelegate BuddyListData;
+
+        internal event AutoJoinDelegate AutoJoin;
+        internal event AutoRejoinDelegate AutoRejoin;
+        internal event AutoPerformDelegate AutoPerform;
+        internal event EndofNamesDelegate EndofNames;
+        internal event EndofWhoReplyDelegate EndofWhoReply;
+        internal event WhoReplyDelegate WhoReply;
+        internal event ChannelUserListDelegate ChannelUserList;
+
+        internal event StatusTextDelegate StatusText;
+
+        internal event ChannelInfoWindowExistsDelegate ChannelInfoWindowExists;
+        internal event ChannelInfoAddBanDelegate ChannelInfoAddBan;
+        internal event ChannelInfoAddExceptionDelegate ChannelInfoAddException;
+        internal event ChannelInfoTopicSetDelegate ChannelInfoTopicSet;
+
+        internal event UserInfoWindowExistsDelegate UserInfoWindowExists;
+        internal event UserInfoHostFullnameDelegate UserInfoHostFullName;
+        internal event UserInfoIdleLogonDelegate UserInfoIdleLogon;
+        internal event UserInfoAddChannelsDelegate UserInfoAddChannels;
 
         private bool triedAltNickName = false;
         private bool initialLogon = false;
 
-        internal FormUserInfo UserInfoWindow = null;
+        internal Form UserInfoWindow = null;
 
         private void ParseData(string data)
         {
@@ -103,8 +124,7 @@ namespace IceChat
                 string host;
                 string msg;
                 string tempValue;
-
-                IceTabPage t = null;
+                bool check;
 
                 if (RawServerIncomingData != null)
                     RawServerIncomingData(this, data);
@@ -143,21 +163,14 @@ namespace IceChat
                             //get the real server name
                             serverSetting.RealServerName = RemoveColon(ircData[0]);
                             
-                            //update the status bar
-                            if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
-                            {
-                                if (FormMain.Instance.InputPanel.CurrentConnection == this)
-                                {
-                                    FormMain.Instance.StatusText(serverSetting.NickName + " connected to " + serverSetting.RealServerName);
-                                }
-                            }
-
                             if (serverSetting.NickName != ircData[2])
                             {
-                                ServerMessage(this, "FORCE CHANGE NICK:" + ircData[2] + ":" + serverSetting.NickName + ":" + data);
+                                //ServerMessage(this, "FORCE CHANGE NICK:" + ircData[2] + ":" + serverSetting.NickName + ":" + data);
                                 ChangeNick(this, serverSetting.NickName, ircData[2], HostFromFullHost(ircData[0]));
                                 serverSetting.NickName = ircData[2];
                             }
+
+                            StatusText(this, serverSetting.NickName + " connected to " + serverSetting.RealServerName);
 
                             ServerMessage(this, JoinString(ircData, 3, true));
 
@@ -301,7 +314,6 @@ namespace IceChat
                             }
                             break;
                         
-                        //vampire.webmaster.com- :vampire.webmaster.com 007 Snerf vampire.webmaster.com 1307687376 :Fri, 10 Jun 2011 06:29:36 0000
                         case "007":
                             DateTime date5 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date5 = date5.AddSeconds(Convert.ToDouble(ircData[4]));
@@ -370,7 +382,7 @@ namespace IceChat
                             else
                             {
                                 //multiple hosts
-                                string[] hosts = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                string[] hosts = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                                 foreach (string h in hosts)
                                     UserHostReply(this, h);
                             }
@@ -384,58 +396,28 @@ namespace IceChat
                             if (msg.Length == 0) return;
                             
                             string[] buddies = msg.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
-                            foreach (BuddyListItem b in serverSetting.BuddyList)
-                            {
-                                if (b.IsOnSent && !b.IsOnReceived)
-                                {
-                                    bool isFound = false;
-                                    foreach (string buddy in buddies)
-                                    {
-                                        //this nick is connected
-                                        if (b.Nick.ToLower() == buddy.ToLower())
-                                        {
-                                            b.Connected = true;
-                                            b.IsOnReceived = true;
-                                            isFound = true;
-                                        }
-                                    }
-                                    if (!isFound)
-                                    {
-                                        b.Connected = false;
-                                        b.IsOnReceived = true;
-                                    }
-                                }
-                            }
-
-                            if (buddiesIsOnSent == serverSetting.BuddyList.Length)
-                            {
-                                //reset all the isonsent values
-                                foreach (BuddyListItem buddy in serverSetting.BuddyList)
-                                {
-                                    buddy.IsOnSent = false;
-                                    buddy.IsOnReceived = false;
-                                }
-                                buddiesIsOnSent = 0;
-
-                                //send a user event to refresh the buddy list for this server
-                                if (BuddyListRefresh != null)
-                                    BuddyListRefresh(this, serverSetting.BuddyList);
-                            }
+                            BuddyListData(this, buddies);
                             break;                        
                         case "311":     //whois information username address
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, ircData[3]);
+                            if (check)
                             {
-                                this.UserInfoWindow.HostName(ircData[4] + "@" + ircData[5]);
-                                this.UserInfoWindow.FullName(JoinString(ircData, 7, true));
-                                return;
+                                UserInfoHostFullName(this, nick, ircData[4] + "@" + ircData[5], JoinString(ircData, 7, true));
                             }
-                            msg = "is " + ircData[4] + "@" + ircData[5] + " (" + JoinString(ircData, 7, true) + ")";
-                            WhoisData(this, ircData[3], msg);
-                            IALUserData(this, nick, ircData[4] + "@" + ircData[5], "");
+                            else
+                            {
+                                msg = "is " + ircData[4] + "@" + ircData[5] + " (" + JoinString(ircData, 7, true) + ")";
+                                WhoisData(this, ircData[3], msg);
+                                IALUserData(this, nick, ircData[4] + "@" + ircData[5], "");
+                            }
                             break;
                         case "312":     //whois information server info
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
+                            
                             msg = "using " + ircData[4] + " (" + JoinString(ircData, 5, true) + ")";
                             WhoisData(this, ircData[3], msg);
                             break;
@@ -443,7 +425,9 @@ namespace IceChat
                         case "307":     //whois information nick ips
                         case "310":     //whois is available for help
                         case "313":     //whois information is an IRC operator
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
@@ -451,81 +435,104 @@ namespace IceChat
                         case "317":     //whois information signon time
                             DateTime date1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date1 = date1.AddSeconds(Convert.ToDouble(ircData[5]));
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                             {
-                                this.UserInfoWindow.IdleTime(GetDuration(Convert.ToInt32(ircData[4])) + " " + JoinString(ircData, 6, true));
-                                this.UserInfoWindow.LogonTime(date1.ToShortTimeString() + " " + date1.ToShortDateString());
-                                return;
+                                UserInfoIdleLogon(this, nick, GetDuration(Convert.ToInt32(ircData[4])) + " " + JoinString(ircData, 6, true), date1.ToShortTimeString() + " " + date1.ToShortDateString());
                             }
-                            msg = GetDuration(Convert.ToInt32(ircData[4])) + " " + JoinString(ircData, 6, true) + " " + date1.ToShortTimeString() + " " + date1.ToShortDateString();
-                            WhoisData(this, ircData[3], msg);
+                            else
+                            {
+                                msg = GetDuration(Convert.ToInt32(ircData[4])) + " " + JoinString(ircData, 6, true) + " " + date1.ToShortTimeString() + " " + date1.ToShortDateString();
+                                WhoisData(this, ircData[3], msg);
+                            }
                             break;
                         case "318":     //whois information end of whois
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 4, false);
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "319":     //whois information channels
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                             {
                                 string[] chans = JoinString(ircData, 4, true).Split(' ');
-                                foreach (string chan in chans)
-                                    this.UserInfoWindow.Channel(chan);
-                                return;
+                                UserInfoAddChannels(this, nick, chans);
                             }
-                            msg = "is on: " + JoinString(ircData, 4, true);
-                            WhoisData(this, ircData[3], msg);
+                            else
+                            {
+                                msg = "is on: " + JoinString(ircData, 4, true);
+                                WhoisData(this, ircData[3], msg);
+                            }
                             break;
                         case "320":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "330":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 5, true) + " " + ircData[4];
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "334":
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 4, false);
                             WhoisData(this, ircData[3], msg);                            
                             break;
                         case "335":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "338":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             if (ircData[6].StartsWith(":"))
                                 msg = JoinString(ircData, 6, true) + " " + ircData[4] + " " + ircData[5];
                             else
                                 msg = JoinString(ircData, 5, true) + " " + ircData[4];
-                            //msg = JoinString(ircData, 4, false);
                             WhoisData(this, ircData[3], msg);
                             break;                        
                         case "378":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = RemoveColon(ircData[4]) + " " + JoinString(ircData, 5, true);
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "379":     //whois information
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = RemoveColon(ircData[4]) + " " + JoinString(ircData, 5, true);
                             WhoisData(this, ircData[3], msg);
                             break;
                         case "275":
                         case "671":     //using secure connection
-                            if (this.UserInfoWindow != null && this.UserInfoWindow.Nick.ToLower() == ircData[3].ToLower())
+                            nick = ircData[3];
+                            check = UserInfoWindowExists(this, nick);
+                            if (check)
                                 return;
                             msg = JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
@@ -563,37 +570,33 @@ namespace IceChat
                             break;
                         case "331":     //no topic is set
                             channel = ircData[3];
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                                if (t.HasChannelInfo)
-                                    break;
-                            GenericChannelMessage(this, channel, "No Topic Set");
+                            check = ChannelInfoWindowExists(this, channel);
+                            if (!check)
+                                GenericChannelMessage(this, channel, "No Topic Set");
                             break;
                         case "332":     //channel topic
                             channel = ircData[3];
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                                if (t.HasChannelInfo)
-                                    break;
-                            ChannelTopic(this, channel, "", "", JoinString(ircData, 4, true));
+                            check = ChannelInfoWindowExists(this, channel);
+                            if (!check)        
+                                ChannelTopic(this, channel, "", "", JoinString(ircData, 4, true));
                             break;
                         case "333":     //channel time
                             channel = ircData[3];
                             nick = ircData[4];
                             DateTime date2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date2 = date2.AddSeconds(Convert.ToDouble(ircData[5]));
-
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
+                            
+                            check = ChannelInfoWindowExists(this, channel);
+                            if (check)
                             {
-                                if (t.HasChannelInfo)
-                                {
-                                    t.ChannelInfoForm.ChannelTopicSetBy(nick, date2.ToShortTimeString() + " " + date2.ToShortDateString());
-                                    break;
-                                }
-                            }                            
-                            msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
-                            GenericChannelMessage(this, channel, msg);
+                                ChannelInfoTopicSet(this, channel, nick, date2.ToShortTimeString() + " " + date2.ToShortDateString());
+                            }
+                            else
+                            {
+                                msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
+                                GenericChannelMessage(this, channel, msg);
+                            }
+                            
                             break;
                         case "343":
                             ServerMessage(this, JoinString(ircData, 3, false));                                                        
@@ -604,94 +607,38 @@ namespace IceChat
                             //4 is host
                             //5 added by
                             //6 added time
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
+                            check = ChannelInfoWindowExists(this, channel);
+                            if (check)
                             {
-                                if (t.HasChannelInfo)
-                                {
-                                    DateTime date4 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
-                                    t.ChannelInfoForm.AddChannelException(ircData[4], NickFromFullHost(ircData[5]) + " on " + date4.ToShortTimeString() + " " + date4.ToShortDateString());
-                                    break;
-                                }
+                                DateTime date4 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
+                                ChannelInfoAddException(this, channel, ircData[4],NickFromFullHost(ircData[5]) + " on " + date4.ToShortTimeString() + " " + date4.ToShortDateString());
                             }
-                            msg = JoinString(ircData, 3, false);
-                            ServerMessage(this, msg);                            
+                            else
+                            {
+                                ServerMessage(this,JoinString(ircData, 3, false));                            
+                            }                            
                             break;
                         case "349": //end of channel exception list
                             break;
                         case "315": //end of who reply
-                            channel = ircData[3];                           
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                            {
-                                //end of who reply, do a channel refresh
-                                t.GotWhoList = true;
-                                if (FormMain.Instance.NickList.CurrentWindow == t)
-                                    FormMain.Instance.NickList.RefreshList(t);
-
-                            }
+                            channel = ircData[3];
+                            EndofWhoReply(this, channel);
                             break;
                         case "352": //who reply
-                            channel = ircData[3];                           
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                            {
-                                IALUserData(this, ircData[7], ircData[4] + "@" + ircData[5], channel);
-                                if (t.GotWhoList)
-                                    if (ServerMessage != null)
-                                        ServerMessage(this, JoinString(ircData, 2, false));
-
-                            }
+                            channel = ircData[3];
+                            WhoReply(this, channel, ircData[7], ircData[4] + "@" + ircData[5], JoinString(ircData, 2, false));
                             break;
                         case "353": //channel user list
                             channel = ircData[4];
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                            {
-                                if (t.IsFullyJoined)
-                                {
-                                    //just show the message to the console
-                                    ServerMessage(this, JoinString(ircData, 4, true));
-                                    return;
-                                }
-                            }
-                            if (!t.GotNamesList)
-                            {
-                                string[] nicks = JoinString(ircData, 5, true).Split(' ');
-                                foreach (string nickName in nicks)
-                                {
-                                    if (nickName.Length > 0)
-                                    {
-                                        JoinChannel(this, channel, nickName, "", false);
-                                        IALUserData(this, nickName, "", channel);
-                                    }
-                                }
-                            }
+                            ChannelUserList(this, channel, JoinString(ircData, 5, true).Split(' '), JoinString(ircData, 4, true));
                             break;
                         case "365":  //End of Links
-                            msg = JoinString(ircData, 4, true);
-                            ServerMessage(this, msg);                            
+                            ServerMessage(this, JoinString(ircData, 4, true));                            
                             break;
                         case "366":     //end of names
                             channel = ircData[3];
                             //channel is fully joined                            
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
-                            {
-                                t.GotNamesList = true;
-                                //send a WHO command to get all the hosts
-                                if (t.Nicks.Count < 200)
-                                {
-                                    t.GotWhoList = false;
-                                    SendData("WHO " + t.TabCaption);
-                                }
-                                else
-                                    t.GotWhoList = true;
-
-                                t.IsFullyJoined = true;
-                                if (FormMain.Instance.NickList.CurrentWindow == t)
-                                    FormMain.Instance.NickList.RefreshList(t);
-                            }
+                            EndofNames(this, channel);
                             break;
                         case "367": //channel ban list
                             channel = ircData[3];
@@ -699,22 +646,19 @@ namespace IceChat
                             //4 is host
                             //5 banned by
                             //6 ban time
-                            t = FormMain.Instance.GetWindow(this, channel, IceTabPage.WindowType.Channel);
-                            if (t != null)
+                            check = ChannelInfoWindowExists(this, channel);
+                            if (check)
                             {
-                                if (t.HasChannelInfo)
-                                {
-                                    DateTime date3 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
-                                    t.ChannelInfoForm.AddChannelBan(ircData[4], ircData[5] + " on " + date3.ToShortTimeString() + " " + date3.ToShortDateString());
-                                    break;
-                                }
+                                DateTime date3 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
+                                ChannelInfoAddBan(this, channel, ircData[4], ircData[5] + " on " + date3.ToShortTimeString() + " " + date3.ToShortDateString());
                             }
-                            msg = JoinString(ircData, 3, false);
-                            ServerMessage(this, msg);                            
+                            else
+                            {
+                                ServerMessage(this, JoinString(ircData, 3, false));                            
+                            }
                             break;
                         case "368": //end of channel ban list
                             break;
-
                         case "377":
                             ServerMessage(this, JoinString(ircData, 6, true));
                             break;
@@ -724,7 +668,6 @@ namespace IceChat
                             if (serverSetting.ShowMOTD || serverSetting.ForceMOTD)
                                 ServerMOTD(this, msg);
                             break;
-
                         case "376": //end of motd
                         case "422": //missing motd
                             if (serverSetting.ForceMOTD)
@@ -745,14 +688,7 @@ namespace IceChat
                             if (serverSetting.AutoPerformEnable)
                             {
                                 ServerMessage(this, "Running AutoPerform command(s)..");
-
-                                string autoCommand;
-                                foreach (string command in serverSetting.AutoPerform)
-                                {
-                                    autoCommand = command.Replace("\r", String.Empty);
-                                    if (!autoCommand.StartsWith(";"))
-                                        OutGoingCommand(this, autoCommand);
-                                }
+                                AutoPerform(this, serverSetting.AutoPerform);
                             }
 
                             // Nickserv password
@@ -764,36 +700,14 @@ namespace IceChat
                             if (serverSetting.RejoinChannels)
                             {
                                 //rejoin any channels that are open
-                                foreach (IceTabPage tw in FormMain.Instance.TabMain.TabPages)
-                                {
-                                    if (tw.WindowStyle == IceTabPage.WindowType.Channel)
-                                    {
-                                        if (tw.Connection == this)
-                                        {
-                                            if (this.serverSetting.AutoJoinDelay)
-                                                OutGoingCommand(this, "/timer rejoin 6 1 /join " + tw.TabCaption);
-                                            else
-                                                SendData("JOIN " + tw.TabCaption);
-                                        }
-                                    }
-                                }
+                                AutoRejoin(this);
                             }
 
                             //run autojoins
                             if (serverSetting.AutoJoinEnable)
                             {
                                 ServerMessage(this, "Auto-joining Channels");
-
-                                foreach (string chan in serverSetting.AutoJoinChannels)
-                                {
-                                    if (!chan.StartsWith(";"))
-                                    {
-                                        if (this.serverSetting.AutoJoinDelay)
-                                            OutGoingCommand(this, "/timer autojoin 6 1 /join " + chan);
-                                        else
-                                            SendData("JOIN " + chan);
-                                    }
-                                }
+                                AutoJoin(this, serverSetting.AutoJoinChannels);
                             }
 
                             fullyConnected = true;
@@ -812,6 +726,8 @@ namespace IceChat
                             break;
                         case "396":     //mode X message                            
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
+                            //IALUserData(this, this.serverSetting.NickName, 
+                            /*
                             if (this.serverSetting.IAL.ContainsKey(this.serverSetting.NickName))
                             {
                                 host = ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host;
@@ -819,18 +735,16 @@ namespace IceChat
                                     ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host = host.Substring(0, host.IndexOf("@") + 1) + ircData[3];
                                 
                             }
+                            */ 
                             ServerMessage(this, msg);
                             break;
                         case "439":
                         case "931":
-                            msg = JoinString(ircData, 3, true);
-                            ServerMessage(this, msg);
+                            ServerMessage(this, JoinString(ircData, 3, true));
                             break;
                         case "901":
-                            msg = JoinString(ircData, 6, true);
-                            ServerMessage(this, msg);                            
+                            ServerMessage(this, JoinString(ircData, 6, true));                            
                             break;
-
                         case "PRIVMSG":
                             channel = ircData[2];
                             msg = JoinString(ircData, 3, true);
@@ -1325,10 +1239,9 @@ namespace IceChat
                         case "465": //no open proxies
                         case "513": //if you can not connect, type /quote PONG ...
                             ServerError(this, JoinString(ircData, 3, true), true);                            
-                            break;
-                        
-                        default:
-                            ServerMessage(this, data);
+                            break;                        
+                        default:                            
+                            ServerMessage(this, JoinString(ircData, 3, false));
                             break;
                         //                            
                     }

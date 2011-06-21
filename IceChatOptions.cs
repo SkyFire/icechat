@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -677,7 +677,15 @@ namespace IceChat
         [XmlArrayItem("Item")]
         public string[] Themes
         { get; set; }
-    
+
+        [XmlElement("SoundUseExternalCommand")]
+        public bool SoundUseExternalCommand
+        { get; set; }
+
+        [XmlElement("SoundExternalCommand")]
+        public string SoundExternalCommand
+        { get; set; }
+
     }
     
     [XmlRoot("IceChatMessageFormat")]

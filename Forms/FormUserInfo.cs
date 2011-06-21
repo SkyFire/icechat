@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -70,9 +70,9 @@ namespace IceChat
             else
             {
                 _nick = value;
-                FormMain.Instance.ParseOutGoingCommand(_connection, "/whois " + _nick + " " + _nick);
                 this.Text = "User Information: " + _nick;
                 this.textNick.Text = value;
+                FormMain.Instance.ParseOutGoingCommand(_connection, "/whois " + _nick + " " + _nick);
             }
         }
 

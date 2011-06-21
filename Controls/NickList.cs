@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -634,12 +634,12 @@ namespace IceChat
                         g.DrawString(((Nick)sortedNickNames[i]).nick, this.Font, b, 2, currentY);
                         
                         //draw the host
-                        System.Diagnostics.Debug.WriteLine("drawing:" + ((Nick)sortedNickNames[i]).nick + ":" + u.NickName + ":" + currentWindow.TabCaption);
+                        //System.Diagnostics.Debug.WriteLine("drawing:" + ((Nick)sortedNickNames[i]).nick + ":" + u.NickName + ":" + currentWindow.TabCaption);
                         if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
                         {
                             //host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
                             string host = ((Nick)sortedNickNames[i]).host;
-                            System.Diagnostics.Debug.WriteLine(u.NickName + ":" + ((Nick)sortedNickNames[i]).nick + ":" + host);
+                            //System.Diagnostics.Debug.WriteLine(u.NickName + ":" + ((Nick)sortedNickNames[i]).nick + ":" + host);
                             if (((Nick)sortedNickNames[i]).host.Length > 0)
                                 g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                         }

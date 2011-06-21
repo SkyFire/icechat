@@ -1,5 +1,5 @@
 ﻿/******************************************************************************\
- * IceChat 2009 Internet Relay Chat Client
+ * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
  *                                    <www.icechat.net> 
@@ -28,7 +28,6 @@ using System.Text;
 
 namespace IceChat
 {
-    //public delegate void OutgoingMessageDelegate(IRCConnection connection, string window, string data, int color);
     public delegate void OutGoingCommandDelegate(IRCConnection connection, string data);
     public delegate void RawServerIncomingDataDelegate(IRCConnection connection, string data);
     public delegate void RawServerOutgoingDataDelegate(IRCConnection connection, string data);
@@ -82,7 +81,7 @@ namespace IceChat
     public delegate void NewServerConnectionDelegate(ServerSetting serverSetting);
 
     //for the Buddy List
-    public delegate void BuddyListRefreshDelegate(IRCConnection connection, BuddyListItem[] buddyList);
+    public delegate void BuddyListDelegate(IRCConnection connection, string[] buddies);
 
     //for the IAL (internal address list)
     public delegate void IALUserDataDelegate(IRCConnection connection, string nick, string host, string channel);
@@ -91,14 +90,28 @@ namespace IceChat
     public delegate void IALUserQuitDelegate(IRCConnection connection, string nick);
 
 
-    //public delegate void ServerDisconnectDelegate(object sender);
-    //public delegate void ServerAddDelegate(object sender, ServerSetting serverSetting);
+    public delegate void AutoPerformDelegate(IRCConnection connection, string[] commands);
+    public delegate void AutoJoinDelegate(IRCConnection connection, string[] channels);
+    public delegate void AutoRejoinDelegate(IRCConnection connection);
+
+    public delegate void EndofNamesDelegate(IRCConnection connection, string channel);
+    public delegate void EndofWhoReplyDelegate(IRCConnection connection, string channel);
+    public delegate void WhoReplyDelegate(IRCConnection connection, string channel, string nick, string host, string message);
+    public delegate void ChannelUserListDelegate(IRCConnection connection, string channel, string[] nicks, string message);
+
+    public delegate void StatusTextDelegate(IRCConnection connection, string statusText);
+
+    public delegate bool UserInfoWindowExistsDelegate(IRCConnection connection, string nick);
+
+    public delegate void UserInfoHostFullnameDelegate(IRCConnection connection, string nick, string host, string full);
+    public delegate void UserInfoIdleLogonDelegate(IRCConnection connection, string nick, string idleTime, string logonTime);
+    public delegate void UserInfoAddChannelsDelegate(IRCConnection connection, string nick, string[] channels);
     
-    //public delegate void AddConsoleTabDelegate(IRCConnection connection);
+    public delegate bool ChannelInfoWindowExistsDelegate(IRCConnection connection, string channel);
+    public delegate void ChannelInfoAddBanDelegate(IRCConnection connection, string channel, string host, string bannedBy);
+    public delegate void ChannelInfoAddExceptionDelegate(IRCConnection connection, string channel, string host, string bannedBy);
+    public delegate void ChannelInfoTopicSetDelegate(IRCConnection connection, string channel, string nick, string time);
 
-
-    //public delegate void WindowMessageDelegate(IRCConnection connection, string name, string data, int color);
-    //public delegate void SaveServersDelegate();
 
 
 }
