@@ -26,11 +26,9 @@ using System;
 using System.Windows.Forms;
 
 namespace IceChatPlugin
-{
-  
+{  
 
-    public delegate void OutGoingCommandHandler(object sender, PluginArgs e);
-
+    public delegate void OutGoingCommandHandler(PluginArgs e);
 
     public interface IPluginIceChat
     {
@@ -46,9 +44,13 @@ namespace IceChatPlugin
         Form MainForm { get; set; }
         string CurrentFolder { get; set; }
         void ShowInfo();
-        MenuStrip MainMenuStrip { get; set; }
 
-        //add an item to the mainform menu
+        AppDomain domain { get; set; }
+
+        //the mainform menu
+        MenuStrip MainMenuStrip { get; set; }
+        //the bottom panel of the main window
+        Panel BottomPanel { get; set; }        
 
         void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab);
         void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab);
@@ -57,9 +59,16 @@ namespace IceChatPlugin
         void SaveSettingsForm();
         void SaveEditorForm();
 
+        ToolStripItem[] AddChannelPopups();
+        ToolStripItem[] AddQueryPopups();
+        ToolStripItem[] AddServerPopups();
+
+        IceChat.IRCConnection ServerTreeCurrentConnection { get; set; }
+        string ServerTreeCurrentTab { get; set; }
+
         void MainProgramLoaded();       //the main icechat form/program has loaded
 
-        PluginArgs ChannelMessage(PluginArgs args);       //return whether default message has been overriden
+        PluginArgs ChannelMessage(PluginArgs args);
         PluginArgs ChannelAction(PluginArgs args);
         PluginArgs ChannelKick(PluginArgs args);
         PluginArgs QueryMessage(PluginArgs args);
@@ -74,6 +83,17 @@ namespace IceChatPlugin
         PluginArgs UserNotice(PluginArgs args);
         PluginArgs CtcpMessage(PluginArgs args);
         PluginArgs CtcpReply(PluginArgs args);
+
+
+        PluginArgs ChannelNotice(PluginArgs args);        
+        void ServerConnect(PluginArgs args);
+        void ServerDisconnect(PluginArgs args);                
+        void WhoisUser(PluginArgs args);
+        void ChannelTopic(PluginArgs args);
+        void ChannelInvite(PluginArgs args);                
+        void BuddyList(PluginArgs args);
+        void ChannelMode(PluginArgs args);
+
 
         void NickChange(PluginArgs args);
         void ServerError(PluginArgs args);
@@ -93,11 +113,9 @@ namespace IceChatPlugin
         public string Extra;
         public Form Form;           
         public Object TextWindow;
-        public Object Connection;
+        public IceChat.IRCConnection Connection;
         
         public string Command;      //if you wish to return back a command
-
-        //public bool isHandled;      //if the default text message is over riden
 
         public PluginArgs(Object textwindow, string channel, string nick, string host, string message)
         {
@@ -113,7 +131,7 @@ namespace IceChatPlugin
             this.Form = form;    
         }
         
-        public PluginArgs(Object connection)
+        public PluginArgs(IceChat.IRCConnection connection)
         {
             this.Connection = connection;
         }

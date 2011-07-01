@@ -23,42 +23,54 @@
 \******************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
-using System.IO;
 using System.Xml.Serialization;
 
 namespace IceChat
 {
-    [XmlRoot("IceChatServers")]
-    public class IceChatServers
+    public class InternalAddressList
     {
-        [XmlArray("Servers")]
-        [XmlArrayItem("Item",typeof(ServerSetting))]
-        public ArrayList listServers;
+        private string _nick;
+        private string _host;
+        private ArrayList _channels;
 
-        public IceChatServers() 
+        public InternalAddressList(string nick, string host, string channel)
         {
-            listServers = new ArrayList();
+            _nick = nick;
+            _host = host;
+            _channels = new ArrayList();
+            _channels.Add(channel);
         }
 
-        public void AddServer(ServerSetting server)
+        public string Nick
         {
-            listServers.Add(server);
+            get { return _nick; }
+            set { _nick = value; }
         }
 
-        public void RemoveServer(ServerSetting server)
+        public string Host
         {
-            listServers.Remove(server);
+            get { return _host; }
+            set { _host = value; }
         }
 
-        public int GetNextID()
+        public ArrayList Channels
         {
-            if (listServers.Count ==0)
-                return 1;
-            return ((ServerSetting)listServers[listServers.Count-1]).ID+1;
+            get { return this._channels; }
+        }
+
+        public void AddChannel(string channel)
+        {
+            if (_channels.IndexOf(channel) == -1)
+                _channels.Add(channel);
+        }
+
+        public void RemoveChannel(string channel)
+        {
+            if (_channels.IndexOf(channel) != -1)
+                _channels.Remove(channel);
         }
     }
-    
 }

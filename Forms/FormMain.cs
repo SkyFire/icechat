@@ -83,7 +83,7 @@ namespace IceChat
         //private System.Threading.Mutex mutex;
 
         private ArrayList loadedPlugins;
-        private ArrayList loadedScripts;
+        //private ArrayList loadedScripts;
 
         private IdentServer identServer;
         
@@ -92,9 +92,9 @@ namespace IceChat
         private TabPage channelListTab;
         private TabPage buddyListTab;
 
-        private delegate void AddWindowDelegate(IRCConnection connection, string windowName, IceTabPage.WindowType windowType);
+        private delegate IceTabPage AddWindowDelegate(IRCConnection connection, string windowName, IceTabPage.WindowType windowType);
         private delegate void RemoveTabDelegate(IRCConnection connection, string channel, IceTabPage.WindowType windowType);
-        private delegate int GetSelectedTabDelegate();
+        //private delegate int GetSelectedTabDelegate();
 
         private delegate void StatusTextDelegate(string data);
         private delegate void CurrentWindowDelegate(string data, int color);
@@ -213,11 +213,14 @@ namespace IceChat
             emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
 
             logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
-            pluginsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
             scriptsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Scripts";
             soundsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds";
             picturesFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Pictures";
 
+            //pluginsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
+            pluginsFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "Plugins";
+            //pluginsFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                        
             if (!Directory.Exists(pluginsFolder))
                 Directory.CreateDirectory(pluginsFolder);
 
@@ -287,6 +290,7 @@ namespace IceChat
             this.toolStripAway.Image = StaticMethods.LoadResourceImage("away.png");
             this.toolStripSystemTray.Image = StaticMethods.LoadResourceImage("system-tray.png");
             this.toolStripUpdate.Image = StaticMethods.LoadResourceImage("update.png");
+            
             //disable this by default
             this.toolStripUpdate.Visible = false;
 
@@ -326,7 +330,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version + " - June 20 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " :: " + IceChat.Properties.Settings.Default.Version + " :: July 1 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -499,7 +503,7 @@ namespace IceChat
                 identServer = new IdentServer();
 
             loadedPlugins = new ArrayList();
-            loadedScripts = new ArrayList();
+            //loadedScripts = new ArrayList();
 
             //load any plugin addons
             LoadPlugins();
@@ -520,7 +524,8 @@ namespace IceChat
                     NewServerConnection(s);
             }
 
-            WindowMessage(null, "Console", "Current Data Folder: " + currentFolder, 4, true);
+            WindowMessage(null, "Console", "Data Folder: " + currentFolder, 4, true);
+            WindowMessage(null, "Console", "Plugins Folder: " + pluginsFolder, 4, true);
 
             //check for an update
             //checkForUpdate();
@@ -681,10 +686,22 @@ namespace IceChat
                 identServer.Stop();
                 identServer = null;
             }
-            
-            for (int i = 0; i < loadedPlugins.Count; i++)
-                loadedPlugins.RemoveAt(i);
 
+            foreach (IPluginIceChat ipc in loadedPlugins)
+                ipc.Dispose();
+
+            //unload and dispose of all the plugins
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                AppDomain.Unload(ipc.domain);
+                ipc.Dispose();
+            }
+
+            for (int i = 0; i < loadedPlugins.Count; i++)
+            {
+                loadedPlugins.RemoveAt(i);
+            }
+            
             //disconnect all the servers
             foreach (IRCConnection c in serverTree.ServerConnections.Values)
             {
@@ -762,10 +779,6 @@ namespace IceChat
             WindowMessage(null, "Console", "\x00034** This is a Beta version, not fully functional, not all options are added **", 1, false);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
             WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat2009\x0003 on \x00030,2irc://irc.quakenet.org/icechat2009\x0003 if you wish to help with this project", 1, true);
-
-
-            //WindowMessage(null, "Console", "\x00033\x0002If you want a fully working version of IceChat, visit http://www.icechat.net and download IceChat 7.70", 1, false);
-            //WindowMessage(null, "Console", "\x00033If you want a fully working version of IceChat, visit http://www.icechat.net and download IceChat 7.70", 1, false);
 
             StatusText("Welcome to " + Settings.Default.ProgramID + " " + Settings.Default.Version);
         }
@@ -1239,6 +1252,7 @@ namespace IceChat
         {
             IRCConnection c = new IRCConnection(serverSetting);
 
+            
             c.ChannelMessage += new ChannelMessageDelegate(OnChannelMessage);
             c.ChannelAction += new ChannelActionDelegate(OnChannelAction);
             c.QueryMessage += new QueryMessageDelegate(OnQueryMessage);
@@ -1283,6 +1297,7 @@ namespace IceChat
             c.IALUserQuit += new IALUserQuitDelegate(OnIALUserQuit);
 
             c.BuddyListData += new BuddyListDelegate(OnBuddyList);
+            c.BuddyListClear += new BuddyListClearDelegate(OnBuddyListClear);
             c.RawServerIncomingData += new RawServerIncomingDataDelegate(OnRawServerData);
             c.RawServerOutgoingData += new RawServerOutgoingDataDelegate(OnRawServerOutgoingData);
 
@@ -1296,6 +1311,11 @@ namespace IceChat
             c.ChannelUserList += new ChannelUserListDelegate(OnChannelUserList);
 
             c.StatusText += new IceChat.StatusTextDelegate(OnStatusText);
+            c.RefreshServerTree += new RefreshServerTreeDelegate(OnRefreshServerTree);
+            c.ServerReconnect += new ServerReconnectDelegate(OnServerReconnect);
+            c.ServerDisconnect += new ServerReconnectDelegate(OnServerDisconnect);
+            c.ServerConnect += new ServerConnectDelegate(OnServerConnect);
+            c.ServerForceDisconnect += new ServerForceDisconnectDelegate(OnServerForceDisconnect);
             
             c.UserInfoWindowExists += new UserInfoWindowExistsDelegate(OnUserInfoWindowExists);
             c.UserInfoHostFullName += new UserInfoHostFullnameDelegate(OnUserInfoHostFullName);
@@ -1306,6 +1326,8 @@ namespace IceChat
             c.ChannelInfoAddBan += new ChannelInfoAddBanDelegate(OnChannelInfoAddBan);
             c.ChannelInfoAddException += new ChannelInfoAddExceptionDelegate(OnChannelInfoAddException);
             c.ChannelInfoTopicSet += new ChannelInfoTopicSetDelegate(OnChannelInfoTopicSet);
+
+            c.WriteErrorFile += new WriteErrorFileDelegate(OnWriteErrorFile);
 
             OnAddConsoleTab(c);
 
@@ -1335,12 +1357,12 @@ namespace IceChat
         /// <param name="connection">Which Connection it came from</param>
         /// <param name="windowName">Window Name of the New Tab</param>
         /// <param name="windowType">Window Type of the New Tab</param>
-        internal void AddWindow(IRCConnection connection, string windowName, IceTabPage.WindowType windowType)
+        internal IceTabPage AddWindow(IRCConnection connection, string windowName, IceTabPage.WindowType windowType)
         {
             if (this.InvokeRequired)
             {
                 AddWindowDelegate a = new AddWindowDelegate(AddWindow);
-                this.Invoke(a, new object[] { connection, windowName, windowType });
+                return (IceTabPage)this.Invoke(a, new object[] { connection, windowName, windowType });
             }
             else
             {
@@ -1411,7 +1433,8 @@ namespace IceChat
 
                 if (page.WindowStyle == IceTabPage.WindowType.Query && iceChatOptions.WhoisNewQuery)
                     ParseOutGoingCommand(page.Connection, "/whois " + page.TabCaption);
-               
+
+                return page;
             }
         }
         /// <summary>
@@ -1750,16 +1773,22 @@ namespace IceChat
                                     loadedPlugins.Remove(plugin);
                                     menuItem.Click -= new EventHandler(OnPluginMenuItemClick);
                                     pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
-                                    WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);
+
+                                    AppDomain.Unload(plugin.domain);
+
                                     plugin.Dispose();
+
+                                    WindowMessage(null, "Console", "Unloaded Plugin - " + plugin.Name, 4, true);                                    
                                     
                                 }
                             }
                             break;                        
                         
                         case "/loadplugin":
-                            if (data.Length > 0)
+                            if (data.Length > 0)                            
                             {
+                                loadPlugin(pluginsFolder + System.IO.Path.DirectorySeparatorChar + data);
+                                /*
                                 Type ObjType = null;
                                 Assembly ass = null;
 
@@ -1814,6 +1843,7 @@ namespace IceChat
                                 {
                                     WriteErrorFile(connection, "LoadPlugins",ex);
                                 }
+                                */ 
                             }                            
                             break;
                         case "/reload":
@@ -2527,7 +2557,7 @@ namespace IceChat
                                 {
                                     temp = CurrentWindow.TabCaption;
                                     SendData(connection, "PART " + temp);
-                                    SendData(connection, "JOIN " + temp);
+                                    ParseOutGoingCommand(connection, "/timer joinhop 1 1 /join " + temp);
                                 }
                             }
                             else
@@ -2536,7 +2566,7 @@ namespace IceChat
                                 if (t != null)
                                 {
                                     SendData(connection, "PART " + t.TabCaption);
-                                    SendData(connection, "JOIN " + t.TabCaption);
+                                    ParseOutGoingCommand(connection, "/timer joinhop 1 1 /join " + t.TabCaption);
                                 }
                             }
                             break;
@@ -3527,7 +3557,7 @@ namespace IceChat
                         data = ReplaceFirst(data, m.Value, this.Handle.ToString());
                         break;
                     case "$icechat":
-                        data = ReplaceFirst(data, m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net");
+                        data = ReplaceFirst(data, m.Value, Settings.Default.ProgramID + " " + Settings.Default.Version + " http://icechat.codeplex.com");
                         break;
                     case "$logdir":
                         data = ReplaceFirst(data, m.Value, logsFolder);
@@ -4400,6 +4430,17 @@ namespace IceChat
 
         private void OnQuickConnectServer(ServerSetting s)
         {
+            s.NickName = iceChatOptions.DefaultNick;
+            s.AltNickName = iceChatOptions.DefaultNick + "_";
+            s.AwayNickName = iceChatOptions.DefaultNick + "[A]";
+            s.FullName = iceChatOptions.DefaultFullName;
+            s.QuitMessage = iceChatOptions.DefaultQuitMessage;
+            s.IdentName = iceChatOptions.DefaultIdent;
+            s.IAL = new Hashtable();
+
+            Random r = new Random();
+            s.ID = r.Next(50000, 99999);
+
             NewServerConnection(s);
         }
 
@@ -4458,7 +4499,7 @@ namespace IceChat
         public void LoadScripts()
         {
             // loads all script 
-            loadedScripts.Clear();
+            //loadedScripts.Clear();
 
             if (FormMain.Instance.IceChatOptions.ScriptFiles == null) return;
             /*
@@ -4511,43 +4552,117 @@ namespace IceChat
         }
 
 
-        private void loadPlugin(String fileName)
-        {
+        //http://www.codeproject.com/KB/cs/dynamicpluginmanager.aspx
+
+        private void loadPlugin(string fileName)
+        {            
             string args = fileName.Substring(fileName.LastIndexOf("\\") + 1);
             args = args.Substring(0, args.Length - 4);
+
+            //System.Diagnostics.Debug.WriteLine(fileName);
+
+            AppDomainSetup setup = new AppDomainSetup();
+            setup.ApplicationName = args;
+            
+            //setup.ApplicationBase = pluginsFolder;
+            //setup.PrivateBinPath = pluginsFolder;
+            //System.Diagnostics.Debug.WriteLine(pluginsFolder);
+            setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+            setup.PrivateBinPath = "Plugins";
+            
+            //setup.PrivateBinPath = AppDomain.CurrentDomain.BaseDirectory;
+            
+            //setup.CachePath = pluginsFolder + Path.DirectorySeparatorChar + "cache";
+            //setup.ShadowCopyFiles = "true";
+            //setup.ShadowCopyDirectories = pluginsFolder;
+
+            AppDomain appDomain = AppDomain.CreateDomain(args + "_AppDomain", null, setup);
+
+            Type loaderType = typeof(AssemblyLoader);
+            
+            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, loaderType.FullName);
+            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().Location, loaderType.FullName);
+            
+            //System.Diagnostics.Debug.WriteLine(loaderType.FullName);
+
+            AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, loaderType.FullName);
+
+            //Type plugType = typeof(IPluginIceChat);
+
+            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap("ChannelMonitor", "IceChatPlugin.Plugin");
+            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(plugType.Assembly.FullName, "IceChatPlugin.IPluginIceChat");
 
             Type ObjType = null;
             try
             {
                 // load it
-                Assembly ass = null;
-                ass = Assembly.LoadFile(fileName);
-                //System.Diagnostics.Debug.WriteLine(ass.ToString());
+                //Assembly ass = null;
+                //ass = Assembly.LoadFile(fileName);
+                //Assembly ass = appDomain.Load(fileName);
+                //System.Diagnostics.Debug.WriteLine("file:" + fileName);
+                
+                //byte[] b = File.ReadAllBytes(fileName);
+                //Assembly ass = appDomain.Load(AssemblyName.GetAssemblyName(args));
+                //System.Diagnostics.Debug.WriteLine(args);
+                //Assembly ass = appDomain.Load(args);
+                //Assembly ass = appDomain.Load(b);
+                //Assembly ass = loader.LoadAssembly(fileName);
+                //l.LoadAssembly(fileName);
+
+                //fileName = fileName.Substring(0, fileName.Length - 4);
+                //System.Diagnostics.Debug.WriteLine(fileName);
+                //System.Diagnostics.Debug.WriteLine(args);
+
+                //l.LoadAssembly(fileName);
+                //l.LoadAssemblyLocal("I");
+                //l.LoadLocalAssembly("IPluginIceChat");
+                //l.LoadLocalAssembly("IRCConnection");
+                
+                //l.LoadAssembly(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "IRCConnection.dll");
+                //l.LoadAssembly(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "IPluginIceChat.dll");
+
+                //System.Diagnostics.Debug.WriteLine("loading:" + fileName);
+                //appDomain.Load(@"IceChat.IRCConnection");
+                //appDomain.Load("IPluginIceChat.dll");
+                //appDomain.Load("mscorlib");
+
+                //return;
+
+                Assembly ass = l.LoadAssembly(args);
+
                 if (ass != null)
                 {
                     ObjType = ass.GetType("IceChatPlugin.Plugin");
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("assembly is null");
+                    System.Diagnostics.Debug.WriteLine("assembly is null");                    
+                    return;
                 }
+                 
             }
             catch (Exception ex)
             {
-                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins Cast", ex);
+                System.Diagnostics.Debug.WriteLine("ERROR:" +ex.Message);
+
+                //System.Diagnostics.Debug.WriteLine(ex.InnerException.Message);
+                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin Error ", ex);
+                
+                return;
             }
             try
             {
                 // OK Lets create the object as we have the Report Type
                 if (ObjType != null)
                 {
-                    //System.Diagnostics.Debug.WriteLine("create instance of " + args);
-
                     IPluginIceChat ipi = (IPluginIceChat)Activator.CreateInstance(ObjType);
 
                     ipi.MainForm = this;
-                    ipi.MainMenuStrip = this.MainMenuStrip;
+                    ipi.MainMenuStrip = menuMainStrip;
                     ipi.CurrentFolder = currentFolder;
+                    ipi.BottomPanel = panelDockBottom;
+
+                    ipi.domain = appDomain;
 
                     WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
 
@@ -4560,7 +4675,10 @@ namespace IceChat
 
                     ipi.OnCommand += new OutGoingCommandHandler(Plugin_OnCommand);
                     ipi.Initialize();
+
                     loadedPlugins.Add(ipi);
+
+
                 }
                 else
                 {
@@ -4569,7 +4687,7 @@ namespace IceChat
             }
             catch (Exception ex)
             {
-                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugins", ex);
+                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin", ex);
             }
 
 
@@ -4585,20 +4703,19 @@ namespace IceChat
 
                 string args = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
                 args = args.Substring(0, args.Length - 4);
+                loadPlugin(pluginFiles[i]);
                 
-                if (!args.ToUpper().StartsWith("IPLUGIN"))
-                {
-                    loadPlugin(pluginFiles[i]);
-                }
             }
         }
 
-        private void Plugin_OnCommand(object sender, PluginArgs e)
+        private void Plugin_OnCommand(PluginArgs e)
         {
             if (e.Command != null)
             {
                 if (e.Connection != null)
-                    ParseOutGoingCommand((IRCConnection)e.Connection, e.Command);
+                    ParseOutGoingCommand(e.Connection, e.Command);
+                else
+                    ParseOutGoingCommand(null, e.Command);
             }
 
         }
@@ -4607,14 +4724,12 @@ namespace IceChat
         {
             ParseOutGoingCommand(null, "/unloadplugin " + menuItem.ToolTipText);
         }
-        
-        /*
+                
         internal void ReloadPlugin(ToolStripMenuItem menuItem)
         {
             ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
         }
-        */
-        
+                
         /// <summary>
         /// Write out to the errors file, specific to the Connection
         /// </summary>
@@ -4677,15 +4792,6 @@ namespace IceChat
                 if (Convert.ToDouble(version[0].InnerText) > currentVersion)
                 {
                     this.toolStripUpdate.Visible = true;
-                    /*
-                    CurrentWindowMessage(inputPanel.CurrentConnection, "There is a newer version of IceChat available (" + versiontext[0].InnerText + ")", 4, true);
-                    DialogResult result = MessageBox.Show("Would you like to update to the newer version of IceChat?", "IceChat " + versiontext[0].InnerText + " available", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        System.Diagnostics.Debug.WriteLine("run update program : " + Application.StartupPath);
-                        System.Diagnostics.Process.Start(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatUpdater.exe", "\"" + currentFolder + "\"");
-                    }
-                    */
                 }
                 else
                 {
@@ -4829,26 +4935,29 @@ namespace IceChat
             fd.AutoUpgradeEnabled = true;
             fd.Filter = "Plugin file (*.dll)|*.dll";
             fd.Title = "Which plugin file do you want to open?";
-            fd.InitialDirectory = this.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Plugins";
+            fd.InitialDirectory = pluginsFolder;
 
             if (fd.ShowDialog() == DialogResult.OK)
             {
-                //urrentScript = fd.FileName;
+                //currentScript = fd.FileName;
                 //need to make sure the plugin is not already loaded
-
-                //pluginsToolStripMenuItem.DropDownItems.Add(t);
                 foreach (ToolStripItem item in pluginsToolStripMenuItem.DropDownItems)
                 {
-                    //System.Diagnostics.Debug.WriteLine(item.ToolTipText + ":" + fd.FileName + ":" + System.IO.Path.GetFileName(fd.FileName));
                     if (item.ToolTipText.ToLower() == System.IO.Path.GetFileName(fd.FileName).ToLower())
                     {
                         return;
-
                     }
                 }
+                //System.Diagnostics.Debug.WriteLine(fd.FileName);
                 loadPlugin(fd.FileName);
 
             }
+        }
+
+        private void bottomPanelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitterBottom.Visible = bottomPanelToolStripMenuItem.Checked;
+            panelDockBottom.Visible = bottomPanelToolStripMenuItem.Checked;
         }
 
     }
@@ -4990,5 +5099,15 @@ namespace IceChat
     }
     
     #endregion
-    
+
+    public class AssemblyLoader : MarshalByRefObject
+    {
+        public Assembly LoadAssembly(string assemblyName)
+        {
+            //return Assembly.LoadFrom(path);
+            //System.Diagnostics.Debug.WriteLine(path);
+            return Assembly.Load(assemblyName);
+        }
+    }
+
 }

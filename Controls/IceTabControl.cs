@@ -549,6 +549,7 @@ namespace IceChat
    
                     if (!this.Controls.Contains(_TabPages[i]))
                          this.Controls.Add(_TabPages[i]);
+                    
                     if (showTabs == true)
                         DrawTab(g, _TabPages[i], i);
                 }
@@ -556,6 +557,9 @@ namespace IceChat
 
                 if (GetTabPage(_selectedIndex) != null)
                 {
+                    if (StaticMethods.IsRunningOnMono())
+                        GetTabPage(0).BringToFront();
+                    
                     GetTabPage(_selectedIndex).BringToFront();
                 }
 

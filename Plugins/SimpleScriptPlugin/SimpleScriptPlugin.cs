@@ -38,8 +38,14 @@ namespace IceChatPlugin
         private string m_Author;
         private string m_Version;
 
+        private AppDomain m_domain;
+
         private Form m_MainForm;
         private MenuStrip m_MenuStrip;
+        private Panel m_BottomPanel;
+
+        private string m_ServerTreeCurrentTab;
+        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
 
         //all the events get declared here, do not change
         public event OutGoingCommandHandler OnCommand;
@@ -100,6 +106,30 @@ namespace IceChatPlugin
             set { m_MenuStrip = value; }
         }
 
+        public Panel BottomPanel
+        {
+            get { return m_BottomPanel; }
+            set { m_BottomPanel = value; }
+        }
+
+        public string ServerTreeCurrentTab
+        {
+            get { return m_ServerTreeCurrentTab; }
+            set { m_ServerTreeCurrentTab = value; }
+        }
+
+        public IceChat.IRCConnection ServerTreeCurrentConnection
+        {
+            get { return m_ServerTreeCurrentConnection; }
+            set { m_ServerTreeCurrentConnection = value; }
+        }
+
+        public AppDomain domain
+        {
+            get { return m_domain; }
+            set { m_domain = value; }
+        }
+
         public void ShowInfo()
         {
             MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
@@ -126,6 +156,21 @@ namespace IceChatPlugin
         {
 
 
+        }
+
+        public ToolStripItem[] AddChannelPopups()
+        {
+            return null;
+        }
+
+        public ToolStripItem[] AddQueryPopups()
+        {
+            return null;
+        }
+
+        public ToolStripItem[] AddServerPopups()
+        {
+            return null;
         }
 
         public void LoadEditorForm(TabControl ScriptsTab)
@@ -382,7 +427,7 @@ namespace IceChatPlugin
                                     args.Command = command;
                                     
                                     if (OnCommand != null)
-                                        OnCommand(this, args);
+                                        OnCommand(args);
 
                                 }
                             }                            
@@ -403,7 +448,7 @@ namespace IceChatPlugin
                                     args.Command = command;
 
                                     if (OnCommand != null)
-                                        OnCommand(this, args);
+                                        OnCommand(args);
 
                                 }
                             }
@@ -421,7 +466,7 @@ namespace IceChatPlugin
                                 args.Command = command;
 
                                 if (OnCommand != null)
-                                    OnCommand(this, args);
+                                    OnCommand(args);
                             
                             } 
                             break;
@@ -523,6 +568,48 @@ namespace IceChatPlugin
 
         public void ServerError(PluginArgs args)
         {
+
+        }
+        public void ServerConnect(PluginArgs args)
+        {
+
+        }
+
+        public void ServerDisconnect(PluginArgs args)
+        {
+
+        }
+
+        public void WhoisUser(PluginArgs args)
+        {
+
+        }
+
+        public PluginArgs ChannelNotice(PluginArgs args)
+        {
+
+            return args;
+        }
+
+        public void ChannelTopic(PluginArgs args)
+        {
+
+        }
+
+        public void ChannelInvite(PluginArgs args)
+        {
+
+        }
+
+        public void ChannelMode(PluginArgs args)
+        {
+            //args.Extra --  full channel mode
+
+        }
+
+        public void BuddyList(PluginArgs args)
+        {
+            //args.Extra -- "online" or "offline"
 
         }
 

@@ -1469,7 +1469,6 @@ namespace IceChat
                 textReader.Dispose();
                 
                 FormMain.Instance.IceChatOptions.CurrentTheme = comboTheme.Text;
-                System.Diagnostics.Debug.WriteLine("Update Colors");
                 FormMain.Instance.ColorsFile = themeColorsFile;
                 UpdateColorSettings();
             }
@@ -1483,7 +1482,6 @@ namespace IceChat
                 textReader.Dispose();
                 
                 FormMain.Instance.MessagesFile = themeMessagesFile;
-                System.Diagnostics.Debug.WriteLine("Update Messages:" + themeMessagesFile);
                 UpdateMessageSettings();
 
             }

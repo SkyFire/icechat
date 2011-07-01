@@ -33,6 +33,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
+using IceChatPlugin;
 
 namespace IceChat
 {
@@ -55,7 +56,7 @@ namespace IceChat
 
         private List<KeyValuePair<string,object>> serverNodes;
 
-        internal event NewServerConnectionDelegate NewServerConnection;
+        public event NewServerConnectionDelegate NewServerConnection;
 
         internal delegate void SaveDefaultDelegate();
         internal event SaveDefaultDelegate SaveDefault;
@@ -531,6 +532,19 @@ namespace IceChat
                             this.autoPerformToolStripMenuItem,
                             this.openLogFolderToolStripMenuItem});
 
+
+                        //add the menu's created by plugins
+                        foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                        {
+                            //ipc.ServerTreeCurrentConnection = ((ServerSetting)findNode).
+                            
+                            ToolStripItem[] popServer = ipc.AddServerPopups();
+                            if (popServer != null && popServer.Length > 0)
+                            {
+                                this.contextMenuServer.Items.AddRange(popServer);
+                            }
+                        }
+
                         //add in the popup menu
                         AddPopupMenu("Console", contextMenuServer);
 
@@ -552,6 +566,19 @@ namespace IceChat
 
                             this.noColorModeToolStripMenuItem.Checked = ((IceTabPage)findNode).TextWindow.NoColorMode;
                             
+                            //add the menu's created by plugins
+                            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                            {
+                                ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
+                                ipc.ServerTreeCurrentTab =  ((IceTabPage)findNode).TabCaption;
+
+                                ToolStripItem[] popChan = ipc.AddChannelPopups();
+                                if (popChan != null && popChan.Length > 0)
+                                {
+                                    this.contextMenuChannel.Items.AddRange(popChan);
+                                }
+                            }
+
                             //add in the popup menu
                             AddPopupMenu("Channel", contextMenuChannel);
 
@@ -565,6 +592,19 @@ namespace IceChat
                             this.closeWindowToolStripMenuItem,
                             this.userInformationToolStripMenuItem,
                             this.silenceUserToolStripMenuItem});
+
+                            //add the menu's created by plugins
+                            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                            {
+                                ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
+                                ipc.ServerTreeCurrentTab = ((IceTabPage)findNode).TabCaption;
+
+                                ToolStripItem[] popQuery = ipc.AddQueryPopups();
+                                if (popQuery != null && popQuery.Length > 0)
+                                {
+                                    this.contextMenuQuery.Items.AddRange(popQuery);
+                                }
+                            }
 
                             //add in the popup menu
                             AddPopupMenu("Query", contextMenuQuery);
@@ -1143,7 +1183,7 @@ namespace IceChat
         {
             get { return false; }
         }
-
+        
         #region Server Tree Buttons
         
         private void buttonConnect_Click(object sender, EventArgs e)
@@ -1278,7 +1318,6 @@ namespace IceChat
         #endregion
 
         #region Server Popup Menus
-
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             buttonConnect.PerformClick();

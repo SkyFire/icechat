@@ -69,7 +69,7 @@ namespace IceChat
             }
             catch (SocketException)
             {
-                System.Diagnostics.Debug.WriteLine("socket exception listen error");
+                //System.Diagnostics.Debug.WriteLine("socket exception listen error");
             }
             catch (Exception)
             {

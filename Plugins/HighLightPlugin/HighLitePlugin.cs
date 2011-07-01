@@ -36,8 +36,15 @@ namespace IceChatPlugin
         private string m_Author;
         private string m_Version;
 
+        private AppDomain m_domain;
+
         private Form m_MainForm;
         private MenuStrip m_MenuStrip;
+        private Panel m_BottomPanel;
+        private string currentFolder;
+
+        private string m_ServerTreeCurrentTab;
+        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
 
         //all the events get declared here, do not change
         public event OutGoingCommandHandler OnCommand;
@@ -54,14 +61,13 @@ namespace IceChatPlugin
 
         private IceChatHighLites iceChatHighLites;
         private string highlitesFile;
-        private string currentFolder;
 
         public Plugin()
         {
             //set your default values here
             m_Name = "HighLite Plugin";
             m_Author = "Snerf";
-            m_Version = "1.2";
+            m_Version = "1.4";
         }
 
         public string Name
@@ -95,6 +101,30 @@ namespace IceChatPlugin
         {
             get { return m_MenuStrip; }
             set { m_MenuStrip = value; }
+        }
+
+        public Panel BottomPanel
+        {
+            get { return m_BottomPanel; }
+            set { m_BottomPanel = value; }
+        }
+
+        public string ServerTreeCurrentTab
+        {
+            get { return m_ServerTreeCurrentTab; }
+            set { m_ServerTreeCurrentTab = value; }
+        }
+
+        public IceChat.IRCConnection ServerTreeCurrentConnection
+        {
+            get { return m_ServerTreeCurrentConnection; }
+            set { m_ServerTreeCurrentConnection = value; }
+        }
+
+        public AppDomain domain
+        {
+            get { return m_domain; }
+            set { m_domain = value; }
         }
 
         public void ShowInfo()
@@ -256,6 +286,21 @@ namespace IceChatPlugin
             //
         }
 
+        public ToolStripItem[] AddChannelPopups()
+        {
+            return null;
+        }
+
+        public ToolStripItem[] AddQueryPopups()
+        {
+            return null;
+        }
+
+        public ToolStripItem[] AddServerPopups()
+        {
+            return null;
+        }
+
         private void ShowHighLites()
         {
             foreach (HighLiteItem hli in iceChatHighLites.listHighLites)
@@ -351,18 +396,18 @@ namespace IceChatPlugin
             }
         }
 
-        private string CheckTextHighLite(string message)
+        private string CheckTextHighLite(PluginArgs args)
         {
             //parse out any identifiers for the channel/nick, etc
+            string message = args.Message;
 
             foreach (HighLiteItem hli in iceChatHighLites.listHighLites)
             {
                 if (hli.Enabled)
                 {
-                    //string match = hli.Match.Replace("$chan", t.WindowName);
                     string match = hli.Match;
-                    //match = match.Replace("$me", t.Connection.ServerSetting.NickName);
-                    
+                    match = match.Replace("$me", args.Connection.ServerSetting.NickName);
+
                     if (message.IndexOf(match, StringComparison.InvariantCultureIgnoreCase) > -1)
                     {
                         if (message.StartsWith(((char)3).ToString()))
@@ -399,25 +444,25 @@ namespace IceChatPlugin
 
         public PluginArgs ChannelMessage(PluginArgs args)
         {
-            args.Message = CheckTextHighLite(args.Message);            
+            args.Message = CheckTextHighLite(args);            
             return args;
         }
 
         public PluginArgs ChannelAction(PluginArgs args)
         {
-            args.Message = CheckTextHighLite(args.Message);
+            args.Message = CheckTextHighLite(args);
             return args;
         }
 
         public PluginArgs QueryMessage(PluginArgs args)
         {
-            args.Message = CheckTextHighLite(args.Message);
+            args.Message = CheckTextHighLite(args);
             return args;
         }
 
         public PluginArgs QueryAction(PluginArgs args)
         {
-            args.Message = CheckTextHighLite(args.Message);
+            args.Message = CheckTextHighLite(args);
             return args;
         }
 
@@ -486,6 +531,49 @@ namespace IceChatPlugin
 
         public void ServerError(PluginArgs args)
         {
+
+        }
+
+        public void ServerConnect(PluginArgs args)
+        {
+
+        }
+
+        public void ServerDisconnect(PluginArgs args)
+        {
+
+        }
+
+        public void WhoisUser(PluginArgs args)
+        {
+
+        }
+
+        public PluginArgs ChannelNotice(PluginArgs args)
+        {
+
+            return args;
+        }
+
+        public void ChannelTopic(PluginArgs args)
+        {
+
+        }
+
+        public void ChannelInvite(PluginArgs args)
+        {
+
+        }
+
+        public void ChannelMode(PluginArgs args)
+        {
+            //args.Extra --  full channel mode
+
+        }
+
+        public void BuddyList(PluginArgs args)
+        {
+            //args.Extra -- "online" or "offline"
 
         }
 

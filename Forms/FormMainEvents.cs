@@ -46,6 +46,109 @@ namespace IceChat
         private delegate void ShowDCCFileAcceptDelegate(IRCConnection connection, string nick, string host, string port, string ip, string file, uint fileSize, uint filePos, bool resume);
         private delegate void ShowDCCPassiveAcceptDelegate(IRCConnection connection, string nick, string host, string ip, string file, uint fileSize, uint filePos, bool resume, string id);
 
+        private void OnRefreshServerTree(IRCConnection connection)
+        {
+            serverTree.Invalidate();
+        }
+
+        private void OnWriteErrorFile(IRCConnection connection, string method, Exception e)
+        {
+            WriteErrorFile(connection, method, e);
+        }
+
+        private void OnServerReconnect(IRCConnection connection)
+        {
+            string msg = GetMessageFormat("Server Reconnect");
+            msg = msg.Replace("$serverip", connection.ServerSetting.ServerIP).Replace("$server",connection.ServerSetting.ServerName).Replace("$port", connection.ServerSetting.ServerPort);
+            
+            OnServerMessage(connection, msg);
+        }
+
+        private void OnServerForceDisconnect(IRCConnection connection)
+        {
+            //throw new NotImplementedException();
+            if (IceChatOptions.ReconnectServer && connection.AttemptReconnect)
+            {
+                OnServerMessage(connection, "Waiting 30 seconds to Reconnect to (" + connection.ServerSetting.ServerName + ")");
+                try
+                {
+                    if (connection.ReconnectTimer != null)
+                        connection.ReconnectTimer.Start();
+                    connection.DisconnectError = false;
+
+                }
+                catch (Exception)
+                {
+                    //do nada
+                }
+            }
+
+        }
+
+        private void OnServerConnect(IRCConnection connection, string address)
+        {
+            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+            msg = msg.Replace("$serverip", address.Replace("$server", connection.ServerSetting.ProxyIP).Replace("$port", connection.ServerSetting.ProxyPort));
+            
+            OnServerMessage(connection, msg);
+
+            PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", connection.ServerSetting.NickName , "", msg);
+            args.Connection = connection;
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ServerConnect(args);
+            }
+        }
+
+        private void OnServerDisconnect(IRCConnection connection)
+        {
+            string msg = GetMessageFormat("Server Disconnect");
+            
+            msg = msg.Replace("$serverip", connection.ServerSetting.ServerIP);
+            msg = msg.Replace("$port", connection.ServerSetting.ServerPort);
+            
+            if (connection.ServerSetting.RealServerName.Length > 0)
+                msg = msg.Replace("$server",connection.ServerSetting.RealServerName);
+            else
+                msg = msg.Replace("$server", connection.ServerSetting.ServerName);
+
+
+            foreach (IceTabPage t in mainTabControl.TabPages)
+            {
+                if (t.WindowStyle == IceTabPage.WindowType.Channel || t.WindowStyle == IceTabPage.WindowType.Query)
+                {
+                    if (t.Connection == connection)
+                    {
+                        t.ClearNicks();
+                        t.IsFullyJoined = false;
+                        t.GotNamesList = false;
+                        t.GotWhoList = false;
+
+                        t.TextWindow.AppendText(msg, 1);
+                        t.LastMessageType = ServerMessageType.ServerMessage;
+
+                        if (CurrentWindow == t)
+                            nickList.Header = t.TabCaption + ":0";
+                    }
+                }
+            }
+
+            OnServerMessage(connection, msg);
+
+            PlaySoundFile("dropped");
+
+            PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", connection.ServerSetting.NickName, "", msg);
+            args.Connection = connection;
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ServerConnect(args);
+            }
+
+        }
+
+
         private void OnChannelInfoTopicSet(IRCConnection connection, string channel, string nick, string time)
         {
             IceTabPage t = FormMain.Instance.GetWindow(connection, channel, IceTabPage.WindowType.Channel);
@@ -208,8 +311,18 @@ namespace IceChat
 
         }
 
+        private void OnBuddyListClear(IRCConnection connection)
+        {
+            buddyList.ClearBuddyList(connection);
+        }
+
         private void OnBuddyList(IRCConnection connection, string[] buddies)
         {
+
+
+            PluginArgs args = new PluginArgs(connection);
+            
+            
             foreach (BuddyListItem b in connection.ServerSetting.BuddyList)
             {
                 if (b.IsOnSent && !b.IsOnReceived)
@@ -223,12 +336,26 @@ namespace IceChat
                             b.Connected = true;
                             b.IsOnReceived = true;
                             isFound = true;
+                            
+                            args.Nick = b.Nick;
+                            args.Extra = "online";
+                            foreach (IPluginIceChat ipc in loadedPlugins)
+                            {
+                                ipc.BuddyList(args);
+                            }
                         }
                     }
                     if (!isFound)
                     {
                         b.Connected = false;
                         b.IsOnReceived = true;
+
+                        args.Nick = b.Nick;
+                        args.Extra = "offline";
+                        foreach (IPluginIceChat ipc in loadedPlugins)
+                        {
+                            ipc.BuddyList(args);
+                        }
                     }
                 }
             }
@@ -244,9 +371,6 @@ namespace IceChat
                 connection.buddiesIsOnSent = 0;
 
                 //send a user event to refresh the buddy list for this server
-                //if (BuddyListRefresh != null)
-                //    BuddyListRefresh(this, serverSetting.BuddyList);
-
                 this.buddyList.ClearBuddyList(connection);
 
                 foreach (BuddyListItem buddy in connection.ServerSetting.BuddyList)
@@ -255,6 +379,7 @@ namespace IceChat
                 }
 
             }
+
         }
 
         private void OnEndofWhoReply(IRCConnection connection, string channel)
@@ -293,6 +418,7 @@ namespace IceChat
                     OnServerMessage(connection, message);
                     return;
                 }
+                
                 if (!t.GotNamesList)
                 {
                     foreach (string nickName in nicks)
@@ -306,8 +432,6 @@ namespace IceChat
                 }
             }
         }
-
-
 
         /// <summary>
         /// Show a reply to a CTCP Message we have sent out
@@ -376,13 +500,13 @@ namespace IceChat
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "TIME " + System.DateTime.Now.ToString() + ((char)1).ToString());
                     break;
                 case "USERINFO":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://icechat.codeplex.com" + ((char)1).ToString());
                     break;
                 case "CLIENTINFO":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
                     break;
                 case "SOURCE":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://www.icechat.net" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://icechat.codeplex.com" + ((char)1).ToString());
                     break;
                 case "FINGER":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
@@ -399,6 +523,12 @@ namespace IceChat
         /// <param name="message">The Notice message</param>
         private void OnUserNotice(IRCConnection connection, string nick, string message)
         {
+            if (message.ToUpper().StartsWith("DCC CHAT"))
+            {
+                if (FormMain.Instance.IceChatOptions.DCCChatIgnore)
+                    return;
+            }
+            
             string msg = GetMessageFormat("User Notice");
             if (connection.ServerSetting.RealServerName.Length > 0)
                 msg = msg.Replace("$server", connection.ServerSetting.RealServerName);
@@ -643,12 +773,20 @@ namespace IceChat
         /// <param name="data">The Whois data</param>
         private void OnWhoisData(IRCConnection connection, string nick, string data)
         {
-            if (iceChatOptions.WhoisEventLocation == 2) //hide the event
-                return;
-
             string msg = GetMessageFormat("User Whois");
             msg = msg.Replace("$nick", nick);
             msg = msg.Replace("$data", data);
+
+            PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, "", nick, "", msg);
+            args.Connection = connection;
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.WhoisUser(args);
+            }
+
+            if (iceChatOptions.WhoisEventLocation == 2) //hide the event
+                return;
 
             //check if there is a query window open
             IceTabPage t = GetWindow(connection, nick, IceTabPage.WindowType.Query);
@@ -1133,8 +1271,16 @@ namespace IceChat
             IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
             if (t == null)
             {
-                AddWindow(connection, channel, IceTabPage.WindowType.Channel);
-                
+                t = AddWindow(connection, channel, IceTabPage.WindowType.Channel);
+
+                PluginArgs args = new PluginArgs(t.TextWindow, channel, connection.ServerSetting.NickName, "", "");
+                args.Connection = connection;
+
+                foreach (IPluginIceChat ipc in loadedPlugins)
+                {
+                    ipc.ChannelJoin(args);
+                }
+
                 serverTree.Invalidate();
             }
         }
@@ -1383,6 +1529,7 @@ namespace IceChat
                     msg = msg.Replace("$host", host);
                     msg = msg.Replace("$channel", channel);
                     msg = msg.Replace("$topic", topic);
+                    
                     if (iceChatOptions.TopicEventLocation == 0)
                     {
                         //send it to the channel
@@ -1394,14 +1541,33 @@ namespace IceChat
                         //send it to the console
                         mainTabControl.GetTabPage("Console").AddText(connection, msg, 1, false);
                     }
+
+                    PluginArgs args = new PluginArgs(t, channel, nick, host, msg);
+                    args.Connection = connection;
+
+                    foreach (IPluginIceChat ipc in loadedPlugins)
+                    {
+                        ipc.ChannelTopic(args);
+                    }
+
                 }
                 else
                 {
                     string msgt = GetMessageFormat("Channel Topic Text");
                     msgt = msgt.Replace("$channel", channel);
                     msgt = msgt.Replace("$topic", topic);
+                    
                     t.TextWindow.AppendText(msgt, 1);
                     t.LastMessageType = ServerMessageType.Other;
+
+                    PluginArgs args = new PluginArgs(t, channel, nick, host, msgt);
+                    args.Connection = connection;
+
+                    foreach (IPluginIceChat ipc in loadedPlugins)
+                    {
+                        ipc.ChannelTopic(args);
+                    }
+                
                 }
 
             }
@@ -1466,6 +1632,15 @@ namespace IceChat
                 IceTabPage chan = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
                 if (chan != null)
                 {
+                    PluginArgs args = new PluginArgs(chan, channel, modeSetter, modeSetterHost, msg);
+                    args.Extra = fullmode;
+                    args.Connection = connection;
+
+                    foreach (IPluginIceChat ipc in loadedPlugins)
+                    {
+                        ipc.ChannelMode(args);
+                    }                    
+                    
                     if (modeSetter != channel)
                     {
                         if (iceChatOptions.ModeEventLocation == 0)
@@ -1615,6 +1790,7 @@ namespace IceChat
 
                         }
                     }
+
                     if (inputPanel.CurrentConnection == connection)
                     {
                         string network = "";
@@ -1649,6 +1825,14 @@ namespace IceChat
             if (!connection.ServerSetting.DisableSounds)
                 PlaySoundFile("conmsg");
 
+            PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, channel, nick, host, msg);
+            args.Connection = connection;
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ChannelInvite(args);
+            }
+
         }
 
         /// <summary>
@@ -1663,7 +1847,6 @@ namespace IceChat
         private void OnChannelNotice(IRCConnection connection, string nick, string host, char status, string channel, string message)
         {
             IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
-            //TabWindow t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
             if (t != null)
             {
                 string msg = GetMessageFormat("Channel Notice");
@@ -1676,8 +1859,16 @@ namespace IceChat
 
                 msg = msg.Replace("$channel", channel);
                 msg = msg.Replace("$message", message);
-                
-                t.TextWindow.AppendText(msg, 1);
+
+                PluginArgs args = new PluginArgs(t, channel, nick, host, msg);
+                args.Connection = connection;
+
+                foreach (IPluginIceChat ipc in loadedPlugins)
+                {
+                    args = ipc.ChannelNotice(args);
+                }
+
+                t.TextWindow.AppendText(args.Message, 1);
                 t.LastMessageType = ServerMessageType.Message;
             }
         }
@@ -1696,6 +1887,7 @@ namespace IceChat
 
             PluginArgs args = new PluginArgs(connection);
             args.Message = data;
+            
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
                 ipc.ServerRaw(args);
@@ -1709,6 +1901,15 @@ namespace IceChat
             IceTabPage t = GetWindow(null, "Debug", IceTabPage.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText("-" + connection.ServerSetting.ID + ":" + data, 1);
+
+            PluginArgs args = new PluginArgs(connection);
+            args.Message = data;
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ServerRaw(args);
+            }
+
         }
 
         private void OnIALUserData(IRCConnection connection, string nick, string host, string channel)
@@ -1723,11 +1924,9 @@ namespace IceChat
             if (!connection.ServerSetting.IAL.ContainsKey(nick))
             {
                 connection.ServerSetting.IAL.Add(nick, ial);
-                //System.Diagnostics.Debug.WriteLine("add ial " + nick + ":" + host);
             }
             else
             {
-                //System.Diagnostics.Debug.WriteLine("update ial " + nick + ":" + host);
                 if (channel.Length > 0)
                     ((InternalAddressList)connection.ServerSetting.IAL[nick]).AddChannel(channel);
                 if (host.Length > 0)

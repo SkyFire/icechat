@@ -24,41 +24,36 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Text;
-using System.IO;
 using System.Xml.Serialization;
 
 namespace IceChat
 {
-    [XmlRoot("IceChatServers")]
-    public class IceChatServers
+    public class BuddyListItem
     {
-        [XmlArray("Servers")]
-        [XmlArrayItem("Item",typeof(ServerSetting))]
-        public ArrayList listServers;
+        [XmlElement("Nick")]
+        public string Nick
+        { get; set; }
 
-        public IceChatServers() 
-        {
-            listServers = new ArrayList();
-        }
+        [XmlElement("Note")]
+        public string Note
+        { get; set; }
 
-        public void AddServer(ServerSetting server)
-        {
-            listServers.Add(server);
-        }
+        [XmlIgnore()]
+        public bool Connected
+        { get; set; }
 
-        public void RemoveServer(ServerSetting server)
-        {
-            listServers.Remove(server);
-        }
+        [XmlIgnore()]
+        public bool PreviousState
+        { get; set; }
 
-        public int GetNextID()
-        {
-            if (listServers.Count ==0)
-                return 1;
-            return ((ServerSetting)listServers[listServers.Count-1]).ID+1;
-        }
+        [XmlIgnore()]
+        public bool IsOnSent
+        { get; set; }
+
+        [XmlIgnore()]
+        public bool IsOnReceived
+        { get; set; }
+
     }
-    
 }

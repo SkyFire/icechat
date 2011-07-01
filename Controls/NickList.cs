@@ -1240,8 +1240,10 @@ namespace IceChat
                                     nickName = nickName.Substring(1);
                             }
 
-
-                            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nickName); ;
+                            if (u.host.Length > 0)
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b *!" + u.host);
+                            else
+                                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, "/mode " + currentWindow.TabCaption + " +b " + nickName); ;
 
                             FormMain.Instance.FocusInputBox();
                             return;

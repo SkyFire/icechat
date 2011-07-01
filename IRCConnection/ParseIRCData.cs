@@ -1,4 +1,4 @@
-/******************************************************************************\
+﻿/******************************************************************************\
  * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
@@ -32,91 +32,99 @@ using System.Windows.Forms;
 namespace IceChat
 {
     public partial class IRCConnection
-    {        
-           
-        internal event OutGoingCommandDelegate OutGoingCommand;
+    {
 
-        internal event ChannelMessageDelegate ChannelMessage;
-        internal event ChannelActionDelegate ChannelAction;
-        internal event QueryMessageDelegate QueryMessage;
-        internal event QueryActionDelegate QueryAction;
+        public event OutGoingCommandDelegate OutGoingCommand;
 
-        internal event GenericChannelMessageDelegate GenericChannelMessage;
+        public event ChannelMessageDelegate ChannelMessage;
+        public event ChannelActionDelegate ChannelAction;
+        public event QueryMessageDelegate QueryMessage;
+        public event QueryActionDelegate QueryAction;
 
-        internal event ChangeNickDelegate ChangeNick;
-        internal event JoinChannelDelegate JoinChannel;
-        internal event PartChannelDelegate PartChannel;
-        internal event QuitServerDelegate QuitServer;
-        internal event ChannelNoticeDelegate ChannelNotice;
+        public event GenericChannelMessageDelegate GenericChannelMessage;
 
-        internal event KickNickDelegate KickNick;
-        internal event KickMyselfDelegate KickMyself;
+        public event ChangeNickDelegate ChangeNick;
+        public event JoinChannelDelegate JoinChannel;
+        public event PartChannelDelegate PartChannel;
+        public event QuitServerDelegate QuitServer;
+        public event ChannelNoticeDelegate ChannelNotice;
 
-        internal event ChannelTopicDelegate ChannelTopic;
+        public event KickNickDelegate KickNick;
+        public event KickMyselfDelegate KickMyself;
 
-        internal event ChannelModeChangeDelegate ChannelMode;
-        internal event UserModeChangeDelegate UserMode;
+        public event ChannelTopicDelegate ChannelTopic;
 
-        internal event ChannelInviteDelegate ChannelInvite;
-        internal event UserHostReplyDelegate UserHostReply;
-        internal event JoinChannelMyselfDelegate JoinChannelMyself;
-        internal event PartChannelMyselfDelegate PartChannelMyself;
-        
-        internal event ServerMessageDelegate ServerMessage;
-        internal event ServerMOTDDelegate ServerMOTD;
-        internal event ServerErrorDelegate ServerError;
-        internal event WhoisDataDelegate WhoisData;
-        internal event CtcpMessageDelegate CtcpMessage;
-        internal event CtcpReplyDelegate CtcpReply;
-        internal event UserNoticeDelegate UserNotice;
-    
-        internal event ServerNoticeDelegate ServerNotice;
+        public event ChannelModeChangeDelegate ChannelMode;
+        public event UserModeChangeDelegate UserMode;
 
-        internal event ChannelListStartDelegate ChannelListStart;
-        internal event ChannelListDelegate ChannelList;
+        public event ChannelInviteDelegate ChannelInvite;
+        public event UserHostReplyDelegate UserHostReply;
+        public event JoinChannelMyselfDelegate JoinChannelMyself;
+        public event PartChannelMyselfDelegate PartChannelMyself;
 
-        internal event DCCChatDelegate DCCChat;
-        internal event DCCFileDelegate DCCFile;
-        internal event DCCPassiveDelegate DCCPassive;
+        public event ServerMessageDelegate ServerMessage;
+        public event ServerMOTDDelegate ServerMOTD;
+        public event ServerErrorDelegate ServerError;
+        public event WhoisDataDelegate WhoisData;
+        public event CtcpMessageDelegate CtcpMessage;
+        public event CtcpReplyDelegate CtcpReply;
+        public event UserNoticeDelegate UserNotice;
 
-        internal event RawServerIncomingDataDelegate RawServerIncomingData;
-        internal event RawServerOutgoingDataDelegate RawServerOutgoingData;
+        public event ServerNoticeDelegate ServerNotice;
 
-        internal event IALUserDataDelegate IALUserData;
-        internal event IALUserChangeDelegate IALUserChange;
-        internal event IALUserPartDelegate IALUserPart;
-        internal event IALUserQuitDelegate IALUserQuit;
+        public event ChannelListStartDelegate ChannelListStart;
+        public event ChannelListDelegate ChannelList;
 
-        internal event BuddyListDelegate BuddyListData;
+        public event DCCChatDelegate DCCChat;
+        public event DCCFileDelegate DCCFile;
+        public event DCCPassiveDelegate DCCPassive;
 
-        internal event AutoJoinDelegate AutoJoin;
-        internal event AutoRejoinDelegate AutoRejoin;
-        internal event AutoPerformDelegate AutoPerform;
-        internal event EndofNamesDelegate EndofNames;
-        internal event EndofWhoReplyDelegate EndofWhoReply;
-        internal event WhoReplyDelegate WhoReply;
-        internal event ChannelUserListDelegate ChannelUserList;
+        public event RawServerIncomingDataDelegate RawServerIncomingData;
+        public event RawServerOutgoingDataDelegate RawServerOutgoingData;
 
-        internal event StatusTextDelegate StatusText;
+        public event IALUserDataDelegate IALUserData;
+        public event IALUserChangeDelegate IALUserChange;
+        public event IALUserPartDelegate IALUserPart;
+        public event IALUserQuitDelegate IALUserQuit;
 
-        internal event ChannelInfoWindowExistsDelegate ChannelInfoWindowExists;
-        internal event ChannelInfoAddBanDelegate ChannelInfoAddBan;
-        internal event ChannelInfoAddExceptionDelegate ChannelInfoAddException;
-        internal event ChannelInfoTopicSetDelegate ChannelInfoTopicSet;
+        public event BuddyListDelegate BuddyListData;
+        public event BuddyListClearDelegate BuddyListClear;
 
-        internal event UserInfoWindowExistsDelegate UserInfoWindowExists;
-        internal event UserInfoHostFullnameDelegate UserInfoHostFullName;
-        internal event UserInfoIdleLogonDelegate UserInfoIdleLogon;
-        internal event UserInfoAddChannelsDelegate UserInfoAddChannels;
+        public event AutoJoinDelegate AutoJoin;
+        public event AutoRejoinDelegate AutoRejoin;
+        public event AutoPerformDelegate AutoPerform;
+        public event EndofNamesDelegate EndofNames;
+        public event EndofWhoReplyDelegate EndofWhoReply;
+        public event WhoReplyDelegate WhoReply;
+        public event ChannelUserListDelegate ChannelUserList;
+
+        public event StatusTextDelegate StatusText;
+
+        public event ChannelInfoWindowExistsDelegate ChannelInfoWindowExists;
+        public event ChannelInfoAddBanDelegate ChannelInfoAddBan;
+        public event ChannelInfoAddExceptionDelegate ChannelInfoAddException;
+        public event ChannelInfoTopicSetDelegate ChannelInfoTopicSet;
+
+        public event UserInfoWindowExistsDelegate UserInfoWindowExists;
+        public event UserInfoHostFullnameDelegate UserInfoHostFullName;
+        public event UserInfoIdleLogonDelegate UserInfoIdleLogon;
+        public event UserInfoAddChannelsDelegate UserInfoAddChannels;
+
+        public event RefreshServerTreeDelegate RefreshServerTree;
+        public event WriteErrorFileDelegate WriteErrorFile;
+        public event ServerReconnectDelegate ServerReconnect;
+        public event ServerReconnectDelegate ServerDisconnect;
+        public event ServerConnectDelegate ServerConnect;
+        public event ServerForceDisconnectDelegate ServerForceDisconnect;
 
         private bool triedAltNickName = false;
         private bool initialLogon = false;
 
-        internal Form UserInfoWindow = null;
+        public Form UserInfoWindow = null;
 
         private void ParseData(string data)
         {
-            try 
+            try
             {
                 string[] ircData = data.Split(' ');
                 string channel;
@@ -154,15 +162,15 @@ namespace IceChat
 
                     nick = NickFromFullHost(RemoveColon(ircData[0]));
                     host = HostFromFullHost(RemoveColon(ircData[0]));
-                    
+
                     // A great list of IRC Numerics http://www.mirc.net/raws/
-                    
+
                     switch (IrcNumeric)
                     {
                         case "001":
                             //get the real server name
                             serverSetting.RealServerName = RemoveColon(ircData[0]);
-                            
+
                             if (serverSetting.NickName != ircData[2])
                             {
                                 //ServerMessage(this, "FORCE CHANGE NICK:" + ircData[2] + ":" + serverSetting.NickName + ":" + data);
@@ -209,7 +217,7 @@ namespace IceChat
                                     if (ircData[i].Substring(0, 10) == "CHANMODES=")
                                     {
                                         //CHANMODES=b,k,l,imnpstrDducCNMT
-                                        
+
                                         /*
                                         CHANMODES=A,B,C,D
 
@@ -229,7 +237,7 @@ namespace IceChat
                                         Type D: Modes that change a setting on the channel. These modes
                                         never take a parameter.
                                         */
-                                        
+
                                         //CHANMODES=b,k,l,imnpstrDducCNMT
                                         //CHANMODES=bouv,k,lOMN,cdejimnpqrstzAJLRU
                                         string[] modes = ircData[i].Substring(ircData[i].IndexOf("=") + 1).Split(',');
@@ -241,7 +249,7 @@ namespace IceChat
                                             serverSetting.ChannelModeNoParam = modes[3];
 
                                         }
-                                        
+
                                         //System.Diagnostics.Debug.WriteLine(modes.Length);
                                         /*
                                         for (int j = 0; j < modes.Length; j++)
@@ -313,7 +321,7 @@ namespace IceChat
                                 }
                             }
                             break;
-                        
+
                         case "007":
                             DateTime date5 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date5 = date5.AddSeconds(Convert.ToDouble(ircData[4]));
@@ -329,14 +337,14 @@ namespace IceChat
                             break;
                         case "042":
                             msg = JoinString(ircData, 4, true) + " " + ircData[3];
-                            ServerMessage(this, msg);                            
+                            ServerMessage(this, msg);
                             break;
                         case "219": //end of stats
                             ServerMessage(this, JoinString(ircData, 4, true));
                             break;
                         case "221": //:port80b.se.quakenet.org 221 Snerf +i
-                            ServerMessage(this, RemoveColon(ircData[0]) + " sets mode for " + ircData[2] + " " + ircData[3]);                            
-                            break;                        
+                            ServerMessage(this, RemoveColon(ircData[0]) + " sets mode for " + ircData[2] + " " + ircData[3]);
+                            break;
                         case "251": //there are x users on x servers
                         case "255": //I have x users and x servers
                             ServerMessage(this, JoinString(ircData, 3, true));
@@ -356,17 +364,17 @@ namespace IceChat
                             if (ircData[5].StartsWith(":"))
                                 msg = JoinString(ircData, 5, true);
                             else
-                                msg = JoinString(ircData, 3, true);    
+                                msg = JoinString(ircData, 3, true);
                             ServerMessage(this, msg);
                             break;
-                        
+
                         case "302": //parse out a userhost
                             msg = JoinString(ircData, 3, true);
                             if (msg.Length == 0) return;
                             if (msg.IndexOf(' ') == -1)
                             {
                                 //single host
-                                host = msg.Substring(msg.IndexOf('@')+1);
+                                host = msg.Substring(msg.IndexOf('@') + 1);
                                 if (msg.IndexOf('*') > -1)
                                     nick = msg.Substring(0, msg.IndexOf('*'));
                                 else
@@ -382,7 +390,7 @@ namespace IceChat
                             else
                             {
                                 //multiple hosts
-                                string[] hosts = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                                string[] hosts = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                                 foreach (string h in hosts)
                                     UserHostReply(this, h);
                             }
@@ -394,10 +402,10 @@ namespace IceChat
                             buddyListTimer.Start();
 
                             if (msg.Length == 0) return;
-                            
-                            string[] buddies = msg.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+
+                            string[] buddies = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             BuddyListData(this, buddies);
-                            break;                        
+                            break;
                         case "311":     //whois information username address
                             nick = ircData[3];
                             check = UserInfoWindowExists(this, ircData[3]);
@@ -417,7 +425,7 @@ namespace IceChat
                             check = UserInfoWindowExists(this, nick);
                             if (check)
                                 return;
-                            
+
                             msg = "using " + ircData[4] + " (" + JoinString(ircData, 5, true) + ")";
                             WhoisData(this, ircData[3], msg);
                             break;
@@ -491,7 +499,7 @@ namespace IceChat
                             if (check)
                                 return;
                             msg = JoinString(ircData, 4, false);
-                            WhoisData(this, ircData[3], msg);                            
+                            WhoisData(this, ircData[3], msg);
                             break;
                         case "335":     //whois information
                             nick = ircData[3];
@@ -511,7 +519,7 @@ namespace IceChat
                             else
                                 msg = JoinString(ircData, 5, true) + " " + ircData[4];
                             WhoisData(this, ircData[3], msg);
-                            break;                        
+                            break;
                         case "378":     //whois information
                             nick = ircData[3];
                             check = UserInfoWindowExists(this, nick);
@@ -536,7 +544,7 @@ namespace IceChat
                                 return;
                             msg = JoinString(ircData, 4, true);
                             WhoisData(this, ircData[3], msg);
-                            break;                        
+                            break;
                         case "321":     //start channel list
                             ChannelListStart(this);
                             break;
@@ -577,7 +585,7 @@ namespace IceChat
                         case "332":     //channel topic
                             channel = ircData[3];
                             check = ChannelInfoWindowExists(this, channel);
-                            if (!check)        
+                            if (!check)
                                 ChannelTopic(this, channel, "", "", JoinString(ircData, 4, true));
                             break;
                         case "333":     //channel time
@@ -585,7 +593,7 @@ namespace IceChat
                             nick = ircData[4];
                             DateTime date2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                             date2 = date2.AddSeconds(Convert.ToDouble(ircData[5]));
-                            
+
                             check = ChannelInfoWindowExists(this, channel);
                             if (check)
                             {
@@ -596,10 +604,10 @@ namespace IceChat
                                 msg = "Channel Topic Set by: " + nick + " on " + date2.ToShortTimeString() + " " + date2.ToShortDateString();
                                 GenericChannelMessage(this, channel, msg);
                             }
-                            
+
                             break;
                         case "343":
-                            ServerMessage(this, JoinString(ircData, 3, false));                                                        
+                            ServerMessage(this, JoinString(ircData, 3, false));
                             break;
                         case "348": //channel exception list
                             channel = ircData[3];
@@ -611,12 +619,12 @@ namespace IceChat
                             if (check)
                             {
                                 DateTime date4 = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Convert.ToDouble(ircData[6]));
-                                ChannelInfoAddException(this, channel, ircData[4],NickFromFullHost(ircData[5]) + " on " + date4.ToShortTimeString() + " " + date4.ToShortDateString());
+                                ChannelInfoAddException(this, channel, ircData[4], NickFromFullHost(ircData[5]) + " on " + date4.ToShortTimeString() + " " + date4.ToShortDateString());
                             }
                             else
                             {
-                                ServerMessage(this,JoinString(ircData, 3, false));                            
-                            }                            
+                                ServerMessage(this, JoinString(ircData, 3, false));
+                            }
                             break;
                         case "349": //end of channel exception list
                             break;
@@ -633,7 +641,7 @@ namespace IceChat
                             ChannelUserList(this, channel, JoinString(ircData, 5, true).Split(' '), JoinString(ircData, 4, true));
                             break;
                         case "365":  //End of Links
-                            ServerMessage(this, JoinString(ircData, 4, true));                            
+                            ServerMessage(this, JoinString(ircData, 4, true));
                             break;
                         case "366":     //end of names
                             channel = ircData[3];
@@ -654,7 +662,7 @@ namespace IceChat
                             }
                             else
                             {
-                                ServerMessage(this, JoinString(ircData, 3, false));                            
+                                ServerMessage(this, JoinString(ircData, 3, false));
                             }
                             break;
                         case "368": //end of channel ban list
@@ -664,7 +672,7 @@ namespace IceChat
                             break;
                         case "372": //motd
                         case "375":
-                            msg = JoinString(ircData, 3, true);                            
+                            msg = JoinString(ircData, 3, true);
                             if (serverSetting.ShowMOTD || serverSetting.ForceMOTD)
                                 ServerMOTD(this, msg);
                             break;
@@ -711,8 +719,9 @@ namespace IceChat
                             }
 
                             fullyConnected = true;
-                            FormMain.Instance.ServerTree.Invalidate();
-                            
+
+                            RefreshServerTree(this);
+
                             //read the command queue
                             if (commandQueue.Count > 0)
                             {
@@ -735,7 +744,7 @@ namespace IceChat
                                     ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host = host.Substring(0, host.IndexOf("@") + 1) + ircData[3];
                                 
                             }
-                            */ 
+                            */
                             ServerMessage(this, msg);
                             break;
                         case "439":
@@ -743,14 +752,14 @@ namespace IceChat
                             ServerMessage(this, JoinString(ircData, 3, true));
                             break;
                         case "901":
-                            ServerMessage(this, JoinString(ircData, 6, true));                            
+                            ServerMessage(this, JoinString(ircData, 6, true));
                             break;
                         case "PRIVMSG":
                             channel = ircData[2];
                             msg = JoinString(ircData, 3, true);
-                            
+
                             if (CheckIgnoreList(nick, host)) return;
-                
+
                             if (channel.ToLower() == serverSetting.NickName.ToLower())
                             {
                                 //this is a private message to you
@@ -782,7 +791,7 @@ namespace IceChat
                                             {
                                                 msg = msg.Substring(8).Trim();
                                                 System.Diagnostics.Debug.WriteLine("PRIVMSG:" + msg);
-                                                
+
                                                 string[] dccData = msg.Split(' ');
                                                 //sometimes the filenames can be include in quotes
                                                 System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
@@ -829,7 +838,7 @@ namespace IceChat
                                                         System.Diagnostics.Debug.WriteLine("PASSIVE DCC " + id + ":" + fileSize + ":" + port + ":" + ip + ":" + file);
                                                         if (DCCPassive != null)
                                                             DCCPassive(this, nick, host, ip, file, fileSize, 0, false, id);
-                                                        
+
                                                         return;
                                                     }
                                                     else
@@ -854,7 +863,7 @@ namespace IceChat
                                                         //check that values are numbers
 
                                                         if (DCCFile != null && file.Length > 0)
-                                                            DCCFile(this, nick, host, port, ip, file, fileSize,0, false);
+                                                            DCCFile(this, nick, host, port, ip, file, fileSize, 0, false);
                                                         return;
                                                     }
                                                 }
@@ -863,9 +872,9 @@ namespace IceChat
                                                 //string port = dccData[2];
                                                 //string fileSize = dccData[3];
                                                 System.Diagnostics.Debug.WriteLine("DCC SEND:" + dccData[0] + "::" + dccData[1] + "::" + dccData[2] + "::" + dccData[3]);
-                                                
+
                                                 //check if filesize is a valid number
-                                                uint result;                                                
+                                                uint result;
                                                 if (!uint.TryParse(dccData[3], out result))
                                                     return;
 
@@ -897,10 +906,10 @@ namespace IceChat
                                                 //System.Diagnostics.Debug.WriteLine("ACCEPT:" + msg);
                                                 string[] dccData = msg.Split(' ');
                                                 //System.Diagnostics.Debug.WriteLine("length:" + dccData.Length);
-                                                
+
                                                 if (DCCFile != null)
                                                     DCCFile(this, nick, host, dccData[dccData.Length - 2], "ip", "file", 0, uint.Parse(dccData[dccData.Length - 1]), true);
-                                                
+
 
                                             }
                                             else if (msg.ToUpper().StartsWith("DCC CHAT"))
@@ -952,7 +961,7 @@ namespace IceChat
                                             }
                                             else
                                             {
-                                                ChannelNotice(this, nick, host,(char)32,channel, msg);
+                                                ChannelNotice(this, nick, host, (char)32, channel, msg);
                                                 IALUserData(this, nick, host, channel);
                                             }
                                             break;
@@ -980,7 +989,7 @@ namespace IceChat
                             else
                             {
                                 if (CheckIgnoreList(nick, host)) return;
-                                
+
                                 if (initialLogon && serverSetting.StatusMSG == null && serverSetting.StatusModes != null)
                                 {
                                     serverSetting.StatusMSG = new char[serverSetting.StatusModes[1].Length];
@@ -1002,13 +1011,12 @@ namespace IceChat
                                     //System.Diagnostics.Debug.WriteLine("NOTICE:" + msg);
                                     if (msg.ToUpper().StartsWith("DCC SEND"))
                                     {
-                                        System.Diagnostics.Debug.WriteLine("NOTICE DCC SEND:" + nick + ":" + msg);                                        
+                                        System.Diagnostics.Debug.WriteLine("NOTICE DCC SEND:" + nick + ":" + msg);
                                         UserNotice(this, nick, msg);
                                     }
                                     else if (msg.ToUpper().StartsWith("DCC CHAT"))
                                     {
-                                        if (!FormMain.Instance.IceChatOptions.DCCChatIgnore)
-                                            UserNotice(this, nick, msg);
+                                        UserNotice(this, nick, msg);
                                     }
                                     else
                                     {
@@ -1027,7 +1035,7 @@ namespace IceChat
                                                         msg = GetDurationMS(diff);
                                                     }
                                                     if (CtcpReply != null)
-                                                        CtcpReply(this, nick, ctcp, msg);    
+                                                        CtcpReply(this, nick, ctcp, msg);
                                                     break;
                                                 default:
                                                     if (CtcpReply != null)
@@ -1090,7 +1098,7 @@ namespace IceChat
                                 JoinChannel(this, channel, nick, host, true);
                             }
                             break;
-                        
+
                         case "PART":
                             channel = RemoveColon(ircData[2]);
                             tempValue = JoinString(ircData, 3, true); //part reason
@@ -1153,9 +1161,9 @@ namespace IceChat
                                 IALUserPart(this, nick, channel);
                             }
                             break;
-                        case "PONG":                            
+                        case "PONG":
                             pongTimer.Stop();
-                            pongTimer.Start();                            
+                            pongTimer.Start();
                             break;
                         case "TOPIC":   //channel topic change
                             channel = ircData[2];
@@ -1166,7 +1174,7 @@ namespace IceChat
                             ServerMessage(this, JoinString(ircData, 2, true));
                             break;
                         case "501": //unknown MODE
-                            ServerMessage(this, JoinString(ircData, 3, true));                            
+                            ServerMessage(this, JoinString(ircData, 3, true));
                             break;
                         //errors
                         case "404": //can not send to channel
@@ -1202,8 +1210,8 @@ namespace IceChat
                         case "474": //Cannot join channel (+b)
                         case "475": //Cannot join channel (+k)
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            ServerError(this, msg, true);                            
-                            break;  
+                            ServerError(this, msg, true);
+                            break;
 
                         case "433": //nickname in use
                             ServerMessage(this, JoinString(ircData, 4, true));
@@ -1218,7 +1226,7 @@ namespace IceChat
                                 triedAltNickName = true;
                             }
                             else
-                            {                                
+                            {
                                 //pick a random nick
                                 Random r = new Random();
                                 string randNick = r.Next(10, 99).ToString();
@@ -1238,9 +1246,9 @@ namespace IceChat
                             break;
                         case "465": //no open proxies
                         case "513": //if you can not connect, type /quote PONG ...
-                            ServerError(this, JoinString(ircData, 3, true), true);                            
-                            break;                        
-                        default:                            
+                            ServerError(this, JoinString(ircData, 3, true), true);
+                            break;
+                        default:
                             ServerMessage(this, JoinString(ircData, 3, false));
                             break;
                         //                            
@@ -1249,7 +1257,7 @@ namespace IceChat
             }
             catch (Exception e)
             {
-                FormMain.Instance.WriteErrorFile(this, "ParseData", e);
+                WriteErrorFile(this, "ParseData", e);
             }
         }
 
@@ -1264,7 +1272,7 @@ namespace IceChat
                 {
                     //check for an exact match
                     if (nick.ToLower() == ignore.ToLower()) return true;
-                    
+
                     //check if we are looking for a host match
                     if (ignore.Contains("!") && ignore.Contains("@"))
                     {
@@ -1287,7 +1295,7 @@ namespace IceChat
 
         private string GetDurationMS(int milliSseconds)
         {
-            TimeSpan t = new TimeSpan(0,0,0,0, milliSseconds);
+            TimeSpan t = new TimeSpan(0, 0, 0, 0, milliSseconds);
 
             string s = t.Seconds.ToString() + "." + t.Milliseconds.ToString() + " secs";
             if (t.Minutes > 0)
@@ -1304,7 +1312,7 @@ namespace IceChat
         {
             TimeSpan t = new TimeSpan(0, 0, seconds);
 
-            string s = t.Seconds.ToString() + " secs";            
+            string s = t.Seconds.ToString() + " secs";
             if (t.Minutes > 0)
                 s = t.Minutes.ToString() + " mins " + s;
             if (t.Hours > 0)
@@ -1327,7 +1335,7 @@ namespace IceChat
         {
             if (host.StartsWith(":"))
                 host = host.Substring(1);
-            
+
             if (host.IndexOf("!") > -1)
                 return host.Substring(0, host.IndexOf("!"));
             else
@@ -1340,20 +1348,20 @@ namespace IceChat
                 return data.Substring(1);
             else
                 return data;
-        }   
+        }
 
         private string JoinString(string[] strData, int startIndex, bool removeColon)
         {
             if (startIndex > strData.GetUpperBound(0)) return "";
 
-            string tempString = String.Join(" ", strData, startIndex, strData.GetUpperBound(0) + 1 - startIndex );
+            string tempString = String.Join(" ", strData, startIndex, strData.GetUpperBound(0) + 1 - startIndex);
             if (removeColon)
             {
                 tempString = RemoveColon(tempString);
             }
             return tempString;
         }
-        
+
         #endregion
 
     }

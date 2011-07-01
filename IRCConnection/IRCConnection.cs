@@ -1,4 +1,4 @@
-/******************************************************************************\
+﻿/******************************************************************************\
  * IceChat 9 Internet Relay Chat Client
  *
  * Copyright (C) 2011 Paul Vanderzee <snerf@icechat.net>
@@ -48,7 +48,7 @@ namespace IceChat
 
         private System.Timers.Timer reconnectTimer;
         private System.Timers.Timer buddyListTimer;
-        internal int buddiesIsOnSent = 0;
+        public int buddiesIsOnSent = 0;
 
         private ServerSetting serverSetting;
         private bool fullyConnected = false;
@@ -56,13 +56,13 @@ namespace IceChat
         private ArrayList ircTimers;
 
         private System.Timers.Timer pongTimer;
-        
+
         private int whichAddressinList = 1;
         private int whichAddressCurrent = 1;
         private int totalAddressinDNS = 0;
         //private const int bytesperlong = 4; // 32 / 8
         //private const int bitsperbyte = 8;
-        
+
         //private SslStream sslStream;
         //private NetworkStream socketStream;
         private bool proxyAuthed;
@@ -74,16 +74,16 @@ namespace IceChat
             commandQueue = new ArrayList();
             sendBuffer = new Queue<string>();
             serverSetting = ss;
-                        
-            reconnectTimer = new System.Timers.Timer(30000);            
+
+            reconnectTimer = new System.Timers.Timer(30000);
             reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnReconnectTimerElapsed);
 
             buddyListTimer = new System.Timers.Timer(60000);
-            buddyListTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnBuddyListTimerElapsed);            
+            buddyListTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnBuddyListTimerElapsed);
 
             pongTimer = new System.Timers.Timer(60000 * serverSetting.PongTimerMinutes);    //15 minutes
             pongTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnPongTimerElapsed);
-            
+
             ircTimers = new ArrayList();
         }
 
@@ -103,7 +103,7 @@ namespace IceChat
             reconnectTimer.Dispose();
         }
 
-        internal void BuddyListCheck()
+        public void BuddyListCheck()
         {
             if (serverSetting.BuddyListEnable)
             {
@@ -133,7 +133,7 @@ namespace IceChat
                 buddyListTimer.Stop();
             }
             else
-                FormMain.Instance.BuddyList.ClearBuddyList(this);
+                BuddyListClear(this);
 
         }
 
@@ -149,13 +149,7 @@ namespace IceChat
                 whichAddressinList++;
 
                 //reconnect
-                if (ServerMessage != null)
-                {
-                    string msg = FormMain.Instance.GetMessageFormat("Server Reconnect");
-                    msg = msg.Replace("$serverip", serverSetting.ServerIP).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                    ServerMessage(this, msg);
-                }
-
+                ServerReconnect(this);
                 ConnectSocket();
             }
         }
@@ -173,9 +167,9 @@ namespace IceChat
                 //attemptReconnect = true;
                 //pongTimer.Stop();
                 //reconnectTimer.Start();            
-            
+
             }
-            catch(SocketException se)
+            catch (SocketException se)
             {
                 System.Diagnostics.Debug.WriteLine(se.Message);
             }
@@ -184,12 +178,12 @@ namespace IceChat
 
         #region Public Properties and Methods
 
-        internal void AddToCommandQueue(string command)
+        public void AddToCommandQueue(string command)
         {
             commandQueue.Add(command);
         }
 
-        internal ServerSetting ServerSetting
+        public ServerSetting ServerSetting
         {
             get
             {
@@ -201,7 +195,12 @@ namespace IceChat
             }
         }
 
-        internal bool IsConnected
+        public System.Timers.Timer ReconnectTimer
+        {
+            get { return this.reconnectTimer; }
+        }
+
+        public bool IsConnected
         {
             get
             {
@@ -216,23 +215,27 @@ namespace IceChat
 
         }
 
-        internal bool DisconnectError
+        public bool DisconnectError
         {
             get
             {
                 return disconnectError;
             }
+            set
+            {
+                this.disconnectError = value;
+            }
         }
 
-        internal bool IsFullyConnected
+        public bool IsFullyConnected
         {
             get
             {
                 return fullyConnected;
             }
         }
-        
-        internal bool AttemptReconnect
+
+        public bool AttemptReconnect
         {
             get { return attemptReconnect; }
             set { attemptReconnect = value; }
@@ -251,49 +254,18 @@ namespace IceChat
             Socket client = (Socket)ar.AsyncState;
             client.EndDisconnect(ar);
 
-            string msg = FormMain.Instance.GetMessageFormat("Server Disconnect");
-            msg = msg.Replace("$serverip", serverSetting.ServerIP);
-            msg = msg.Replace("$port", serverSetting.ServerPort);
-            if (serverSetting.RealServerName.Length > 0)
-                msg = msg.Replace("$server", serverSetting.RealServerName);
-            else
-                msg = msg.Replace("$server", serverSetting.ServerName);
+            ServerDisconnect(this);
 
-            foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
-            {
-                if (t.WindowStyle == IceTabPage.WindowType.Channel || t.WindowStyle == IceTabPage.WindowType.Query)
-                {
-                    if (t.Connection == this)
-                    {
-                        t.ClearNicks();
-                        t.IsFullyJoined = false;
-                        t.GotNamesList = false;
-                        t.GotWhoList = false;
-
-                        t.TextWindow.AppendText(msg, 1);
-                        t.LastMessageType = FormMain.ServerMessageType.ServerMessage;
-
-                        if (FormMain.Instance.CurrentWindow == t)
-                            FormMain.Instance.NickList.Header = t.TabCaption + ":0";                            
-                    }
-                }
-            }
-            if (ServerMessage != null)
-                ServerMessage(this, msg);
-
-            FormMain.Instance.ServerTree.Invalidate();
-
-            if (FormMain.Instance.CurrentWindowType == IceTabPage.WindowType.Console)
-                if (FormMain.Instance.InputPanel.CurrentConnection == this)
-                    FormMain.Instance.StatusText(serverSetting.NickName + " disconnected (" + serverSetting.ServerName + ")");
+            RefreshServerTree(this);
+            StatusText(this, serverSetting.NickName + " disconnected (" + serverSetting.ServerName + ")");
 
             serverSocket = null;
             serverSetting.ConnectedTime = DateTime.Now;
 
             commandQueue.Clear();
-            
+
             buddyListTimer.Stop();
-            FormMain.Instance.BuddyList.ClearBuddyList(this);
+            BuddyListClear(this);
             if (serverSetting.BuddyList != null)
             {
                 foreach (BuddyListItem buddy in serverSetting.BuddyList)
@@ -304,13 +276,14 @@ namespace IceChat
                     buddy.IsOnReceived = false;
                 }
             }
-            FormMain.Instance.PlaySoundFile("dropped");
 
             initialLogon = false;
             triedAltNickName = false;
             fullyConnected = false;
 
-            serverSetting.IAL.Clear();
+            if (serverSetting.IAL != null)
+                serverSetting.IAL.Clear();
+            
             serverSetting.Away = false;
             serverSetting.RealServerName = "";
 
@@ -325,14 +298,7 @@ namespace IceChat
             }
             ircTimers.Clear();
 
-            if (disconnectError && attemptReconnect && FormMain.Instance.IceChatOptions.ReconnectServer)
-            {
-                //reconnect
-                if (ServerMessage != null)
-                    ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");
-                disconnectError = false;
-                reconnectTimer.Start();
-            }
+            ServerForceDisconnect(this);
 
         }
 
@@ -351,9 +317,9 @@ namespace IceChat
                     ServerError(this, "Null Socket - Can not Connect", false);
                 return;
             }
-            
+
             try
-            {                
+            {
                 serverSocket.EndConnect(ar);
             }
             catch (Exception e)
@@ -396,7 +362,7 @@ namespace IceChat
                 {
                     if (sslStream != null && sslStream.CanRead)
                     {
-                        readBuffer = new byte[BUFFER_SIZE];                        
+                        readBuffer = new byte[BUFFER_SIZE];
                         sslStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
                 }
@@ -410,10 +376,10 @@ namespace IceChat
                 }
                 this.serverSetting.ConnectedTime = DateTime.Now;
 
-                FormMain.Instance.ServerTree.Invalidate();
+                RefreshServerTree(this);
 
                 if (serverSetting.UseProxy)
-                {                    
+                {
 
                     //socks v5 code
                     byte[] d = new byte[256];
@@ -435,7 +401,7 @@ namespace IceChat
                     try
                     {
                         socketStream.BeginWrite(d, 0, nIndex, new AsyncCallback(OnSendData), socketStream);
-                        
+
                         if (ServerMessage != null)
                             ServerMessage(this, "Socks 5 Connection Established with " + serverSetting.ProxyIP);
                     }
@@ -462,7 +428,7 @@ namespace IceChat
                     this.pongTimer.Start();
                 }
             }
-            
+
             catch (SocketException se)
             {
                 if (ServerError != null)
@@ -479,7 +445,7 @@ namespace IceChat
                 disconnectError = true;
                 ForceDisconnect();
             }
-            
+
         }
         /*
         private bool SetKeepAlive(Socket sock, ulong time, ulong interval)
@@ -525,7 +491,7 @@ namespace IceChat
         /// Function for sending RAW IRC Data to the Server Connection
         /// </summary>
         /// <param name="data"></param>
-        internal void SendData(string data)
+        public void SendData(string data)
         {
             //check if the socket is still connected
             if (serverSocket == null)
@@ -544,7 +510,7 @@ namespace IceChat
             //get the proper encoding            
             byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
-            {                
+            {
                 if (socketStream.CanWrite)
                 {
                     try
@@ -586,7 +552,7 @@ namespace IceChat
             }
         }
 
-        internal void SendData(byte[] bytData)
+        public void SendData(byte[] bytData)
         {
             //check if the socket is still connected
             if (serverSocket == null)
@@ -647,7 +613,7 @@ namespace IceChat
                 }
             }
         }
-       
+
         /// <summary>
         /// Event fire when Data needs to be sent to the Server Connection
         /// </summary>
@@ -655,7 +621,7 @@ namespace IceChat
         {
             SslStream sl = null;
             NetworkStream ns = null;
-            
+
             if (serverSetting.UseSSL)
                 sl = (SslStream)ar.AsyncState;
             else
@@ -735,8 +701,8 @@ namespace IceChat
                             ServerMessage(this, "Sending Proxy Verification");
                             //System.Diagnostics.Debug.WriteLine(Convert.ToInt16(proxyData[proxyData.Length - 2]));
                             SendData(proxyData);
-                            
-                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);                        
+
+                            socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                         }
                         else if (strData[1] == 0x02)  //send proxy information with user/pass
                         {
@@ -779,7 +745,7 @@ namespace IceChat
                             SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
 
                             whichAddressinList = whichAddressCurrent;
-                            
+
 
                             ServerMessage(this, "Sending User Registration Information");
 
@@ -818,12 +784,6 @@ namespace IceChat
                         {
                             strData = Encoding.GetEncoding(serverSetting.Encoding).GetString(readBuffer);
                         }
-
-
-                        //string strData = Encoding.GetEncoding(serverSetting.Encoding).GetString(readBuffer);
-                        
-                        //if (strData.Length > bytesRead)  //removes any trailing null characters
-                        //    strData = strData.Substring(0, bytesRead);
 
                         while (strData.EndsWith(Convert.ToChar(0x0).ToString()))
                             strData = strData.Substring(0, strData.Length - 1);
@@ -884,7 +844,7 @@ namespace IceChat
                         //connection lost                    
                         disconnectError = true;
                         ForceDisconnect();
-                        
+
                         if (ServerError != null)
                             ServerError(this, "Connection Lost", false);
 
@@ -903,13 +863,13 @@ namespace IceChat
                 ServerError(this, "Exception OnReceiveData Error:" + e.Message.ToString(), false);
                 disconnectError = true;
                 ForceDisconnect();
-            }                 
+            }
         }
-        
+
         /// <summary>
         /// Method for starting a Server Connection
         /// </summary>
-        internal void ConnectSocket()
+        public void ConnectSocket()
         {
             disconnectError = false;
 
@@ -938,12 +898,11 @@ namespace IceChat
                         IPEndPoint proxyEndPoint = new IPEndPoint(proxyIP, Convert.ToInt32(serverSetting.ProxyPort));
                         Socket proxySocket = new Socket(proxyEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                        if (ServerMessage != null)
-                        {
-                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                            msg = msg.Replace("$serverip", proxyIP.ToString()).Replace("$server", serverSetting.ProxyIP).Replace("$port", serverSetting.ProxyPort);
-                            ServerMessage(this, msg);
-                        }
+                        ServerConnect(this, proxyIP.ToString());
+
+                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                        //msg = msg.Replace("$serverip", proxyIP.ToString()).Replace("$server", serverSetting.ProxyIP).Replace("$port", serverSetting.ProxyPort);
+                        //ServerMessage(this, msg);
 
                         serverSocket = proxySocket;
                         proxySocket.BeginConnect(proxyEndPoint, new AsyncCallback(OnConnectionReady), null);
@@ -967,13 +926,12 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("ipv6 connect:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
                         serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 
-                        if (ServerMessage != null)
-                        {
-                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                            msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                            serverSetting.ServerIP = ipAddress.ToString();
-                            ServerMessage(this, msg + " (IPv6)");
-                        }
+                        ServerConnect(this, ipAddress.ToString());
+                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                        //msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                        //ServerMessage(this, msg + " (IPv6)");
+
+                        serverSetting.ServerIP = ipAddress.ToString();
 
                         System.Diagnostics.Debug.WriteLine("start ipv6 connect here");
                         serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
@@ -1002,14 +960,15 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("try ipv6 1:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
                         serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                        if (ServerMessage != null)
-                        {
-                            string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                            msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                            serverSetting.ServerIP = ipAddress.ToString();
-                            ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
-                        }
-                        System.Diagnostics.Debug.WriteLine("start connect here");
+                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                        //msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                        serverSetting.ServerIP = ipAddress.ToString();
+
+                        ServerConnect(this, ipAddress.ToString());
+
+                        //ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
+
+                        //System.Diagnostics.Debug.WriteLine("start connect here");
                         serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                         return;
                     }
@@ -1027,13 +986,11 @@ namespace IceChat
                                 IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
                                 serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                                if (ServerMessage != null)
-                                {
-                                    string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                                    msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                                    serverSetting.ServerIP = address.ToString();
-                                    ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
-                                }
+                                //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                                //msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                                ServerConnect(this, address.ToString());
+                                serverSetting.ServerIP = address.ToString();
+                                //ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
 
                                 serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                                 break;
@@ -1071,7 +1028,7 @@ namespace IceChat
                 ForceDisconnect();
             }
         }
-        
+
         private bool RemoteCertificateValidationCallback(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (sslPolicyErrors == SslPolicyErrors.None || sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch)
@@ -1088,7 +1045,7 @@ namespace IceChat
         }
 
 
-        internal void ForceDisconnect()
+        public void ForceDisconnect()
         {
             try
             {
@@ -1102,29 +1059,16 @@ namespace IceChat
             {
             }
 
-            if (FormMain.Instance.IceChatOptions.ReconnectServer && this.attemptReconnect)
-            {
-                if (ServerMessage != null)
-                    ServerMessage(this, "Waiting 30 seconds to Reconnect to (" + serverSetting.ServerName + ")");
-                try
-                {
-                    if (reconnectTimer != null)
-                        reconnectTimer.Start();
-                }
-                catch (Exception)
-                {
-                    //do nada
-                }
-            }
+            ServerForceDisconnect(this);
 
         }
-        
+
         #endregion
 
 
         #region Timer Events
 
-        internal void CreateTimer(string id, double interval, int reps, string command)
+        public void CreateTimer(string id, double interval, int reps, string command)
         {
             IrcTimer timer = new IrcTimer(id, interval * 1000, reps, command);
             timer.OnTimerElapsed += new IrcTimer.TimerElapsed(OnTimerElapsed);
@@ -1132,7 +1076,7 @@ namespace IceChat
             timer.Start();
         }
 
-        internal void DestroyTimer(string id)
+        public void DestroyTimer(string id)
         {
             object remove = null;
             foreach (object key in ircTimers)
@@ -1151,9 +1095,9 @@ namespace IceChat
         private void OnTimerElapsed(string command)
         {
             //System.Diagnostics.Debug.WriteLine("Timer Elapsed:" + command);
-            FormMain.Instance.ParseOutGoingCommand(this, command);
+            OutGoingCommand(this, command);
         }
-        
+
         #endregion
     }
 

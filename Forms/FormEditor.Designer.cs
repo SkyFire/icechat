@@ -319,6 +319,7 @@
             this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
             this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
             this.scriptsToolStripMenuItem.Text = "Scripts";
+            this.scriptsToolStripMenuItem.Visible = false;
             // 
             // mainToolStripMenuItem
             // 

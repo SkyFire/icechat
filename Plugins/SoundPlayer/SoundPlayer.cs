@@ -24,6 +24,9 @@
 
 using System;
 using System.Windows.Forms;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace IceChatPlugin
 {
@@ -33,26 +36,25 @@ namespace IceChatPlugin
         private string m_Author;
         private string m_Version;
 
-        private AppDomain m_domain;
-
         private Form m_MainForm;
         private MenuStrip m_MenuStrip;
         private Panel m_BottomPanel;
         private string currentFolder;
-
-        
-        private string m_ServerTreeCurrentTab;
-        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
-
         
         //all the events get declared here
         public event OutGoingCommandHandler OnCommand;
 
+        [DllImport("winmm.dll")]
+        private static extern long mciSendString(string strCommand,
+                StringBuilder strReturn, int iReturnLength,
+                IntPtr hwndCallback);
+
+
         public Plugin()
         {
             //set your default values here
-            m_Name = "Default Plugin";
-            m_Author = "Default Author";
+            m_Name = "Sound Player Plugin (Windows)";
+            m_Author = "Snerf";
             m_Version = "1.0";
         }
 
@@ -106,25 +108,6 @@ namespace IceChatPlugin
             set { m_BottomPanel = value; }
         }
 
-        public string ServerTreeCurrentTab
-        {
-            get { return m_ServerTreeCurrentTab; }
-            set { m_ServerTreeCurrentTab = value; }
-        }
-
-        public IceChat.IRCConnection ServerTreeCurrentConnection
-        {
-            get { return m_ServerTreeCurrentConnection; }
-            set { m_ServerTreeCurrentConnection = value; }
-        }
-
-        public AppDomain domain
-        {
-            get { return m_domain; }
-            set { m_domain = value; }
-        }
-
-        
         //declare the standard methods
         public void ShowInfo()
         {
@@ -145,23 +128,21 @@ namespace IceChatPlugin
 
         public void MainProgramLoaded()
         {
-            //when the main program has finished loading
+
         }
 
         public void SaveColorsForm()
         {
-            //when the save button is clicked on the Colors Settings Window
 
         }
 
         public void SaveSettingsForm()
         {
-            //when the save button is clicked on the IceChat Settings Window
+        
         }
 
         public void LoadEditorForm(TabControl ScriptsTab)
         {
-
 
         }
 
@@ -170,20 +151,6 @@ namespace IceChatPlugin
 
         }
 
-        public ToolStripItem[] AddChannelPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddQueryPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddServerPopups()
-        {
-            return null;
-        }
 
         //declare all the necessary events
 
@@ -221,11 +188,64 @@ namespace IceChatPlugin
         {
             return args;
         }
-        
         //args.Connection   -- current connection
         //args.Extra        -- command data 
         public PluginArgs InputText(PluginArgs args)
         {
+            string data = args.Extra;
+
+            int indexOfSpace = data.IndexOf(" ");
+            string command = "";
+
+            if (indexOfSpace > 0)
+            {
+                command = data.Substring(0, indexOfSpace);
+                data = data.Substring(command.Length + 1);
+            }
+            else
+            {
+                command = data;
+                data = "";
+            }
+
+            if (command.ToLower() == "/mp3")
+            {
+                if (data.Length > 0)
+                {
+                    if (File.Exists(data))
+                    {
+                        //MessageBox.Show("exists");
+                        mciSendString("open \"" + data + "\" ALIAS MediaFile TYPE MpegVideo", null, 0, IntPtr.Zero);
+                        mciSendString("play MediaFile", null, 0, IntPtr.Zero);
+                    }
+                    else if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds" + System.IO.Path.DirectorySeparatorChar + data))
+                    {
+                        mciSendString("open \"" + currentFolder + System.IO.Path.DirectorySeparatorChar + "Sounds" + System.IO.Path.DirectorySeparatorChar + data + "\" ALIAS MediaFile TYPE MpegVideo", null, 0, IntPtr.Zero);
+                        mciSendString("play MediaFile", null, 0, IntPtr.Zero);
+                    }
+                    else
+                    {
+                        if (data.ToLower().Equals("stop"))
+                        {
+                            //stop playing the music
+                            mciSendString("stop MediaFile", null, 0, IntPtr.Zero);
+                        }
+                        if (data.ToLower().Equals("pause"))
+                        {
+                            mciSendString("pause MediaFile", null, 0, IntPtr.Zero);
+                        }
+                        if (data.ToLower().Equals("play"))
+                        {
+                            mciSendString("play MediaFile", null, 0, IntPtr.Zero);
+                        }
+
+
+                    }
+                }
+                args.Extra = "";
+            }
+            
+            
             return args;
         }
 
@@ -276,50 +296,5 @@ namespace IceChatPlugin
         {
 
         }
-        
-        //newly added here
-        public void ServerConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerDisconnect(PluginArgs args)
-        {
-
-        }
-
-        public void WhoisUser(PluginArgs args)
-        {
-
-        }
-
-        public PluginArgs ChannelNotice(PluginArgs args)
-        {
-
-            return args;
-        }
-
-        public void ChannelTopic(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelInvite(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelMode(PluginArgs args)
-        {
-            //args.Extra --  full channel mode
-
-        }
-
-        public void BuddyList(PluginArgs args)
-        {
-            //args.Extra -- "online" or "offline"
-
-        }
-
     }
 }
