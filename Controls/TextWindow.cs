@@ -602,6 +602,8 @@ namespace IceChat
                     {
                         try
                         {
+                            if (clickedWord.StartsWith("www"))
+                                clickedWord = "http://" + clickedWord;
                             System.Diagnostics.Process.Start(clickedWord);
                         }
                         catch (Exception)

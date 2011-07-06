@@ -330,7 +330,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " :: " + IceChat.Properties.Settings.Default.Version + " :: July 1 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " :: " + IceChat.Properties.Settings.Default.Version + " :: July 5 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -449,7 +449,7 @@ namespace IceChat
             nickListTab = new TabPage("Nick List");
             Panel nickPanel = new Panel();
             nickPanel.Dock = DockStyle.Fill;
-            nickPanel.Controls.Add(nickList);            
+            nickPanel.Controls.Add(nickList);
             nickListTab.Controls.Add(nickPanel);
             nickListTab.BackColor = IrcColor.colors[iceChatColors.PanelHeaderBG1];
             nickListTab.ForeColor = IrcColor.colors[iceChatColors.PanelHeaderForeColor];
@@ -1648,14 +1648,14 @@ namespace IceChat
                 data = data.Replace("&#x3;", ((char)3).ToString());
 
                 PluginArgs args = new PluginArgs(inputPanel.CurrentConnection);
-                args.Extra = data;
+                args.Command = data;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
                     args = ipc.InputText(args);
                 }
 
-                data = args.Extra;
+                data = args.Command;
 
                 if (data.StartsWith("//"))
                 {
@@ -2856,7 +2856,7 @@ namespace IceChat
                                 msg = msg.Replace("$nick", data); ;
                                 msg = msg.Replace("$ctcp", "PING");
                                 CurrentWindowMessage(connection, msg, 7, true);
-                                SendData(connection, "PRIVMSG " + data + " :PING");
+                                SendData(connection, "PRIVMSG " + data + " :PING " + System.Environment.TickCount.ToString() + "");
                             }                            
                             break;
                         case "/play":   //play a WAV sound
@@ -4579,55 +4579,12 @@ namespace IceChat
             AppDomain appDomain = AppDomain.CreateDomain(args + "_AppDomain", null, setup);
 
             Type loaderType = typeof(AssemblyLoader);
-            
-            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location, loaderType.FullName);
-            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().Location, loaderType.FullName);
-            
-            //System.Diagnostics.Debug.WriteLine(loaderType.FullName);
 
             AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, loaderType.FullName);
-
-            //Type plugType = typeof(IPluginIceChat);
-
-            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap("ChannelMonitor", "IceChatPlugin.Plugin");
-            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstanceAndUnwrap(plugType.Assembly.FullName, "IceChatPlugin.IPluginIceChat");
 
             Type ObjType = null;
             try
             {
-                // load it
-                //Assembly ass = null;
-                //ass = Assembly.LoadFile(fileName);
-                //Assembly ass = appDomain.Load(fileName);
-                //System.Diagnostics.Debug.WriteLine("file:" + fileName);
-                
-                //byte[] b = File.ReadAllBytes(fileName);
-                //Assembly ass = appDomain.Load(AssemblyName.GetAssemblyName(args));
-                //System.Diagnostics.Debug.WriteLine(args);
-                //Assembly ass = appDomain.Load(args);
-                //Assembly ass = appDomain.Load(b);
-                //Assembly ass = loader.LoadAssembly(fileName);
-                //l.LoadAssembly(fileName);
-
-                //fileName = fileName.Substring(0, fileName.Length - 4);
-                //System.Diagnostics.Debug.WriteLine(fileName);
-                //System.Diagnostics.Debug.WriteLine(args);
-
-                //l.LoadAssembly(fileName);
-                //l.LoadAssemblyLocal("I");
-                //l.LoadLocalAssembly("IPluginIceChat");
-                //l.LoadLocalAssembly("IRCConnection");
-                
-                //l.LoadAssembly(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "IRCConnection.dll");
-                //l.LoadAssembly(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "IPluginIceChat.dll");
-
-                //System.Diagnostics.Debug.WriteLine("loading:" + fileName);
-                //appDomain.Load(@"IceChat.IRCConnection");
-                //appDomain.Load("IPluginIceChat.dll");
-                //appDomain.Load("mscorlib");
-
-                //return;
-
                 Assembly ass = l.LoadAssembly(args);
 
                 if (ass != null)
@@ -4643,11 +4600,8 @@ namespace IceChat
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("ERROR:" +ex.Message);
-
-                //System.Diagnostics.Debug.WriteLine(ex.InnerException.Message);
+                //System.Diagnostics.Debug.WriteLine("ERROR:" +ex.Message);
                 WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin Error ", ex);
-                
                 return;
             }
             try
@@ -4975,9 +4929,13 @@ namespace IceChat
         {
             _tabControl = new TabControl();
             _tabControl.Dock = DockStyle.Fill;
-            //_tabControl.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             _tabControl.Multiline = true;
             _tabControl.TabStop = false;
+            _tabControl.SizeMode = TabSizeMode.Fixed;
+            _tabControl.ItemSize = new Size(150, 20);
+            _tabControl.DrawMode = TabDrawMode.OwnerDrawFixed;
+            _tabControl.Alignment = TabAlignment.Left;
+            _tabControl.DrawItem += new DrawItemEventHandler(OnDrawItem);
             _tabControl.DoubleClick += new EventHandler(OnDoubleClick);
             _tabControl.MouseDown += new MouseEventHandler(OnMouseDown);
             _tabControl.MouseHover += new EventHandler(OnMouseHover);
@@ -4985,6 +4943,30 @@ namespace IceChat
             
             this.Controls.Add(_tabControl);
 
+        }
+
+        private void OnDrawItem(object sender, DrawItemEventArgs e)
+        {
+            Rectangle tabRect = _tabControl.GetTabRect(e.Index);
+            Brush textBrush = new SolidBrush(Color.Black);
+            
+            Graphics g = e.Graphics;
+            Pen p = new Pen(Color.Gray);
+            
+            g.DrawRectangle(p, tabRect);
+            if (_tabControl.Alignment == TabAlignment.Left)
+            {
+                g.TranslateTransform(tabRect.Left, tabRect.Height + tabRect.Top);
+                g.RotateTransform(270);
+                g.DrawString(_tabControl.TabPages[e.Index].Text, _tabControl.Font, textBrush, 10, 0);
+            }
+            else
+            {
+                g.TranslateTransform(tabRect.Left, tabRect.Top);
+                g.RotateTransform(90);
+                g.DrawString(_tabControl.TabPages[e.Index].Text, _tabControl.Font, textBrush, 10, -20);
+            }
+            g.ResetTransform();
         }
 
         private void OnMouseDown(object sender, MouseEventArgs e)
@@ -5061,7 +5043,11 @@ namespace IceChat
         /// </summary>
         internal void Initialize()
         {
-            _tabControl.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));            
+            //_tabControl.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, FormMain.Instance.IceChatFonts.FontSettings[6].FontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            _tabControl.Font = new Font(FormMain.Instance.IceChatFonts.FontSettings[6].FontName, 10);
+            _tabControl.ForeColor = System.Drawing.SystemColors.ControlText;
+            _tabControl.Appearance = TabAppearance.Normal;
+            
         }
 
         /// <summary>
@@ -5072,7 +5058,6 @@ namespace IceChat
         {
             if (p.Parent.GetType() == typeof(TabPage))
             {
-                //System.Diagnostics.Debug.WriteLine(panel1.Parent.Name);
                 //remove the tab from the tabStrip
                 TabPage tp = (TabPage)p.Parent;
                 _tabControl.TabPages.Remove((TabPage)p.Parent);
@@ -5104,8 +5089,6 @@ namespace IceChat
     {
         public Assembly LoadAssembly(string assemblyName)
         {
-            //return Assembly.LoadFrom(path);
-            //System.Diagnostics.Debug.WriteLine(path);
             return Assembly.Load(assemblyName);
         }
     }

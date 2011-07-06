@@ -369,7 +369,7 @@ namespace IceChatPlugin
                 //add the channel to the list
                 cMonitor newChan = new cMonitor(args.Connection, args.Channel);
                 monitoredChannels.Add(newChan);
-
+                
                 AddMonitorMessage(args.Channel, "Started Monitoring channel:" + monitoredChannels.Count);
             }
             return args;
@@ -396,7 +396,7 @@ namespace IceChatPlugin
             return args;
         }
         //args.Connection   -- current connection
-        //args.Extra        -- command data 
+        //args.Command        -- command data 
         public PluginArgs InputText(PluginArgs args)
         {
             return args;

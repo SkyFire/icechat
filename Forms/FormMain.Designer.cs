@@ -447,7 +447,7 @@ namespace IceChat
             // splitterLeft
             // 
             this.splitterLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.splitterLeft.Location = new System.Drawing.Point(181, 50);
+            this.splitterLeft.Location = new System.Drawing.Point(161, 50);
             this.splitterLeft.Name = "splitterLeft";
             this.splitterLeft.Size = new System.Drawing.Size(3, 455);
             this.splitterLeft.TabIndex = 15;
@@ -457,7 +457,7 @@ namespace IceChat
             // 
             this.splitterRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.splitterRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitterRight.Location = new System.Drawing.Point(618, 50);
+            this.splitterRight.Location = new System.Drawing.Point(640, 50);
             this.splitterRight.Name = "splitterRight";
             this.splitterRight.Size = new System.Drawing.Size(3, 455);
             this.splitterRight.TabIndex = 16;
@@ -643,20 +643,20 @@ namespace IceChat
             // 
             this.mainTabControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainTabControl.Location = new System.Drawing.Point(184, 50);
+            this.mainTabControl.Location = new System.Drawing.Point(164, 50);
             this.mainTabControl.Margin = new System.Windows.Forms.Padding(0);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = -1;
-            this.mainTabControl.Size = new System.Drawing.Size(434, 455);
+            this.mainTabControl.Size = new System.Drawing.Size(476, 455);
             this.mainTabControl.TabIndex = 20;
             // 
             // panelDockRight
             // 
             this.panelDockRight.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelDockRight.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelDockRight.Location = new System.Drawing.Point(621, 50);
+            this.panelDockRight.Location = new System.Drawing.Point(643, 50);
             this.panelDockRight.Name = "panelDockRight";
-            this.panelDockRight.Size = new System.Drawing.Size(175, 455);
+            this.panelDockRight.Size = new System.Drawing.Size(153, 455);
             this.panelDockRight.TabIndex = 14;
             // 
             // panelDockLeft
@@ -665,7 +665,7 @@ namespace IceChat
             this.panelDockLeft.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelDockLeft.Location = new System.Drawing.Point(0, 50);
             this.panelDockLeft.Name = "panelDockLeft";
-            this.panelDockLeft.Size = new System.Drawing.Size(181, 455);
+            this.panelDockLeft.Size = new System.Drawing.Size(161, 455);
             this.panelDockLeft.TabIndex = 13;
             // 
             // inputPanel
@@ -698,7 +698,7 @@ namespace IceChat
             this.MainMenuStrip = this.menuMainStrip;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "IceChat 2009";
+            this.Text = "IceChat";
             this.menuMainStrip.ResumeLayout(false);
             this.menuMainStrip.PerformLayout();
             this.contextMenuNotify.ResumeLayout(false);

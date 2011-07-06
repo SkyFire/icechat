@@ -223,7 +223,7 @@ namespace IceChatPlugin
         }
         
         //args.Connection   -- current connection
-        //args.Extra        -- command data 
+        //args.Command        -- command data 
         public PluginArgs InputText(PluginArgs args)
         {
             return args;

@@ -1,3 +1,7 @@
+Build RC1 July 5, 2011
+* Minor fix to Tabs on Side Panels
+
+
 Build RC1 July 1, 2011
 * Major update to Plugin Framework, access to Connection Class added
 * Will need to re-compile all Plugins

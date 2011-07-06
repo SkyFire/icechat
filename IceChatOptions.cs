@@ -301,8 +301,8 @@ namespace IceChat
         private bool _isOnTray = false;
         private int _maxTextLines = 500;
 
-        private int _panelRightWidth = 200;
-        private int _panelLeftWidth = 175;
+        private int _panelRightWidth = 230;
+        private int _panelLeftWidth = 200;
         private int _dccChatTimeOut = 60;
         private int _dccPortLower = 5000;
         private int _dccPortUpper = 10000;
@@ -311,7 +311,7 @@ namespace IceChat
         private int _dccBufferSize = 1024;
 
         private string _language = "English";
-        private string _identName = "IceChat09";
+        private string _identName = "IceChat9";
         private string _fullName = "The Chat Cool People Use";
         private string _quitMessage = "$randquit";
 
