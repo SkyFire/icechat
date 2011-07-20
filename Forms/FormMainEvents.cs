@@ -66,9 +66,8 @@ namespace IceChat
 
         private void OnServerForceDisconnect(IRCConnection connection)
         {
-            //throw new NotImplementedException();
             if (IceChatOptions.ReconnectServer && connection.AttemptReconnect)
-            {
+            {                
                 OnServerMessage(connection, "Waiting 30 seconds to Reconnect to (" + connection.ServerSetting.ServerName + ")");
                 try
                 {
@@ -82,13 +81,16 @@ namespace IceChat
                     //do nada
                 }
             }
+            
+            serverTree.Invalidate();
 
         }
 
         private void OnServerConnect(IRCConnection connection, string address)
         {
             string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-            msg = msg.Replace("$serverip", address.Replace("$server", connection.ServerSetting.ProxyIP).Replace("$port", connection.ServerSetting.ProxyPort));
+
+            msg = msg.Replace("$serverip",address).Replace("$server", connection.ServerSetting.ServerName).Replace("$port", connection.ServerSetting.ServerPort);
             
             OnServerMessage(connection, msg);
 
@@ -2041,6 +2043,7 @@ namespace IceChat
                     //ask for the dcc file receive
                     FormDCCFileAccept dccAccept = new FormDCCFileAccept(connection, nick, host, port, ip, file, fileSize, resume, filePos);
                     dccAccept.DCCFileAcceptResult += new FormDCCFileAccept.DCCFileAcceptDelegate(OnDCCFileAcceptResult);
+                    dccAccept.StartPosition = FormStartPosition.CenterParent;
                     dccAccept.Show(FormMain.Instance);
 
                 }
@@ -2085,6 +2088,7 @@ namespace IceChat
                     //ask for the dcc file receive
                     FormDCCFileAccept dccAccept = new FormDCCFileAccept(connection, nick, host, "", ip, file, fileSize, filePos, resume,  id);
                     dccAccept.DCCFileAcceptResult += new FormDCCFileAccept.DCCFileAcceptDelegate(OnDCCPassiveAcceptResult);
+                    dccAccept.StartPosition = FormStartPosition.CenterParent;
                     dccAccept.Show(FormMain.Instance);
                 }
             }

@@ -202,6 +202,17 @@ namespace IceChat
         public string ProxyPass
         { get; set; }
 
+        [XmlElement("UseBNC")]
+        public bool UseBNC
+        { get; set; }
+
+        
+        
+        [XmlElement("ServerNotes")]
+        public string ServerNotes
+        { get; set; }
+
+
 
         //these are all temporary server settings, not saved to the XML file
 

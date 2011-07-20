@@ -50,7 +50,10 @@ namespace IceChatPlugin
         //the mainform menu
         MenuStrip MainMenuStrip { get; set; }
         //the bottom panel of the main window
-        Panel BottomPanel { get; set; }        
+        Panel BottomPanel { get; set; }
+
+        TabControl LeftPanel { get; set; }
+        TabControl RightPanel { get; set; }
 
         void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab);
         void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab);

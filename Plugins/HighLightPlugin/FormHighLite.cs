@@ -43,6 +43,7 @@ namespace IceChatPlugin
             
             textHiLite.ForeColor = IrcColor.colors[highLiteItem.Color];
             textHiLite.Tag = highLiteItem.Color;
+            checkFlashTab.Checked = highLiteItem.FlashTab;
 
         }
 
@@ -51,7 +52,8 @@ namespace IceChatPlugin
             highLiteItem.Match = textHiLite.Text;
             highLiteItem.Command = textCommand.Text;
             highLiteItem.Color = (int)textHiLite.Tag;
-            
+            highLiteItem.FlashTab = checkFlashTab.Checked;
+
             //update or add new item
             if (SaveHighLite != null)
                 SaveHighLite(this.highLiteItem, listIndex);
@@ -79,25 +81,57 @@ namespace IceChatPlugin
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            //draw the 32 colors, in 2 rows of 16
-            for (int i = 0; i <= 15; i++)
+            //draw the 72 colors, in 6 rows of 12
+            for (int i = 0; i <= 11; i++)
             {
 
                 e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i]), (i * 17), 0, 15, 15);
                 e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 0, 15, 15);
 
-                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 16]), (i * 17), 20, 15, 15);
+                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 12]), (i * 17), 20, 15, 15);
                 e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 20, 15, 15);
+
+                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 24]), (i * 17), 40, 15, 15);
+                e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 40, 15, 15);
+
+                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 36]), (i * 17), 60, 15, 15);
+                e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 60, 15, 15);
+
+                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 48]), (i * 17), 80, 15, 15);
+                e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 80, 15, 15);
+
+                e.Graphics.FillRectangle(new SolidBrush(IrcColor.colors[i + 60]), (i * 17), 100, 15, 15);
+                e.Graphics.DrawRectangle(new Pen(Color.Gray), (i * 17), 100, 15, 15);
 
                 if (i == selectedColor)
                 {
                     //draw a selection rectangle
                     e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 0, 15, 15);
                 }
-                if (i + 16 == selectedColor)
+                if (i + 12 == selectedColor)
                 {
                     //draw a selection rectangle
                     e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 20, 15, 15);
+                }
+                if (i + 24 == selectedColor)
+                {
+                    //draw a selection rectangle
+                    e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 40, 15, 15);
+                }
+                if (i + 36 == selectedColor)
+                {
+                    //draw a selection rectangle
+                    e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 60, 15, 15);
+                }
+                if (i + 48 == selectedColor)
+                {
+                    //draw a selection rectangle
+                    e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 80, 15, 15);
+                }
+                if (i + 60 == selectedColor)
+                {
+                    //draw a selection rectangle
+                    e.Graphics.DrawRectangle(new Pen(Color.Black, 3), (i * 17), 100, 15, 15);
                 }
             }
         }
@@ -130,16 +164,58 @@ namespace IceChatPlugin
                 }
 
             }
-            else if ((e.Y > 19) || e.Y < 38)
+            else if ((e.Y > 19) && e.Y < 38)
             {
                 xPos = e.X / 17;
                 if (OnClick != null)
                 {
-                    selectedColor = xPos + 16;
+                    selectedColor = xPos + 12;
                     hostPanel.Invalidate();
-                    OnClick(xPos + 16);
+                    OnClick(xPos + 12);
                 }
             }
+            else if ((e.Y > 39) && e.Y < 58)
+            {
+                xPos = e.X / 17;
+                if (OnClick != null)
+                {
+                    selectedColor = xPos + 24;
+                    hostPanel.Invalidate();
+                    OnClick(xPos + 24);
+                }
+            }
+            else if ((e.Y > 59) && e.Y < 79)
+            {
+                xPos = e.X / 17;
+                if (OnClick != null)
+                {
+                    selectedColor = xPos + 36;
+                    hostPanel.Invalidate();
+                    OnClick(xPos + 36);
+                }
+            }
+            else if ((e.Y > 79) && e.Y < 99)
+            {
+                xPos = e.X / 17;
+                if (OnClick != null)
+                {
+                    selectedColor = xPos + 48;
+                    hostPanel.Invalidate();
+                    OnClick(xPos + 48);
+                }
+            }
+            else if ((e.Y > 99) && e.Y < 119)
+            {
+                xPos = e.X / 17;
+                if (OnClick != null)
+                {
+                    selectedColor = xPos + 60;
+                    hostPanel.Invalidate();
+                    OnClick(xPos + 60);
+                }
+            }
+
+
         }
     }
     public static class IrcColor
@@ -149,7 +225,7 @@ namespace IceChatPlugin
         static IrcColor()
         {
             //Color color;
-            colors = new Color[32];
+            colors = new Color[72];
 
             colors[0] = System.Drawing.ColorTranslator.FromHtml("#FFFFFF");
             colors[1] = System.Drawing.ColorTranslator.FromHtml("#000000");
@@ -187,7 +263,60 @@ namespace IceChatPlugin
             colors[30] = System.Drawing.ColorTranslator.FromHtml("#FFDAB9");
             colors[31] = System.Drawing.ColorTranslator.FromHtml("#2F4F4F");
 
+            colors[32] = System.Drawing.ColorTranslator.FromHtml("#D8E9EC");
+            colors[33] = System.Drawing.ColorTranslator.FromHtml("#5FDAEE");
+            colors[34] = System.Drawing.ColorTranslator.FromHtml("#E2FF00");
+            colors[35] = System.Drawing.ColorTranslator.FromHtml("#00009E");
 
+            colors[36] = System.Drawing.ColorTranslator.FromHtml("#FFFFCC");
+            colors[37] = System.Drawing.ColorTranslator.FromHtml("#FFFF99");
+            colors[38] = System.Drawing.ColorTranslator.FromHtml("#FFFF66");
+            colors[39] = System.Drawing.ColorTranslator.FromHtml("#FFCC33");
+            colors[40] = System.Drawing.ColorTranslator.FromHtml("#FF9933");
+            colors[41] = System.Drawing.ColorTranslator.FromHtml("#FF6633");
+
+            colors[42] = System.Drawing.ColorTranslator.FromHtml("#c6ffc6");
+            colors[43] = System.Drawing.ColorTranslator.FromHtml("#84ff84");
+            colors[44] = System.Drawing.ColorTranslator.FromHtml("#00ff00");
+            colors[45] = System.Drawing.ColorTranslator.FromHtml("#00c700");
+            colors[46] = System.Drawing.ColorTranslator.FromHtml("#008600");
+            colors[47] = System.Drawing.ColorTranslator.FromHtml("#004100");
+
+            //blues
+            colors[48] = System.Drawing.ColorTranslator.FromHtml("#C6FFFF");
+            colors[49] = System.Drawing.ColorTranslator.FromHtml("#84FFFF");
+            colors[50] = System.Drawing.ColorTranslator.FromHtml("#00FFFF");
+            colors[51] = System.Drawing.ColorTranslator.FromHtml("#6699FF");
+            colors[52] = System.Drawing.ColorTranslator.FromHtml("#6666FF");
+            colors[53] = System.Drawing.ColorTranslator.FromHtml("#3300FF");
+
+
+
+            //reds
+            colors[54] = System.Drawing.ColorTranslator.FromHtml("#FFCC99");
+            colors[55] = System.Drawing.ColorTranslator.FromHtml("#FF9966");
+            colors[56] = System.Drawing.ColorTranslator.FromHtml("#ff6633");
+            colors[57] = System.Drawing.ColorTranslator.FromHtml("#FF0033");
+            colors[58] = System.Drawing.ColorTranslator.FromHtml("#CC0000");
+            colors[59] = System.Drawing.ColorTranslator.FromHtml("#AA0000");
+
+
+            //pink / purple
+            colors[60] = System.Drawing.ColorTranslator.FromHtml("#ffc7ff");
+            colors[61] = System.Drawing.ColorTranslator.FromHtml("#ff86ff");
+            colors[62] = System.Drawing.ColorTranslator.FromHtml("#ff00ff");
+            colors[63] = System.Drawing.ColorTranslator.FromHtml("#FF00CC");
+            colors[64] = System.Drawing.ColorTranslator.FromHtml("#CC0099");
+            colors[65] = System.Drawing.ColorTranslator.FromHtml("#660099");
+
+
+            //gray scale
+            colors[66] = System.Drawing.ColorTranslator.FromHtml("#EEEEEE");
+            colors[67] = System.Drawing.ColorTranslator.FromHtml("#CCCCCC");
+            colors[68] = System.Drawing.ColorTranslator.FromHtml("#AAAAAA");
+            colors[69] = System.Drawing.ColorTranslator.FromHtml("#888888");
+            colors[70] = System.Drawing.ColorTranslator.FromHtml("#666666");
+            colors[71] = System.Drawing.ColorTranslator.FromHtml("#444444");
         }
     }
 }

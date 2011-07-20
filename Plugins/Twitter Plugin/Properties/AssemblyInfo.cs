@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IceChat 9")]
-[assembly: AssemblyDescription("Internet Relay Chat Client")]
+[assembly: AssemblyTitle("Twitter Plugin")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("IceChat Networks")]
-[assembly: AssemblyProduct("IceChat 9")]
-[assembly: AssemblyCopyright("Copyright © 2000-2011 Paul Vanderzee")]
+[assembly: AssemblyProduct("Twitter Plugin")]
+[assembly: AssemblyCopyright("Copyright © Paul Vanderzee")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3649a87a-c843-4b1c-94f1-4db1865a44e1")]
+[assembly: Guid("a1cbc364-005c-44f2-b26b-419f288a53a2")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,5 +29,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("9.0.0.0")]
-[assembly: AssemblyFileVersion("9.0.2011.0720")]
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

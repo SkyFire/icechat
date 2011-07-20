@@ -39,7 +39,11 @@ namespace IceChatUpdater
     public partial class FormUpdater : Form
     {
         private string currentFolder;
-        private int currentFile;
+        private System.Net.WebClient webClient;
+        private string currentFile;
+
+        private Stack<Uri> localFiles = new Stack<Uri>();
+        private Stack<Uri> moveFiles = new Stack<Uri>();
 
         public FormUpdater(string[] args)
         {
@@ -58,6 +62,7 @@ namespace IceChatUpdater
                 Directory.CreateDirectory(currentFolder);
 
             labelFolder.Text = currentFolder;
+            labelCurrentFile.Text = "";
 
             CheckForUpdate();
 
@@ -67,10 +72,20 @@ namespace IceChatUpdater
         {
 
             //get the current version of IceChat 2009 in the Same Folder
-            System.Diagnostics.FileVersionInfo fv = System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChat2009.exe");
-            System.Diagnostics.Debug.WriteLine(fv.FileVersion);
-            labelCurrent.Text = "Current Version: " + fv.FileVersion;
-            double currentVersion = Convert.ToDouble(fv.FileVersion.Replace(".", String.Empty));
+            System.Diagnostics.FileVersionInfo fv;
+            double currentVersion;
+            try
+            {
+                fv = System.Diagnostics.FileVersionInfo.GetVersionInfo(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChat2009.exe");
+                System.Diagnostics.Debug.WriteLine(fv.FileVersion);
+                labelCurrent.Text = "Current Version: " + fv.FileVersion;
+                currentVersion = Convert.ToDouble(fv.FileVersion.Replace(".", String.Empty));
+            }
+            catch(Exception)
+            {
+                currentVersion = 000000000;
+                labelCurrent.Text = "Current Version: 0.0.0000.0000";
+            }
             
             //delete the current update.xml file if it exists
             if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + "update.xml"))
@@ -104,100 +119,118 @@ namespace IceChatUpdater
         private void buttonDownload_Click(object sender, EventArgs e)
         {
             //download the files in the File List box
-            System.Net.WebClient webClient = new System.Net.WebClient();
+            webClient = new System.Net.WebClient();
             this.Cursor = Cursors.WaitCursor;
             
-            System.Collections.ArrayList localFiles = new System.Collections.ArrayList();
-
-
-            //webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(webClient_DownloadFileCompleted);            
-            //webClient.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
+            //System.Collections.ArrayList localFiles = new System.Collections.ArrayList();
+            
+            webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(webClient_DownloadFileCompleted);            
+            webClient.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
             foreach (string file in listFiles.Items)
             {
                 string f = System.IO.Path.GetFileName(file);
-                System.Diagnostics.Debug.WriteLine(f);
-                //webClient.DownloadFileAsync(new Uri(file), currentFolder + System.IO.Path.DirectorySeparatorChar + f);                
+                //System.Diagnostics.Debug.WriteLine(f);
                 if (File.Exists(currentFolder + System.IO.Path.DirectorySeparatorChar + f))
                     File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
 
-                localFiles.Add(f);
-                webClient.DownloadFile(file, currentFolder + System.IO.Path.DirectorySeparatorChar + f);                    
+                System.Diagnostics.Debug.WriteLine(file);
+                
+                Uri uri = new Uri(file);
+                localFiles.Push(uri);
+                moveFiles.Push(uri);
                     
             }
-            
-            this.Cursor = Cursors.Default;
-            MessageBox.Show("Completed Download");
+            Uri u = localFiles.Pop();
+            string localFile = Path.GetFileName(u.ToString());
+            currentFile = u.ToString();
+            labelCurrentFile.Text = currentFile;
 
-            //now see if IceChat is running
-            //and close it
-            
-            buttonDownload.Enabled = false;
-
-            Process[] pArry = Process.GetProcesses();
-
-            foreach (Process p in pArry)
-            {
-                string s = p.ProcessName;
-                s = s.ToLower();
-
-                if (s.CompareTo("icechat2009") == 0)
-                {
-                    if (Path.GetDirectoryName(p.Modules[0].FileName).ToLower() == Application.StartupPath.ToLower())
-                    {
-                        MessageBox.Show("Closing IceChat to update it");
-                        try
-                        {
-                            p.Kill();
-                            //p.CloseMainWindow();
-
-                            //wait a bit and then copy the files to this folder, and VOILA
-                            p.WaitForExit();
-                            
-                            System.Threading.Thread.Sleep(3000);
-                            
-
-                        }
-                        catch (Exception ee)
-                        {
-                            MessageBox.Show(ee.Message + ":" + ee.Source);
-                        }
-                        
-                    }
-                }
-            }
-
-            foreach (string f in localFiles)
-            {
-                if (File.Exists(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f))
-                    File.Delete(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-
-                System.Threading.Thread.Sleep(500);
-
-                //MessageBox.Show(currentFolder + System.IO.Path.DirectorySeparatorChar + f + ":" + Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-
-                File.Copy(currentFolder + System.IO.Path.DirectorySeparatorChar + f, Application.StartupPath + System.IO.Path.DirectorySeparatorChar + f);
-
-                //delete the files out of the update folder
-                File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + f);
-            }
-
-
-            MessageBox.Show("Files Updated, you are welcome to Restart IceChat");
-
-
+            webClient.DownloadFileAsync(u, currentFolder + System.IO.Path.DirectorySeparatorChar + localFile);
+           
         }
 
         private void webClient_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(e.ProgressPercentage + ":" +e.BytesReceived);
+            //System.Diagnostics.Debug.WriteLine(e.ProgressPercentage + ":" +e.BytesReceived);
+            this.progressBar.Value = e.ProgressPercentage;
+            labelSize.Text = e.BytesReceived + "/" + e.TotalBytesToReceive + " (" + e.ProgressPercentage + "%)";            
         }
 
         private void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            //throw new NotImplementedException();
-            System.Diagnostics.Debug.WriteLine("download done:" + e.UserState);
+            System.Diagnostics.Debug.WriteLine("download done:" + e.UserState + ":" + currentFile);
+            
             //go to the next file in the list
-            currentFile++;
+            if (localFiles.Count > 0)
+            {
+                Uri u = localFiles.Pop();
+
+                string localFile = Path.GetFileName(u.ToString());
+                currentFile = u.ToString();
+                labelCurrentFile.Text = currentFile;
+                System.Diagnostics.Debug.WriteLine(localFile);
+                webClient.DownloadFileAsync(u, currentFolder + System.IO.Path.DirectorySeparatorChar + localFile);
+            }
+            else
+            {
+
+                this.Cursor = Cursors.Default;
+                MessageBox.Show("Completed Download");
+
+                //now see if IceChat is running
+                //and close it
+
+                buttonDownload.Enabled = false;
+
+                Process[] pArry = Process.GetProcesses();
+
+                foreach (Process p in pArry)
+                {
+                    string s = p.ProcessName;
+                    s = s.ToLower();
+                    if (s.CompareTo("icechat2009") == 0)
+                    {
+                        if (Path.GetDirectoryName(p.Modules[0].FileName).ToLower() == Application.StartupPath.ToLower())
+                        {
+                            MessageBox.Show("Closing IceChat to update it");
+                            try
+                            {
+                                p.Kill();
+                                //p.CloseMainWindow();
+
+                                //wait a bit and then copy the files to this folder, and VOILA
+                                p.WaitForExit();
+
+                                System.Threading.Thread.Sleep(3000);
+
+
+                            }
+                            catch (Exception ee)
+                            {
+                                MessageBox.Show(ee.Message + ":" + ee.Source);
+                            }
+
+                        }
+                    }
+                }
+
+                foreach (Uri f in moveFiles)
+                {
+                    if (File.Exists(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Path.GetFileName(f.ToString())))
+                        File.Delete(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Path.GetFileName(f.ToString()));
+
+                    System.Threading.Thread.Sleep(500);
+
+                    File.Copy(currentFolder + System.IO.Path.DirectorySeparatorChar + Path.GetFileName(f.ToString()), Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Path.GetFileName(f.ToString()));
+
+                    //delete the files out of the update folder
+                    File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + Path.GetFileName(f.ToString()));
+                }
+
+
+                MessageBox.Show("Files Updated, you are welcome to Restart IceChat");
+
+            }
 
         }
     }

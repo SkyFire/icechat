@@ -33,6 +33,7 @@ namespace IceChat
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
             this.tabMain = new System.Windows.Forms.TabPage();
+            this.checkMinimizeTray = new System.Windows.Forms.CheckBox();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.labelLanguage = new System.Windows.Forms.Label();
             this.checkStatusBar = new System.Windows.Forms.CheckBox();
@@ -41,9 +42,10 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.checkShowNickHost = new System.Windows.Forms.CheckBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.textMaximumLines = new System.Windows.Forms.TextBox();
             this.labelMaxLines = new System.Windows.Forms.Label();
-            this.checkMinimizeTray = new System.Windows.Forms.CheckBox();
             this.label15 = new System.Windows.Forms.Label();
             this.trackTransparency = new System.Windows.Forms.TrackBar();
             this.checkShowUnreadLine = new System.Windows.Forms.CheckBox();
@@ -197,6 +199,8 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.checkNickShowButtons = new System.Windows.Forms.CheckBox();
+            this.checkServerShowButtons = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -258,6 +262,7 @@ namespace IceChat
             // 
             // tabMain
             // 
+            this.tabMain.Controls.Add(this.checkMinimizeTray);
             this.tabMain.Controls.Add(this.comboBoxLanguage);
             this.tabMain.Controls.Add(this.labelLanguage);
             this.tabMain.Controls.Add(this.checkStatusBar);
@@ -274,11 +279,21 @@ namespace IceChat
             this.tabMain.Text = "Main Settings";
             this.tabMain.UseVisualStyleBackColor = true;
             // 
+            // checkMinimizeTray
+            // 
+            this.checkMinimizeTray.AutoSize = true;
+            this.checkMinimizeTray.Location = new System.Drawing.Point(15, 116);
+            this.checkMinimizeTray.Name = "checkMinimizeTray";
+            this.checkMinimizeTray.Size = new System.Drawing.Size(135, 20);
+            this.checkMinimizeTray.TabIndex = 49;
+            this.checkMinimizeTray.Text = "Minimize to Tray";
+            this.checkMinimizeTray.UseVisualStyleBackColor = true;
+            // 
             // comboBoxLanguage
             // 
             this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLanguage.FormattingEnabled = true;
-            this.comboBoxLanguage.Location = new System.Drawing.Point(89, 132);
+            this.comboBoxLanguage.Location = new System.Drawing.Point(87, 193);
             this.comboBoxLanguage.Name = "comboBoxLanguage";
             this.comboBoxLanguage.Size = new System.Drawing.Size(178, 24);
             this.comboBoxLanguage.TabIndex = 46;
@@ -286,7 +301,7 @@ namespace IceChat
             // labelLanguage
             // 
             this.labelLanguage.AutoSize = true;
-            this.labelLanguage.Location = new System.Drawing.Point(12, 135);
+            this.labelLanguage.Location = new System.Drawing.Point(10, 196);
             this.labelLanguage.Name = "labelLanguage";
             this.labelLanguage.Size = new System.Drawing.Size(71, 16);
             this.labelLanguage.TabIndex = 45;
@@ -342,9 +357,12 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.checkServerShowButtons);
+            this.tabDisplay.Controls.Add(this.checkNickShowButtons);
+            this.tabDisplay.Controls.Add(this.checkShowNickHost);
+            this.tabDisplay.Controls.Add(this.label17);
             this.tabDisplay.Controls.Add(this.textMaximumLines);
             this.tabDisplay.Controls.Add(this.labelMaxLines);
-            this.tabDisplay.Controls.Add(this.checkMinimizeTray);
             this.tabDisplay.Controls.Add(this.label15);
             this.tabDisplay.Controls.Add(this.trackTransparency);
             this.tabDisplay.Controls.Add(this.checkShowUnreadLine);
@@ -361,9 +379,28 @@ namespace IceChat
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
             // 
+            // checkShowNickHost
+            // 
+            this.checkShowNickHost.AutoSize = true;
+            this.checkShowNickHost.Location = new System.Drawing.Point(286, 11);
+            this.checkShowNickHost.Name = "checkShowNickHost";
+            this.checkShowNickHost.Size = new System.Drawing.Size(181, 20);
+            this.checkShowNickHost.TabIndex = 52;
+            this.checkShowNickHost.Text = "Show Hosts in Nick List";
+            this.checkShowNickHost.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(256, 185);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(310, 16);
+            this.label17.TabIndex = 51;
+            this.label17.Text = "Changing this value will reset all the Windows";
+            // 
             // textMaximumLines
             // 
-            this.textMaximumLines.Location = new System.Drawing.Point(173, 162);
+            this.textMaximumLines.Location = new System.Drawing.Point(173, 182);
             this.textMaximumLines.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textMaximumLines.Name = "textMaximumLines";
             this.textMaximumLines.Size = new System.Drawing.Size(60, 23);
@@ -373,26 +410,16 @@ namespace IceChat
             // 
             this.labelMaxLines.AutoSize = true;
             this.labelMaxLines.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.labelMaxLines.Location = new System.Drawing.Point(12, 165);
+            this.labelMaxLines.Location = new System.Drawing.Point(12, 185);
             this.labelMaxLines.Name = "labelMaxLines";
             this.labelMaxLines.Size = new System.Drawing.Size(148, 16);
             this.labelMaxLines.TabIndex = 50;
             this.labelMaxLines.Text = "Number of Text Lines";
             // 
-            // checkMinimizeTray
-            // 
-            this.checkMinimizeTray.AutoSize = true;
-            this.checkMinimizeTray.Location = new System.Drawing.Point(15, 142);
-            this.checkMinimizeTray.Name = "checkMinimizeTray";
-            this.checkMinimizeTray.Size = new System.Drawing.Size(135, 20);
-            this.checkMinimizeTray.TabIndex = 48;
-            this.checkMinimizeTray.Text = "Minimize to Tray";
-            this.checkMinimizeTray.UseVisualStyleBackColor = true;
-            // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(12, 189);
+            this.label15.Location = new System.Drawing.Point(12, 225);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(239, 16);
             this.label15.TabIndex = 47;
@@ -401,7 +428,7 @@ namespace IceChat
             // trackTransparency
             // 
             this.trackTransparency.BackColor = System.Drawing.Color.White;
-            this.trackTransparency.Location = new System.Drawing.Point(15, 208);
+            this.trackTransparency.Location = new System.Drawing.Point(257, 212);
             this.trackTransparency.Maximum = 100;
             this.trackTransparency.Minimum = 25;
             this.trackTransparency.Name = "trackTransparency";
@@ -1906,6 +1933,26 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
+            // checkNickShowButtons
+            // 
+            this.checkNickShowButtons.AutoSize = true;
+            this.checkNickShowButtons.Location = new System.Drawing.Point(286, 37);
+            this.checkNickShowButtons.Name = "checkNickShowButtons";
+            this.checkNickShowButtons.Size = new System.Drawing.Size(195, 20);
+            this.checkNickShowButtons.TabIndex = 53;
+            this.checkNickShowButtons.Text = "Show Buttons in Nick List";
+            this.checkNickShowButtons.UseVisualStyleBackColor = true;
+            // 
+            // checkServerShowButtons
+            // 
+            this.checkServerShowButtons.AutoSize = true;
+            this.checkServerShowButtons.Location = new System.Drawing.Point(286, 63);
+            this.checkServerShowButtons.Name = "checkServerShowButtons";
+            this.checkServerShowButtons.Size = new System.Drawing.Size(211, 20);
+            this.checkServerShowButtons.TabIndex = 54;
+            this.checkServerShowButtons.Text = "Show Buttons in Server List";
+            this.checkServerShowButtons.UseVisualStyleBackColor = true;
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2110,10 +2157,14 @@ namespace IceChat
         private System.Windows.Forms.Label labelWhoisEvent;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ComboBox comboBufferSize;
-        private System.Windows.Forms.CheckBox checkMinimizeTray;
         private System.Windows.Forms.TextBox textMaximumLines;
         private System.Windows.Forms.Label labelMaxLines;
         private System.Windows.Forms.TextBox textExternalPlayCommand;
         private System.Windows.Forms.CheckBox checkExternalPlayCommand;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.CheckBox checkMinimizeTray;
+        private System.Windows.Forms.CheckBox checkShowNickHost;
+        private System.Windows.Forms.CheckBox checkNickShowButtons;
+        private System.Windows.Forms.CheckBox checkServerShowButtons;
     }
 }

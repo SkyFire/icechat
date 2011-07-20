@@ -37,8 +37,8 @@ namespace IceChat
         //default color values
         private int _channelOwnerColor = 4;
         private int _channelAdminColor = 4;
-        private int _channelOpColor = 4;
-        private int _channelHalfOpColor = 4;
+        private int _channelOpColor = 12;
+        private int _channelHalfOpColor = 7;
         private int _channelVoiceColor = 9;
         private int _channelRegularColor = 1;
 
@@ -300,6 +300,9 @@ namespace IceChat
         private bool _minimizeTray = false;
         private bool _isOnTray = false;
         private int _maxTextLines = 500;
+        private bool _showNickHost = true;
+        private bool _showNickButtons = true;
+        private bool _showServerButtons = true;
 
         private int _panelRightWidth = 230;
         private int _panelLeftWidth = 200;
@@ -481,6 +484,28 @@ namespace IceChat
             get { return this._showNickList; }
             set { this._showNickList = value; }
         }
+
+        [XmlElement("ShowNickHost")]
+        public bool ShowNickHost
+        {
+            get { return this._showNickHost; }
+            set { this._showNickHost = value; }
+        }
+
+        [XmlElement("ShowNickButtons")]
+        public bool ShowNickButtons
+        {
+            get { return this._showNickButtons; }
+            set { this._showNickButtons = value; }
+        }
+
+        [XmlElement("ShowServerButtons")]
+        public bool ShowServerButtons
+        {
+            get { return this._showServerButtons; }
+            set { this._showServerButtons = value; }
+        }
+
 
         [XmlElement("DisableQueries")]
         public bool DisableQueries

@@ -181,6 +181,7 @@ namespace IceChat
             this.textNickservPassword.Text = serverSetting.NickservPassword;
             this.checkAutoStart.Checked = serverSetting.AutoStart;
             this.checkUseSSL.Checked = serverSetting.UseSSL;
+            this.checkUseIPv6.Checked = serverSetting.UseIPv6;
             this.checkInvalidCertificate.Checked = serverSetting.SSLAcceptInvalidCertificate;
 
             if (serverSetting.AutoJoinChannels != null)
@@ -273,6 +274,8 @@ namespace IceChat
                 radioSocks4.Checked = true;
             else if (serverSetting.ProxyType == 3)
                 radioSocks5.Checked = true;
+
+            this.textNotes.Text = serverSetting.ServerNotes;
         }
 
         /// <summary>
@@ -381,6 +384,7 @@ namespace IceChat
             serverSetting.RejoinChannels = checkRejoinChannel.Checked;
             serverSetting.DisableCTCP = checkDisableCTCP.Checked;
             serverSetting.AutoStart = checkAutoStart.Checked;
+            serverSetting.UseIPv6 = checkUseIPv6.Checked;
             serverSetting.UseSSL = checkUseSSL.Checked;
             serverSetting.SSLAcceptInvalidCertificate = checkInvalidCertificate.Checked;
             serverSetting.Encoding = comboEncoding.Text;
@@ -398,6 +402,7 @@ namespace IceChat
             else if (radioSocks5.Checked)
                 serverSetting.ProxyType = 3;
 
+            serverSetting.ServerNotes = textNotes.Text;
 
             if (newServer == true)
             {

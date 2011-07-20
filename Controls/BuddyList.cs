@@ -116,6 +116,10 @@ namespace IceChat
 
             g.FillRectangle(l, headerR);
             // http://www.scip.be/index.php?Page=ArticlesNET01&Lang=EN
+
+            System.Diagnostics.Debug.WriteLine("p:" + this.Parent.GetType());
+            System.Diagnostics.Debug.WriteLine("pp:" + this.Parent.Parent.GetType());
+            
             if (this.Parent.Parent.GetType() != typeof(FormFloat))
             {
                 if (Application.RenderWithVisualStyles)
@@ -230,7 +234,7 @@ namespace IceChat
                 TreeNode t = new TreeNode();
                 t.Text = buddy.Nick;
                 t.Tag = connection;
-                t.ToolTipText = buddy.Note;
+                t.ToolTipText = connection.ServerSetting.ServerName;
 
                 if (buddy.Connected)
                 {

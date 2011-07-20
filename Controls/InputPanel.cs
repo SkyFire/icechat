@@ -129,12 +129,20 @@ namespace IceChat
                 }
                 else
                 {
-                    foreach (string line in lines)
+                    if (lines.Length > 4)
                     {
-                        if (line.Length > 0)
+                        //we are pasting 5 lines or more, lets ask
+                        DialogResult ask = MessageBox.Show("You will be pasting " + lines.Length + " lines, do you wish to proceed?", "IceChat", MessageBoxButtons.YesNo);
+                        if (ask == DialogResult.Yes)
                         {
-                            textInput.addToBuffer(line);
-                            OnCommand(this, line);
+                            foreach (string line in lines)
+                            {
+                                if (line.Length > 0)
+                                {
+                                    textInput.addToBuffer(line);
+                                    OnCommand(this, line);
+                                }
+                            }
                         }
                     }
                 }

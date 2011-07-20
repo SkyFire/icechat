@@ -602,7 +602,7 @@ namespace IceChat
                     {
                         try
                         {
-                            if (clickedWord.StartsWith("www"))
+                            if (clickedWord.ToLower().StartsWith("www"))
                                 clickedWord = "http://" + clickedWord;
                             System.Diagnostics.Process.Start(clickedWord);
                         }
@@ -792,13 +792,17 @@ namespace IceChat
 
         internal int MaximumTextLines
         {
+            get
+            {
+                return _maxTextLines;
+            }
             set { 
                 
                 _maxTextLines = value;
                 
                 _displayLines = new DisplayLine[_maxTextLines * 4];
                 _textLines = new TextLine[_maxTextLines];
-
+                
                 LoadTextSizes();
                 
             }
@@ -1005,7 +1009,7 @@ namespace IceChat
                         {
 
                         }
-                        System.Diagnostics.Debug.WriteLine("match:" + (x + totalChars));
+                        //System.Diagnostics.Debug.WriteLine("match:" + (x + totalChars));
                     }
                 }
                 //System.Diagnostics.Debug.WriteLine(_textLines[i].line.IndexOf(data));
@@ -1627,7 +1631,8 @@ namespace IceChat
                 Font font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
 
                 int redline = -1;
-                if (FormMain.Instance.IceChatOptions.ShowUnreadLine)
+
+                if (FormMain.Instance.IceChatOptions.ShowUnreadLine && !_singleLine)
                 {
                     for (int i = _totaldisplayLines - 1, j = 0; i >= 0; --i)
                     {
@@ -1669,16 +1674,12 @@ namespace IceChat
                     curBackColor = _backColor;
                     
                     //check if in a url
-                    
                     if (!isInUrl)
                     {
                         //underline = false;
                         font = null;
                         font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
                     }
-                    
-                    //font = null;
-                    //font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular, GraphicsUnit.Point);
                     
                     if (line.Length > 0)
                     {
@@ -1789,7 +1790,6 @@ namespace IceChat
                                     if (bold) fs = fs | FontStyle.Bold;
 
                                     font = new Font(this.Font.Name, this.Font.Size, fs, GraphicsUnit.Point);
-                                    //font = new Font(this.Font.Name, this.Font.Size, (underline == false) ? FontStyle.Regular : FontStyle.Underline);
                                     break;
                                 case italicChar:
                                     //italic character
@@ -2328,23 +2328,21 @@ namespace IceChat
             colors[27] = System.Drawing.ColorTranslator.FromHtml("#FFFF99");
             colors[28] = System.Drawing.ColorTranslator.FromHtml("#339900");
             colors[29] = System.Drawing.ColorTranslator.FromHtml("#FF9900");
+            
             colors[30] = System.Drawing.ColorTranslator.FromHtml("#FFDAB9");
             colors[31] = System.Drawing.ColorTranslator.FromHtml("#2F4F4F");
-
             colors[32] = System.Drawing.ColorTranslator.FromHtml("#D8E9EC");
-            colors[33] = System.Drawing.ColorTranslator.FromHtml("#E2FF00");
-            colors[34] = System.Drawing.ColorTranslator.FromHtml("#5FDAEE");
-            colors[35] = System.Drawing.ColorTranslator.FromHtml("#9E0000");
+            colors[33] = System.Drawing.ColorTranslator.FromHtml("#5FDAEE");
+            colors[34] = System.Drawing.ColorTranslator.FromHtml("#E2FF00");
+            colors[35] = System.Drawing.ColorTranslator.FromHtml("#00009E");
 
-            //yellow / orange
-            colors[36] = System.Drawing.ColorTranslator.FromHtml("#CCFFFF");
-            colors[37] = System.Drawing.ColorTranslator.FromHtml("#99FFFF");
-            colors[38] = System.Drawing.ColorTranslator.FromHtml("#66FFFF");
-            colors[39] = System.Drawing.ColorTranslator.FromHtml("#33CCFF");
-            colors[40] = System.Drawing.ColorTranslator.FromHtml("#3399FF");
-            colors[41] = System.Drawing.ColorTranslator.FromHtml("#3366FF");
+            colors[36] = System.Drawing.ColorTranslator.FromHtml("#FFFFCC");
+            colors[37] = System.Drawing.ColorTranslator.FromHtml("#FFFF99");
+            colors[38] = System.Drawing.ColorTranslator.FromHtml("#FFFF66");
+            colors[39] = System.Drawing.ColorTranslator.FromHtml("#FFCC33");
+            colors[40] = System.Drawing.ColorTranslator.FromHtml("#FF9933");
+            colors[41] = System.Drawing.ColorTranslator.FromHtml("#FF6633");
 
-            //greens
             colors[42] = System.Drawing.ColorTranslator.FromHtml("#c6ffc6");
             colors[43] = System.Drawing.ColorTranslator.FromHtml("#84ff84");
             colors[44] = System.Drawing.ColorTranslator.FromHtml("#00ff00");
@@ -2353,22 +2351,25 @@ namespace IceChat
             colors[47] = System.Drawing.ColorTranslator.FromHtml("#004100");
 
             //blues
-            colors[48] = System.Drawing.ColorTranslator.FromHtml("#ffffc6");
-            colors[49] = System.Drawing.ColorTranslator.FromHtml("#ffff84");
-            colors[50] = System.Drawing.ColorTranslator.FromHtml("#ffff00");
-            colors[51] = System.Drawing.ColorTranslator.FromHtml("#FF9966");
-            colors[52] = System.Drawing.ColorTranslator.FromHtml("#FF6666");
-            colors[53] = System.Drawing.ColorTranslator.FromHtml("#FF0033");
+            colors[48] = System.Drawing.ColorTranslator.FromHtml("#C6FFFF");
+            colors[49] = System.Drawing.ColorTranslator.FromHtml("#84FFFF");
+            colors[50] = System.Drawing.ColorTranslator.FromHtml("#00FFFF");
+            colors[51] = System.Drawing.ColorTranslator.FromHtml("#6699FF");
+            colors[52] = System.Drawing.ColorTranslator.FromHtml("#6666FF");
+            colors[53] = System.Drawing.ColorTranslator.FromHtml("#3300FF");
+            
 
+            
             //reds
-            colors[54] = System.Drawing.ColorTranslator.FromHtml("#99CCFF");
-            colors[55] = System.Drawing.ColorTranslator.FromHtml("#6699FF");
-            colors[56] = System.Drawing.ColorTranslator.FromHtml("#3366FF");
-            colors[57] = System.Drawing.ColorTranslator.FromHtml("#3300FF");
-            colors[58] = System.Drawing.ColorTranslator.FromHtml("#0000CC");
-            colors[59] = System.Drawing.ColorTranslator.FromHtml("#0000AA");
+            colors[54] = System.Drawing.ColorTranslator.FromHtml("#FFCC99");
+            colors[55] = System.Drawing.ColorTranslator.FromHtml("#FF9966");
+            colors[56] = System.Drawing.ColorTranslator.FromHtml("#ff6633");
+            colors[57] = System.Drawing.ColorTranslator.FromHtml("#FF0033");
+            colors[58] = System.Drawing.ColorTranslator.FromHtml("#CC0000");
+            colors[59] = System.Drawing.ColorTranslator.FromHtml("#AA0000");
 
-            //pink / putple
+
+            //pink / purple
             colors[60] = System.Drawing.ColorTranslator.FromHtml("#ffc7ff");
             colors[61] = System.Drawing.ColorTranslator.FromHtml("#ff86ff");
             colors[62] = System.Drawing.ColorTranslator.FromHtml("#ff00ff");

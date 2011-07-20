@@ -72,7 +72,8 @@ namespace IceChat
         private TextWindow textTopic;
         private WindowType windowType;
         private FlickerFreeListView channelList;
-
+        private TextBox searchText;
+        private ListView.ListViewItemCollection listItems = null;
         private TabControl consoleTab;
 
         private FormMain.ServerMessageType lastMessageType;
@@ -89,6 +90,9 @@ namespace IceChat
         private Thread listenThread;
 
         private System.Timers.Timer dccTimeOutTimer;
+
+        private bool _flashTab;
+        private int _flashValue;
 
         public enum WindowType
         {
@@ -152,6 +156,9 @@ namespace IceChat
             nicks = new Hashtable();
             channelModes = new Hashtable();
             
+            _flashTab = false;
+            _flashValue = 0;
+
             lastMessageType = FormMain.ServerMessageType.Default;
         }
 
@@ -466,6 +473,38 @@ namespace IceChat
             set
             {
                 gotNamesList = value;
+            }
+        }
+
+        internal bool FlashTab
+        {
+            get
+            {
+                return _flashTab;
+            }
+            set
+            {
+                _flashTab = value;
+            }
+        }
+
+        internal int FlashValue
+        {
+            get
+            {
+                _flashValue++;
+                if (_flashValue == 2)
+                    _flashValue = 0;
+
+                return _flashValue;
+            }
+        }
+
+        internal int CheckFlashValue
+        {
+            get
+            {
+                return _flashValue;
             }
         }
 
@@ -892,7 +931,7 @@ namespace IceChat
             }
             else
             {
-                channelTopic = topic;
+                channelTopic = topic;                
                 textTopic.ClearTextWindow();
                 string msgt = FormMain.Instance.GetMessageFormat("Channel Topic Text");
                 msgt = msgt.Replace("$channel", this.TabCaption);
@@ -1146,9 +1185,83 @@ namespace IceChat
             this.channelList.MultiSelect = false;
             this.channelList.FullRowSelect = true;
 
+            Panel searchPanel = new Panel();
+            searchPanel.Height = 30;
+
+            Label searchLabel = new Label();
+            searchLabel.Text = "Search Channels:";
+            searchLabel.Dock = DockStyle.Left;
+            searchLabel.AutoSize = true;
+            searchLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            
+            searchText = new TextBox();
+            searchText.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            searchText.Dock = DockStyle.Fill;
+            searchText.BorderStyle = BorderStyle.Fixed3D;
+
+            Button searchButton = new Button();
+            searchButton.Text = "Search";
+            searchButton.Dock = DockStyle.Right;
+            searchButton.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            searchButton.Click += new EventHandler(OnSearchButtonClick);
+            
+            searchPanel.Controls.Add(searchText);
+            searchPanel.Controls.Add(searchLabel);
+            searchPanel.Controls.Add(searchButton);
+            
+            searchPanel.Dock =  DockStyle.Bottom;
+            
+            
+            this.Controls.Add(searchPanel);
             this.Controls.Add(channelList);
             this.channelList.ResumeLayout(false);
             this.ResumeLayout(false);
+
+        }
+
+        private void OnSearchButtonClick(object sender, EventArgs e)
+        {
+            //filter the channel list according to the specified text
+
+            if (searchText.Text.Length == 0)
+            {
+                //restore the original list
+                //channelList.Items = listItems;
+                if (listItems != null)
+                {
+                    channelList.Items.Clear();
+                    channelList.Items.AddRange(listItems);
+                }
+                listItems = null;
+            }
+            else
+            {
+                if (listItems == null)
+                {
+
+                }
+                listItems = new ListView.ListViewItemCollection(channelList);
+                //channelList.BeginUpdate
+
+                System.Diagnostics.Debug.WriteLine(listItems.Count);
+
+                channelList.Items.Clear();
+                
+                System.Diagnostics.Debug.WriteLine(listItems.Count);
+                
+                foreach (ListViewItem item in listItems)
+                {
+                    System.Diagnostics.Debug.WriteLine(item.Text + ":" + item.Text.Contains(searchText.Text));
+                    if (item.Text.Contains(searchText.Text))
+                    {
+                        channelList.Items.Add(item);        
+
+                    }
+                }
+
+            }
+
 
         }
 

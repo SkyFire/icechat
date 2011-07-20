@@ -42,6 +42,8 @@ namespace IceChatPlugin
         private MenuStrip m_MenuStrip;
         private Panel m_BottomPanel;
         private string currentFolder;
+        private TabControl m_RightPanel;
+        private TabControl m_LeftPanel;
 
         private string m_ServerTreeCurrentTab;
         private IceChat.IRCConnection m_ServerTreeCurrentConnection;
@@ -107,6 +109,18 @@ namespace IceChatPlugin
         {
             get { return m_BottomPanel; }
             set { m_BottomPanel = value; }
+        }
+
+        public TabControl LeftPanel
+        {
+            get { return m_LeftPanel; }
+            set { m_LeftPanel = value; }
+        }
+
+        public TabControl RightPanel
+        {
+            get { return m_RightPanel; }
+            set { m_RightPanel = value; }
         }
 
         public string ServerTreeCurrentTab
@@ -270,6 +284,8 @@ namespace IceChatPlugin
                 hli.Command = item.SubItems[1].Text;
                 hli.Color = Convert.ToInt32(item.SubItems[2].Text);
                 hli.Enabled = item.Checked;
+                hli.FlashTab = Convert.ToBoolean(item.SubItems[3].Text);
+
                 iceChatHighLites.AddHighLight(hli);
             }
             
@@ -308,6 +324,7 @@ namespace IceChatPlugin
                 ListViewItem lvi = this.listHighLite.Items.Add(hli.Match);
                 lvi.SubItems.Add(hli.Command);
                 lvi.SubItems.Add(hli.Color.ToString());
+                lvi.SubItems.Add(hli.FlashTab.ToString());
                 lvi.ForeColor = IrcColor.colors[hli.Color];
                 lvi.Checked = hli.Enabled;
             }
@@ -345,6 +362,7 @@ namespace IceChatPlugin
                 hli.Match = item.Text;
                 hli.Command = item.SubItems[1].Text;
                 hli.Color = Convert.ToInt32(item.SubItems[2].Text);
+                hli.FlashTab = Convert.ToBoolean(item.SubItems[3].Text);
 
                 FormHighLite fi = new FormHighLite(hli, item.Index);
                 fi.SaveHighLite += new FormHighLite.SaveHighLiteDelegate(UpdateHighLite);                
@@ -376,6 +394,8 @@ namespace IceChatPlugin
                 ListViewItem lvi = this.listHighLite.Items.Add(hli.Match);
                 lvi.SubItems.Add(hli.Command);
                 lvi.SubItems.Add(hli.Color.ToString());
+                lvi.SubItems.Add(hli.FlashTab.ToString());
+
                 lvi.ForeColor = IrcColor.colors[hli.Color];
                 lvi.Checked = true;
             }
@@ -390,6 +410,8 @@ namespace IceChatPlugin
                     item.Text = hli.Match;
                     item.SubItems[1].Text = hli.Command;
                     item.SubItems[2].Text = hli.Color.ToString();
+                    item.SubItems[3].Text = hli.FlashTab.ToString();
+
                     item.ForeColor = IrcColor.colors[hli.Color];
                     break;
                 }
@@ -433,7 +455,16 @@ namespace IceChatPlugin
                             message = "&#x3;" + hli.Color.ToString() + message;
 
                         //System.Diagnostics.Debug.WriteLine("matched:" + message + "::" + hli.Match);
+                        if (hli.FlashTab == true)
+                        {
+                            if (args.Channel.Length > 0)
+                                args.Command = "/flash " + args.Channel;
+                            else if (args.Nick.Length > 0)
+                                args.Command = "/flash " + args.Nick;
+                            
+                            OnCommand(args);
 
+                        }
                         break;
                     }
                 }
@@ -443,7 +474,7 @@ namespace IceChatPlugin
         }
 
         public PluginArgs ChannelMessage(PluginArgs args)
-        {
+        {                        
             args.Message = CheckTextHighLite(args);            
             return args;
         }
@@ -613,6 +644,11 @@ namespace IceChatPlugin
         [XmlElement("Enabled")]
         public bool Enabled
         { get; set; }
+
+        [XmlElement("FlashTab")]
+        public bool FlashTab
+        { get; set; }
+
     }
 
 }

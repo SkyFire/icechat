@@ -36,7 +36,9 @@
             this.buttonDownload = new System.Windows.Forms.Button();
             this.labelUpdate = new System.Windows.Forms.Label();
             this.labelNoUpdate = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.labelCurrentFile = new System.Windows.Forms.Label();
+            this.labelSize = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // labelCurrent
@@ -80,7 +82,7 @@
             // labelFolder
             // 
             this.labelFolder.AutoSize = true;
-            this.labelFolder.Location = new System.Drawing.Point(13, 214);
+            this.labelFolder.Location = new System.Drawing.Point(13, 243);
             this.labelFolder.Name = "labelFolder";
             this.labelFolder.Size = new System.Drawing.Size(46, 16);
             this.labelFolder.TabIndex = 4;
@@ -119,19 +121,39 @@
             this.labelNoUpdate.Text = "Your are running Latest Version";
             this.labelNoUpdate.Visible = false;
             // 
-            // progressBar1
+            // progressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(16, 170);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(386, 23);
-            this.progressBar1.TabIndex = 8;
+            this.progressBar.Location = new System.Drawing.Point(16, 170);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(386, 23);
+            this.progressBar.TabIndex = 8;
+            // 
+            // labelCurrentFile
+            // 
+            this.labelCurrentFile.AutoSize = true;
+            this.labelCurrentFile.Location = new System.Drawing.Point(13, 207);
+            this.labelCurrentFile.Name = "labelCurrentFile";
+            this.labelCurrentFile.Size = new System.Drawing.Size(90, 16);
+            this.labelCurrentFile.TabIndex = 9;
+            this.labelCurrentFile.Text = "Current File:";
+            // 
+            // labelSize
+            // 
+            this.labelSize.AutoSize = true;
+            this.labelSize.Location = new System.Drawing.Point(408, 177);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(35, 16);
+            this.labelSize.TabIndex = 10;
+            this.labelSize.Text = "Size";
             // 
             // FormUpdater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(593, 239);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(593, 272);
+            this.Controls.Add(this.labelSize);
+            this.Controls.Add(this.labelCurrentFile);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.labelNoUpdate);
             this.Controls.Add(this.labelUpdate);
             this.Controls.Add(this.buttonDownload);
@@ -162,7 +184,9 @@
         private System.Windows.Forms.Button buttonDownload;
         private System.Windows.Forms.Label labelUpdate;
         private System.Windows.Forms.Label labelNoUpdate;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label labelCurrentFile;
+        private System.Windows.Forms.Label labelSize;
     }
 }
 

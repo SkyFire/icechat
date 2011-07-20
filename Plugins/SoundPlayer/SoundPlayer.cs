@@ -40,7 +40,10 @@ namespace IceChatPlugin
         private MenuStrip m_MenuStrip;
         private Panel m_BottomPanel;
         private string currentFolder;
-        
+
+        private TabControl m_RightPanel;
+        private TabControl m_LeftPanel;
+
         //all the events get declared here
         public event OutGoingCommandHandler OnCommand;
 
@@ -106,6 +109,18 @@ namespace IceChatPlugin
         {
             get { return m_BottomPanel; }
             set { m_BottomPanel = value; }
+        }
+
+        public TabControl LeftPanel
+        {
+            get { return m_LeftPanel; }
+            set { m_LeftPanel = value; }
+        }
+
+        public TabControl RightPanel
+        {
+            get { return m_RightPanel; }
+            set { m_RightPanel = value; }
         }
 
         //declare the standard methods

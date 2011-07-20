@@ -30,6 +30,7 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using IceChatPlugin;
 
 namespace IceChat
 {
@@ -74,6 +75,8 @@ namespace IceChat
 
         private bool showTabs;
 
+        private System.Timers.Timer flashTabTimer;
+
         //public event System.EventHandler SelectedIndexChanged;
         public delegate void TabEventHandler(object sender, TabEventArgs e);
         public event TabEventHandler SelectedIndexChanged;
@@ -94,6 +97,17 @@ namespace IceChat
             _popupMenu = ConsolePopupMenu();
             _popupMenu.ItemClicked += new ToolStripItemClickedEventHandler(OnPopupMenu_ItemClicked);
 
+            flashTabTimer = new System.Timers.Timer();
+            flashTabTimer.Interval = 1000;
+            flashTabTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnFlashTabTimerElapsed);
+
+
+        }
+
+        private void OnFlashTabTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Invalidate();
+            FormMain.Instance.ServerTree.Invalidate();
         }
 
         internal List<IceTabPage> TabPages 
@@ -146,7 +160,8 @@ namespace IceChat
             {
                 this.showTabs = value;
                 //re-draw the panel accordingly
-                this.Refresh();
+                //this.Refresh();
+                this.Invalidate();
             }
         }
 
@@ -162,7 +177,7 @@ namespace IceChat
 
         internal void SelectTab(IceTabPage page)
         {
-            if (CurrentTab!=null && CurrentTab.TextWindow!=null)
+            if (CurrentTab != null && CurrentTab.TextWindow != null)
                 CurrentTab.TextWindow.resetUnreadMarker();
 
             for (int i = 0; i < _TabPages.Count; i++)
@@ -308,7 +323,21 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Clear All", "/clear all console", StaticMethods.LoadResourceImage("clear.png")));
             menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add(NewMenuItem("Quit Server", "//quit", StaticMethods.LoadResourceImage("disconected.png")));
+            menu.Items.Add(NewMenuItem("Auto Join", "/autojoin", null));
+            menu.Items.Add(NewMenuItem("Auto Perform", "/autoperform", null));
             
+            if (FormMain.Instance.IceChatPlugins != null)
+            {
+                foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                {
+                    ToolStripItem[] popServer = ipc.AddServerPopups();
+                    if (popServer != null && popServer.Length > 0)
+                    {
+                        menu.Items.AddRange(popServer);
+                    }
+                }
+            }
+
             //add the console popup menu
             AddPopupMenu("Console", menu);
             return menu;
@@ -323,6 +352,17 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", StaticMethods.LoadResourceImage("refresh.png")));
             menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", StaticMethods.LoadResourceImage("info.png")));
             menu.Items.Add(NewMenuItem("Change Font", "/font $1", StaticMethods.LoadResourceImage("fonts.png")));
+
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                ToolStripItem[] popServer = ipc.AddChannelPopups();
+                if (popServer != null && popServer.Length > 0)
+                {
+                    menu.Items.AddRange(popServer);
+                }
+            }
+
+
             //add then channel popup menu
             AddPopupMenu("Channel", menu);
             return menu;
@@ -336,6 +376,15 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Close Window", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
             menu.Items.Add(NewMenuItem("User Information", "/userinfo $1", StaticMethods.LoadResourceImage("refresh.png")));
             menu.Items.Add(NewMenuItem("Silence User", "/silence +$1", StaticMethods.LoadResourceImage("info.png")));
+
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                ToolStripItem[] popServer = ipc.AddQueryPopups();
+                if (popServer != null && popServer.Length > 0)
+                {
+                    menu.Items.AddRange(popServer);
+                }
+            }
 
             //add then channel popup menu
             AddPopupMenu("Query", menu);
@@ -537,7 +586,32 @@ namespace IceChat
                 if (this._selectedIndex > (_TabPages.Count - 1))
                     SelectedIndex = 0;
                 
-                CalculateTabSizes(g);                
+                CalculateTabSizes(g);
+
+                bool flashTabs = false;
+
+                //check if we have any flashing tabs
+                for (int i = 0; i < _TabPages.Count; i++)
+                {
+                    if (_TabPages[i].FlashTab == true)
+                    {
+                        flashTabs = true;
+                        break;
+                    }
+                }
+
+                if (flashTabs == true)
+                {
+                    //enable the flash tab timer
+                    flashTabTimer.Enabled = true;
+                    flashTabTimer.Start();
+                }
+                else
+                {
+                    //disable the flash tab timer
+                    flashTabTimer.Stop();
+                    flashTabTimer.Enabled = false;
+                }
 
                 Region rsaved = g.Clip;
                 for (int i = 0; i < _TabPages.Count; i++)
@@ -647,13 +721,23 @@ namespace IceChat
                 Rectangle rimage = new Rectangle(recBounds.X, recBounds.Y, img.Width, img.Height);
                 if (bSelected)
                 {
-                    rimage.Offset(4, 4);
+                    rimage.Offset(4, 4);                    
                     g.DrawImage(img, rimage);
+                    
+                    //disable flashing, since it is the current page
+                    tabPage.FlashTab = false;
                 }
                 else
                 {
                     rimage.Offset(4, 6);
-                    g.DrawImage(img, rimage);
+                    if (tabPage.FlashTab == true)
+                    {
+                        if (tabPage.FlashValue == 1)
+                            g.DrawImage(img, rimage);
+                    }
+                    else
+                        g.DrawImage(img, rimage);
+                    
                 }
 
                 StringFormat stringFormat = new StringFormat();

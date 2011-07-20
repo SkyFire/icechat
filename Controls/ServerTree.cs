@@ -50,6 +50,8 @@ namespace IceChat
         private int selectedNodeIndex = 0;
         private int selectedServerID = 0;
 
+        private ServerSetting selectedDragID = null;
+
         private string headerCaption = "";
         private ToolTip toolTip;
         private int toolTipNode = -1;
@@ -89,6 +91,8 @@ namespace IceChat
 
             serversCollection = LoadServers();
 
+            this.panelButtons.VisibleChanged += new EventHandler(panelButtons_VisibleChanged);
+
             foreach (ServerSetting s in serversCollection.listServers)
             {
                 if (s.AltNickName == null)
@@ -101,6 +105,15 @@ namespace IceChat
             Invalidate();
             
         }
+
+        private void panelButtons_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.panelButtons.Visible == true)
+                this.vScrollBar.Height = this.Height - (this.headerHeight + this.panelButtons.Height);
+            else
+                this.vScrollBar.Height = this.Height - this.headerHeight;
+        }
+
         //this is to make the arrow keys work in the user control
         protected override bool IsInputKey(Keys AKeyData)
         {
@@ -129,7 +142,11 @@ namespace IceChat
         private void OnResize(object sender, EventArgs e)
         {
             this.vScrollBar.Left = this.Width - this.vScrollBar.Width;
-            this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+
+            if (this.panelButtons.Visible == true)
+                this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+            else
+                this.vScrollBar.Height = this.Height - this.headerHeight;
         }
 
         internal void ApplyLanguage()
@@ -274,9 +291,22 @@ namespace IceChat
             int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
             int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1 + topIndex;
+            
             g.Dispose();
             
             SelectNodeByIndex(nodeNumber, true);
+            
+            if (e.Button == MouseButtons.Left)
+            {
+                object findNode = FindNodeValue(nodeNumber);
+                if (findNode != null)
+                {
+                    if (findNode.GetType() == typeof(ServerSetting))
+                    {
+                        selectedDragID = (ServerSetting)findNode;
+                    }
+                }
+            }
 
             if (e.Button == MouseButtons.Middle)
             {
@@ -305,7 +335,45 @@ namespace IceChat
 
             int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
-            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1;
+            int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1 + topIndex;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                //try dragging a node
+                if (nodeNumber <= serverNodes.Count)
+                {
+                    object findNode = FindNodeValue(nodeNumber);
+                    if (findNode != null)
+                    {
+                        if (findNode.GetType() == typeof(ServerSetting) && selectedDragID != null)
+                        {
+                            //can only drag a server node
+                            ServerSetting index1 = (ServerSetting)findNode;
+                            if (index1 == selectedDragID) return;
+
+                            serversCollection.listServers.Remove(selectedDragID);
+                            serversCollection.listServers.Insert(index1.ID - 1, selectedDragID);
+
+                            //rename all the servers ID's in the list
+                            int count = 1;
+                            foreach (ServerSetting s in serversCollection.listServers)
+                            {
+                                s.ID = count;
+                                count++;
+                            }
+
+                            //re-select the proper node (NOTE QUITE RIGHT)                            
+                            selectedNodeIndex = nodeNumber;
+
+                            this.Invalidate();
+
+                        }
+                    }
+                }
+
+                return;
+            }
+
 
             if (nodeNumber <= serverNodes.Count)
             {
@@ -511,6 +579,13 @@ namespace IceChat
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
             //see what menu to popup according to the nodetype
+            if (selectedDragID != null)
+            {
+                //save the server list
+                SaveServerSettings();
+                selectedDragID = null;
+            }
+
             if (e.Button == MouseButtons.Right)
             {
                 //see what kind of a node we right clicked
@@ -741,9 +816,10 @@ namespace IceChat
             if (selectedNodeIndex == 0 || selectedServerID == 0) return;
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
+            if (command.Length == 0) return;
 
             IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
-            if (c!=null)
+            if (c != null)
             {
                 if (c.IsConnected)
                 {
@@ -827,7 +903,11 @@ namespace IceChat
                     }
                 }
                 //draw each individual server
-                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
+                Rectangle listR;
+                if (this.panelButtons.Visible == true)
+                    listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
+                else
+                    listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
 
                 int currentY = listR.Y;
                 int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
@@ -835,8 +915,6 @@ namespace IceChat
                 BuildServerNodes();
 
                 int nodeCount = 0;
-
-                //System.Diagnostics.Debug.WriteLine("selectedNode:" + selectedNodeIndex);
 
                 foreach (KeyValuePair<string, object> de in serverNodes)
                 {
@@ -896,11 +974,24 @@ namespace IceChat
                             g.DrawImage(StaticMethods.LoadResourceImage("refresh.png"), x, currentY, 16, 16);
                             break;
                         case "3":   //channel
-                            g.DrawImage(StaticMethods.LoadResourceImage("channel.png"), x, currentY, 16, 16);
+                            //check if we are flashing or not
+                            if (((IceTabPage)value).FlashTab == true)
+                            {
+                                if (((IceTabPage)value).CheckFlashValue == 1)
+                                    g.DrawImage(StaticMethods.LoadResourceImage("channel.png"), x, currentY, 16, 16);
+                            }
+                            else
+                                g.DrawImage(StaticMethods.LoadResourceImage("channel.png"), x, currentY, 16, 16);
                             break;
                         case "4":   //query
                         case "5":   //dcc chat
-                            g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
+                            if (((IceTabPage)value).FlashTab == true)
+                            {
+                                if (((IceTabPage)value).CheckFlashValue == 1)
+                                    g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
+                            }
+                            else
+                                g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
                             break;
                         case "6":   //channel list
                             g.DrawImage(StaticMethods.LoadResourceImage("channellist.png"), x, currentY, 16, 16);
@@ -1183,7 +1274,16 @@ namespace IceChat
         {
             get { return false; }
         }
-        
+
+        internal bool ShowServerButtons
+        {
+            get { return this.panelButtons.Visible; }
+            set 
+            { 
+                this.panelButtons.Visible = value;
+            }
+        }
+
         #region Server Tree Buttons
         
         private void buttonConnect_Click(object sender, EventArgs e)
@@ -1320,12 +1420,42 @@ namespace IceChat
         #region Server Popup Menus
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            buttonConnect.PerformClick();
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
+
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c != null)
+            {
+                if (!c.IsConnected)
+                {
+                    //switch to the Console
+                    FormMain.Instance.TabMain.SelectedIndex = 0;
+                    c.ConnectSocket();
+                }
+                return;
+            }
+            if (NewServerConnection != null)
+                NewServerConnection(GetServerSetting(selectedServerID));
+
         }
 
         private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            buttonDisconnect.PerformClick();
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
+
+            IRCConnection c = (IRCConnection)serverConnections[selectedServerID];
+            if (c != null)
+            {
+                c.AttemptReconnect = false;
+                if (c.IsConnected)
+                {
+                    FormMain.Instance.ParseOutGoingCommand(c, "//quit " + c.ServerSetting.QuitMessage);
+                }
+                return;
+            }
         }
 
         private void forceDisconnectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1344,7 +1474,21 @@ namespace IceChat
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            buttonEdit.PerformClick();
+            if (selectedServerID > 0)
+            {
+                f = new FormServers(GetServerSetting(selectedServerID));
+                f.SaveServer += new FormServers.SaveServerDelegate(OnSaveServer);
+                f.SaveDefaultServer += new FormServers.SaveDefaultServerDelegate(OnSaveDefaultServer);
+            }
+            else
+            {
+                f = new FormServers();
+                f.NewServer += new FormServers.NewServerDelegate(OnNewServer);
+                f.SaveDefaultServer += new FormServers.SaveDefaultServerDelegate(OnSaveDefaultServer);
+            }
+
+            f.ShowDialog(this.Parent);
+
         }
 
         private void autoJoinToolStripMenuItem_Click(object sender, EventArgs e)

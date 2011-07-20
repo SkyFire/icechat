@@ -886,8 +886,6 @@ namespace IceChat
                         TreeNode t = new TreeNode(msg.MessageName);
                         t.Tag = msg.FormattedMessage;
                         treeMessages.Nodes[0].Nodes.Add(t);
-                        if (msg.MessageName == "Channel Message")
-                            System.Diagnostics.Debug.WriteLine(msg.MessageName + ":" + msg.FormattedMessage);
 
                         TreeNode t2 = new TreeNode(msg.MessageName);
                         t2.Tag = msg.FormattedMessage;

@@ -200,7 +200,10 @@ namespace IceChat
         private void OnResize(object sender, EventArgs e)
         {
             this.vScrollBar.Left = this.Width - this.vScrollBar.Width;
-            this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+            if (this.panelButtons.Visible)
+                this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+            else
+                this.vScrollBar.Height = this.Height - this.headerHeight;
         }
 
         internal void ApplyLanguage()
@@ -421,6 +424,8 @@ namespace IceChat
                 //find the nickname number, add 1 to it to make it a non-zero value
                 int nickNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + topIndex;
 
+                if (sortedNickNames == null) return;
+
                 if (nickNumber < sortedNickNames.Count)
                 {
                     if (toolTipNode != nickNumber)
@@ -453,7 +458,8 @@ namespace IceChat
             if (((ToolStripMenuItem)sender).Tag == null) return;
 
             string command = ((ToolStripMenuItem)sender).Tag.ToString();
-            FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, command);
+            if (command.Length > 0)
+                FormMain.Instance.ParseOutGoingCommand(currentWindow.Connection, command);
         }
 
         private void PopulateNicks()
@@ -546,21 +552,18 @@ namespace IceChat
                 }
 
                 //draw the nicks 
-                Rectangle listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
+                Rectangle listR;
+                if (this.panelButtons.Visible)
+                    listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight - panelButtons.Height);
+                else
+                    listR = new Rectangle(0, headerHeight, this.Width, this.Height - headerHeight);
 
                 if (currentWindow != null && currentWindow.WindowStyle == IceTabPage.WindowType.Channel)
                 {
-                    //if (sortedNicks != null)
-                    //    sortedNicks = null;
-
-                    //sortedNicks = new ArrayList(currentWindow.Nicks.Values);
-                    //sortedNicks.Sort();
-
                     PopulateNicks();
 
                     int currentY = listR.Y;
                     int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
-                    //string host = "";
 
                     int randColor = -1;
 
@@ -633,17 +636,18 @@ namespace IceChat
                         //draw the nickname
                         g.DrawString(((Nick)sortedNickNames[i]).nick, this.Font, b, 2, currentY);
                         
+
                         //draw the host
-                        //System.Diagnostics.Debug.WriteLine("drawing:" + ((Nick)sortedNickNames[i]).nick + ":" + u.NickName + ":" + currentWindow.TabCaption);
-                        if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
+                        if (FormMain.Instance.IceChatOptions.ShowNickHost)
                         {
-                            //host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[u.NickName]).Host;
-                            string host = ((Nick)sortedNickNames[i]).host;
-                            //System.Diagnostics.Debug.WriteLine(u.NickName + ":" + ((Nick)sortedNickNames[i]).nick + ":" + host);
-                            if (((Nick)sortedNickNames[i]).host.Length > 0)
-                                g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
+                            if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
+                            {
+                                string host = ((Nick)sortedNickNames[i]).host;
+                                if (((Nick)sortedNickNames[i]).host.Length > 0)
+                                    g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
+                            }
                         }
-                        
+
                         currentY += _lineSize;
                         if (currentY >= (listR.Height + listR.Y))
                         {
@@ -697,11 +701,13 @@ namespace IceChat
                         int subMenu = 0;
 
                         popupMenu.Items.Clear();
-
+                        
                         string nick = sortedNickNames[selectedIndex].ToString();
                         //replace any of the modes
                         for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                             nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+
+                        Nick u = ((Nick)sortedNickNames[selectedIndex]);
 
                         foreach (string menu in menuItems)
                         {
@@ -751,7 +757,12 @@ namespace IceChat
                                     command = command.Replace("$1", nick);
                                     command = command.Replace("$nick", nick);
 
-                                    t.Click += new EventHandler(OnPopupMenuClick);
+                                    if (u.host.Length > 0)
+                                        command = command.Replace("$host", nick + "!" + u.host);
+                                    else
+                                        command = command.Replace("$host", nick);
+
+                                        t.Click += new EventHandler(OnPopupMenuClick);
                                     t.Tag = command;
                                 }
                                 if (menuDepth == 0)
@@ -921,6 +932,21 @@ namespace IceChat
                 UpdateHeader(value);
             }
         }
+
+        internal bool ShowNickButtons
+        {
+            get { return this.panelButtons.Visible; }
+            set 
+            { 
+                this.panelButtons.Visible = value;
+                if (this.panelButtons.Visible)
+                    this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+                else
+                    this.vScrollBar.Height = this.Height - this.headerHeight;
+
+            }
+        }
+        
         /// <summary>
         /// Returns the TabWindow which is currently being shown in the Nicklist
         /// </summary>

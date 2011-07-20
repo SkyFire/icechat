@@ -322,19 +322,16 @@ namespace IceChat
             {
                 serverSocket.EndConnect(ar);
             }
-            catch (Exception e)
+            catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error: " + e.Message, false);
+                    ServerError(this, "Socket Exception Error " + se.ErrorCode + ":" + se.Message, false);
 
                 disconnectError = true;
                 ForceDisconnect();
                 return;
             }
 
-
-            //System.Diagnostics.Debug.WriteLine("connected");
-            //System.Diagnostics.Debug.WriteLine("create networkstream 2");
             socketStream = new NetworkStream(serverSocket, true);
             if (serverSetting.UseSSL)
             {
@@ -431,8 +428,12 @@ namespace IceChat
 
             catch (SocketException se)
             {
+                System.Diagnostics.Debug.WriteLine("CODE:" + se.SocketErrorCode);
+                System.Diagnostics.Debug.WriteLine("ST:"+ se.StackTrace);
+
                 if (ServerError != null)
                     ServerError(this, "Socket Exception Error:" + se.Message.ToString() + ":" + se.ErrorCode, false);
+
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -853,15 +854,18 @@ namespace IceChat
             }
             catch (SocketException se)
             {
-                //ServerError(this, "Socket Exception OnReceiveData Error:" + se.Source + ":" + se.Message.ToString());
                 ServerError(this, "Socket Exception OnReceiveData Error:" + se.Message.ToString(), false);
                 disconnectError = true;
+                attemptReconnect = true;
+                
                 ForceDisconnect();
             }
             catch (Exception e)
             {
                 ServerError(this, "Exception OnReceiveData Error:" + e.Message.ToString(), false);
                 disconnectError = true;
+                attemptReconnect = true;
+
                 ForceDisconnect();
             }
         }
@@ -922,24 +926,47 @@ namespace IceChat
                     IPAddress ipAddress = null;
                     if (IPAddress.TryParse(serverSetting.ServerName, out ipAddress))
                     {
-                        IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
-                        System.Diagnostics.Debug.WriteLine("ipv6 connect:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
-                        serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                        /*
+                        IPHostEntry ipHostInfo = Dns.GetHostEntry(serverSetting.ServerName);
+                        System.Diagnostics.Debug.WriteLine(ipHostInfo.AddressList.Length + ":" + Socket.OSSupportsIPv6);
 
-                        ServerConnect(this, ipAddress.ToString());
-                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                        //msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                        //ServerMessage(this, msg + " (IPv6)");
+                        if (IPAddress.TryParse(serverSetting.ServerName, out ipAddress))
+                        {
+                            System.Diagnostics.Debug.WriteLine("parsed ipv6:" + ipAddress.AddressFamily);
+                        }
 
-                        serverSetting.ServerIP = ipAddress.ToString();
+                        foreach (IPAddress ip in ipHostInfo.AddressList)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ip.Address.ToString() + ":" + ip.AddressFamily);
+                        }
+                        */
+                        //ipAddress = ipHostInfo.AddressList[0];// IPAddress.Parse(address);
+                        
+                        if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
+                        {
+                            System.Diagnostics.Debug.WriteLine("success parse as ipv6 address");
+                            
+                            IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
+                            serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                            serverSocket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, 0);
+                            System.Diagnostics.Debug.WriteLine("ipv6 connect:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
 
-                        System.Diagnostics.Debug.WriteLine("start ipv6 connect here");
-                        serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
+                            ServerConnect(this, ipAddress.ToString());
+                            //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                            //msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
+                            //ServerMessage(this, msg + " (IPv6)");
+
+                            serverSetting.ServerIP = ipAddress.ToString();
+
+                            System.Diagnostics.Debug.WriteLine("start ipv6 connect here");
+                            //serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), serverSocket);
+                            serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady),  null);
+                        }
                         return;
                     }
-                    else
+                    //else
                     {
-                        System.Diagnostics.Debug.WriteLine("can not get ip of ipv6 address");
+                        //System.Diagnostics.Debug.WriteLine("can not get ip of ipv6 address");
                     }
                 }
                 else
@@ -960,15 +987,9 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("try ipv6 1:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
                         serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                        //msg = msg.Replace("$serverip", ipAddress.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
                         serverSetting.ServerIP = ipAddress.ToString();
-
                         ServerConnect(this, ipAddress.ToString());
 
-                        //ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
-
-                        //System.Diagnostics.Debug.WriteLine("start connect here");
                         serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                         return;
                     }
@@ -986,11 +1007,8 @@ namespace IceChat
                                 IPEndPoint ipe = new IPEndPoint(address, Convert.ToInt32(serverSetting.ServerPort));
                                 serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                                //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                                //msg = msg.Replace("$serverip", address.ToString()).Replace("$server", serverSetting.ServerName).Replace("$port", serverSetting.ServerPort);
-                                ServerConnect(this, address.ToString());
                                 serverSetting.ServerIP = address.ToString();
-                                //ServerMessage(this, msg + " (" + whichAddressCurrent + "/" + hostEntry.AddressList.Length + ")");
+                                ServerConnect(this, address.ToString());
 
                                 serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                                 break;
@@ -1022,8 +1040,12 @@ namespace IceChat
             catch (SocketException se)
             {
                 if (ServerError != null)
-                    ServerError(this, "Socket Exception Error 1:" + se.Message, false);
+                    ServerError(this, "Socket Error " + se.ErrorCode + " :" + se.Message, false);
 
+                System.Diagnostics.Debug.WriteLine(se.StackTrace);
+                System.Diagnostics.Debug.WriteLine(se.NativeErrorCode);
+                System.Diagnostics.Debug.WriteLine(se.SocketErrorCode);
+                System.Diagnostics.Debug.WriteLine(se.ErrorCode);
                 disconnectError = true;
                 ForceDisconnect();
             }

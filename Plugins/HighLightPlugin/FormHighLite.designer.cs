@@ -35,6 +35,7 @@
             this.textCommand = new System.Windows.Forms.TextBox();
             this.panelColorPicker = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
+            this.checkFlashTab = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -50,7 +51,7 @@
             // textHiLite
             // 
             this.textHiLite.Location = new System.Drawing.Point(13, 29);
-            this.textHiLite.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textHiLite.Margin = new System.Windows.Forms.Padding(4);
             this.textHiLite.Name = "textHiLite";
             this.textHiLite.Size = new System.Drawing.Size(275, 23);
             this.textHiLite.TabIndex = 1;
@@ -67,7 +68,7 @@
             // 
             // buttonUpdate
             // 
-            this.buttonUpdate.Location = new System.Drawing.Point(15, 201);
+            this.buttonUpdate.Location = new System.Drawing.Point(12, 281);
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(116, 23);
             this.buttonUpdate.TabIndex = 3;
@@ -87,26 +88,37 @@
             // 
             this.panelColorPicker.BackColor = System.Drawing.SystemColors.Control;
             this.panelColorPicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.panelColorPicker.Location = new System.Drawing.Point(16, 122);
+            this.panelColorPicker.Location = new System.Drawing.Point(16, 153);
             this.panelColorPicker.Name = "panelColorPicker";
-            this.panelColorPicker.Size = new System.Drawing.Size(288, 40);
+            this.panelColorPicker.Size = new System.Drawing.Size(288, 122);
             this.panelColorPicker.TabIndex = 21;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 103);
+            this.label3.Location = new System.Drawing.Point(13, 134);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(149, 16);
             this.label3.TabIndex = 22;
             this.label3.Text = "Select Highlight Color";
             // 
+            // checkFlashTab
+            // 
+            this.checkFlashTab.AutoSize = true;
+            this.checkFlashTab.Location = new System.Drawing.Point(15, 106);
+            this.checkFlashTab.Name = "checkFlashTab";
+            this.checkFlashTab.Size = new System.Drawing.Size(148, 20);
+            this.checkFlashTab.TabIndex = 23;
+            this.checkFlashTab.Text = "Flash Channel Tab";
+            this.checkFlashTab.UseVisualStyleBackColor = true;
+            // 
             // FormHighLite
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(318, 236);
+            this.ClientSize = new System.Drawing.Size(318, 316);
+            this.Controls.Add(this.checkFlashTab);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.panelColorPicker);
             this.Controls.Add(this.textCommand);
@@ -115,7 +127,7 @@
             this.Controls.Add(this.textHiLite);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormHighLite";
@@ -137,5 +149,6 @@
         private System.Windows.Forms.TextBox textCommand;
         private System.Windows.Forms.Panel panelColorPicker;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox checkFlashTab;
     }
 }

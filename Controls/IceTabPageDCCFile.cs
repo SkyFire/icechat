@@ -174,25 +174,25 @@ namespace IceChat
                 try
                 {
                     if (dcc.Thread != null)
-                        if (dcc.Thread.IsAlive)
+                        if (dcc.Thread.IsAlive == true)
                             dcc.Thread.Abort();
 
                     if (dcc.Socket != null)
-                        if (dcc.Socket.Connected)
+                        if (dcc.Socket.Connected == true)
                             dcc.Socket.Close();
 
                     dcc.Socket = null;
                     dcc.Thread = null;
-                    
+
                     if (dcc.ListenerSocket != null)
                     {
                         dcc.ListenerSocket.Stop();
                         dcc.ListenerSocket = null;
                     }
-                     
+
                     if (dcc.ListenerThread != null)
                     {
-                        dcc.keepListening = false;                        
+                        dcc.keepListening = false;
                     }
 
                     if (dcc.timeoutTimer != null)
@@ -201,10 +201,14 @@ namespace IceChat
                         dcc.timeoutTimer = null;
                     }
                 }
-                catch (ThreadAbortException ta) {
+                catch (ThreadAbortException ta)
+                {
                     System.Diagnostics.Debug.WriteLine(ta.Message + ":" + ta.StackTrace);
                 }
-                    
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
+                }
 
                 if (!dcc.Finished)
                 {
@@ -313,6 +317,8 @@ namespace IceChat
                     }
                 }
             }
+            
+            System.Diagnostics.Process.Start(FormMain.Instance.IceChatOptions.DCCReceiveFolder);
         }
 
         /// <summary>
@@ -347,7 +353,10 @@ namespace IceChat
                                 
                                 if (dcc.Socket != null)
                                     dcc.Socket.Close();
-                                
+
+                                dcc.FileStream.Flush();
+                                dcc.FileStream.Close();
+
                                 lvi.SubItems[5].Text = "Cancelled";
                                 return;
                             }
@@ -363,19 +372,28 @@ namespace IceChat
             {
                 if (dccFiles[i].Port == port && dccFiles[i].Connection == connection)
                 {
+                    /*
                     IPAddress ipAddr = LongToIPAddress(dccFiles[i].Ip);
                     IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(dccFiles[i].Port));
-
                     dccFiles[i].IPAddress = ipAddr;
                     dccFiles[i].Socket = null;
                     dccFiles[i].Socket = new TcpClient();
+                    
+                    //this needs to be on a seperate thread
                     dccFiles[i].Socket.Connect(ep);
                     if (dccFiles[i].Socket.Connected)
                     {
-                        System.Diagnostics.Debug.WriteLine("start dcc resume thread");
+                        System.Diagnostics.Debug.WriteLine("start dcc resume thread:" + dccFiles[i].Ip );
                         dccFiles[i].Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
-                        dccFiles[i].Thread.Start(dccFiles[i]);
+                        dccFiles[i].Thread.Start((DccFileStruct)dccFiles[i]);
                     }
+                    */
+
+                    dccFiles[i].Thread = new Thread(new ParameterizedThreadStart(ResumeDCC));
+                    dccFiles[i].Thread.Start(dccFiles[i]);
+                    
+                    break;
+
                 }
             }
         }
@@ -480,6 +498,8 @@ namespace IceChat
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("passive dcc file error:" + ex.Message);
+                
+                dcc.FileStream.Close();
             }
         }
 
@@ -542,11 +562,6 @@ namespace IceChat
                 }
 
             }
-            
-            //DccFileStruct dcc.timeoutTimer.Stop();
-            //dcc.ListenerSocket.Stop();
-            //dcc.ListenerThread.Abort();            
-            //RemoveDCCFile(dcc);
         }
 
 
@@ -562,7 +577,6 @@ namespace IceChat
                 {
                     dcc.Socket = dcc.ListenerSocket.AcceptTcpClient();
                     System.Diagnostics.Debug.WriteLine("ip:" + dcc.Socket.Client.RemoteEndPoint.ToString());
-                    //ip:96.54.227.190:62487
                     dcc.Ip = dcc.Socket.Client.RemoteEndPoint.ToString();
                     dcc.ListenerSocket.Stop();
                     dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
@@ -614,13 +628,15 @@ namespace IceChat
                         return;
                     }
                 }
-                
+
+                dcc.Path = dccPath;
+
                 //check if the file exists
                 if (File.Exists(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName))
                 {
                     //check the local file size and compare to what is being sent
                     FileInfo fi = new FileInfo(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName);
-                    if (fi.Length <= dcc.FileSize)
+                    if (fi.Length < dcc.FileSize)
                     {
                         try
                         {
@@ -631,9 +647,11 @@ namespace IceChat
                             dcc.Resume = true;
                             dcc.TotalBytesRead = (uint)fi.Length;
                             dcc.FileStream = new FileStream(dccPath + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Append);
-                            dcc.Path = dccPath;
                             dcc.StartFileSize = dcc.TotalBytesRead;
                             dccFiles.Add(dcc);
+
+                            AddDCCFile(dcc);
+                            UpdateDCCFileStatus(dcc, "W-RESUME");
                         }
                         catch (Exception e)
                         {
@@ -667,12 +685,14 @@ namespace IceChat
                         }
                     }
                 }
+                System.Diagnostics.Debug.WriteLine("next part of start dcc");
+                AddDCCFile(dcc);
+                UpdateDCCFileStatus(dcc, "Waiting");
 
-                IPAddress ipAddr = LongToIPAddress(ip);
-                IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(port));
-
-                dcc.IPAddress = ipAddr;
+                dcc.Thread = new Thread(new ParameterizedThreadStart(ConnectDCC));
+                dcc.Thread.Start(dcc);
                 
+                /*
                 dcc.Socket.Connect(ep);
                 if (dcc.Socket.Connected)
                 {
@@ -684,10 +704,106 @@ namespace IceChat
                     dcc.Thread.Start(dcc);
                     
                 }
+                */ 
             }
             catch (SocketException se)
             {
                 System.Diagnostics.Debug.WriteLine("DCC file connection error:" + se.Message);
+                FormMain.Instance.WindowMessage(connection, "Console", "DCC File Receive Error from " + dcc.Nick + " for file " + dcc.FileName + " : " + se.Message, 4, true);
+
+                //AddDCCFile(dcc);
+                dcc.Errored = true;
+                dcc.Finished = false;
+                dcc.StartTime = 0;
+                UpdateDCCFileProgress(dcc);
+
+            }
+        }
+
+        private void ResumeDCC(object dccObject)
+        {
+            DccFileStruct dcc = (DccFileStruct)dccObject;
+
+            IPAddress ipAddr = LongToIPAddress(dcc.Ip);
+            IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(dcc.Port));
+            dcc.IPAddress = ipAddr;
+            
+            //dcc.Socket = null;
+            //dcc.Socket = new TcpClient();
+
+            System.Diagnostics.Debug.WriteLine("start dcc resume thread:" + dcc.Ip);
+
+            try
+            {
+                dcc.Socket.Connect(ep);
+                if (dcc.Socket.Connected)
+                {
+                    System.Diagnostics.Debug.WriteLine("dcc resume connected");
+                    UpdateDCCFileStatus(dcc, "Resuming");
+                    GetDCCData(dcc);
+                }
+                else
+                {
+                    //dcc did not connect
+                    System.Diagnostics.Debug.WriteLine("dcc resume NOT connected");
+
+                }
+            }
+            catch (SocketException se)
+            {
+                System.Diagnostics.Debug.WriteLine("DCC Resume Connect Error " + se.ErrorCode + ":" + se.StackTrace);
+                FormMain.Instance.WindowMessage(dcc.Connection, "Console", "DCC File Resume Error from " + dcc.Nick + " for file " + dcc.FileName + " : " + se.Message, 4, true);
+
+                dcc.FileStream.Close();
+                dcc.Errored = true;
+                dcc.Finished = false;
+                dcc.StartTime = 0;
+                UpdateDCCFileProgress(dcc);
+
+            }
+        }
+
+        private void ConnectDCC(object dccObject)
+        {
+            DccFileStruct dcc = (DccFileStruct)dccObject;
+
+            IPAddress ipAddr = LongToIPAddress(dcc.Ip);
+            IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(dcc.Port));
+
+            dcc.IPAddress = ipAddr;
+            System.Diagnostics.Debug.WriteLine("ConnectDCC attempt connect to :" + dcc.Ip);
+            
+            try
+            {
+                dcc.Socket.Connect(ep);
+
+                if (dcc.Socket.Connected)
+                {
+                    if (dcc.FileStream == null)
+                        dcc.FileStream = new FileStream(dcc.Path + System.IO.Path.DirectorySeparatorChar + dcc.FileName, FileMode.Create);
+
+                    System.Diagnostics.Debug.WriteLine("connected with dcc");
+                    UpdateDCCFileStatus(dcc, "Connected");
+                    GetDCCData(dcc);
+                }
+                else
+                {
+                    //did not connect
+                }
+            }
+            catch (SocketException se)
+            {
+                System.Diagnostics.Debug.WriteLine("DCC Connect Error " + se.ErrorCode + ":" + se.StackTrace);
+                FormMain.Instance.WindowMessage(dcc.Connection, "Console", "DCC File Receive Error from " + dcc.Nick + " for file " + dcc.FileName + " : " + se.Message, 4, true);
+                
+                dcc.FileStream.Close();
+                //AddDCCFile(dcc);
+                dcc.Errored = true;
+                dcc.Finished = false;
+                dcc.StartTime = 0;
+                UpdateDCCFileProgress(dcc);
+
+
             }
         }
 
@@ -745,7 +861,8 @@ namespace IceChat
                         }
                         catch { }
                         
-                        dccFiles.Remove(dcc);                        
+                        dccFiles.Remove(dcc);           
+             
                         return;
                     }
                 }
@@ -819,9 +936,6 @@ namespace IceChat
                 dcc.Socket = dcc.PassiveSocket.AcceptTcpClient();
                 dcc.PassiveSocket.Stop();
 
-                //string msg = FormMain.Instance.GetMessageFormat("DCC Passive Connect");
-                //msg = msg.Replace("$nick", dcc.Nick);
-                //textWindow.AppendText(msg, 1);
                 System.Diagnostics.Debug.WriteLine("dcc passive socket connected with " + dcc.Nick);
                 dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
                 dcc.Thread.Start(dcc);
@@ -840,13 +954,6 @@ namespace IceChat
         {
             DccFileStruct dcc = (DccFileStruct)dccObject;
                             
-            //add it to the Download List            
-            if (dcc.Style == "Download")
-                AddDCCFile(dcc);
-            
-            //if (!dcc.Resume)
-            //    dccFiles.Add(dcc);
-
             byte[] buffer = new byte[8192];
 
             dcc.StartTime = DateTime.Now.Ticks;
@@ -870,6 +977,7 @@ namespace IceChat
                             if (bytesRead == 0)
                             {
                                 //we have a disconnection/error
+                                System.Diagnostics.Debug.WriteLine("0 bytes, disconnect");
                                 break;
                             }
 
@@ -892,12 +1000,20 @@ namespace IceChat
                                     break;
                                 }
                             }
+
+                            //System.Diagnostics.Debug.WriteLine("received:" + rxTotal);
+
                             buffer[0] = (byte)(rxTotal / 16777216);
                             buffer[1] = (byte)((rxTotal - (16777216 * buffer[0])) / 65536);
                             buffer[2] = (byte)((rxTotal - ((16777216 * buffer[0]) + (65536 * buffer[1]))) / 256);
                             buffer[3] = (byte)(rxTotal - ((16777216 * buffer[0]) + (65536 * buffer[1]) + 256 * buffer[2]));
-                            //ns.Write(buffer, 0, 4);
+                            
+                            ns.Write(buffer, 0, 4);
                         }
+
+                        //System.Diagnostics.Debug.WriteLine("no more data avail:" + dcc.Socket.Connected);
+
+                        //break;
                     }
                     else if (dcc.Style == "Upload")
                     {
@@ -908,9 +1024,6 @@ namespace IceChat
                         NetworkStream ns = dcc.Socket.GetStream();
                         int buffSize = dcc.Socket.SendBufferSize;
                         int bytesToSend ;
-                        //long bytesReceived;
- 
-                        //FormMain.Instance.IceChatOptions.DCCBufferSize
 
                         int buffLimit = FormMain.Instance.IceChatOptions.DCCBufferSize;
 
@@ -962,25 +1075,33 @@ namespace IceChat
                 catch (SocketException se)
                 {
                     System.Diagnostics.Debug.WriteLine("GetDCCData Socket Exception:" + se.Message);
+                    dcc.Errored = true;
+                    break;
                 }
                 catch (Exception ex)
                 {
                     //we have an error
-                    System.Diagnostics.Debug.WriteLine("GetDCCData Error:" + ex.Message);
+                    System.Diagnostics.Debug.WriteLine("GetDCCData Error:" + ex.Message + ":" + ex.StackTrace);
+                    dcc.Errored = true;
                     break;
                 }
 
             }
-            
-            
-            UpdateDCCFileProgress(dcc);
-            
+
             System.Diagnostics.Debug.WriteLine("dcc file disconnected:" + dcc.TotalBytesRead + "/" + dcc.FileSize);
+            if (dcc.TotalBytesRead != dcc.FileSize)
+            {
+                dcc.Finished = false;
+                dcc.Errored = true;
+            }
+
+            UpdateDCCFileProgress(dcc);
             
             try
             {
                 if (dcc.FileStream != null)
                 {
+                    System.Diagnostics.Debug.WriteLine("closing file stream");
                     dcc.FileStream.Flush();
                     dcc.FileStream.Close();
                 }
@@ -1059,7 +1180,9 @@ namespace IceChat
                         {
                             float b = (elasped / 10000000f);
                             float bps = (dcc.TotalBytesRead - dcc.StartFileSize) / b;
-                            
+
+                            System.Diagnostics.Debug.WriteLine(elasped + ":" + (dcc.TotalBytesRead - dcc.StartFileSize) + ":" + bps);
+
                             lvi.SubItems[3].Text = bps.ToString() + " b/s";
                             if (bps > 0)
                             {
@@ -1069,11 +1192,16 @@ namespace IceChat
                         }
                         else
                             lvi.SubItems[3].Text = "0 b/s";
-
-                        lvi.SubItems[4].Text = GetDurationTicks(elasped);
+                        
+                        if (dcc.StartTime == 0)
+                            lvi.SubItems[4].Text = "";
+                        else
+                            lvi.SubItems[4].Text = GetDurationTicks(elasped);
 
                         if (dcc.TotalBytesRead == dcc.FileSize || dcc.Finished)
                             lvi.SubItems[5].Text = "Completed";
+                        else if (dcc.Errored)
+                            lvi.SubItems[5].Text = "ERROR";                        
                         else if (dcc.Resume)
                             lvi.SubItems[5].Text = "Resuming";
                         else
@@ -1103,13 +1231,13 @@ namespace IceChat
     }
     internal class DccFileStruct
     {
-        internal Thread Thread;
-        internal Thread ListenerThread;
-        internal TcpClient Socket;
-        internal TcpListener ListenerSocket;
-        internal FileStream FileStream;
+        internal Thread Thread = null;
+        internal Thread ListenerThread = null;
+        internal TcpClient Socket = null;
+        internal TcpListener ListenerSocket = null;
+        internal FileStream FileStream = null;
         internal IPAddress IPAddress;
-        internal IRCConnection Connection;
+        internal IRCConnection Connection = null;
 
         internal System.Timers.Timer timeoutTimer;
 
@@ -1130,7 +1258,8 @@ namespace IceChat
         internal bool Finished;
         internal bool Resume;
         internal long StartTime;
-        
+        internal bool Errored;
+
         internal string Style;        //upload or download
         internal object ListingTag;
         internal bool keepListening;

@@ -28,126 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tabControlEditor = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.textAliases = new System.Windows.Forms.TextBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.textPopups = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.textScripts = new System.Windows.Forms.TextBox();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
-            this.mainToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.unloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.popupTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControlEditor.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.textPopups = new System.Windows.Forms.TextBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.textAliases = new System.Windows.Forms.TextBox();
+            this.tabControlEditor = new System.Windows.Forms.TabControl();
+            this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBottom.SuspendLayout();
             this.menuStripMain.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabControlEditor.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tabControlEditor
-            // 
-            this.tabControlEditor.Controls.Add(this.tabPage1);
-            this.tabControlEditor.Controls.Add(this.tabPage2);
-            this.tabControlEditor.Controls.Add(this.tabPage3);
-            this.tabControlEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControlEditor.Location = new System.Drawing.Point(0, 24);
-            this.tabControlEditor.Name = "tabControlEditor";
-            this.tabControlEditor.SelectedIndex = 0;
-            this.tabControlEditor.Size = new System.Drawing.Size(663, 271);
-            this.tabControlEditor.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.textAliases);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(655, 242);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Aliases";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // textAliases
-            // 
-            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textAliases.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textAliases.Location = new System.Drawing.Point(3, 3);
-            this.textAliases.Multiline = true;
-            this.textAliases.Name = "textAliases";
-            this.textAliases.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textAliases.Size = new System.Drawing.Size(649, 236);
-            this.textAliases.TabIndex = 0;
-            this.textAliases.WordWrap = false;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.textPopups);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(655, 242);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "PopupMenus";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // textPopups
-            // 
-            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textPopups.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textPopups.Location = new System.Drawing.Point(3, 3);
-            this.textPopups.Multiline = true;
-            this.textPopups.Name = "textPopups";
-            this.textPopups.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textPopups.Size = new System.Drawing.Size(649, 236);
-            this.textPopups.TabIndex = 1;
-            this.textPopups.WordWrap = false;
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.textScripts);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(655, 242);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Scripts";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // textScripts
-            // 
-            this.textScripts.AcceptsTab = true;
-            this.textScripts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textScripts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textScripts.Location = new System.Drawing.Point(3, 3);
-            this.textScripts.Multiline = true;
-            this.textScripts.Name = "textScripts";
-            this.textScripts.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textScripts.Size = new System.Drawing.Size(649, 236);
-            this.textScripts.TabIndex = 1;
-            this.textScripts.WordWrap = false;
             // 
             // panelBottom
             // 
@@ -192,88 +98,12 @@
             this.menuStripMain.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainToolStripMenuItem2,
-            this.popupTypeToolStripMenuItem,
-            this.scriptsToolStripMenuItem});
+            this.popupTypeToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
             this.menuStripMain.Size = new System.Drawing.Size(663, 24);
             this.menuStripMain.TabIndex = 2;
             this.menuStripMain.Text = "menuStrip1";
-            // 
-            // mainToolStripMenuItem2
-            // 
-            this.mainToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.loadToolStripMenuItem,
-            this.unloadToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.scriptsFolderToolStripMenuItem,
-            this.toolStripMenuItem2,
-            this.closeToolStripMenuItem1});
-            this.mainToolStripMenuItem2.Name = "mainToolStripMenuItem2";
-            this.mainToolStripMenuItem2.Size = new System.Drawing.Size(42, 20);
-            this.mainToolStripMenuItem2.Text = "File";
-            // 
-            // newToolStripMenuItem
-            // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.newToolStripMenuItem.Text = "New";
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // unloadToolStripMenuItem
-            // 
-            this.unloadToolStripMenuItem.Name = "unloadToolStripMenuItem";
-            this.unloadToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.unloadToolStripMenuItem.Text = "Unload";
-            this.unloadToolStripMenuItem.Click += new System.EventHandler(this.unloadToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(216, 6);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // scriptsFolderToolStripMenuItem
-            // 
-            this.scriptsFolderToolStripMenuItem.Name = "scriptsFolderToolStripMenuItem";
-            this.scriptsFolderToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.scriptsFolderToolStripMenuItem.Text = "Explore Scripts Folder";
-            this.scriptsFolderToolStripMenuItem.Click += new System.EventHandler(this.scriptsFolderToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(216, 6);
-            // 
-            // closeToolStripMenuItem1
-            // 
-            this.closeToolStripMenuItem1.Name = "closeToolStripMenuItem1";
-            this.closeToolStripMenuItem1.Size = new System.Drawing.Size(219, 22);
-            this.closeToolStripMenuItem1.Text = "Exit";
-            this.closeToolStripMenuItem1.Click += new System.EventHandler(this.closeToolStripMenuItem1_Click);
             // 
             // popupTypeToolStripMenuItem
             // 
@@ -314,13 +144,6 @@
             this.queryToolStripMenuItem.Text = "Query";
             this.queryToolStripMenuItem.Click += new System.EventHandler(this.queryToolStripMenuItem_Click);
             // 
-            // scriptsToolStripMenuItem
-            // 
-            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
-            this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
-            this.scriptsToolStripMenuItem.Text = "Scripts";
-            this.scriptsToolStripMenuItem.Visible = false;
-            // 
             // mainToolStripMenuItem
             // 
             this.mainToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -344,6 +167,78 @@
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.textPopups);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(655, 242);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "PopupMenus";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // textPopups
+            // 
+            this.textPopups.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textPopups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textPopups.Location = new System.Drawing.Point(3, 3);
+            this.textPopups.Multiline = true;
+            this.textPopups.Name = "textPopups";
+            this.textPopups.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textPopups.Size = new System.Drawing.Size(649, 236);
+            this.textPopups.TabIndex = 1;
+            this.textPopups.WordWrap = false;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.textAliases);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(655, 242);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Aliases";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // textAliases
+            // 
+            this.textAliases.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textAliases.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textAliases.Location = new System.Drawing.Point(3, 3);
+            this.textAliases.Multiline = true;
+            this.textAliases.Name = "textAliases";
+            this.textAliases.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textAliases.Size = new System.Drawing.Size(649, 236);
+            this.textAliases.TabIndex = 0;
+            this.textAliases.WordWrap = false;
+            // 
+            // tabControlEditor
+            // 
+            this.tabControlEditor.Controls.Add(this.tabPage1);
+            this.tabControlEditor.Controls.Add(this.tabPage2);
+            this.tabControlEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlEditor.Location = new System.Drawing.Point(0, 24);
+            this.tabControlEditor.Name = "tabControlEditor";
+            this.tabControlEditor.SelectedIndex = 0;
+            this.tabControlEditor.Size = new System.Drawing.Size(663, 271);
+            this.tabControlEditor.TabIndex = 0;
+            // 
+            // closeToolStripMenuItem1
+            // 
+            this.closeToolStripMenuItem1.Name = "closeToolStripMenuItem1";
+            this.closeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem1.Text = "Exit";
+            this.closeToolStripMenuItem1.Click += new System.EventHandler(this.closeToolStripMenuItem1_Click);
+            // 
+            // mainToolStripMenuItem2
+            // 
+            this.mainToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeToolStripMenuItem1});
+            this.mainToolStripMenuItem2.Name = "mainToolStripMenuItem2";
+            this.mainToolStripMenuItem2.Size = new System.Drawing.Size(42, 20);
+            this.mainToolStripMenuItem2.Text = "File";
+            // 
             // FormEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -362,16 +257,14 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "IceChat Editor";
-            this.tabControlEditor.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.panelBottom.ResumeLayout(false);
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabControlEditor.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -379,36 +272,25 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControlEditor;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.MenuStrip menuStripMain;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.TextBox textAliases;
-        private System.Windows.Forms.TextBox textPopups;
-        private System.Windows.Forms.TextBox textScripts;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem unloadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem popupTypeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nickListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem channelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem queryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem scriptsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem scriptsFolderToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TextBox textPopups;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox textAliases;
+        private System.Windows.Forms.TabControl tabControlEditor;
+        private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem1;
     }
 }

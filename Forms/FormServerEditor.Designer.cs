@@ -33,6 +33,7 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.checkUseIPv6 = new System.Windows.Forms.CheckBox();
             this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.textAwayNick = new System.Windows.Forms.TextBox();
             this.labelAwayNickName = new System.Windows.Forms.Label();
@@ -53,6 +54,7 @@
             this.labelServerName = new System.Windows.Forms.Label();
             this.labelNickName = new System.Windows.Forms.Label();
             this.tabPageExtra = new System.Windows.Forms.TabPage();
+            this.checkInvalidCertificate = new System.Windows.Forms.CheckBox();
             this.checkAutoStart = new System.Windows.Forms.CheckBox();
             this.labelServerPassword = new System.Windows.Forms.Label();
             this.textServerPassword = new System.Windows.Forms.TextBox();
@@ -98,6 +100,8 @@
             this.buttonEditBuddy = new System.Windows.Forms.Button();
             this.buttonRemoveBuddy = new System.Windows.Forms.Button();
             this.buttonAddBuddy = new System.Windows.Forms.Button();
+            this.tabPageNotes = new System.Windows.Forms.TabPage();
+            this.textNotes = new System.Windows.Forms.TextBox();
             this.tabPageProxy = new System.Windows.Forms.TabPage();
             this.textProxyPass = new System.Windows.Forms.TextBox();
             this.labelProxyPass = new System.Windows.Forms.Label();
@@ -124,7 +128,7 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.checkInvalidCertificate = new System.Windows.Forms.CheckBox();
+            this.tabPageBNC = new System.Windows.Forms.TabPage();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -132,6 +136,7 @@
             this.tabPageAutoPerform.SuspendLayout();
             this.tabPageIgnore.SuspendLayout();
             this.tabBuddyList.SuspendLayout();
+            this.tabPageNotes.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
             this.tabPageDefault.SuspendLayout();
             this.SuspendLayout();
@@ -173,7 +178,9 @@
             this.tabControlSettings.Controls.Add(this.tabPageAutoPerform);
             this.tabControlSettings.Controls.Add(this.tabPageIgnore);
             this.tabControlSettings.Controls.Add(this.tabBuddyList);
+            this.tabControlSettings.Controls.Add(this.tabPageNotes);
             this.tabControlSettings.Controls.Add(this.tabPageProxy);
+            this.tabControlSettings.Controls.Add(this.tabPageBNC);
             this.tabControlSettings.Controls.Add(this.tabPageDefault);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlSettings.ImageList = this.imageListEditor;
@@ -188,6 +195,7 @@
             // tabPageMain
             // 
             this.tabPageMain.BackColor = System.Drawing.Color.Transparent;
+            this.tabPageMain.Controls.Add(this.checkUseIPv6);
             this.tabPageMain.Controls.Add(this.checkUseSSL);
             this.tabPageMain.Controls.Add(this.textAwayNick);
             this.tabPageMain.Controls.Add(this.labelAwayNickName);
@@ -216,10 +224,20 @@
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
             // 
+            // checkUseIPv6
+            // 
+            this.checkUseIPv6.AutoSize = true;
+            this.checkUseIPv6.Location = new System.Drawing.Point(459, 158);
+            this.checkUseIPv6.Name = "checkUseIPv6";
+            this.checkUseIPv6.Size = new System.Drawing.Size(149, 20);
+            this.checkUseIPv6.TabIndex = 52;
+            this.checkUseIPv6.Text = "Connect with IPv6";
+            this.checkUseIPv6.UseVisualStyleBackColor = true;
+            // 
             // checkUseSSL
             // 
             this.checkUseSSL.AutoSize = true;
-            this.checkUseSSL.Location = new System.Drawing.Point(370, 35);
+            this.checkUseSSL.Location = new System.Drawing.Point(459, 132);
             this.checkUseSSL.Name = "checkUseSSL";
             this.checkUseSSL.Size = new System.Drawing.Size(145, 20);
             this.checkUseSSL.TabIndex = 51;
@@ -398,13 +416,23 @@
             this.tabPageExtra.Controls.Add(this.checkMOTD);
             this.tabPageExtra.Controls.Add(this.checkModeI);
             this.tabPageExtra.ImageIndex = 1;
-            this.tabPageExtra.Location = new System.Drawing.Point(4, 46);
+            this.tabPageExtra.Location = new System.Drawing.Point(4, 25);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageExtra.Size = new System.Drawing.Size(642, 232);
+            this.tabPageExtra.Size = new System.Drawing.Size(642, 253);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
+            // 
+            // checkInvalidCertificate
+            // 
+            this.checkInvalidCertificate.AutoSize = true;
+            this.checkInvalidCertificate.Location = new System.Drawing.Point(15, 167);
+            this.checkInvalidCertificate.Name = "checkInvalidCertificate";
+            this.checkInvalidCertificate.Size = new System.Drawing.Size(230, 20);
+            this.checkInvalidCertificate.TabIndex = 53;
+            this.checkInvalidCertificate.Text = "Accept invalid SSL certificates";
+            this.checkInvalidCertificate.UseVisualStyleBackColor = true;
             // 
             // checkAutoStart
             // 
@@ -427,7 +455,7 @@
             // 
             // textServerPassword
             // 
-            this.textServerPassword.Location = new System.Drawing.Point(412, 9);
+            this.textServerPassword.Location = new System.Drawing.Point(418, 9);
             this.textServerPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textServerPassword.Name = "textServerPassword";
             this.textServerPassword.Size = new System.Drawing.Size(143, 23);
@@ -435,7 +463,7 @@
             // 
             // textNickservPassword
             // 
-            this.textNickservPassword.Location = new System.Drawing.Point(412, 34);
+            this.textNickservPassword.Location = new System.Drawing.Point(418, 34);
             this.textNickservPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textNickservPassword.Name = "textNickservPassword";
             this.textNickservPassword.Size = new System.Drawing.Size(143, 23);
@@ -473,7 +501,7 @@
             // 
             this.comboEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboEncoding.FormattingEnabled = true;
-            this.comboEncoding.Location = new System.Drawing.Point(88, 194);
+            this.comboEncoding.Location = new System.Drawing.Point(123, 194);
             this.comboEncoding.Name = "comboEncoding";
             this.comboEncoding.Size = new System.Drawing.Size(147, 24);
             this.comboEncoding.TabIndex = 4;
@@ -530,11 +558,11 @@
             this.tabPageAutoJoin.Controls.Add(this.textChannel);
             this.tabPageAutoJoin.Controls.Add(this.labelChannel);
             this.tabPageAutoJoin.ImageIndex = 2;
-            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 46);
+            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 25);
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
             this.tabPageAutoJoin.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoJoin.Size = new System.Drawing.Size(642, 232);
+            this.tabPageAutoJoin.Size = new System.Drawing.Size(642, 253);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
             this.tabPageAutoJoin.UseVisualStyleBackColor = true;
@@ -637,11 +665,11 @@
             this.tabPageAutoPerform.Controls.Add(this.textAutoPerform);
             this.tabPageAutoPerform.Controls.Add(this.checkAutoPerform);
             this.tabPageAutoPerform.ImageIndex = 3;
-            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 46);
+            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 25);
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
             this.tabPageAutoPerform.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoPerform.Size = new System.Drawing.Size(642, 232);
+            this.tabPageAutoPerform.Size = new System.Drawing.Size(642, 253);
             this.tabPageAutoPerform.TabIndex = 2;
             this.tabPageAutoPerform.Text = "AutoPerform";
             this.tabPageAutoPerform.UseVisualStyleBackColor = true;
@@ -653,14 +681,14 @@
             this.textAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAutoPerform.Multiline = true;
             this.textAutoPerform.Name = "textAutoPerform";
-            this.textAutoPerform.Size = new System.Drawing.Size(636, 204);
+            this.textAutoPerform.Size = new System.Drawing.Size(636, 225);
             this.textAutoPerform.TabIndex = 28;
             // 
             // checkAutoPerform
             // 
             this.checkAutoPerform.AutoSize = true;
             this.checkAutoPerform.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.checkAutoPerform.Location = new System.Drawing.Point(3, 208);
+            this.checkAutoPerform.Location = new System.Drawing.Point(3, 229);
             this.checkAutoPerform.Name = "checkAutoPerform";
             this.checkAutoPerform.Size = new System.Drawing.Size(636, 20);
             this.checkAutoPerform.TabIndex = 29;
@@ -677,9 +705,9 @@
             this.tabPageIgnore.Controls.Add(this.buttonEditIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonRemoveIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
-            this.tabPageIgnore.Location = new System.Drawing.Point(4, 46);
+            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
             this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(642, 232);
+            this.tabPageIgnore.Size = new System.Drawing.Size(642, 253);
             this.tabPageIgnore.TabIndex = 4;
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
@@ -779,10 +807,10 @@
             this.tabBuddyList.Controls.Add(this.buttonEditBuddy);
             this.tabBuddyList.Controls.Add(this.buttonRemoveBuddy);
             this.tabBuddyList.Controls.Add(this.buttonAddBuddy);
-            this.tabBuddyList.Location = new System.Drawing.Point(4, 46);
+            this.tabBuddyList.Location = new System.Drawing.Point(4, 25);
             this.tabBuddyList.Name = "tabBuddyList";
             this.tabBuddyList.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBuddyList.Size = new System.Drawing.Size(642, 232);
+            this.tabBuddyList.Size = new System.Drawing.Size(642, 253);
             this.tabBuddyList.TabIndex = 7;
             this.tabBuddyList.Text = "Buddy List";
             this.tabBuddyList.UseVisualStyleBackColor = true;
@@ -864,6 +892,26 @@
             this.buttonAddBuddy.Text = "Add";
             this.buttonAddBuddy.UseVisualStyleBackColor = true;
             this.buttonAddBuddy.Click += new System.EventHandler(this.buttonAddBuddy_Click);
+            // 
+            // tabPageNotes
+            // 
+            this.tabPageNotes.Controls.Add(this.textNotes);
+            this.tabPageNotes.Location = new System.Drawing.Point(4, 46);
+            this.tabPageNotes.Name = "tabPageNotes";
+            this.tabPageNotes.Size = new System.Drawing.Size(642, 232);
+            this.tabPageNotes.TabIndex = 8;
+            this.tabPageNotes.Text = "Notes";
+            this.tabPageNotes.UseVisualStyleBackColor = true;
+            // 
+            // textNotes
+            // 
+            this.textNotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textNotes.Location = new System.Drawing.Point(0, 0);
+            this.textNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textNotes.Multiline = true;
+            this.textNotes.Name = "textNotes";
+            this.textNotes.Size = new System.Drawing.Size(642, 232);
+            this.textNotes.TabIndex = 29;
             // 
             // tabPageProxy
             // 
@@ -1134,15 +1182,15 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // checkInvalidCertificate
+            // tabPageBNC
             // 
-            this.checkInvalidCertificate.AutoSize = true;
-            this.checkInvalidCertificate.Location = new System.Drawing.Point(15, 167);
-            this.checkInvalidCertificate.Name = "checkInvalidCertificate";
-            this.checkInvalidCertificate.Size = new System.Drawing.Size(230, 20);
-            this.checkInvalidCertificate.TabIndex = 53;
-            this.checkInvalidCertificate.Text = "Accept invalid SSL certificates";
-            this.checkInvalidCertificate.UseVisualStyleBackColor = true;
+            this.tabPageBNC.Location = new System.Drawing.Point(4, 46);
+            this.tabPageBNC.Name = "tabPageBNC";
+            this.tabPageBNC.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBNC.Size = new System.Drawing.Size(642, 232);
+            this.tabPageBNC.TabIndex = 9;
+            this.tabPageBNC.Text = "BNC Settings";
+            this.tabPageBNC.UseVisualStyleBackColor = true;
             // 
             // FormServers
             // 
@@ -1176,6 +1224,8 @@
             this.tabPageIgnore.PerformLayout();
             this.tabBuddyList.ResumeLayout(false);
             this.tabBuddyList.PerformLayout();
+            this.tabPageNotes.ResumeLayout(false);
+            this.tabPageNotes.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
             this.tabPageProxy.PerformLayout();
             this.tabPageDefault.ResumeLayout(false);
@@ -1283,5 +1333,9 @@
         private System.Windows.Forms.Button buttonAddBuddy;
         private System.Windows.Forms.CheckBox checkUseSSL;
         private System.Windows.Forms.CheckBox checkInvalidCertificate;
+        private System.Windows.Forms.CheckBox checkUseIPv6;
+        private System.Windows.Forms.TabPage tabPageNotes;
+        private System.Windows.Forms.TextBox textNotes;
+        private System.Windows.Forms.TabPage tabPageBNC;
     }
 }
