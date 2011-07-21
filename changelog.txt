@@ -1,3 +1,8 @@
+Build RC 1.2 July 21, 2011
+* Fix Scrollbar issue with new windows where a lot of text gets entered, but does not show
+* Fix Scrollbar issue on Nicklist overlapping Nicklist Buttons panel
+
+
 Build RC1.1 July 20, 2011
 * Updater now shows progress bar status for each file to be downloaded
 * Fix problem with channels clearing when settings changed, and Maximum text lines did not change
@@ -9,7 +14,7 @@ Build RC1.1 July 20, 2011
 * Added option to Show Nick List buttons under Display settings
 * Added option to Show Server List buttons under Display settings
 * If pasting 5 or more lines, client asks if you wish to proceed
-* Fixed DCC File Receiving
+* Fixed more DCC File Receiving problems
 * Fixed colors to be the same colors as IceChat 7
 * Server Disconnect errors should show disconnect in server tree
 

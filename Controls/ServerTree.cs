@@ -78,6 +78,7 @@ namespace IceChat
             this.Resize += new EventHandler(OnResize);
             this.KeyDown += new KeyEventHandler(OnKeyDown);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
+            this.panelButtons.VisibleChanged += new EventHandler(panelButtons_VisibleChanged);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
             this.DoubleBuffered = true;
             
@@ -90,8 +91,6 @@ namespace IceChat
             serverNodes = new List<KeyValuePair<string,object>>();
 
             serversCollection = LoadServers();
-
-            this.panelButtons.VisibleChanged += new EventHandler(panelButtons_VisibleChanged);
 
             foreach (ServerSetting s in serversCollection.listServers)
             {

@@ -392,6 +392,7 @@
     <EmbeddedResource Include="Icons\Smile.png" />
     <EmbeddedResource Include="Icons\window.png" />
     <EmbeddedResource Include="Icons\query.png" />
+    <None Include="app.config" />
     <None Include="IceChat2009.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

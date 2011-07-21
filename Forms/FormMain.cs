@@ -330,7 +330,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = IceChat.Properties.Settings.Default.ProgramID + " :: " + IceChat.Properties.Settings.Default.Version + " :: July 20 2011";
+            this.Text = IceChat.Properties.Settings.Default.ProgramID + " :: " + IceChat.Properties.Settings.Default.Version + " :: July 21 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);

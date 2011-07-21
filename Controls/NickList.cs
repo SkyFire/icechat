@@ -131,6 +131,7 @@ namespace IceChat
             this.Resize += new EventHandler(OnResize);            
             this.FontChanged += new EventHandler(OnFontChanged);
             this.panelButtons.Resize += new EventHandler(panelButtons_Resize);
+            this.panelButtons.VisibleChanged += new EventHandler(panelButtons_VisibleChanged);
             this.KeyDown += new KeyEventHandler(OnKeyDown);
             this.KeyUp += new KeyEventHandler(OnKeyUp);
             this.vScrollBar.Scroll += new ScrollEventHandler(OnScroll);
@@ -147,6 +148,14 @@ namespace IceChat
             toolTip.AutoPopDelay = 3000;
 
             popupMenu = new ContextMenuStrip();
+        }
+
+        private void panelButtons_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.panelButtons.Visible)
+                this.vScrollBar.Height = this.Height - this.headerHeight - this.panelButtons.Height;
+            else
+                this.vScrollBar.Height = this.Height - this.headerHeight;
         }
 
         private void OnMouseLeave(object sender, EventArgs e)

@@ -1212,9 +1212,7 @@ namespace IceChat
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = newValue + vScrollBar.LargeChange - 1;
 
-                    //System.Diagnostics.Debug.WriteLine(newValue + ":" + vScrollBar.Value + ":" + (vScrollBar.Value + (vScrollBar.LargeChange - 1)));
-                    //if (newValue <= vScrollBar.Value + (vScrollBar.LargeChange - 1))
-                    if (newValue <= vScrollBar.Value + 5)
+                    if (newValue <= (vScrollBar.Value + (vScrollBar.LargeChange /2)) || vScrollBar.Enabled == false)
                         vScrollBar.Value = newValue;
                 }
             }
