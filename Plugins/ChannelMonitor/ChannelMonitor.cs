@@ -471,6 +471,11 @@ namespace IceChatPlugin
 
         }
 
+        public void ServerPreConnect(PluginArgs args)
+        {
+
+        }
+
         public void ServerDisconnect(PluginArgs args)
         {
 

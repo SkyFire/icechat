@@ -287,6 +287,8 @@ namespace IceChat
 
         private bool _showEmoticons = false;
         private bool _showEmoticonPicker = true;
+        private bool _emoticonsFixedSize = true;
+
         private bool _showColorPicker = true;
         private bool _showStatusBar = true;
         private bool _showServerTree = true;
@@ -435,12 +437,18 @@ namespace IceChat
             set { this._showEmoticons = value; }
         }
 
-
         [XmlElement("ShowEmoticonPicker")]
         public bool ShowEmoticonPicker
         {
             get { return this._showEmoticonPicker; }
             set { this._showEmoticonPicker = value; }
+        }
+
+        [XmlElement("EmoticonsFixedSize")]
+        public bool EmoticonsFixedSize
+        {
+            get { return this._emoticonsFixedSize; }
+            set { this._emoticonsFixedSize = value; }
         }
 
         [XmlElement("ShowColorPicker")]
@@ -527,6 +535,11 @@ namespace IceChat
             get { return this._whoisNewQuery; }
             set { this._whoisNewQuery = value; }
         }
+
+        [XmlElement("ChannelOpenKick")]
+        public bool ChannelOpenKick
+        { get; set; }
+
 
         [XmlElement("ShowUnreadLine")]
         public bool ShowUnreadLine

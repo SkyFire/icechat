@@ -43,6 +43,7 @@ namespace IceChat
             FormSplash splash = new FormSplash();
             splash.Show();
             Application.Run(new FormMain(args, splash));            
+
             //AppDomain.CurrentDomain.AssemblyLoad -= ShowAssemblyLoad;
         }
 

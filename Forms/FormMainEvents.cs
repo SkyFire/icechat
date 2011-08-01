@@ -64,6 +64,17 @@ namespace IceChat
             OnServerMessage(connection, msg);
         }
 
+        private void OnServerPreConnect(IRCConnection connection)
+        {
+            PluginArgs args = new PluginArgs(connection);
+
+            foreach (IPluginIceChat ipc in loadedPlugins)
+            {
+                ipc.ServerPreConnect(args);
+            }
+        }
+
+
         private void OnServerForceDisconnect(IRCConnection connection)
         {
             if (IceChatOptions.ReconnectServer && connection.AttemptReconnect)
@@ -90,7 +101,10 @@ namespace IceChat
         {
             string msg = FormMain.Instance.GetMessageFormat("Server Connect");
 
-            msg = msg.Replace("$serverip",address).Replace("$server", connection.ServerSetting.ServerName).Replace("$port", connection.ServerSetting.ServerPort);
+            if (connection.ServerSetting.UseBNC)
+                msg = msg.Replace("$serverip", address).Replace("$server", connection.ServerSetting.BNCIP).Replace("$port", connection.ServerSetting.BNCPort) + " (BNC Connection)";
+            else
+                msg = msg.Replace("$serverip", address).Replace("$server", connection.ServerSetting.ServerName).Replace("$port", connection.ServerSetting.ServerPort);
             
             OnServerMessage(connection, msg);
 
@@ -493,7 +507,7 @@ namespace IceChat
             switch (ctcp)
             {
                 case "VERSION":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + Settings.Default.ProgramID + " " + Settings.Default.Version + " : " + GetOperatingSystemName() + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "VERSION " + ProgramID + " " + VersionID + " : " + GetOperatingSystemName() + ((char)1).ToString());
                     break;
                 case "PING":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "PING " + System.Environment.TickCount.ToString() + ((char)1).ToString());
@@ -508,7 +522,7 @@ namespace IceChat
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
                     break;
                 case "SOURCE":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + Settings.Default.ProgramID + " " + Settings.Default.Version + " http://icechat.codeplex.com" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + FormMain.ProgramID + " " + FormMain.VersionID + " http://icechat.codeplex.com" + ((char)1).ToString());
                     break;
                 case "FINGER":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
@@ -694,9 +708,7 @@ namespace IceChat
 
             IceTabPage t = GetWindow(connection, "Channels", IceTabPage.WindowType.ChannelList);
             if (t != null)
-            {
-                t.AddChannelList(channel, Convert.ToInt32(users), topic);
-            }
+                t.AddChannelList(channel, Convert.ToInt32(users), StripColorCodes(topic));
         }
 
         /// <summary>
@@ -1011,11 +1023,13 @@ namespace IceChat
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
                 args.Extra = message;
                 args.Connection = connection;
-                
+
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
                     args = ipc.ChannelMessage(args);
                 }
+
+                args.Message = args.Message.Replace("$message", message);
 
                 /*
                 foreach (object o in loadedScripts)
@@ -1223,7 +1237,7 @@ namespace IceChat
         /// <param name="nick">Nickname of who was Kicked</param>
         /// <param name="reason">Kick Reason</param>
         /// <param name="kickUser">Full User Host of Who kicked the User</param>
-        private void OnKickNick(IRCConnection connection, string channel, string nick, string reason, string kickUser)
+        private void OnChannelKick(IRCConnection connection, string channel, string nick, string reason, string kickUser)
         {
             IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
             if (t != null)
@@ -1285,6 +1299,18 @@ namespace IceChat
 
                 serverTree.Invalidate();
             }
+            else
+            {
+                PluginArgs args = new PluginArgs(t.TextWindow, channel, connection.ServerSetting.NickName, "", "");
+                args.Connection = connection;
+
+                foreach (IPluginIceChat ipc in loadedPlugins)
+                {
+                    ipc.ChannelJoin(args);
+                }
+
+                serverTree.Invalidate();
+            }
         }
 
         /// <summary>
@@ -1331,11 +1357,30 @@ namespace IceChat
         /// <param name="channel">Which Channel you were kicked from</param>
         /// <param name="reason">Kick Reason</param>
         /// <param name="kickUser">Full User Host of who kicked you</param>
-        private void OnKickSelf(IRCConnection connection, string channel, string reason, string kickUser)
+        private void OnChannelKickSelf(IRCConnection connection, string channel, string reason, string kickUser)
         {
             try
             {
-                RemoveWindow(connection, channel, IceTabPage.WindowType.Channel);
+                IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+                if (iceChatOptions.ChannelOpenKick)
+                {
+                    if (t != null)
+                    {
+                        t.ClearNicks();
+                        t.IsFullyJoined = false;
+                        t.GotNamesList = false;
+                        t.GotWhoList = false;
+
+                        if (CurrentWindow == t)
+                            nickList.Header = t.TabCaption + ":0";
+
+                        FormMain.Instance.NickList.Invalidate();
+                    }
+                }
+                else
+                {
+                    RemoveWindow(connection, channel, IceTabPage.WindowType.Channel);
+                }
 
                 string nick = NickFromFullHost(kickUser);
                 string host = HostFromFullHost(kickUser);
@@ -1355,8 +1400,15 @@ namespace IceChat
                 {
                     args = ipc.ChannelKick(args);
                 }
-
-                mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
+                if (iceChatOptions.ChannelOpenKick)
+                {
+                    if (t != null)
+                        t.TextWindow.AppendText(args.Message, 1);
+                    else
+                        mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
+                }
+                else
+                    mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
 
             }
             catch (Exception e)
@@ -1520,8 +1572,7 @@ namespace IceChat
         {
             IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
             if (t != null)
-            {
-
+            {                
                 t.ChannelTopic = topic;
 
                 if (nick.Length > 0)
@@ -1918,7 +1969,8 @@ namespace IceChat
         {
             //internal addresslist userdata            
             if (!connection.IsFullyConnected) return;
-            
+            if (connection.ServerSetting.StatusModes == null) return;
+
             for (int i = 0; i < connection.ServerSetting.StatusModes[1].Length; i++)
                 nick = nick.Replace(connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
@@ -1992,7 +2044,7 @@ namespace IceChat
                     return;
 
             }
-
+            
             if (!mainTabControl.WindowExists(connection, nick, IceTabPage.WindowType.DCCChat))
                 AddWindow(connection, nick, IceTabPage.WindowType.DCCChat);
 
@@ -2002,17 +2054,17 @@ namespace IceChat
                 string msg = GetMessageFormat("DCC Chat Request");
                 msg = msg.Replace("$nick", nick).Replace("$host", host);
                 msg = msg.Replace("$port", port).Replace("$ip", ip);
-
-                /*
+                
                 PluginArgs args = new PluginArgs(t.TextWindow, "", nick, host, msg);
                 args.Connection = connection;
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    //
+                    //new dcc chat started
+                    args = ipc.DCCChatOpen(args);
                 }
-                */
-                t.TextWindow.AppendText(msg, 1);
+                
+                t.TextWindow.AppendText(args.Message, 1);
                 t.StartDCCChat(nick, ip, port);
                 t.LastMessageType = ServerMessageType.Other;
             }
@@ -2151,5 +2203,33 @@ namespace IceChat
                 }
             }
         }
+
+        private string StripColorCodes(string line)
+        {
+            //strip out all the color codes, bold , underline and reverse codes
+            string ParseBackColor = @"\x03([0-9]{1,2}),([0-9]{1,2})";
+            string ParseForeColor = @"\x03[0-9]{1,2}";
+            string ParseColorChar = @"\x03";
+            string ParseBoldChar = @"\x02";
+            string ParseUnderlineChar = @"\x1F";    //code 31
+            string ParseReverseChar = @"\x16";      //code 22
+            string ParseItalicChar = @"\x1D";      //code 29
+
+            StringBuilder sLine = new StringBuilder();
+            sLine.Append(line);
+
+            Regex ParseIRCCodes = new Regex(ParseBackColor + "|" + ParseForeColor + "|" + ParseColorChar + "|" + ParseBoldChar + "|" + ParseUnderlineChar + "|" + ParseReverseChar + "|" + ParseItalicChar);
+
+            Match m = ParseIRCCodes.Match(sLine.ToString());
+
+            while (m.Success)
+            {
+                sLine.Remove(m.Index, m.Length);
+                m = ParseIRCCodes.Match(sLine.ToString(), m.Index);
+            }
+
+            return sLine.ToString();
+        }
+
     }
 }

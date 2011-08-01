@@ -41,6 +41,7 @@
             this.reJoinChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.channelFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.noColorModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoPerformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,7 +60,7 @@
             this.clearWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.closeWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectDCCChat = new System.Windows.Forms.ToolStripMenuItem();
-            this.noColorModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToAutoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
@@ -157,11 +158,12 @@
             this.clearWindowToolStripMenuItem,
             this.closeChannelToolStripMenuItem,
             this.reJoinChannelToolStripMenuItem,
+            this.addToAutoJoinToolStripMenuItem,
             this.channelInformationToolStripMenuItem,
             this.channelFontToolStripMenuItem,
             this.noColorModeToolStripMenuItem});
             this.contextMenuChannel.Name = "contextMenuChannel";
-            this.contextMenuChannel.Size = new System.Drawing.Size(185, 158);
+            this.contextMenuChannel.Size = new System.Drawing.Size(185, 180);
             // 
             // clearWindowToolStripMenuItem
             // 
@@ -197,6 +199,13 @@
             this.channelFontToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.channelFontToolStripMenuItem.Text = "Channel Font";
             this.channelFontToolStripMenuItem.Click += new System.EventHandler(this.channelFontToolStripMenuItem_Click);
+            // 
+            // noColorModeToolStripMenuItem
+            // 
+            this.noColorModeToolStripMenuItem.Name = "noColorModeToolStripMenuItem";
+            this.noColorModeToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.noColorModeToolStripMenuItem.Text = "No Color Mode";
+            this.noColorModeToolStripMenuItem.Click += new System.EventHandler(this.noColorModeToolStripMenuItem_Click);
             // 
             // autoPerformToolStripMenuItem
             // 
@@ -334,12 +343,12 @@
             this.disconnectDCCChat.Text = "Disconnect";
             this.disconnectDCCChat.Click += new System.EventHandler(this.disconnectDCCChat_Click);
             // 
-            // noColorModeToolStripMenuItem
+            // addToAutoJoinToolStripMenuItem
             // 
-            this.noColorModeToolStripMenuItem.Name = "noColorModeToolStripMenuItem";
-            this.noColorModeToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
-            this.noColorModeToolStripMenuItem.Text = "No Color Mode";
-            this.noColorModeToolStripMenuItem.Click += new System.EventHandler(this.noColorModeToolStripMenuItem_Click);
+            this.addToAutoJoinToolStripMenuItem.Name = "addToAutoJoinToolStripMenuItem";
+            this.addToAutoJoinToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.addToAutoJoinToolStripMenuItem.Text = "Add to AutoJoin";
+            this.addToAutoJoinToolStripMenuItem.Click += new System.EventHandler(this.addToAutoJoinToolStripMenuItem_Click);
             // 
             // ServerTree
             // 
@@ -398,5 +407,6 @@
         private System.Windows.Forms.ToolStripMenuItem closeWindowDCCChat;
         private System.Windows.Forms.ToolStripMenuItem disconnectDCCChat;
         private System.Windows.Forms.ToolStripMenuItem noColorModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addToAutoJoinToolStripMenuItem;
     }
 }

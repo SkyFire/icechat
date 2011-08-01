@@ -39,10 +39,8 @@ namespace IceChat
 
         public IdentServer()
         {
-
             identThread = new Thread(new ThreadStart(Listen));
             identThread.Start();
-
         }
 
         private void Listen()
@@ -152,10 +150,6 @@ namespace IceChat
             {
 
             }
-            //System.Diagnostics.Debug.WriteLine("Ident Server Stopped");
         }
-
     }
-
-
 }

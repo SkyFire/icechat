@@ -35,6 +35,8 @@ using System.Net;
 using System.Threading;
 using System.IO;
 
+using IceChatPlugin;
+
 namespace IceChat
 {
     public class IceTabPage : Panel, IDisposable
@@ -59,12 +61,8 @@ namespace IceChat
         private bool hasChannelInfo = false;
         private FormChannelInfo channelInfoForm = null;
 
-        private delegate void ChangeTopicDelegate(string topic);
-        private delegate void ChangeTextDelegate(string text);
         private delegate TextWindow CurrentWindowDelegate();
-        private delegate void AddChannelListDelegate(string channel, int users, string topic);
-        private delegate void AddDccChatDelegate(string message);
-        private delegate void ClearChannelListDelegate();
+        private delegate void ChangeTopicDelegate(string topic);
 
         private Panel panelTopic;
         
@@ -214,23 +212,26 @@ namespace IceChat
         /// <param name="connection"></param>
         internal void AddConsoleTab(IRCConnection connection)
         {
-            ConsoleTab t = new ConsoleTab(connection.ServerSetting.ServerName);
-            t.Connection = connection;
+            this.Invoke((MethodInvoker)delegate()
+            {
+                ConsoleTab t = new ConsoleTab(connection.ServerSetting.ServerName);
+                t.Connection = connection;
 
-            TextWindow w = new TextWindow();
-            w.Dock = DockStyle.Fill;
-            w.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[0].FontName, FormMain.Instance.IceChatFonts.FontSettings[0].FontSize);
-            w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
-            w.NoEmoticons = true;
+                TextWindow w = new TextWindow();
+                w.Dock = DockStyle.Fill;
+                w.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[0].FontName, FormMain.Instance.IceChatFonts.FontSettings[0].FontSize);
+                w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
+                w.NoEmoticons = true;
 
-            t.Controls.Add(w);
-            if (FormMain.Instance.IceChatOptions.LogConsole)
-                w.SetLogFile();
+                t.Controls.Add(w);
+                if (FormMain.Instance.IceChatOptions.LogConsole)
+                    w.SetLogFile();
 
-            consoleTab.TabPages.Add(t);
-            consoleTab.SelectedTab = t;
-
+                consoleTab.TabPages.Add(t);
+                consoleTab.SelectedTab = t;
+            });
         }
+
         /// <summary>
         /// Temporary Method to create a NULL Connection for the Welcome Tab in the Console
         /// </summary>
@@ -542,7 +543,16 @@ namespace IceChat
         {
             string msg = FormMain.Instance.GetMessageFormat("DCC Chat Timeout");
             msg = msg.Replace("$nick", _tabCaption);
-            textWindow.AppendText(msg, 1);
+
+            PluginArgs args = new PluginArgs(this.textWindow, "", _tabCaption, "", msg);
+            args.Connection = this.connection;
+
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                args = ipc.DCCChatTimeOut(args);
+            }            
+            
+            textWindow.AppendText(args.Message, 1);
 
             dccTimeOutTimer.Stop();
             dccSocketListener.Stop();
@@ -563,7 +573,16 @@ namespace IceChat
 
                     string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
                     msg = msg.Replace("$nick", _tabCaption);
-                    textWindow.AppendText(msg, 1);
+
+                    PluginArgs args = new PluginArgs(this.textWindow, "", this.connection.ServerSetting.NickName, "", msg);
+                    args.Connection = this.connection;
+
+                    foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                    {
+                        args = ipc.DCCChatConnected(args);
+                    }
+
+                    textWindow.AppendText(args.Message, 1);
 
                     dccThread = new Thread(new ThreadStart(GetDCCData));
                     dccThread.Start();
@@ -579,7 +598,9 @@ namespace IceChat
         internal void StartDCCChat(string nick, string ip, string port)
         {
             dccSocket = new TcpClient();
+            System.Diagnostics.Debug.WriteLine("startdcc chat:" + ip + " on port " + port);
             IPAddress ipAddr = LongToIPAddress(ip);
+            System.Diagnostics.Debug.WriteLine(ipAddr.ToString());
             IPEndPoint ep = new IPEndPoint(ipAddr, Convert.ToInt32(port));
             try
             {
@@ -588,7 +609,17 @@ namespace IceChat
                 {
                     string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
                     msg = msg.Replace("$nick", nick).Replace("$ip", ip).Replace("$port", port);
-                    textWindow.AppendText(msg, 1);
+
+                    PluginArgs args = new PluginArgs(this.textWindow, "", nick, ip, msg);
+                    args.Extra = port;
+                    args.Connection = this.connection;
+
+                    foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                    {
+                        args = ipc.DCCChatConnected(args);
+                    }
+                    
+                    textWindow.AppendText(args.Message, 1);
 
                     dccThread = new Thread(new ThreadStart(GetDCCData));
                     dccThread.Start();
@@ -625,7 +656,6 @@ namespace IceChat
             {
                 try
                 {
-
                     int buffSize = 0;
                     byte[] buffer = new byte[8192];
                     NetworkStream ns = dccSocket.GetStream();
@@ -640,7 +670,7 @@ namespace IceChat
                         //we have a disconnection
                         break;
                     }
-                    AddDccMessage(strData);
+                    AddDCCMessage(strData);
                 }
                 catch (Exception)
                 {
@@ -651,19 +681,23 @@ namespace IceChat
 
             string msg = FormMain.Instance.GetMessageFormat("DCC Chat Disconnect");
             msg = msg.Replace("$nick", _tabCaption);
-            textWindow.AppendText(msg, 1);
+
+            PluginArgs args = new PluginArgs(this.textWindow, "", _tabCaption, "", msg);
+            args.Connection = this.connection;
+
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                args = ipc.DCCChatClosed(args);
+            }
             
+            textWindow.AppendText(msg, 1);
+            System.Diagnostics.Debug.WriteLine("dcc chat disconnect");
             dccSocket.Close();
         }
 
-        private void AddDccMessage(string message)
+        private void AddDCCMessage(string message)
         {
-            if (this.InvokeRequired)
-            {
-                AddDccChatDelegate a = new AddDccChatDelegate(AddDccMessage);
-                this.Invoke(a, new object[] { message });
-            }
-            else
+            this.Invoke((MethodInvoker)delegate()
             {
                 string[] lines = message.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
@@ -673,10 +707,19 @@ namespace IceChat
                         string msg = FormMain.Instance.GetMessageFormat("DCC Chat Message");
                         msg = msg.Replace("$nick", _tabCaption);
                         msg = msg.Replace("$message", line);
-                        textWindow.AppendText(msg, 1);
+
+                        PluginArgs args = new PluginArgs(this.textWindow, "", _tabCaption, "", msg);
+                        args.Connection = this.connection;
+
+                        foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                        {
+                            args = ipc.DCCChatMessage(args);
+                        }
+
+                        textWindow.AppendText(args.Message, 1);
                     }
                 }
-            }
+            });
         }
 
         private long IPAddressToLong(IPAddress ip)
@@ -899,27 +942,20 @@ namespace IceChat
 
         internal void ClearChannelList()
         {
-            if (this.InvokeRequired)
+            this.Invoke((MethodInvoker)delegate()
             {
-                ClearChannelListDelegate c = new ClearChannelListDelegate(ClearChannelList);
-                this.Invoke(c, new object[] { });
-            } 
-            else
                 this.channelList.Items.Clear();
+            });
         }
 
         private void UpdateText(string text)
         {
-            if (this.InvokeRequired)
-            {
-                ChangeTextDelegate c = new ChangeTextDelegate(UpdateText);
-                this.Invoke(c, new object[] { text });
-            }
-            else
+            this.Invoke((MethodInvoker)delegate()
             {
                 this.Text = text;
                 this.Update();
-            }
+            });
+
         }
 
         private void UpdateTopic(string topic)
@@ -931,13 +967,13 @@ namespace IceChat
             }
             else
             {
-                channelTopic = topic;                
+                channelTopic = topic;
                 textTopic.ClearTextWindow();
                 string msgt = FormMain.Instance.GetMessageFormat("Channel Topic Text");
                 msgt = msgt.Replace("$channel", this.TabCaption);
                 msgt = msgt.Replace("$topic", topic);
                 textTopic.AppendText(msgt, 1);
-            }
+            }   
         }
 
         /// <summary>
@@ -948,18 +984,13 @@ namespace IceChat
         /// <param name="topic">The channel topic</param>
         internal void AddChannelList(string channel, int users, string topic)
         {
-            if (this.InvokeRequired)
-            {
-                AddChannelListDelegate a = new AddChannelListDelegate(AddChannelList);
-                this.Invoke(a, new object[] { channel, users, topic });
-            }
-            else
+            this.Invoke((MethodInvoker)delegate()
             {
                 ListViewItem lvi = new ListViewItem(channel);
                 lvi.SubItems.Add(users.ToString());
                 lvi.SubItems.Add(topic);
                 channelList.Items.Add(lvi);
-            }
+            });            
         }
 
         private void OnControlAdded(object sender, ControlEventArgs e)
@@ -1016,7 +1047,7 @@ namespace IceChat
             else
             {
                 FormMain.Instance.InputPanel.CurrentConnection = null;
-                FormMain.Instance.StatusText("Welcome to " + IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version);
+                FormMain.Instance.StatusText("Welcome to " + FormMain.ProgramID + " " + FormMain.VersionID);
             }
             
         }
@@ -1163,13 +1194,13 @@ namespace IceChat
             this.channelList.SuspendLayout();
             this.SuspendLayout();
 
-            this.channelList.Dock = DockStyle.Fill;
             this.channelList.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.channelList.Location = new System.Drawing.Point(0, 0);
             this.channelList.Name = "channelList";
             this.channelList.DoubleClick += new EventHandler(channelList_DoubleClick);
             this.channelList.ColumnClick += new ColumnClickEventHandler(channelList_ColumnClick);
-            
+            this.channelList.MouseDown += new MouseEventHandler(channelList_MouseDown);
+
             ColumnHeader c = new ColumnHeader();
             c.Text = "Channel";
             c.Width = 200;
@@ -1211,10 +1242,10 @@ namespace IceChat
             searchPanel.Controls.Add(searchButton);
             
             searchPanel.Dock =  DockStyle.Bottom;
-            
-            
-            this.Controls.Add(searchPanel);
+            this.channelList.Dock = DockStyle.Fill;
+
             this.Controls.Add(channelList);
+            this.Controls.Add(searchPanel);
             this.channelList.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1223,7 +1254,6 @@ namespace IceChat
         private void OnSearchButtonClick(object sender, EventArgs e)
         {
             //filter the channel list according to the specified text
-
             if (searchText.Text.Length == 0)
             {
                 //restore the original list
@@ -1294,6 +1324,44 @@ namespace IceChat
             foreach (ListViewItem eachItem in channelList.SelectedItems)
                 FormMain.Instance.ParseOutGoingCommand(this.connection, "/join " + eachItem.Text);
         }
+
+        private void channelList_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {                
+                //show a popup menu
+                ContextMenuStrip menu = new ContextMenuStrip();
+                ToolStripMenuItem joinChannel = new System.Windows.Forms.ToolStripMenuItem();
+                ToolStripMenuItem autoJoinChannel = new System.Windows.Forms.ToolStripMenuItem();
+                joinChannel.Text = "Join Channel";
+                autoJoinChannel.Text = "Autojoin Channel";
+                
+                joinChannel.Size = new System.Drawing.Size(165, 22);
+                autoJoinChannel.Size = new System.Drawing.Size(165, 22);
+
+                joinChannel.Click += new EventHandler(joinChannel_Click);
+                autoJoinChannel.Click += new EventHandler(autoJoinChannel_Click);
+                menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                    joinChannel,
+                    autoJoinChannel});
+
+                menu.Show(channelList, new Point(e.X, e.Y));
+            }
+        }
+
+        private void autoJoinChannel_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in channelList.SelectedItems)
+                FormMain.Instance.ParseOutGoingCommand(this.connection, "/autojoin " + eachItem.Text);
+            
+        }
+
+        private void joinChannel_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem eachItem in channelList.SelectedItems)
+                FormMain.Instance.ParseOutGoingCommand(this.connection, "/join " + eachItem.Text);            
+        }
+
 
         /// <summary>
         /// Create the Channel Window and items needed

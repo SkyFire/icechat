@@ -55,6 +55,8 @@ namespace IceChat
             
             this.Text = "Server Editor: New Server";
 
+            RemoveAdvancedTabs();
+
             foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
             {
                 try
@@ -95,11 +97,39 @@ namespace IceChat
             LoadSettings();
 
             this.Text = "Server Editor: " + s.ServerName;
+            
             LoadDefaultServerSettings();
 
+            if (!s.AdvancedSettings)
+                RemoveAdvancedTabs();
+            else
+                checkAdvancedSettings.Checked = true;
 
+            this.checkAdvancedSettings.CheckedChanged += new System.EventHandler(this.checkAdvancedSettings_CheckedChanged);
 
             ApplyLanguage();
+        }
+
+        private void RemoveAdvancedTabs()
+        {
+            this.tabControlSettings.TabPages.Remove(tabPageProxy);
+            this.tabControlSettings.TabPages.Remove(tabPageBNC);
+            this.tabControlSettings.TabPages.Remove(tabPageNotes);
+            this.tabControlSettings.TabPages.Remove(tabPageIgnore);
+            this.tabControlSettings.TabPages.Remove(tabBuddyList);
+        }
+
+        private void AddAdvancedTabs()
+        {
+            this.tabControlSettings.TabPages.Remove(tabPageDefault);
+
+            this.tabControlSettings.TabPages.Add(tabPageIgnore);
+            this.tabControlSettings.TabPages.Add(tabBuddyList);
+            this.tabControlSettings.TabPages.Add(tabPageNotes);
+            this.tabControlSettings.TabPages.Add(tabPageProxy);
+            this.tabControlSettings.TabPages.Add(tabPageBNC);
+
+            this.tabControlSettings.TabPages.Add(tabPageDefault);
         }
 
         private void AddImagesToTabs()
@@ -275,7 +305,14 @@ namespace IceChat
             else if (serverSetting.ProxyType == 3)
                 radioSocks5.Checked = true;
 
+            checkUseBNC.Checked = serverSetting.UseBNC;
+            textBNCIP.Text = serverSetting.BNCIP;
+            textBNCPort.Text = serverSetting.BNCPort;
+            textBNCUser.Text = serverSetting.BNCUser;
+            textBNCPass.Text = serverSetting.BNCPass;
+            
             this.textNotes.Text = serverSetting.ServerNotes;
+
         }
 
         /// <summary>
@@ -402,7 +439,15 @@ namespace IceChat
             else if (radioSocks5.Checked)
                 serverSetting.ProxyType = 3;
 
+            serverSetting.UseBNC = checkUseBNC.Checked;
+            serverSetting.BNCIP = textBNCIP.Text;
+            serverSetting.BNCPort = textBNCPort.Text;
+            serverSetting.BNCUser = textBNCUser.Text;
+            serverSetting.BNCPass = textBNCPass.Text;
+
             serverSetting.ServerNotes = textNotes.Text;
+
+            serverSetting.AdvancedSettings = checkAdvancedSettings.Checked;
 
             if (newServer == true)
             {
@@ -591,7 +636,42 @@ namespace IceChat
                 textBuddy.Text = eachItem.Text;
                 listBuddyList.Items.Remove(eachItem);
             }
+        }
 
+        private void checkAdvancedSettings_CheckedChanged(object sender, EventArgs e)
+        {
+            //add or remote BNC/Proxy/Server Notes
+            if (checkAdvancedSettings.Checked)
+                AddAdvancedTabs();
+            else
+                RemoveAdvancedTabs();
+        }
+
+        private void listChannel_DoubleClick(object sender, System.EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listChannel.SelectedItems)
+            {
+                textChannel.Text = eachItem.Text;
+                listChannel.Items.Remove(eachItem);
+            }
+        }
+
+        private void listBuddyList_DoubleClick(object sender, System.EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listBuddyList.SelectedItems)
+            {
+                textBuddy.Text = eachItem.Text;
+                listBuddyList.Items.Remove(eachItem);
+            }
+        }
+
+        private void listIgnore_DoubleClick(object sender, System.EventArgs e)
+        {
+            foreach (ListViewItem eachItem in listIgnore.SelectedItems)
+            {
+                textIgnore.Text = eachItem.Text;
+                listIgnore.Items.Remove(eachItem);
+            }
         }
     }
 }

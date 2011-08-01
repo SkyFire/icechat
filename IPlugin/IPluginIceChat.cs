@@ -86,17 +86,23 @@ namespace IceChatPlugin
         PluginArgs UserNotice(PluginArgs args);
         PluginArgs CtcpMessage(PluginArgs args);
         PluginArgs CtcpReply(PluginArgs args);
+        PluginArgs ChannelNotice(PluginArgs args);
 
+        PluginArgs DCCChatOpen(PluginArgs args);
+        PluginArgs DCCChatClosed(PluginArgs args);
+        PluginArgs DCCChatMessage(PluginArgs args);
+        PluginArgs DCCChatTimeOut(PluginArgs args);
+        PluginArgs DCCChatConnected(PluginArgs args);
 
-        PluginArgs ChannelNotice(PluginArgs args);        
         void ServerConnect(PluginArgs args);
-        void ServerDisconnect(PluginArgs args);                
+        void ServerDisconnect(PluginArgs args);
+        void ServerPreConnect(PluginArgs args);
+
         void WhoisUser(PluginArgs args);
         void ChannelTopic(PluginArgs args);
         void ChannelInvite(PluginArgs args);                
         void BuddyList(PluginArgs args);
         void ChannelMode(PluginArgs args);
-
 
         void NickChange(PluginArgs args);
         void ServerError(PluginArgs args);

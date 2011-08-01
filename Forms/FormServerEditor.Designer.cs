@@ -33,6 +33,7 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.checkAdvancedSettings = new System.Windows.Forms.CheckBox();
             this.checkUseIPv6 = new System.Windows.Forms.CheckBox();
             this.checkUseSSL = new System.Windows.Forms.CheckBox();
             this.textAwayNick = new System.Windows.Forms.TextBox();
@@ -115,6 +116,17 @@
             this.textProxyIP = new System.Windows.Forms.TextBox();
             this.labelProxyIP = new System.Windows.Forms.Label();
             this.checkUseProxy = new System.Windows.Forms.CheckBox();
+            this.tabPageBNC = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBNCPass = new System.Windows.Forms.TextBox();
+            this.labelBNCPass = new System.Windows.Forms.Label();
+            this.textBNCUser = new System.Windows.Forms.TextBox();
+            this.labelBNCUser = new System.Windows.Forms.Label();
+            this.textBNCPort = new System.Windows.Forms.TextBox();
+            this.labelBNCPort = new System.Windows.Forms.Label();
+            this.textBNCIP = new System.Windows.Forms.TextBox();
+            this.labelBNCIP = new System.Windows.Forms.Label();
+            this.checkUseBNC = new System.Windows.Forms.CheckBox();
             this.tabPageDefault = new System.Windows.Forms.TabPage();
             this.textDefaultQuitMessage = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -128,7 +140,18 @@
             this.labelDefaultNickName = new System.Windows.Forms.Label();
             this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
-            this.tabPageBNC = new System.Windows.Forms.TabPage();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControlSettings.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageExtra.SuspendLayout();
@@ -138,6 +161,7 @@
             this.tabBuddyList.SuspendLayout();
             this.tabPageNotes.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
+            this.tabPageBNC.SuspendLayout();
             this.tabPageDefault.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -195,6 +219,7 @@
             // tabPageMain
             // 
             this.tabPageMain.BackColor = System.Drawing.Color.Transparent;
+            this.tabPageMain.Controls.Add(this.checkAdvancedSettings);
             this.tabPageMain.Controls.Add(this.checkUseIPv6);
             this.tabPageMain.Controls.Add(this.checkUseSSL);
             this.tabPageMain.Controls.Add(this.textAwayNick);
@@ -223,6 +248,16 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main Settings";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // checkAdvancedSettings
+            // 
+            this.checkAdvancedSettings.AutoSize = true;
+            this.checkAdvancedSettings.Location = new System.Drawing.Point(18, 208);
+            this.checkAdvancedSettings.Name = "checkAdvancedSettings";
+            this.checkAdvancedSettings.Size = new System.Drawing.Size(241, 20);
+            this.checkAdvancedSettings.TabIndex = 53;
+            this.checkAdvancedSettings.Text = "Show Advanced Server Settings";
+            this.checkAdvancedSettings.UseVisualStyleBackColor = true;
             // 
             // checkUseIPv6
             // 
@@ -416,10 +451,10 @@
             this.tabPageExtra.Controls.Add(this.checkMOTD);
             this.tabPageExtra.Controls.Add(this.checkModeI);
             this.tabPageExtra.ImageIndex = 1;
-            this.tabPageExtra.Location = new System.Drawing.Point(4, 25);
+            this.tabPageExtra.Location = new System.Drawing.Point(4, 46);
             this.tabPageExtra.Name = "tabPageExtra";
             this.tabPageExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageExtra.Size = new System.Drawing.Size(642, 253);
+            this.tabPageExtra.Size = new System.Drawing.Size(642, 232);
             this.tabPageExtra.TabIndex = 3;
             this.tabPageExtra.Text = "Extra Settings";
             this.tabPageExtra.UseVisualStyleBackColor = true;
@@ -558,18 +593,19 @@
             this.tabPageAutoJoin.Controls.Add(this.textChannel);
             this.tabPageAutoJoin.Controls.Add(this.labelChannel);
             this.tabPageAutoJoin.ImageIndex = 2;
-            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 25);
+            this.tabPageAutoJoin.Location = new System.Drawing.Point(4, 46);
             this.tabPageAutoJoin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoJoin.Name = "tabPageAutoJoin";
             this.tabPageAutoJoin.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoJoin.Size = new System.Drawing.Size(642, 253);
+            this.tabPageAutoJoin.Size = new System.Drawing.Size(642, 232);
             this.tabPageAutoJoin.TabIndex = 1;
             this.tabPageAutoJoin.Text = "AutoJoin";
             this.tabPageAutoJoin.UseVisualStyleBackColor = true;
             // 
             // checkAutoJoinDelay
             // 
-            this.checkAutoJoinDelay.Location = new System.Drawing.Point(183, 184);
+            this.checkAutoJoinDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkAutoJoinDelay.Location = new System.Drawing.Point(186, 208);
             this.checkAutoJoinDelay.Name = "checkAutoJoinDelay";
             this.checkAutoJoinDelay.Size = new System.Drawing.Size(263, 20);
             this.checkAutoJoinDelay.TabIndex = 34;
@@ -596,10 +632,11 @@
             this.listChannel.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listChannel.Location = new System.Drawing.Point(6, 41);
             this.listChannel.Name = "listChannel";
-            this.listChannel.Size = new System.Drawing.Size(350, 137);
+            this.listChannel.Size = new System.Drawing.Size(350, 158);
             this.listChannel.TabIndex = 32;
             this.listChannel.UseCompatibleStateImageBehavior = false;
             this.listChannel.View = System.Windows.Forms.View.Details;
+            this.listChannel.DoubleClick += new System.EventHandler(this.listChannel_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -613,7 +650,8 @@
             // 
             // checkAutoJoin
             // 
-            this.checkAutoJoin.Location = new System.Drawing.Point(6, 184);
+            this.checkAutoJoin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkAutoJoin.Location = new System.Drawing.Point(6, 208);
             this.checkAutoJoin.Name = "checkAutoJoin";
             this.checkAutoJoin.Size = new System.Drawing.Size(151, 20);
             this.checkAutoJoin.TabIndex = 31;
@@ -665,11 +703,11 @@
             this.tabPageAutoPerform.Controls.Add(this.textAutoPerform);
             this.tabPageAutoPerform.Controls.Add(this.checkAutoPerform);
             this.tabPageAutoPerform.ImageIndex = 3;
-            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 25);
+            this.tabPageAutoPerform.Location = new System.Drawing.Point(4, 46);
             this.tabPageAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tabPageAutoPerform.Name = "tabPageAutoPerform";
             this.tabPageAutoPerform.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.tabPageAutoPerform.Size = new System.Drawing.Size(642, 253);
+            this.tabPageAutoPerform.Size = new System.Drawing.Size(642, 232);
             this.tabPageAutoPerform.TabIndex = 2;
             this.tabPageAutoPerform.Text = "AutoPerform";
             this.tabPageAutoPerform.UseVisualStyleBackColor = true;
@@ -681,14 +719,14 @@
             this.textAutoPerform.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textAutoPerform.Multiline = true;
             this.textAutoPerform.Name = "textAutoPerform";
-            this.textAutoPerform.Size = new System.Drawing.Size(636, 225);
+            this.textAutoPerform.Size = new System.Drawing.Size(636, 204);
             this.textAutoPerform.TabIndex = 28;
             // 
             // checkAutoPerform
             // 
             this.checkAutoPerform.AutoSize = true;
             this.checkAutoPerform.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.checkAutoPerform.Location = new System.Drawing.Point(3, 229);
+            this.checkAutoPerform.Location = new System.Drawing.Point(3, 208);
             this.checkAutoPerform.Name = "checkAutoPerform";
             this.checkAutoPerform.Size = new System.Drawing.Size(636, 20);
             this.checkAutoPerform.TabIndex = 29;
@@ -705,9 +743,9 @@
             this.tabPageIgnore.Controls.Add(this.buttonEditIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonRemoveIgnore);
             this.tabPageIgnore.Controls.Add(this.buttonAddIgnore);
-            this.tabPageIgnore.Location = new System.Drawing.Point(4, 25);
+            this.tabPageIgnore.Location = new System.Drawing.Point(4, 46);
             this.tabPageIgnore.Name = "tabPageIgnore";
-            this.tabPageIgnore.Size = new System.Drawing.Size(642, 253);
+            this.tabPageIgnore.Size = new System.Drawing.Size(642, 232);
             this.tabPageIgnore.TabIndex = 4;
             this.tabPageIgnore.Text = "Ignore List";
             this.tabPageIgnore.UseVisualStyleBackColor = true;
@@ -728,10 +766,11 @@
             this.listIgnore.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listIgnore.Location = new System.Drawing.Point(6, 39);
             this.listIgnore.Name = "listIgnore";
-            this.listIgnore.Size = new System.Drawing.Size(350, 137);
+            this.listIgnore.Size = new System.Drawing.Size(350, 164);
             this.listIgnore.TabIndex = 40;
             this.listIgnore.UseCompatibleStateImageBehavior = false;
             this.listIgnore.View = System.Windows.Forms.View.Details;
+            this.listIgnore.DoubleClick += new System.EventHandler(this.listIgnore_DoubleClick);
             // 
             // columnHeader3
             // 
@@ -740,7 +779,8 @@
             // 
             // checkIgnore
             // 
-            this.checkIgnore.Location = new System.Drawing.Point(6, 182);
+            this.checkIgnore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkIgnore.Location = new System.Drawing.Point(6, 208);
             this.checkIgnore.Name = "checkIgnore";
             this.checkIgnore.Size = new System.Drawing.Size(151, 20);
             this.checkIgnore.TabIndex = 39;
@@ -807,10 +847,10 @@
             this.tabBuddyList.Controls.Add(this.buttonEditBuddy);
             this.tabBuddyList.Controls.Add(this.buttonRemoveBuddy);
             this.tabBuddyList.Controls.Add(this.buttonAddBuddy);
-            this.tabBuddyList.Location = new System.Drawing.Point(4, 25);
+            this.tabBuddyList.Location = new System.Drawing.Point(4, 46);
             this.tabBuddyList.Name = "tabBuddyList";
             this.tabBuddyList.Padding = new System.Windows.Forms.Padding(3);
-            this.tabBuddyList.Size = new System.Drawing.Size(642, 253);
+            this.tabBuddyList.Size = new System.Drawing.Size(642, 232);
             this.tabBuddyList.TabIndex = 7;
             this.tabBuddyList.Text = "Buddy List";
             this.tabBuddyList.UseVisualStyleBackColor = true;
@@ -823,10 +863,11 @@
             this.listBuddyList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listBuddyList.Location = new System.Drawing.Point(6, 40);
             this.listBuddyList.Name = "listBuddyList";
-            this.listBuddyList.Size = new System.Drawing.Size(350, 137);
+            this.listBuddyList.Size = new System.Drawing.Size(350, 160);
             this.listBuddyList.TabIndex = 47;
             this.listBuddyList.UseCompatibleStateImageBehavior = false;
             this.listBuddyList.View = System.Windows.Forms.View.Details;
+            this.listBuddyList.DoubleClick += new System.EventHandler(this.listBuddyList_DoubleClick);
             // 
             // columnHeader4
             // 
@@ -835,7 +876,8 @@
             // 
             // checkBuddyList
             // 
-            this.checkBuddyList.Location = new System.Drawing.Point(6, 183);
+            this.checkBuddyList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBuddyList.Location = new System.Drawing.Point(6, 208);
             this.checkBuddyList.Name = "checkBuddyList";
             this.checkBuddyList.Size = new System.Drawing.Size(151, 20);
             this.checkBuddyList.TabIndex = 46;
@@ -1050,6 +1092,114 @@
             this.checkUseProxy.Text = "Enable Proxy Connection";
             this.checkUseProxy.UseVisualStyleBackColor = true;
             // 
+            // tabPageBNC
+            // 
+            this.tabPageBNC.Controls.Add(this.label9);
+            this.tabPageBNC.Controls.Add(this.textBNCPass);
+            this.tabPageBNC.Controls.Add(this.labelBNCPass);
+            this.tabPageBNC.Controls.Add(this.textBNCUser);
+            this.tabPageBNC.Controls.Add(this.labelBNCUser);
+            this.tabPageBNC.Controls.Add(this.textBNCPort);
+            this.tabPageBNC.Controls.Add(this.labelBNCPort);
+            this.tabPageBNC.Controls.Add(this.textBNCIP);
+            this.tabPageBNC.Controls.Add(this.labelBNCIP);
+            this.tabPageBNC.Controls.Add(this.checkUseBNC);
+            this.tabPageBNC.Location = new System.Drawing.Point(4, 46);
+            this.tabPageBNC.Name = "tabPageBNC";
+            this.tabPageBNC.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBNC.Size = new System.Drawing.Size(642, 232);
+            this.tabPageBNC.TabIndex = 9;
+            this.tabPageBNC.Text = "BNC Settings";
+            this.tabPageBNC.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(242, 12);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(164, 16);
+            this.label9.TabIndex = 66;
+            this.label9.Text = "NOT FUNCTIONAL YET";
+            // 
+            // textBNCPass
+            // 
+            this.textBNCPass.Location = new System.Drawing.Point(413, 75);
+            this.textBNCPass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBNCPass.Name = "textBNCPass";
+            this.textBNCPass.Size = new System.Drawing.Size(150, 23);
+            this.textBNCPass.TabIndex = 64;
+            // 
+            // labelBNCPass
+            // 
+            this.labelBNCPass.AutoSize = true;
+            this.labelBNCPass.Location = new System.Drawing.Point(297, 78);
+            this.labelBNCPass.Name = "labelBNCPass";
+            this.labelBNCPass.Size = new System.Drawing.Size(101, 16);
+            this.labelBNCPass.TabIndex = 65;
+            this.labelBNCPass.Text = "BNC Password";
+            // 
+            // textBNCUser
+            // 
+            this.textBNCUser.Location = new System.Drawing.Point(413, 44);
+            this.textBNCUser.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBNCUser.Name = "textBNCUser";
+            this.textBNCUser.Size = new System.Drawing.Size(150, 23);
+            this.textBNCUser.TabIndex = 62;
+            // 
+            // labelBNCUser
+            // 
+            this.labelBNCUser.AutoSize = true;
+            this.labelBNCUser.Location = new System.Drawing.Point(297, 47);
+            this.labelBNCUser.Name = "labelBNCUser";
+            this.labelBNCUser.Size = new System.Drawing.Size(68, 16);
+            this.labelBNCUser.TabIndex = 63;
+            this.labelBNCUser.Text = "BNC User";
+            // 
+            // textBNCPort
+            // 
+            this.textBNCPort.Location = new System.Drawing.Point(128, 75);
+            this.textBNCPort.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBNCPort.Name = "textBNCPort";
+            this.textBNCPort.Size = new System.Drawing.Size(150, 23);
+            this.textBNCPort.TabIndex = 60;
+            // 
+            // labelBNCPort
+            // 
+            this.labelBNCPort.AutoSize = true;
+            this.labelBNCPort.Location = new System.Drawing.Point(12, 78);
+            this.labelBNCPort.Name = "labelBNCPort";
+            this.labelBNCPort.Size = new System.Drawing.Size(66, 16);
+            this.labelBNCPort.TabIndex = 61;
+            this.labelBNCPort.Text = "BNC Port";
+            // 
+            // textBNCIP
+            // 
+            this.textBNCIP.Location = new System.Drawing.Point(128, 44);
+            this.textBNCIP.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBNCIP.Name = "textBNCIP";
+            this.textBNCIP.Size = new System.Drawing.Size(150, 23);
+            this.textBNCIP.TabIndex = 58;
+            // 
+            // labelBNCIP
+            // 
+            this.labelBNCIP.AutoSize = true;
+            this.labelBNCIP.Location = new System.Drawing.Point(12, 47);
+            this.labelBNCIP.Name = "labelBNCIP";
+            this.labelBNCIP.Size = new System.Drawing.Size(100, 16);
+            this.labelBNCIP.TabIndex = 59;
+            this.labelBNCIP.Text = "BNC Server IP";
+            // 
+            // checkUseBNC
+            // 
+            this.checkUseBNC.AutoSize = true;
+            this.checkUseBNC.Location = new System.Drawing.Point(15, 11);
+            this.checkUseBNC.Name = "checkUseBNC";
+            this.checkUseBNC.Size = new System.Drawing.Size(180, 20);
+            this.checkUseBNC.TabIndex = 2;
+            this.checkUseBNC.Text = "Enable BNC Connection";
+            this.checkUseBNC.UseVisualStyleBackColor = true;
+            // 
             // tabPageDefault
             // 
             this.tabPageDefault.Controls.Add(this.textDefaultQuitMessage);
@@ -1182,15 +1332,120 @@
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
             this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
-            // tabPageBNC
+            // textBox1
             // 
-            this.tabPageBNC.Location = new System.Drawing.Point(4, 46);
-            this.tabPageBNC.Name = "tabPageBNC";
-            this.tabPageBNC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBNC.Size = new System.Drawing.Size(642, 232);
-            this.tabPageBNC.TabIndex = 9;
-            this.tabPageBNC.Text = "BNC Settings";
-            this.tabPageBNC.UseVisualStyleBackColor = true;
+            this.textBox1.Location = new System.Drawing.Point(413, 73);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(150, 20);
+            this.textBox1.TabIndex = 56;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(297, 76);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(82, 13);
+            this.label5.TabIndex = 57;
+            this.label5.Text = "Proxy Password";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(413, 42);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(150, 20);
+            this.textBox2.TabIndex = 54;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(297, 45);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 13);
+            this.label6.TabIndex = 55;
+            this.label6.Text = "Proxy User";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Enabled = false;
+            this.radioButton1.Location = new System.Drawing.Point(15, 161);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(54, 17);
+            this.radioButton1.TabIndex = 53;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "HTTP";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Visible = false;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Enabled = false;
+            this.radioButton2.Location = new System.Drawing.Point(15, 135);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(70, 17);
+            this.radioButton2.TabIndex = 52;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Socks v4";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.Visible = false;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(15, 109);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(70, 17);
+            this.radioButton3.TabIndex = 51;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "Socks v5";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(128, 73);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(150, 20);
+            this.textBox3.TabIndex = 49;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 76);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(55, 13);
+            this.label7.TabIndex = 50;
+            this.label7.Text = "Proxy Port";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(128, 42);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(150, 20);
+            this.textBox4.TabIndex = 47;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 45);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(80, 13);
+            this.label8.TabIndex = 48;
+            this.label8.Text = "Proxy Server IP";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(15, 11);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(145, 17);
+            this.checkBox1.TabIndex = 1;
+            this.checkBox1.Text = "Enable Proxy Connection";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // FormServers
             // 
@@ -1228,12 +1483,13 @@
             this.tabPageNotes.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
             this.tabPageProxy.PerformLayout();
+            this.tabPageBNC.ResumeLayout(false);
+            this.tabPageBNC.PerformLayout();
             this.tabPageDefault.ResumeLayout(false);
             this.tabPageDefault.PerformLayout();
             this.ResumeLayout(false);
 
         }
-
 
         #endregion
 
@@ -1337,5 +1593,28 @@
         private System.Windows.Forms.TabPage tabPageNotes;
         private System.Windows.Forms.TextBox textNotes;
         private System.Windows.Forms.TabPage tabPageBNC;
+        private System.Windows.Forms.TextBox textBNCPass;
+        private System.Windows.Forms.Label labelBNCPass;
+        private System.Windows.Forms.TextBox textBNCUser;
+        private System.Windows.Forms.Label labelBNCUser;
+        private System.Windows.Forms.TextBox textBNCPort;
+        private System.Windows.Forms.Label labelBNCPort;
+        private System.Windows.Forms.TextBox textBNCIP;
+        private System.Windows.Forms.Label labelBNCIP;
+        private System.Windows.Forms.CheckBox checkUseBNC;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox checkAdvancedSettings;
     }
 }

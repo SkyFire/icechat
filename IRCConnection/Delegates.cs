@@ -46,8 +46,8 @@ namespace IceChat
     public delegate void ClearNickListDelegate(IRCConnection connection, string channel);
     public delegate void UserHostReplyDelegate(IRCConnection connection, string fullhost);
 
-    public delegate void KickNickDelegate(IRCConnection connection, string channel, string nick, string reason, string kickUser);
-    public delegate void KickMyselfDelegate(IRCConnection connection, string channel, string reason, string kickUser);
+    public delegate void ChannelKickDelegate(IRCConnection connection, string channel, string nick, string reason, string kickUser);
+    public delegate void ChannelKickSelfDelegate(IRCConnection connection, string channel, string reason, string kickUser);
     public delegate void ChangeNickDelegate(IRCConnection connection, string oldnick, string newnick, string host);
     public delegate void UserNoticeDelegate(IRCConnection connection, string nick, string message);
     public delegate void ServerNoticeDelegate(IRCConnection connection, string message);
@@ -116,6 +116,7 @@ namespace IceChat
     public delegate void ServerDisconnectDelegate(IRCConnection connection);
     public delegate void ServerConnectDelegate(IRCConnection connection, string address);
     public delegate void ServerForceDisconnectDelegate(IRCConnection connection);
+    public delegate void ServerPreConnectDelegate(IRCConnection connection);
 
     public delegate void WriteErrorFileDelegate(IRCConnection connection, string method, Exception e);
 

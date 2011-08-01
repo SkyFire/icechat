@@ -102,6 +102,7 @@ namespace IceChat
             public bool wrapped;
             public bool previous;
             public int textColor;
+            public int lineHeight;
         }
 
         #endregion
@@ -201,8 +202,9 @@ namespace IceChat
                     {
                         //check if we are over a channel name
                         string chan = _linkedWord;
-                        for (int i = 0; i < t.Connection.ServerSetting.StatusModes[1].Length; i++)
-                            chan = chan.Replace(t.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
+                        if (t.Connection.ServerSetting.StatusModes != null)
+                            for (int i = 0; i < t.Connection.ServerSetting.StatusModes[1].Length; i++)
+                                chan = chan.Replace(t.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
                         //System.Diagnostics.Debug.WriteLine("hover:" + chan);
                         
                         if (chan.Length > 0 && t.Connection.ServerSetting.ChannelTypes != null && Array.IndexOf(t.Connection.ServerSetting.ChannelTypes, chan[0]) != -1)
@@ -1230,7 +1232,6 @@ namespace IceChat
             {
                 ((VScrollBar)sender).Value = 1;
             }
-
             Invalidate();
         }
 
@@ -1405,6 +1406,7 @@ namespace IceChat
                         _displayLines[line].line = _textLines[currentLine].line;
                         _displayLines[line].textLine = currentLine;
                         _displayLines[line].textColor = _textLines[currentLine].textColor;
+                        _displayLines[line].lineHeight = _lineSize;
                         line++;
                     }
                     catch (Exception e)
@@ -1502,6 +1504,7 @@ namespace IceChat
                                         _displayLines[line].textLine = currentLine;
                                         _displayLines[line].wrapped = true;
                                         _displayLines[line].textColor = _textLines[currentLine].textColor;
+                                        _displayLines[line].lineHeight = _lineSize;
 
                                         lineSplit = true;
                                         if (nextColor.Length != 0)
@@ -1543,6 +1546,8 @@ namespace IceChat
 
                     _displayLines[line].textLine = currentLine;
                     _displayLines[line].textColor = _textLines[currentLine].textColor;
+                    _displayLines[line].lineHeight = _lineSize;
+
                     line++;
                 }
             }
@@ -1622,6 +1627,72 @@ namespace IceChat
                 else
                     startY = this.Height - (_lineSize * LinesToDraw) - (_lineSize / 2);
 
+                if (!FormMain.Instance.IceChatOptions.EmoticonsFixedSize)
+                {
+                    System.Diagnostics.Debug.WriteLine("old Start Y:" + startY + ":" + LinesToDraw + ":" + this.Height);
+
+                    int totalHeight = 0;
+                    int newLinesDraw = LinesToDraw;
+
+                    //recalculate if we have different line heights
+                    for (int i = 0; i < LinesToDraw; i++)
+                    {
+                        totalHeight += _displayLines[i].lineHeight;
+                        if (_displayLines[i].lineHeight > _lineSize)
+                        {
+                            if ((this.Height - totalHeight) < (_lineSize * -1))
+                            {
+                                System.Diagnostics.Debug.WriteLine("need to adjust lines:" + totalHeight + ":" + this.Height);
+                                newLinesDraw--;
+                                //totalHeight -= _displayLines[i].lineHeight - _lineSize;
+                                //LinesToDraw
+                            }
+                        }
+                    }
+
+                    //int x = LinesToDraw-1;
+                    int x = _totaldisplayLines - 1;
+                    int th = 0;
+                    int count = 0;
+
+                    while (x >= 0)
+                    {
+                        count++;
+                        th += _displayLines[x].lineHeight;
+                        System.Diagnostics.Debug.WriteLine("calc size:" + x + ":" + _displayLines[x].lineHeight + ":" + _displayLines[x].line);
+                        if ((this.Height - th) < (_lineSize * -1))
+                        {
+                            newLinesDraw = count;
+                            totalHeight = th;
+                            System.Diagnostics.Debug.WriteLine("reached limit:" + count + ":" + th + ":" + this.Height);
+                            break;
+                        }
+                        x--;
+                    }
+
+                    /*
+                    if (LinesToDraw > newLinesDraw)
+                    {
+                        System.Diagnostics.Debug.WriteLine("OLD total height:" + totalHeight);
+                        totalHeight = 0;
+                        for (int i = 0; i < newLinesDraw; i++)
+                        {
+                            totalHeight += _displayLines[i].lineHeight;
+                        }
+                        System.Diagnostics.Debug.WriteLine("new total height:" + totalHeight + ":" + this.Height);
+                    }
+                    */
+
+                    startY = ((this.Height - totalHeight) - (_lineSize / 2));
+
+                    curLine = val - newLinesDraw;
+                    LinesToDraw = newLinesDraw;
+
+                    //System.Diagnostics.Debug.WriteLine("NEW Y:" + startY + ":" + ((this.Height - totalHeight)- (_lineSize / 2)) + ":" + newLinesDraw + ":" + LinesToDraw);
+                    System.Diagnostics.Debug.WriteLine("NEW Y:" + startY + ":" + newLinesDraw + ":" + LinesToDraw + ":" + totalHeight);
+                }
+
+
                 int lineCounter = 0;
 
                 bool isInUrl = false;
@@ -1678,7 +1749,9 @@ namespace IceChat
                         font = null;
                         font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
                     }
-                    
+
+                    //System.Diagnostics.Debug.WriteLine(lineCounter + ":" + _displayLines[curLine].lineHeight);     
+
                     if (line.Length > 0)
                     {
                         do
@@ -1703,11 +1776,33 @@ namespace IceChat
                                             g.FillRectangle(new SolidBrush(IrcColor.colors[curBackColor]), r);
                                         }
 
-                                        g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width, startY, _lineSize, _lineSize);
+                                        if (FormMain.Instance.IceChatOptions.EmoticonsFixedSize)
+                                        {
+                                            g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width, startY, _lineSize, _lineSize);
+                                            g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+                                            startX += _lineSize + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width;
+                                        }
+                                        else
+                                        {
+                                            g.DrawImage((Image)bm, startX + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width + 1, startY, bm.Width, bm.Height);
 
-                                        g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
-
-                                        startX += bm.Width + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width;
+                                            if (bm.Height > _lineSize)
+                                            {
+                                                //now how much extra height do we need to add?
+                                                if (_displayLines[curLine].lineHeight < bm.Height)
+                                                {
+                                                    _displayLines[curLine].lineHeight = bm.Height;
+                                                    //this causes a SCREEN FLASH, need to find out why
+                                                    System.Diagnostics.Debug.WriteLine("FORCE REDRAW");
+                                                    buffer.Dispose();
+                                                    g.Dispose();
+                                                    Invalidate();
+                                                    return;
+                                                }
+                                            }
+                                            g.DrawString(buildString.ToString(), this.Font, new SolidBrush(IrcColor.colors[curForeColor]), startX, startY, stringFormat);
+                                            startX += bm.Width + (int)g.MeasureString(buildString.ToString(), this.Font, 0, stringFormat).Width;
+                                        }
 
                                         buildString = null;
                                         buildString = new StringBuilder();
@@ -2024,7 +2119,8 @@ namespace IceChat
 
                     }
 
-                    startY += _lineSize;
+                    startY += _displayLines[curLine].lineHeight;
+
                     startX = 0;
                     curLine++;
                     buildString = null;

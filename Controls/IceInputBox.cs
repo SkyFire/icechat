@@ -365,7 +365,19 @@ namespace IceChat
                     FormMain.Instance.ServerTree.SelectTab(FormMain.Instance.TabMain.TabPages[prevIndex], false);
                     return;
                 }
+                else if (e.KeyCode == Keys.Back)
+                {
+                    int prevSpace = base.Text.LastIndexOf(' ');
+                    if (prevSpace > -1)
+                    {
+                        base.Text = base.Text.Substring(0, prevSpace);
+                        base.SelectionStart = base.Text.Length;
 
+                    }
+                    else
+                        base.Text = "";
+
+                }
 			}
 
 

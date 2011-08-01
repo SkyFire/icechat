@@ -26,7 +26,8 @@ namespace IceChat
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        
+
+        private IceTabControl mainTabControl;
         private InputPanel inputPanel;
         private System.Windows.Forms.MenuStrip menuMainStrip;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem;
@@ -724,7 +725,6 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem serverListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nickListToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripAway;
-        private IceTabControl mainTabControl;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdateToolStripMenuItem;

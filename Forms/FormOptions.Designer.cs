@@ -42,6 +42,8 @@ namespace IceChat
             this.textTimeStamp = new System.Windows.Forms.TextBox();
             this.labelTimeStamp = new System.Windows.Forms.Label();
             this.tabDisplay = new System.Windows.Forms.TabPage();
+            this.checkServerShowButtons = new System.Windows.Forms.CheckBox();
+            this.checkNickShowButtons = new System.Windows.Forms.CheckBox();
             this.checkShowNickHost = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
             this.textMaximumLines = new System.Windows.Forms.TextBox();
@@ -136,6 +138,7 @@ namespace IceChat
             this.labelChooseSound = new System.Windows.Forms.Label();
             this.listBoxSounds = new System.Windows.Forms.ListBox();
             this.tabEmoticon = new System.Windows.Forms.TabPage();
+            this.buttonBrowseEmoticon = new System.Windows.Forms.Button();
             this.checkEmoticons = new System.Windows.Forms.CheckBox();
             this.buttonEditTrigger = new System.Windows.Forms.Button();
             this.buttonRemoveEmoticon = new System.Windows.Forms.Button();
@@ -199,8 +202,7 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.checkNickShowButtons = new System.Windows.Forms.CheckBox();
-            this.checkServerShowButtons = new System.Windows.Forms.CheckBox();
+            this.checkKickChannelOpen = new System.Windows.Forms.CheckBox();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -357,6 +359,7 @@ namespace IceChat
             // 
             // tabDisplay
             // 
+            this.tabDisplay.Controls.Add(this.checkKickChannelOpen);
             this.tabDisplay.Controls.Add(this.checkServerShowButtons);
             this.tabDisplay.Controls.Add(this.checkNickShowButtons);
             this.tabDisplay.Controls.Add(this.checkShowNickHost);
@@ -378,6 +381,26 @@ namespace IceChat
             this.tabDisplay.TabIndex = 1;
             this.tabDisplay.Text = "Display";
             this.tabDisplay.UseVisualStyleBackColor = true;
+            // 
+            // checkServerShowButtons
+            // 
+            this.checkServerShowButtons.AutoSize = true;
+            this.checkServerShowButtons.Location = new System.Drawing.Point(286, 63);
+            this.checkServerShowButtons.Name = "checkServerShowButtons";
+            this.checkServerShowButtons.Size = new System.Drawing.Size(211, 20);
+            this.checkServerShowButtons.TabIndex = 54;
+            this.checkServerShowButtons.Text = "Show Buttons in Server List";
+            this.checkServerShowButtons.UseVisualStyleBackColor = true;
+            // 
+            // checkNickShowButtons
+            // 
+            this.checkNickShowButtons.AutoSize = true;
+            this.checkNickShowButtons.Location = new System.Drawing.Point(286, 37);
+            this.checkNickShowButtons.Name = "checkNickShowButtons";
+            this.checkNickShowButtons.Size = new System.Drawing.Size(195, 20);
+            this.checkNickShowButtons.TabIndex = 53;
+            this.checkNickShowButtons.Text = "Show Buttons in Nick List";
+            this.checkNickShowButtons.UseVisualStyleBackColor = true;
             // 
             // checkShowNickHost
             // 
@@ -1315,6 +1338,7 @@ namespace IceChat
             // 
             // tabEmoticon
             // 
+            this.tabEmoticon.Controls.Add(this.buttonBrowseEmoticon);
             this.tabEmoticon.Controls.Add(this.checkEmoticons);
             this.tabEmoticon.Controls.Add(this.buttonEditTrigger);
             this.tabEmoticon.Controls.Add(this.buttonRemoveEmoticon);
@@ -1328,10 +1352,20 @@ namespace IceChat
             this.tabEmoticon.Text = "Emoticons";
             this.tabEmoticon.UseVisualStyleBackColor = true;
             // 
+            // buttonBrowseEmoticon
+            // 
+            this.buttonBrowseEmoticon.Location = new System.Drawing.Point(487, 93);
+            this.buttonBrowseEmoticon.Name = "buttonBrowseEmoticon";
+            this.buttonBrowseEmoticon.Size = new System.Drawing.Size(136, 23);
+            this.buttonBrowseEmoticon.TabIndex = 5;
+            this.buttonBrowseEmoticon.Text = "Browse Folder";
+            this.buttonBrowseEmoticon.UseVisualStyleBackColor = true;
+            this.buttonBrowseEmoticon.Click += new System.EventHandler(this.buttonBrowseEmoticon_Click);
+            // 
             // checkEmoticons
             // 
             this.checkEmoticons.AutoSize = true;
-            this.checkEmoticons.Location = new System.Drawing.Point(487, 93);
+            this.checkEmoticons.Location = new System.Drawing.Point(487, 150);
             this.checkEmoticons.Name = "checkEmoticons";
             this.checkEmoticons.Size = new System.Drawing.Size(123, 20);
             this.checkEmoticons.TabIndex = 4;
@@ -1380,7 +1414,7 @@ namespace IceChat
             this.listViewEmot.MultiSelect = false;
             this.listViewEmot.Name = "listViewEmot";
             this.listViewEmot.ShowGroups = false;
-            this.listViewEmot.Size = new System.Drawing.Size(477, 201);
+            this.listViewEmot.Size = new System.Drawing.Size(477, 248);
             this.listViewEmot.SmallImageList = this.imageListEmoticons;
             this.listViewEmot.TabIndex = 0;
             this.listViewEmot.UseCompatibleStateImageBehavior = false;
@@ -1933,25 +1967,15 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
-            // checkNickShowButtons
+            // checkKickChannelOpen
             // 
-            this.checkNickShowButtons.AutoSize = true;
-            this.checkNickShowButtons.Location = new System.Drawing.Point(286, 37);
-            this.checkNickShowButtons.Name = "checkNickShowButtons";
-            this.checkNickShowButtons.Size = new System.Drawing.Size(195, 20);
-            this.checkNickShowButtons.TabIndex = 53;
-            this.checkNickShowButtons.Text = "Show Buttons in Nick List";
-            this.checkNickShowButtons.UseVisualStyleBackColor = true;
-            // 
-            // checkServerShowButtons
-            // 
-            this.checkServerShowButtons.AutoSize = true;
-            this.checkServerShowButtons.Location = new System.Drawing.Point(286, 63);
-            this.checkServerShowButtons.Name = "checkServerShowButtons";
-            this.checkServerShowButtons.Size = new System.Drawing.Size(211, 20);
-            this.checkServerShowButtons.TabIndex = 54;
-            this.checkServerShowButtons.Text = "Show Buttons in Server List";
-            this.checkServerShowButtons.UseVisualStyleBackColor = true;
+            this.checkKickChannelOpen.AutoSize = true;
+            this.checkKickChannelOpen.Location = new System.Drawing.Point(15, 142);
+            this.checkKickChannelOpen.Name = "checkKickChannelOpen";
+            this.checkKickChannelOpen.Size = new System.Drawing.Size(212, 20);
+            this.checkKickChannelOpen.TabIndex = 55;
+            this.checkKickChannelOpen.Text = "Keep Channel open if kicked";
+            this.checkKickChannelOpen.UseVisualStyleBackColor = true;
             // 
             // FormSettings
             // 
@@ -2166,5 +2190,7 @@ namespace IceChat
         private System.Windows.Forms.CheckBox checkShowNickHost;
         private System.Windows.Forms.CheckBox checkNickShowButtons;
         private System.Windows.Forms.CheckBox checkServerShowButtons;
+        private System.Windows.Forms.Button buttonBrowseEmoticon;
+        private System.Windows.Forms.CheckBox checkKickChannelOpen;
     }
 }

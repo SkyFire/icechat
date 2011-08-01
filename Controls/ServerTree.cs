@@ -634,6 +634,7 @@ namespace IceChat
                             this.clearWindowToolStripMenuItem,
                             this.closeChannelToolStripMenuItem,
                             this.reJoinChannelToolStripMenuItem,
+                            this.addToAutoJoinToolStripMenuItem,
                             this.channelInformationToolStripMenuItem,
                             this.channelFontToolStripMenuItem,
                             this.noColorModeToolStripMenuItem});
@@ -1529,7 +1530,7 @@ namespace IceChat
             ServerSetting s = GetServerSetting(selectedServerID);
             if (s != null)
             {
-                FormMain.Instance.ParseOutGoingCommand(null, "/run " + FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + s.ServerName);
+                System.Diagnostics.Process.Start(FormMain.Instance.LogsFolder + System.IO.Path.DirectorySeparatorChar + s.ServerName);
                 return;
             }
         }
@@ -1561,6 +1562,16 @@ namespace IceChat
                 ((IceTabPage)findNode).Connection.SendData("JOIN " + ((IceTabPage)findNode).TabCaption);
             }
         }
+
+        private void addToAutoJoinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //add channel to autojoin
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/autojoin " + ((IceTabPage)findNode).TabCaption);                
+        }
+
+
 
         private void channelInformationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1645,7 +1656,6 @@ namespace IceChat
         }
 
         #endregion
-
 
 
 

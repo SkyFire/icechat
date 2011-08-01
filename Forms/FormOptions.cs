@@ -159,6 +159,7 @@ namespace IceChat
             checkShowNickHost.Checked = iceChatOptions.ShowNickHost;
             checkNickShowButtons.Checked = iceChatOptions.ShowNickButtons;
             checkServerShowButtons.Checked = iceChatOptions.ShowServerButtons;
+            checkKickChannelOpen.Checked = iceChatOptions.ChannelOpenKick;
 
             //dcc settings
             checkAutoDCCChat.Checked = iceChatOptions.DCCChatAutoAccept;
@@ -264,7 +265,7 @@ namespace IceChat
             iceChatOptions.ShowNickHost = checkShowNickHost.Checked;
             iceChatOptions.ShowNickButtons = checkNickShowButtons.Checked;
             iceChatOptions.ShowServerButtons = checkServerShowButtons.Checked;
-
+            iceChatOptions.ChannelOpenKick = checkKickChannelOpen.Checked;
             iceChatOptions.ShowUnreadLine = checkShowUnreadLine.Checked;
             iceChatOptions.MinimizeToTray = checkMinimizeTray.Checked;
             iceChatOptions.Language = ((LanguageItem)comboBoxLanguage.SelectedItem).LanguageName;
@@ -479,9 +480,8 @@ namespace IceChat
         {
             //add a new emoticon
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons";            
-            ofd.Filter = "Images (*.png)|*.png";
-            //ofd.Multiselect = true;
+            ofd.InitialDirectory = FormMain.Instance.EmoticonsFolder;            
+            ofd.Filter = "PNG Images (*.png)|*.png";
             ofd.RestoreDirectory = true;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
@@ -505,6 +505,15 @@ namespace IceChat
         {
             foreach (ListViewItem eachItem in listViewEmot.SelectedItems)
                 eachItem.BeginEdit();
+        }
+
+        private void buttonBrowseEmoticon_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(FormMain.Instance.EmoticonsFolder);
+            }
+            catch { }            
         }
 
         private void listBoxSounds_SelectedIndexChanged(object sender, EventArgs e)
@@ -621,6 +630,7 @@ namespace IceChat
             //System.Diagnostics.Debug.WriteLine(trackTransparency.Value);
             FormMain.Instance.Opacity = (double)trackTransparency.Value / 100;
         }
+
 
     }
 }

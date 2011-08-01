@@ -49,8 +49,8 @@ namespace IceChat
         public event QuitServerDelegate QuitServer;
         public event ChannelNoticeDelegate ChannelNotice;
 
-        public event KickNickDelegate KickNick;
-        public event KickMyselfDelegate KickMyself;
+        public event ChannelKickDelegate ChannelKick;
+        public event ChannelKickSelfDelegate ChannelKickSelf;
 
         public event ChannelTopicDelegate ChannelTopic;
 
@@ -116,6 +116,7 @@ namespace IceChat
         public event ServerReconnectDelegate ServerDisconnect;
         public event ServerConnectDelegate ServerConnect;
         public event ServerForceDisconnectDelegate ServerForceDisconnect;
+        public event ServerPreConnectDelegate ServerPreConnect;
 
         private bool triedAltNickName = false;
         private bool initialLogon = false;
@@ -1153,11 +1154,11 @@ namespace IceChat
                             if (nick.ToLower() == serverSetting.NickName.ToLower())
                             {
                                 //we got kicked
-                                KickMyself(this, channel, msg, ircData[0]);
+                                ChannelKickSelf(this, channel, msg, ircData[0]);
                             }
                             else
                             {
-                                KickNick(this, channel, nick, msg, ircData[0]);
+                                ChannelKick(this, channel, nick, msg, ircData[0]);
                                 IALUserPart(this, nick, channel);
                             }
                             break;
@@ -1260,7 +1261,7 @@ namespace IceChat
                 WriteErrorFile(this, "ParseData", e);
             }
         }
-
+        
         private bool CheckIgnoreList(string nick, string host)
         {
             if (!this.serverSetting.IgnoreListEnable) return false; //if ignore list is disabled, no match

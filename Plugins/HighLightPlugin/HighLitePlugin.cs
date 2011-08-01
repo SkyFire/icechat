@@ -69,7 +69,7 @@ namespace IceChatPlugin
             //set your default values here
             m_Name = "HighLite Plugin";
             m_Author = "Snerf";
-            m_Version = "1.4";
+            m_Version = "1.41";
         }
 
         public string Name
@@ -432,6 +432,12 @@ namespace IceChatPlugin
 
                     if (message.IndexOf(match, StringComparison.InvariantCultureIgnoreCase) > -1)
                     {
+                        message = message.Replace(args.Extra, "&#x3;" + hli.Color + args.Extra);                        
+
+                        //message = message.Replace("$message", "&#x3;" + hli.Color + "$message");                        
+                        //MessageBox.Show(message + ":" + args.Extra);
+                        
+                        /*
                         if (message.StartsWith(((char)3).ToString()))
                         {
                             //find the color number and replace
@@ -453,6 +459,7 @@ namespace IceChatPlugin
                         }
                         else
                             message = "&#x3;" + hli.Color.ToString() + message;
+                        */
 
                         //System.Diagnostics.Debug.WriteLine("matched:" + message + "::" + hli.Match);
                         if (hli.FlashTab == true)
@@ -570,6 +577,11 @@ namespace IceChatPlugin
 
         }
 
+        public void ServerPreConnect(PluginArgs args)
+        {
+
+        }
+
         public void ServerDisconnect(PluginArgs args)
         {
 
@@ -607,7 +619,29 @@ namespace IceChatPlugin
             //args.Extra -- "online" or "offline"
 
         }
+        public PluginArgs DCCChatConnected(PluginArgs args)
+        {
+            return args;
+        }
 
+        public PluginArgs DCCChatTimeOut(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs DCCChatMessage(PluginArgs args)
+        {
+            return args;
+        }
+        public PluginArgs DCCChatOpen(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs DCCChatClosed(PluginArgs args)
+        {
+            return args;
+        }
     }
 
     //seperate file for all the highlite items

@@ -296,6 +296,11 @@ namespace IceChatPlugin
 
         }
 
+        public void ServerPreConnect(PluginArgs args)
+        {
+
+        }
+
         public void ServerDisconnect(PluginArgs args)
         {
 
@@ -332,6 +337,30 @@ namespace IceChatPlugin
         {
             //args.Extra -- "online" or "offline"
 
+        }
+
+        public PluginArgs DCCChatConnected(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs DCCChatTimeOut(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs DCCChatMessage(PluginArgs args)
+        {
+            return args;
+        }
+        public PluginArgs DCCChatOpen(PluginArgs args)
+        {
+            return args;
+        }
+
+        public PluginArgs DCCChatClosed(PluginArgs args)
+        {
+            return args;
         }
 
     }

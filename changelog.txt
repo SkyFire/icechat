@@ -1,6 +1,22 @@
-Build RC 1.2 July 21, 2011
+Build RC 1.3 August 1, 2011
 * Fix Scrollbar issue with new windows where a lot of text gets entered, but does not show
 * Fix Scrollbar issue on Nicklist overlapping Nicklist Buttons panel
+* Add option to keep channel tab open if you get kicked
+* Add option to show advanced server settings in server editor, disabled by default
+* Added CTRL-Backspace removes a word at a time
+* BNC Settings added into Server Editor
+* Add in Server Editor "Show Advanced Settings" to show proxy/bnc/notes tabs 
+* Add $md5() identifier
+* Strip colors out of Channel List topics
+* Add 'Add to Autojoin' for popupmenu for channel in server tree
+* Add right click menu for channel list, add 'Add to Autojoin' and 'Join Channel'
+* Add /clearall command to clear all the text windows and console tab windows
+
+
+
+Build RC 1.2 July 21, 2011
+* Fix Scrollbar issue with new windows where a lot of text gets entered, but does not show
+* Fix Scrollbar issue on Nicklist overlapping Nicklist Buttons panel 
 
 
 Build RC1.1 July 20, 2011

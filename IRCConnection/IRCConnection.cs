@@ -413,15 +413,23 @@ namespace IceChat
                 }
                 else
                 {
+                    ServerPreConnect(this);
+
                     if (serverSetting.Password != null && serverSetting.Password.Length > 0)
                         SendData("PASS " + serverSetting.Password);
+
+                    if (serverSetting.UseBNC && serverSetting.BNCPass != null && serverSetting.BNCPass.Length > 0)
+                        SendData("PASS " + serverSetting.BNCPass);
 
                     //send the USER / NICK stuff
                     SendData("NICK " + serverSetting.NickName);
                     SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
 
                     whichAddressinList = whichAddressCurrent;
-
+                    
+                    if (serverSetting.UseBNC)
+                        this.fullyConnected = true;
+                    
                     this.pongTimer.Start();
                 }
             }
@@ -541,6 +549,14 @@ namespace IceChat
                         //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
                         sendBuffer.Enqueue(data);
                     }
+                    catch (Exception ex)
+                    {
+                        if (ServerError != null)
+                            ServerError(this, "Exception Error - Can not send:" + ex.Message, false);
+
+                        disconnectError = true;
+                        ForceDisconnect();
+                    }
                 }
                 else
                 {
@@ -570,7 +586,6 @@ namespace IceChat
             }
 
             //get the proper encoding            
-            //byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
             {
                 if (socketStream.CanWrite)
@@ -740,6 +755,8 @@ namespace IceChat
 
                             if (serverSetting.Password != null && serverSetting.Password.Length > 0)
                                 SendData("PASS " + serverSetting.Password);
+
+                            //check for pre-server data
 
                             //send the USER / NICK stuff
                             SendData("NICK " + serverSetting.NickName);
@@ -920,6 +937,46 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("Exception Proxy Connect");
                     }
                 }
+                else if (serverSetting.UseBNC)
+                {
+                    //start connection with BNC server
+                    whichAddressCurrent = 1;
+                    totalAddressinDNS = 1;
+                    IPAddress bncIP = null;
+
+                    try
+                    {
+                        bncIP = IPAddress.Parse(serverSetting.BNCIP);
+                    }
+                    catch (FormatException)
+                    {
+                        //bncIP = Dns.GetHostByAddress(serverSetting.ProxyIP).AddressList[0];
+                    }
+
+                    try
+                    {
+                        IPEndPoint bncEndPoint = new IPEndPoint(bncIP, Convert.ToInt32(serverSetting.BNCPort));
+                        Socket bncSocket = new Socket(bncEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                        ServerConnect(this, bncIP.ToString());
+
+                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
+                        //msg = msg.Replace("$serverip", bncIP.ToString()).Replace("$server", serverSetting.BNCIP).Replace("$port", serverSetting.BNCPort);
+                        //ServerMessage(this, msg);
+
+                        serverSocket = bncSocket;
+                        bncSocket.BeginConnect(bncEndPoint, new AsyncCallback(OnConnectionReady), null);
+                    }
+                    catch (SocketException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Socket Exception Proxy Connect");
+                    }
+                    catch (Exception)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Exception Proxy Connect");
+                    }
+
+                }
                 else if (serverSetting.UseIPv6)
                 {
                     //connect to an IPv6 Server
@@ -941,11 +998,11 @@ namespace IceChat
                         }
                         */
                         //ipAddress = ipHostInfo.AddressList[0];// IPAddress.Parse(address);
-                        
+
                         if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
                         {
                             System.Diagnostics.Debug.WriteLine("success parse as ipv6 address");
-                            
+
                             IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
                             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
                             serverSocket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, 0);
@@ -960,7 +1017,7 @@ namespace IceChat
 
                             System.Diagnostics.Debug.WriteLine("start ipv6 connect here");
                             //serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), serverSocket);
-                            serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady),  null);
+                            serverSocket.BeginConnect(ipe, new AsyncCallback(OnConnectionReady), null);
                         }
                         return;
                     }
@@ -984,8 +1041,7 @@ namespace IceChat
                     if (IPAddress.TryParse(serverSetting.ServerName, out ipAddress))
                     {
                         IPEndPoint ipe = new IPEndPoint(ipAddress, Convert.ToInt32(serverSetting.ServerPort));
-                        System.Diagnostics.Debug.WriteLine("try ipv6 1:" + ipe.AddressFamily.ToString() + ":" + ipAddress.ToString());
-                        serverSocket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                        serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                         serverSetting.ServerIP = ipAddress.ToString();
                         ServerConnect(this, ipAddress.ToString());

@@ -224,11 +224,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="QuitMessages.cs" />
     <Compile Include="ServerSetting.cs" />
     <Compile Include="Controls\ServerTree.cs">
@@ -295,10 +290,6 @@
     <EmbeddedResource Include="Forms\FormUserInfo.resx">
       <DependentUpon>FormUserInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <Compile Include="StaticMethods.cs" />
     <Compile Include="User.cs" />
     <EmbeddedResource Include="Controls\ChannelList.resx">
@@ -392,7 +383,6 @@
     <EmbeddedResource Include="Icons\Smile.png" />
     <EmbeddedResource Include="Icons\window.png" />
     <EmbeddedResource Include="Icons\query.png" />
-    <None Include="app.config" />
     <None Include="IceChat2009.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -429,6 +419,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />
+    <Content Include="ToDo.txt" />
     <EmbeddedResource Include="Icons\update-menu.png" />
     <EmbeddedResource Include="Icons\update.png" />
     <EmbeddedResource Include="Forms\FormDCCFileAccept.resx">
@@ -444,9 +435,6 @@
     <EmbeddedResource Include="Icons\settings.png" />
     <EmbeddedResource Include="Icons\away.png" />
     <EmbeddedResource Include="Icons\system-tray.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,25 @@
+﻿To Do List for IceChat 9
+
+
+Further testing of DCC File Sending and Receiving
+*Add DCC Chat Events to Plugin Framework (RC1.3)
+Add DCC File Events to Plugin Framework
+Allow DCC Chat messages to show and parse ACTION /me messages
+*BNC Settings need to be added to server editor and tested (RC1.3)
+Emoticons that are larger then font sizes, allowed
+*Add in server editor "Show Advanced Settings" to show proxy/bnc/notes tabs (RC1.3)
+*Change for /run command, params to be added inside ' ' single quotes (RC1.3)
+Add $mask() identifier 
+*Add $md5() identifier (RC1.3)
+Add settingfile IceChatPlugins.xml for allowing to enable/disable plugins, add/remove items if DLL is added/removed from Plugins folder
+*Server Editor, fix AutoJoin, Ignore, Buddy List , make slightly taller to coincide with AutoPerform checkbox (RC1.3)
+Build main menu bar from an XML File, all menu items need to be run from a command
+Allow plugins to change the colors/appearance of IceChat, w/o needing an external Theme file
+Fix scrollbar in channel list / search bar
+*Strip colors out of channel list topics (RC1.3)
+*Option to keep channel tab open if you get kicked (add to display settings) (RC1.3)
+*Add 'add to autojoin' for popupmenu for channel in server tree (RC1.3)
+*Add right click menu for channel list, add 'add to autojoin' and 'join channel'(RC1.3)
+*Add ctrl-backspace to erase a word at a time (RC1.3)
+*Add /clearall command to clear all the text windows and console tab windows (RC1.3)
+Change plugin framework from an Interface type to a Event Based type

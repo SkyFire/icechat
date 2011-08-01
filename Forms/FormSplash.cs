@@ -34,8 +34,6 @@ namespace IceChat
         public FormSplash()
         {
             InitializeComponent();
-            labelLoading.Text = IceChat.Properties.Settings.Default.ProgramID + " " + IceChat.Properties.Settings.Default.Version;
-            
         }
     }
 }

@@ -584,7 +584,13 @@ namespace IceChatPlugin
         {
 
         }
+
         public void ServerConnect(PluginArgs args)
+        {
+
+        }
+
+        public void ServerPreConnect(PluginArgs args)
         {
 
         }

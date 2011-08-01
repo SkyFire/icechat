@@ -160,7 +160,6 @@ namespace IceChat
             {
                 this.showTabs = value;
                 //re-draw the panel accordingly
-                //this.Refresh();
                 this.Invalidate();
             }
         }
@@ -350,6 +349,7 @@ namespace IceChat
             menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
             menu.Items.Add(NewMenuItem("Close Channel", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
             menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", StaticMethods.LoadResourceImage("refresh.png")));
+            menu.Items.Add(NewMenuItem("Add to Autojoin Channel", "/autojoin $1", StaticMethods.LoadResourceImage("info.png")));
             menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", StaticMethods.LoadResourceImage("info.png")));
             menu.Items.Add(NewMenuItem("Change Font", "/font $1", StaticMethods.LoadResourceImage("fonts.png")));
 

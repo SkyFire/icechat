@@ -206,13 +206,29 @@ namespace IceChat
         public bool UseBNC
         { get; set; }
 
-        
-        
+        [XmlElement("BNCIP")]
+        public string BNCIP
+        { get; set; }
+
+        [XmlElement("BNCPort")]
+        public string BNCPort
+        { get; set; }
+
+        [XmlElement("BNCUser")]
+        public string BNCUser
+        { get; set; }
+
+        [XmlElement("BNCPass")]
+        public string BNCPass
+        { get; set; }
+
         [XmlElement("ServerNotes")]
         public string ServerNotes
         { get; set; }
 
-
+        [XmlElement("AdvancedSettings")]
+        public bool AdvancedSettings
+        { get; set; }
 
         //these are all temporary server settings, not saved to the XML file
 

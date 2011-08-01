@@ -52,21 +52,7 @@ namespace IceChat
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSplash));
-            this.labelLoading = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // labelLoading
-            // 
-            this.labelLoading.AutoSize = true;
-            this.labelLoading.BackColor = System.Drawing.Color.Transparent;
-            this.labelLoading.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLoading.ForeColor = System.Drawing.Color.White;
-            this.labelLoading.Location = new System.Drawing.Point(12, 311);
-            this.labelLoading.Name = "labelLoading";
-            this.labelLoading.Size = new System.Drawing.Size(52, 16);
-            this.labelLoading.TabIndex = 0;
-            this.labelLoading.Text = "Loading";
-            this.labelLoading.Visible = false;
             // 
             // FormSplash
             // 
@@ -74,7 +60,6 @@ namespace IceChat
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(497, 333);
-            this.Controls.Add(this.labelLoading);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -85,13 +70,11 @@ namespace IceChat
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormSplash";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label labelLoading;
 
 
     }
