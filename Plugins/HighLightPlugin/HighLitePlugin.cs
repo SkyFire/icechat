@@ -32,24 +32,17 @@ namespace IceChatPlugin
 {
     public class Plugin : IPluginIceChat
     {
+        //declare the standard properties
         private string m_Name;
         private string m_Author;
         private string m_Version;
 
-        private AppDomain m_domain;
-
-        private Form m_MainForm;
-        private MenuStrip m_MenuStrip;
-        private Panel m_BottomPanel;
-        private string currentFolder;
-        private TabControl m_RightPanel;
-        private TabControl m_LeftPanel;
-
-        private string m_ServerTreeCurrentTab;
-        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
+        public override string Name { get { return m_Name; } }
+        public override string Version { get { return m_Version; } }
+        public override string Author { get { return m_Author; } }
 
         //all the events get declared here, do not change
-        public event OutGoingCommandHandler OnCommand;
+        public override event OutGoingCommandHandler OnCommand;
 
         private TabPage tabPageHighlight;
         private Button buttonAdd;
@@ -69,113 +62,21 @@ namespace IceChatPlugin
             //set your default values here
             m_Name = "HighLite Plugin";
             m_Author = "Snerf";
-            m_Version = "1.41";
+            m_Version = "1.50";
         }
 
-        public string Name
+        public override void Dispose()
         {
-            get { return m_Name; }
+            
         }
 
-        public string Author
+        public override void Initialize()
         {
-            get { return m_Author; }
-        }
-
-        public string Version
-        {
-            get { return m_Version; }
-        }
-
-        public Form MainForm
-        {
-            get { return m_MainForm; }
-            set { m_MainForm = value; }
-        }
-
-        public string CurrentFolder
-        {
-            get { return currentFolder; }
-            set { currentFolder = value; }
-        }
-
-        public MenuStrip MainMenuStrip
-        {
-            get { return m_MenuStrip; }
-            set { m_MenuStrip = value; }
-        }
-
-        public Panel BottomPanel
-        {
-            get { return m_BottomPanel; }
-            set { m_BottomPanel = value; }
-        }
-
-        public TabControl LeftPanel
-        {
-            get { return m_LeftPanel; }
-            set { m_LeftPanel = value; }
-        }
-
-        public TabControl RightPanel
-        {
-            get { return m_RightPanel; }
-            set { m_RightPanel = value; }
-        }
-
-        public string ServerTreeCurrentTab
-        {
-            get { return m_ServerTreeCurrentTab; }
-            set { m_ServerTreeCurrentTab = value; }
-        }
-
-        public IceChat.IRCConnection ServerTreeCurrentConnection
-        {
-            get { return m_ServerTreeCurrentConnection; }
-            set { m_ServerTreeCurrentConnection = value; }
-        }
-
-        public AppDomain domain
-        {
-            get { return m_domain; }
-            set { m_domain = value; }
-        }
-
-        public void ShowInfo()
-        {
-            MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
-        }
-
-        public void Dispose()
-        {
-
-        }
-
-        public void Initialize()
-        {
-            highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
+            highlitesFile = CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
             LoadHighLites();
         }
-
-        public void MainProgramLoaded()
-        {
-            //
-
-        }
-
-        public void LoadSettingsForm(TabControl SettingsTab)
-        {
-            //
-
-        }
-
-        public void LoadEditorForm(TabControl ScriptsTab)
-        {
-            //
-
-        }
-
-        public void LoadColorsForm(TabControl OptionsTab)
+        
+        public override void LoadColorsForm(TabControl OptionsTab)
         {
             //when the Options Form gets loaded, ability to add tabs
             //add the Highlite Tab
@@ -271,7 +172,7 @@ namespace IceChatPlugin
 
         }
 
-        public void SaveColorsForm()
+        public override void SaveColorsForm()
         {
             //MessageBox.Show("Saving:" + iceChatHighLites.listHighLites.Count + ":" + listHighLite.Items.Count);
 
@@ -290,31 +191,6 @@ namespace IceChatPlugin
             }
             
             SaveHighLites();
-        }
-
-        public void SaveSettingsForm()
-        {
-            //
-        }
-
-        public void SaveEditorForm()
-        {
-            //
-        }
-
-        public ToolStripItem[] AddChannelPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddQueryPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddServerPopups()
-        {
-            return null;
         }
 
         private void ShowHighLites()
@@ -366,7 +242,7 @@ namespace IceChatPlugin
 
                 FormHighLite fi = new FormHighLite(hli, item.Index);
                 fi.SaveHighLite += new FormHighLite.SaveHighLiteDelegate(UpdateHighLite);                
-                fi.ShowDialog(m_MainForm);
+                fi.ShowDialog(this.MainForm);
             }
         }
 
@@ -374,7 +250,7 @@ namespace IceChatPlugin
         {
             FormHighLite fi = new FormHighLite(new HighLiteItem(), 0);
             fi.SaveHighLite += new FormHighLite.SaveHighLiteDelegate(SaveNewHighLite);
-            fi.ShowDialog(m_MainForm);
+            fi.ShowDialog(this.MainForm);
 
         }
 
@@ -480,168 +356,31 @@ namespace IceChatPlugin
             return message;
         }
 
-        public PluginArgs ChannelMessage(PluginArgs args)
+        public override PluginArgs ChannelMessage(PluginArgs args)
         {                        
             args.Message = CheckTextHighLite(args);            
             return args;
         }
 
-        public PluginArgs ChannelAction(PluginArgs args)
+        public override PluginArgs ChannelAction(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args);
             return args;
         }
 
-        public PluginArgs QueryMessage(PluginArgs args)
+        public override PluginArgs QueryMessage(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args);
             return args;
         }
 
-        public PluginArgs QueryAction(PluginArgs args)
+        public override PluginArgs QueryAction(PluginArgs args)
         {
             args.Message = CheckTextHighLite(args);
             return args;
         }
 
-        public PluginArgs ChannelJoin(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ChannelPart(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerQuit(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs InputText(PluginArgs args)
-        {
-            return args;
-        }
-
-
-        public PluginArgs ChannelKick(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs UserNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs CtcpMessage(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs CtcpReply(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs ServerMessage(PluginArgs args)
-        {
-            return args;
-        }
-
-        public void NickChange(PluginArgs args)
-        {
-
-        }
-
-        public void ServerRaw(PluginArgs args)
-        {
-
-        }
-
-        public void ServerError(PluginArgs args)
-        {
-
-        }
-
-        public void ServerConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerPreConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerDisconnect(PluginArgs args)
-        {
-
-        }
-
-        public void WhoisUser(PluginArgs args)
-        {
-
-        }
-
-        public PluginArgs ChannelNotice(PluginArgs args)
-        {
-
-            return args;
-        }
-
-        public void ChannelTopic(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelInvite(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelMode(PluginArgs args)
-        {
-            //args.Extra --  full channel mode
-
-        }
-
-        public void BuddyList(PluginArgs args)
-        {
-            //args.Extra -- "online" or "offline"
-
-        }
-        public PluginArgs DCCChatConnected(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs DCCChatTimeOut(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs DCCChatMessage(PluginArgs args)
-        {
-            return args;
-        }
-        public PluginArgs DCCChatOpen(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs DCCChatClosed(PluginArgs args)
-        {
-            return args;
-        }
+        
     }
 
     //seperate file for all the highlite items

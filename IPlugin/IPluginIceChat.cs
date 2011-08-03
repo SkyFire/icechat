@@ -30,86 +30,89 @@ namespace IceChatPlugin
 
     public delegate void OutGoingCommandHandler(PluginArgs e);
 
-    public interface IPluginIceChat
+    public abstract class IPluginIceChat
     {
+        public abstract void Initialize();
+        public abstract void Dispose();        
 
-        void Initialize();
-        void Dispose();        
-
-        string Name { get; }
-        string Version { get; }
-        string Author { get; }
+        public abstract string Name { get; }
+        public abstract string Version { get; }
+        public abstract string Author { get; }
 
         //sets the MainForm for IceChat
-        Form MainForm { get; set; }
-        string CurrentFolder { get; set; }
-        void ShowInfo();
+        public Form MainForm { get; set; }
+        public string CurrentFolder { get; set; }
+        
+        public virtual void ShowInfo()
+        {
+            MessageBox.Show(Name + " Loaded", Name + " " + Author);
+        }
 
-        AppDomain domain { get; set; }
+        public AppDomain domain { get; set; }
 
         //the mainform menu
-        MenuStrip MainMenuStrip { get; set; }
+        public MenuStrip MainMenuStrip { get; set; }
         //the bottom panel of the main window
-        Panel BottomPanel { get; set; }
+        public Panel BottomPanel { get; set; }
 
-        TabControl LeftPanel { get; set; }
-        TabControl RightPanel { get; set; }
+        public TabControl LeftPanel { get; set; }
+        public TabControl RightPanel { get; set; }
 
-        void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab);
-        void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab);
-        void LoadEditorForm(System.Windows.Forms.TabControl ScriptsTab);
-        void SaveColorsForm();
-        void SaveSettingsForm();
-        void SaveEditorForm();
+        public virtual void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab) { }
+        public virtual void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab) { }
+        public virtual void LoadEditorForm(System.Windows.Forms.TabControl ScriptsTab) { }
+        public virtual void SaveColorsForm() { }
+        public virtual void SaveSettingsForm() { }
+        public virtual void SaveEditorForm() { }
 
-        ToolStripItem[] AddChannelPopups();
-        ToolStripItem[] AddQueryPopups();
-        ToolStripItem[] AddServerPopups();
+        public virtual ToolStripItem[] AddChannelPopups() { return null; }
+        public virtual ToolStripItem[] AddQueryPopups() { return null; }
+        public virtual ToolStripItem[] AddServerPopups() { return null; }
+        
+        public IceChat.IRCConnection ServerTreeCurrentConnection { get; set; }
+        public string ServerTreeCurrentTab { get; set; }
 
-        IceChat.IRCConnection ServerTreeCurrentConnection { get; set; }
-        string ServerTreeCurrentTab { get; set; }
+        public virtual void MainProgramLoaded() { }       //the main icechat form/program has loaded
 
-        void MainProgramLoaded();       //the main icechat form/program has loaded
+        public virtual PluginArgs ChannelMessage(PluginArgs args) { return args; }
+        public virtual PluginArgs ChannelAction(PluginArgs args) { return args; }
+        public virtual PluginArgs ChannelKick(PluginArgs args) { return args; }
+        public virtual PluginArgs QueryMessage(PluginArgs args) { return args; }
+        public virtual PluginArgs QueryAction(PluginArgs args) { return args; }
 
-        PluginArgs ChannelMessage(PluginArgs args);
-        PluginArgs ChannelAction(PluginArgs args);
-        PluginArgs ChannelKick(PluginArgs args);
-        PluginArgs QueryMessage(PluginArgs args);
-        PluginArgs QueryAction(PluginArgs args);
+        public virtual PluginArgs ChannelJoin(PluginArgs args) { return args; }
+        public virtual PluginArgs ChannelPart(PluginArgs args) { return args; }
+        public virtual PluginArgs ServerQuit(PluginArgs args) { return args; }
+        public virtual PluginArgs ServerMessage(PluginArgs args) { return args; }
+        public virtual PluginArgs ServerNotice(PluginArgs args) { return args; }
+        public virtual PluginArgs InputText(PluginArgs args) { return args; }
+        public virtual PluginArgs UserNotice(PluginArgs args) { return args; }
+        public virtual PluginArgs CtcpMessage(PluginArgs args) { return args; }
+        public virtual PluginArgs CtcpReply(PluginArgs args) { return args; }
+        public virtual PluginArgs ChannelNotice(PluginArgs args) { return args; }
 
-        PluginArgs ChannelJoin(PluginArgs args);
-        PluginArgs ChannelPart(PluginArgs args);
-        PluginArgs ServerQuit(PluginArgs args);
-        PluginArgs ServerMessage(PluginArgs args);
-        PluginArgs ServerNotice(PluginArgs args);
-        PluginArgs InputText(PluginArgs args);
-        PluginArgs UserNotice(PluginArgs args);
-        PluginArgs CtcpMessage(PluginArgs args);
-        PluginArgs CtcpReply(PluginArgs args);
-        PluginArgs ChannelNotice(PluginArgs args);
+        public virtual PluginArgs DCCChatOpen(PluginArgs args) { return args; }
+        public virtual PluginArgs DCCChatClosed(PluginArgs args) { return args; }
+        public virtual PluginArgs DCCChatMessage(PluginArgs args) { return args; }
+        public virtual PluginArgs DCCChatTimeOut(PluginArgs args) { return args; }
+        public virtual PluginArgs DCCChatConnected(PluginArgs args) { return args; }
 
-        PluginArgs DCCChatOpen(PluginArgs args);
-        PluginArgs DCCChatClosed(PluginArgs args);
-        PluginArgs DCCChatMessage(PluginArgs args);
-        PluginArgs DCCChatTimeOut(PluginArgs args);
-        PluginArgs DCCChatConnected(PluginArgs args);
+        public virtual void ServerConnect(PluginArgs args) { }
+        public virtual void ServerDisconnect(PluginArgs args) { }
+        public virtual void ServerPreConnect(PluginArgs args) {  }
 
-        void ServerConnect(PluginArgs args);
-        void ServerDisconnect(PluginArgs args);
-        void ServerPreConnect(PluginArgs args);
+        public virtual void WhoisUser(PluginArgs args) { }
+        public virtual void ChannelTopic(PluginArgs args) { }
+        public virtual void ChannelInvite(PluginArgs args) { }
+        public virtual void BuddyList(PluginArgs args) { }
+        public virtual void ChannelMode(PluginArgs args) { }
 
-        void WhoisUser(PluginArgs args);
-        void ChannelTopic(PluginArgs args);
-        void ChannelInvite(PluginArgs args);                
-        void BuddyList(PluginArgs args);
-        void ChannelMode(PluginArgs args);
-
-        void NickChange(PluginArgs args);
-        void ServerError(PluginArgs args);
-        void ServerRaw(PluginArgs args);
+        public virtual void NickChange(PluginArgs args) { }
+        public virtual void ServerError(PluginArgs args) { }
+        public virtual void ServerRaw(PluginArgs args) { }
 
 
-        event OutGoingCommandHandler OnCommand;
+        public virtual event OutGoingCommandHandler OnCommand;
 
     }
 

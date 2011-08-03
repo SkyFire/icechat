@@ -38,19 +38,13 @@ namespace IceChatPlugin
         private string m_Author;
         private string m_Version;
 
-        private AppDomain m_domain;
+        public override string Name { get { return m_Name; } }
+        public override string Version { get { return m_Version; } }
+        public override string Author { get { return m_Author; } }
 
-        private Form m_MainForm;
-        private MenuStrip m_MenuStrip;
-        private Panel m_BottomPanel;
-        private TabControl m_RightPanel;
-        private TabControl m_LeftPanel;
-
-        private string m_ServerTreeCurrentTab;
-        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
 
         //all the events get declared here, do not change
-        public event OutGoingCommandHandler OnCommand;
+        public override event OutGoingCommandHandler OnCommand;
 
         private TabPage tabPageHighlight;
         private Button buttonAdd;
@@ -65,7 +59,6 @@ namespace IceChatPlugin
 
         private IceChatScripts iceChatScripts;
         private string scriptsFile;
-        private string currentFolder;
 
         public Plugin()
         {
@@ -75,119 +68,20 @@ namespace IceChatPlugin
             m_Version = "1.1";
         }
 
-        public string Name
-        {
-            get { return m_Name; }
-        }
-
-        public string Author
-        {
-            get { return m_Author; }
-        }
-
-        public string Version
-        {
-            get { return m_Version; }
-        }
-
-        public Form MainForm
-        {
-            get { return m_MainForm; }
-            set { m_MainForm = value; }
-        }
-
-        public string CurrentFolder
-        {
-            get { return currentFolder; }
-            set { currentFolder = value; }
-        }
-
-        public MenuStrip MainMenuStrip
-        {
-            get { return m_MenuStrip; }
-            set { m_MenuStrip = value; }
-        }
-
-        public Panel BottomPanel
-        {
-            get { return m_BottomPanel; }
-            set { m_BottomPanel = value; }
-        }
-
-        public TabControl LeftPanel
-        {
-            get { return m_LeftPanel; }
-            set { m_LeftPanel = value; }
-        }
-
-        public TabControl RightPanel
-        {
-            get { return m_RightPanel; }
-            set { m_RightPanel = value; }
-        }
-
-        public string ServerTreeCurrentTab
-        {
-            get { return m_ServerTreeCurrentTab; }
-            set { m_ServerTreeCurrentTab = value; }
-        }
-
-        public IceChat.IRCConnection ServerTreeCurrentConnection
-        {
-            get { return m_ServerTreeCurrentConnection; }
-            set { m_ServerTreeCurrentConnection = value; }
-        }
-
-        public AppDomain domain
-        {
-            get { return m_domain; }
-            set { m_domain = value; }
-        }
-
-        public void ShowInfo()
-        {
-            MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
-        }
-
-        public void Dispose()
+        public override void Dispose()
         {
 
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
-            scriptsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatSimpleScript.xml";
+            scriptsFile = CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatSimpleScript.xml";
             LoadScriptSettings();
 
         }
 
-        public void MainProgramLoaded()
-        {
 
-        }
-
-        public void LoadSettingsForm(TabControl SettingsTab)
-        {
-
-
-        }
-
-        public ToolStripItem[] AddChannelPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddQueryPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddServerPopups()
-        {
-            return null;
-        }
-
-        public void LoadEditorForm(TabControl ScriptsTab)
+        public override void LoadEditorForm(TabControl ScriptsTab)
         {
             //when the Editor Form gets loaded, ability to add tabs
             
@@ -285,23 +179,7 @@ namespace IceChatPlugin
 
         }
 
-        public void LoadColorsForm(TabControl OptionsTab)
-        {
-            //when the Options Form gets loaded, ability to add tabs
-           
-        }
-
-        public void SaveColorsForm()
-        {
-            //
-        }
-
-        public void SaveSettingsForm()
-        {
-            //
-        }
-
-        public void SaveEditorForm()
+        public override void SaveEditorForm()
         {
             iceChatScripts.listScripts.Clear();
 
@@ -368,7 +246,7 @@ namespace IceChatPlugin
 
                 FormScriptItem fi = new FormScriptItem(scr, item.Index);
                 fi.SaveScriptItem += new FormScriptItem.SaveScriptItemDelegate(UpdateScriptItem);                
-                fi.ShowDialog(m_MainForm);
+                fi.ShowDialog(MainForm);
             }
         }
 
@@ -376,7 +254,7 @@ namespace IceChatPlugin
         {
             FormScriptItem fsi = new FormScriptItem(new ScriptItem(), 0);
             fsi.SaveScriptItem += new FormScriptItem.SaveScriptItemDelegate(SaveNewScriptItem);
-            fsi.ShowDialog(m_MainForm);
+            fsi.ShowDialog(MainForm);
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -492,146 +370,36 @@ namespace IceChatPlugin
             return args;
         }
 
-        public PluginArgs ChannelMessage(PluginArgs args)
+        public override PluginArgs ChannelMessage(PluginArgs args)
         {
             args = CheckScripts(args, "Channel Message");
             return args;
         }
 
-        public PluginArgs ChannelAction(PluginArgs args)
+        public override PluginArgs ChannelAction(PluginArgs args)
         {
             args = CheckScripts(args, "Channel Action");
             return args;
         }
 
-        public PluginArgs QueryMessage(PluginArgs args)
+        public override PluginArgs QueryMessage(PluginArgs args)
         {
             args = CheckScripts(args, "Private Message");
             return args;
         }
 
-        public PluginArgs QueryAction(PluginArgs args)
+        public override PluginArgs QueryAction(PluginArgs args)
         {
             args = CheckScripts(args, "Private Action");
             return args;
         }
 
-        public PluginArgs ChannelJoin(PluginArgs args)
+        public override PluginArgs ChannelJoin(PluginArgs args)
         {
             args = CheckScripts(args, "Channel Join");
             return args;
         }
 
-        public PluginArgs ChannelPart(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerQuit(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs InputText(PluginArgs args)
-        {
-            return args;
-        }
-
-
-        public PluginArgs ChannelKick(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs UserNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs CtcpMessage(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs CtcpReply(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs ServerMessage(PluginArgs args)
-        {
-            return args;
-        }
-
-        public void NickChange(PluginArgs args)
-        {
-
-        }
-
-        public void ServerRaw(PluginArgs args)
-        {
-
-        }
-
-        public void ServerError(PluginArgs args)
-        {
-
-        }
-
-        public void ServerConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerPreConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerDisconnect(PluginArgs args)
-        {
-
-        }
-
-        public void WhoisUser(PluginArgs args)
-        {
-
-        }
-
-        public PluginArgs ChannelNotice(PluginArgs args)
-        {
-
-            return args;
-        }
-
-        public void ChannelTopic(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelInvite(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelMode(PluginArgs args)
-        {
-            //args.Extra --  full channel mode
-
-        }
-
-        public void BuddyList(PluginArgs args)
-        {
-            //args.Extra -- "online" or "offline"
-
-        }
 
     }
 

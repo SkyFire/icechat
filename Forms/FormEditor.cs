@@ -81,7 +81,7 @@ namespace IceChat
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {
+            {                
                 ipc.LoadEditorForm(this.tabControlEditor);
             }
 
@@ -277,7 +277,9 @@ namespace IceChat
             //save any plugin addons for the Script Editor
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ipc.SaveEditorForm();
+                
+                //if (ipc.OnSaveEditForm != null)
+                //    ipc.OnSaveEditorForm();
             }
            
             this.Close();

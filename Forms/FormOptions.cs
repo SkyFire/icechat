@@ -176,7 +176,7 @@ namespace IceChat
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {
+            {                
                 ipc.LoadSettingsForm(this.tabControlOptions);
             }
 

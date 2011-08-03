@@ -22,4 +22,5 @@ Fix scrollbar in channel list / search bar
 *Add right click menu for channel list, add 'add to autojoin' and 'join channel'(RC1.3)
 *Add ctrl-backspace to erase a word at a time (RC1.3)
 *Add /clearall command to clear all the text windows and console tab windows (RC1.3)
-Change plugin framework from an Interface type to a Event Based type
+Flash Tray icon on new message option
+Change plugin framework from an Interface type to a Abstract class, with Methods that get overriden in plugins (RC1.4)

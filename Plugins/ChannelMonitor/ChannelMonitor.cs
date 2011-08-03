@@ -32,26 +32,19 @@ namespace IceChatPlugin
 {
     public class Plugin : IPluginIceChat
     {
+
         private string m_Name;
         private string m_Author;
         private string m_Version;
-        private AppDomain m_domain;
 
+        public override string Name { get { return m_Name; } }
+        public override string Version { get { return m_Version; } }
+        public override string Author { get { return m_Author; } }
 
-        private Form m_MainForm;
-        private MenuStrip m_MenuStrip;
-        private Panel m_BottomPanel;
-        private string currentFolder;
-        private TabControl m_RightPanel;
-        private TabControl m_LeftPanel;
+        //all the events get declared here, do not change
+        //public override event OutGoingCommandHandler OnCommand;
 
         private ToolStripMenuItem m_EnableMonitor;
-
-        private string m_ServerTreeCurrentTab;
-        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
-
-        //all the events get declared here
-        public event OutGoingCommandHandler OnCommand;
 
         private struct cMonitor
         {
@@ -90,13 +83,13 @@ namespace IceChatPlugin
             m_Version = "1.0";
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             //remove the listview/panel
-            m_BottomPanel.Controls.Remove(panel);
+            BottomPanel.Controls.Remove(panel);
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
 
             panel = new Panel();
@@ -127,7 +120,8 @@ namespace IceChatPlugin
             listMonitor.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             listMonitor.Dock = DockStyle.Fill;
             panel.Controls.Add(listMonitor);
-            m_BottomPanel.Controls.Add(panel);
+            
+            BottomPanel.Controls.Add(panel);
 
             m_EnableMonitor = new ToolStripMenuItem();
             m_EnableMonitor.Text = "Toggle Monitor";
@@ -137,114 +131,13 @@ namespace IceChatPlugin
         }
 
         //declare the standard properties
-        public string Name
-        {
-            get { return m_Name; }
-        }
 
-        public string Author
-        {
-            get { return m_Author; }
-        }
-
-        public string Version
-        {
-            get { return m_Version; }
-        }
-
-        public Form MainForm
-        {
-            get { return m_MainForm; }
-            set { m_MainForm = value; }
-        }
-
-        public AppDomain domain
-        {
-            get { return m_domain; }
-            set { m_domain = value; }
-        }
-
-        public string CurrentFolder
-        {
-            get { return currentFolder; }
-            set { currentFolder = value; }
-        }
-
-        public MenuStrip MainMenuStrip
-        {
-            get { return m_MenuStrip; }
-            set { m_MenuStrip = value; }
-        }
-
-        public Panel BottomPanel
-        {
-            get { return m_BottomPanel; }
-            set { m_BottomPanel = value; }
-        }
-
-        public TabControl LeftPanel
-        {
-            get { return m_LeftPanel; }
-            set { m_LeftPanel = value; }
-        }
-
-        public TabControl RightPanel
-        {
-            get { return m_RightPanel; }
-            set { m_RightPanel = value; }
-        }
-
-        public string ServerTreeCurrentTab
-        {
-            get { return m_ServerTreeCurrentTab; }
-            set { m_ServerTreeCurrentTab = value; }
-        }
-
-        public IceChat.IRCConnection ServerTreeCurrentConnection
-        {
-            get { return m_ServerTreeCurrentConnection; }
-            set { m_ServerTreeCurrentConnection = value; }
-        }
-
-        //declare the standard methods
-        public void ShowInfo()
-        {
-            MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
-        }
-        
-        public void LoadSettingsForm(TabControl SettingsTab)
-        {
-            //when the Settings Form gets loaded, ability to add tabs
-
-        }
-        
-        public void LoadColorsForm(TabControl OptionsTab)
-        {
-            //when the Options Form gets loaded, ability to add tabs
-
-        }
-
-        public ToolStripItem[] AddChannelPopups()
+        public override ToolStripItem[] AddChannelPopups()
         {
             return (new System.Windows.Forms.ToolStripItem[] { m_EnableMonitor });
             //return null;
         }
 
-        public ToolStripItem[] AddQueryPopups()
-        {
-            return null;
-        }
-        
-        public ToolStripItem[] AddServerPopups()
-        {            
-            return null;
-        }
-
-
-        public void MainProgramLoaded()
-        {
-
-        }
 
         private void OnEnableMonitor_Click(object sender, EventArgs e)
         {
@@ -273,32 +166,13 @@ namespace IceChatPlugin
         
         }
 
-        public void SaveColorsForm()
-        {
-
-        }
-
-        public void SaveSettingsForm()
-        {
-        
-        }
-
-        public void LoadEditorForm(TabControl ScriptsTab)
-        {
-
-        }
-
-        public void SaveEditorForm()
-        {
-
-        }
-
+       
         private void AddMonitorMessage(string Channel, string Message)
         {
-            if (m_BottomPanel.InvokeRequired)
+            if (BottomPanel.InvokeRequired)
             {
                 UpdateMonitorDelegate umd = new UpdateMonitorDelegate(AddMonitorMessage);
-                m_BottomPanel.Invoke(umd, new object[] { Channel, Message });
+                BottomPanel.Invoke(umd, new object[] { Channel, Message });
             }
             else
             {
@@ -349,7 +223,7 @@ namespace IceChatPlugin
 
         //declare all the necessary events
 
-        public PluginArgs ChannelMessage(PluginArgs args)
+        public override PluginArgs ChannelMessage(PluginArgs args)
         {
             //check if monitoring is enabled for this channel
             cMonitor newChan = new cMonitor(args.Connection, args.Channel);
@@ -358,25 +232,15 @@ namespace IceChatPlugin
             return args;
         }
 
-        public PluginArgs ChannelAction(PluginArgs args)
+        public override PluginArgs ChannelAction(PluginArgs args)
         {
             cMonitor newChan = new cMonitor(args.Connection, args.Channel);
             if (monitoredChannels.IndexOf(newChan) > -1)
                 AddMonitorMessage(args.Channel, StripColorCodes(args.Message));
             return args;
         }
-
-        public PluginArgs QueryMessage(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs QueryAction(PluginArgs args)
-        {
-            return args;
-        }
         
-        public PluginArgs ChannelJoin(PluginArgs args)
+        public override PluginArgs ChannelJoin(PluginArgs args)
         {
             if (args.Nick == args.Connection.ServerSetting.NickName)
             {                
@@ -389,7 +253,7 @@ namespace IceChatPlugin
             return args;
         }
         
-        public PluginArgs ChannelPart(PluginArgs args)
+        public override PluginArgs ChannelPart(PluginArgs args)
         {
             if (args.Nick == args.Connection.ServerSetting.NickName)
             {
@@ -405,33 +269,8 @@ namespace IceChatPlugin
             return args;
         }
 
-        public PluginArgs ServerQuit(PluginArgs args)
-        {
-            return args;
-        }
-        //args.Connection   -- current connection
-        //args.Command        -- command data 
-        public PluginArgs InputText(PluginArgs args)
-        {
-            return args;
-        }
 
-        public PluginArgs ChannelKick(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs UserNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs CtcpMessage(PluginArgs args)
+        public override PluginArgs CtcpMessage(PluginArgs args)
         {
             //args.Extra        -- ctcp message 
             AddMonitorMessage(args.Nick, "CTCP : " + args.Extra);
@@ -439,80 +278,6 @@ namespace IceChatPlugin
             return args;
         }
 
-        public PluginArgs CtcpReply(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs ServerMessage(PluginArgs args)
-        {
-            
-            return args;
-        }
-
-        public void NickChange(PluginArgs args)
-        {
-
-        }
-
-        public void ServerRaw(PluginArgs args)
-        {
-
-        }
-
-        public void ServerError(PluginArgs args)
-        {
-
-        }
-
-        public void ServerConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerPreConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerDisconnect(PluginArgs args)
-        {
-
-        }
-
-        public void WhoisUser(PluginArgs args)
-        {
-
-        }
-
-        public PluginArgs ChannelNotice(PluginArgs args)
-        {
-
-            return args;
-        }
-
-        public void ChannelTopic(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelInvite(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelMode(PluginArgs args)
-        {
-            //args.Extra --  full channel mode
-
-        }
-
-        public void BuddyList(PluginArgs args)
-        {
-            //args.Extra -- "online" or "offline"
-
-        }
 
     }
 }

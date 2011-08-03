@@ -133,7 +133,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 1.3";
+        public const string VersionID = "Release Candidate 1.4";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -330,7 +330,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 1 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 3 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -1783,7 +1783,7 @@ namespace IceChat
                                 {
                                     //match
                                     IPluginIceChat plugin = (IPluginIceChat)menuItem.Tag;
-
+                                    
                                     plugin.OnCommand -= new OutGoingCommandHandler(Plugin_OnCommand);
                                     loadedPlugins.Remove(plugin);
                                     menuItem.Click -= new EventHandler(OnPluginMenuItemClick);
@@ -4790,7 +4790,7 @@ namespace IceChat
         //http://www.codeproject.com/KB/cs/dynamicpluginmanager.aspx
 
         private void loadPlugin(string fileName)
-        {            
+        {
             string args = fileName.Substring(fileName.LastIndexOf("\\") + 1);
             args = args.Substring(0, args.Length - 4);
 

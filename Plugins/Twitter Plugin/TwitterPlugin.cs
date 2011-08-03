@@ -39,17 +39,9 @@ namespace IceChatPlugin
         private string m_Author;
         private string m_Version;
 
-        private AppDomain m_domain;
-
-        private Form m_MainForm;
-        private MenuStrip m_MenuStrip;
-        private Panel m_BottomPanel;
-        private string currentFolder;
-        private TabControl m_RightPanel;
-        private TabControl m_LeftPanel;
-        
-        private string m_ServerTreeCurrentTab;
-        private IceChat.IRCConnection m_ServerTreeCurrentConnection;
+        public override string Name { get { return m_Name; } }
+        public override string Version { get { return m_Version; } }
+        public override string Author { get { return m_Author; } }
 
         private TabPage twitterTab;
         private TreeView twitterTree;
@@ -62,7 +54,7 @@ namespace IceChatPlugin
         private int headerHeight = 23;
 
         //all the events get declared here
-        public event OutGoingCommandHandler OnCommand;
+        //public override event OutGoingCommandHandler OnCommand;
 
         public Plugin()
         {
@@ -72,15 +64,15 @@ namespace IceChatPlugin
             m_Version = "1.0";
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            m_LeftPanel.TabPages.Remove(twitterTab);
+            LeftPanel.TabPages.Remove(twitterTab);
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
 
-            usersFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatTwitter.xml";
+            usersFile = CurrentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatTwitter.xml";
             
             twitterTab = new TabPage("Twitter");
             twitterPanel = new Panel();
@@ -97,7 +89,7 @@ namespace IceChatPlugin
 
             twitterTab.Controls.Add(twitterPanel);
 
-            m_LeftPanel.TabPages.Add(twitterTab);
+            LeftPanel.TabPages.Add(twitterTab);
 
             //load in your twitter settings
             LoadTwitterSettings();
@@ -139,276 +131,7 @@ namespace IceChatPlugin
         }
 
         //declare the standard properties
-        public string Name
-        {
-            get { return m_Name; }
-        }
-
-        public string Author
-        {
-            get { return m_Author; }
-        }
-
-        public string Version
-        {
-            get { return m_Version; }
-        }
-
-        public Form MainForm
-        {
-            get { return m_MainForm; }
-            set { m_MainForm = value; }
-        }
-
-        public string CurrentFolder
-        {
-            get { return currentFolder; }
-            set { currentFolder = value; }
-        }
-
-        public MenuStrip MainMenuStrip
-        {
-            get { return m_MenuStrip; }
-            set { m_MenuStrip = value; }
-        }
-
-        public Panel BottomPanel
-        {
-            get { return m_BottomPanel; }
-            set { m_BottomPanel = value; }
-        }
-
-        public TabControl LeftPanel
-        {
-            get { return m_LeftPanel; }
-            set { m_LeftPanel = value; }
-        }
-
-        public TabControl RightPanel
-        {
-            get { return m_RightPanel; }
-            set { m_RightPanel = value; }
-        }
-
-        public string ServerTreeCurrentTab
-        {
-            get { return m_ServerTreeCurrentTab; }
-            set { m_ServerTreeCurrentTab = value; }
-        }
-
-        public IceChat.IRCConnection ServerTreeCurrentConnection
-        {
-            get { return m_ServerTreeCurrentConnection; }
-            set { m_ServerTreeCurrentConnection = value; }
-        }
-
-        public AppDomain domain
-        {
-            get { return m_domain; }
-            set { m_domain = value; }
-        }
-
-        
-        //declare the standard methods
-        public void ShowInfo()
-        {
-            MessageBox.Show(m_Name + " Loaded", m_Name + " " + m_Author);
-        }
-        
-        public void LoadSettingsForm(TabControl SettingsTab)
-        {
-            //when the Settings Form gets loaded, ability to add tabs
-
-        }
-        
-        public void LoadColorsForm(TabControl OptionsTab)
-        {
-            //when the Options Form gets loaded, ability to add tabs
-
-        }
-
-        public void MainProgramLoaded()
-        {
-            //when the main program has finished loading
-        }
-
-        public void SaveColorsForm()
-        {
-            //when the save button is clicked on the Colors Settings Window
-
-        }
-
-        public void SaveSettingsForm()
-        {
-            //when the save button is clicked on the IceChat Settings Window
-        }
-
-        public void LoadEditorForm(TabControl ScriptsTab)
-        {
-
-
-        }
-
-        public void SaveEditorForm()
-        {
-
-        }
-
-        public ToolStripItem[] AddChannelPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddQueryPopups()
-        {
-            return null;
-        }
-
-        public ToolStripItem[] AddServerPopups()
-        {
-            return null;
-        }
-
-        //declare all the necessary events
-
-        public PluginArgs ChannelMessage(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ChannelAction(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs QueryMessage(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs QueryAction(PluginArgs args)
-        {
-            return args;
-        }
-        
-        public PluginArgs ChannelJoin(PluginArgs args)
-        {
-            return args;
-        }
-        
-        public PluginArgs ChannelPart(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerQuit(PluginArgs args)
-        {
-            return args;
-        }
-        
-        //args.Connection   -- current connection
-        //args.Command        -- command data 
-        public PluginArgs InputText(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ChannelKick(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs ServerNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs UserNotice(PluginArgs args)
-        {
-            return args;
-        }
-
-        public PluginArgs CtcpMessage(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs CtcpReply(PluginArgs args)
-        {
-            //args.Extra        -- ctcp message 
-            return args;
-        }
-
-        public PluginArgs ServerMessage(PluginArgs args)
-        {
-            
-            return args;
-        }
-
-        public void NickChange(PluginArgs args)
-        {
-
-        }
-
-        public void ServerRaw(PluginArgs args)
-        {
-
-        }
-
-        public void ServerError(PluginArgs args)
-        {
-
-        }
-        
-        //newly added here
-        public void ServerConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerPreConnect(PluginArgs args)
-        {
-
-        }
-
-        public void ServerDisconnect(PluginArgs args)
-        {
-
-        }
-
-        public void WhoisUser(PluginArgs args)
-        {
-
-        }
-
-        public PluginArgs ChannelNotice(PluginArgs args)
-        {
-
-            return args;
-        }
-
-        public void ChannelTopic(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelInvite(PluginArgs args)
-        {
-
-        }
-
-        public void ChannelMode(PluginArgs args)
-        {
-            //args.Extra --  full channel mode
-
-        }
-
-        public void BuddyList(PluginArgs args)
-        {
-            //args.Extra -- "online" or "offline"
-
-        }
+       
 
         private void LoadTwitterUser(string user)
         {
@@ -423,10 +146,10 @@ namespace IceChatPlugin
             // http://api.twitter.com/1/users/show.xml?screen_name=icechat
 
             System.Net.WebClient webClient = new System.Net.WebClient();
-            webClient.DownloadFile("http://api.twitter.com/1/statuses/user_timeline.xml?screen_name=" + user + "&count=5", currentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
+            webClient.DownloadFile("http://api.twitter.com/1/statuses/user_timeline.xml?screen_name=" + user + "&count=5", CurrentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
             
             System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
-            xmlDoc.Load(currentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
+            xmlDoc.Load(CurrentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
 
             XmlNodeList statuses = xmlDoc.DocumentElement.ChildNodes;
             foreach (XmlNode status in statuses)
@@ -453,7 +176,7 @@ namespace IceChatPlugin
                 }
             }
 
-            System.IO.File.Delete(currentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
+            System.IO.File.Delete(CurrentFolder + System.IO.Path.DirectorySeparatorChar + "twitter_" + user + ".xml");
 
         }
 

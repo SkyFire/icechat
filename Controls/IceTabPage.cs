@@ -63,7 +63,13 @@ namespace IceChat
 
         private delegate TextWindow CurrentWindowDelegate();
         private delegate void ChangeTopicDelegate(string topic);
-
+        private delegate void ChangeTextDelegate(string text);
+        private delegate void AddDccChatDelegate(string message);
+        private delegate void AddConsoleTabDelegate(IRCConnection connection);
+        
+        private delegate void AddChannelListDelegate(string channel, int users, string topic);
+        private delegate void ClearChannelListDelegate();
+        
         private Panel panelTopic;
         
         private TextWindow textWindow;
@@ -212,7 +218,12 @@ namespace IceChat
         /// <param name="connection"></param>
         internal void AddConsoleTab(IRCConnection connection)
         {
-            this.Invoke((MethodInvoker)delegate()
+            if (this.InvokeRequired)
+            {
+                AddConsoleTabDelegate act = new AddConsoleTabDelegate(AddConsoleTab);
+                this.Invoke(act, new object[] { connection });
+            }
+            else            
             {
                 ConsoleTab t = new ConsoleTab(connection.ServerSetting.ServerName);
                 t.Connection = connection;
@@ -229,7 +240,7 @@ namespace IceChat
 
                 consoleTab.TabPages.Add(t);
                 consoleTab.SelectedTab = t;
-            });
+            }
         }
 
         /// <summary>
@@ -697,7 +708,12 @@ namespace IceChat
 
         private void AddDCCMessage(string message)
         {
-            this.Invoke((MethodInvoker)delegate()
+            if (this.InvokeRequired)
+            {
+                AddDccChatDelegate a = new AddDccChatDelegate(AddDCCMessage);
+                this.Invoke(a, new object[] { message });
+            }
+            else
             {
                 string[] lines = message.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
@@ -719,7 +735,7 @@ namespace IceChat
                         textWindow.AppendText(args.Message, 1);
                     }
                 }
-            });
+            }
         }
 
         private long IPAddressToLong(IPAddress ip)
@@ -942,21 +958,29 @@ namespace IceChat
 
         internal void ClearChannelList()
         {
-            this.Invoke((MethodInvoker)delegate()
+            if (this.InvokeRequired)
             {
-                this.channelList.Items.Clear();
-            });
+                ClearChannelListDelegate c = new ClearChannelListDelegate(ClearChannelList);
+                this.Invoke(c, new object[] { });
+            }
+            else
+                this.channelList.Items.Clear();        
         }
 
         private void UpdateText(string text)
         {
-            this.Invoke((MethodInvoker)delegate()
+            if (this.InvokeRequired)
+            {
+                ChangeTextDelegate c = new ChangeTextDelegate(UpdateText);
+                this.Invoke(c, new object[] { text });
+            }
+            else
             {
                 this.Text = text;
                 this.Update();
-            });
-
+            }
         }
+
 
         private void UpdateTopic(string topic)
         {
@@ -984,13 +1008,18 @@ namespace IceChat
         /// <param name="topic">The channel topic</param>
         internal void AddChannelList(string channel, int users, string topic)
         {
-            this.Invoke((MethodInvoker)delegate()
+            if (this.InvokeRequired)
+            {
+                AddChannelListDelegate a = new AddChannelListDelegate(AddChannelList);
+                this.Invoke(a, new object[] { channel, users, topic });
+            }
+            else
             {
                 ListViewItem lvi = new ListViewItem(channel);
                 lvi.SubItems.Add(users.ToString());
                 lvi.SubItems.Add(topic);
                 channelList.Items.Add(lvi);
-            });            
+            }  
         }
 
         private void OnControlAdded(object sender, ControlEventArgs e)
