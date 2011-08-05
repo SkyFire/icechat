@@ -1,4 +1,7 @@
 Build RC 1.41 August 4, 2011
+* Add missing file for Highlight Plugin
+
+Build RC 1.41 August 4, 2011
 * Fix issue with Auto starting server connections and Exception Errors
 
 
