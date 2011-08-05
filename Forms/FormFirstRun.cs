@@ -63,7 +63,7 @@ namespace IceChat
                 comboData.Items.Add(s);
             }
 
-            comboData.Text = "irc.quakenet.org";
+            comboData.Text = "ice.syntaxnode.net";
 
             CurrentStep = 0;
         }

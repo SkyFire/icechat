@@ -69,7 +69,8 @@ namespace IceChat
         
         private delegate void AddChannelListDelegate(string channel, int users, string topic);
         private delegate void ClearChannelListDelegate();
-        
+        private delegate void AddConsoleDelegate(ConsoleTab tab, TextWindow window);
+
         private Panel panelTopic;
         
         private TextWindow textWindow;
@@ -234,12 +235,32 @@ namespace IceChat
                 w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
                 w.NoEmoticons = true;
 
-                t.Controls.Add(w);
-                if (FormMain.Instance.IceChatOptions.LogConsole)
-                    w.SetLogFile();
+                //t.Controls.Add(w);
+                //if (FormMain.Instance.IceChatOptions.LogConsole)
+                //    w.SetLogFile();
 
-                consoleTab.TabPages.Add(t);
-                consoleTab.SelectedTab = t;
+                //consoleTab.TabPages.Add(t);
+                //consoleTab.SelectedTab = t;
+                
+                AddConsole(t, w);
+            }
+        }
+
+        private void AddConsole(ConsoleTab tab, TextWindow window)
+        {
+            if (this.InvokeRequired)
+            {
+                AddConsoleDelegate add = new AddConsoleDelegate(AddConsole);
+                this.Invoke(add, new object[] { tab, window });
+            }
+            else
+            {
+                tab.Controls.Add(window);
+                if (FormMain.Instance.IceChatOptions.LogConsole)
+                    window.SetLogFile();
+
+                consoleTab.TabPages.Add(tab);
+                consoleTab.SelectedTab = tab;
             }
         }
 
@@ -1131,16 +1152,20 @@ namespace IceChat
         private void OnControlRemoved(object sender, ControlEventArgs e)
         {
             //this will close the log file for the particular server tab closed
-            if (e.Control.GetType() == typeof(ConsoleTab))
+            try
             {
-                if (((ConsoleTab)e.Control).Connection.ServerSetting.ID > 50000)
+                if (e.Control.GetType() == typeof(ConsoleTab))
                 {
-                    //temporary server, remove it from ServerTree
-                    FormMain.Instance.ServerTree.ServersCollection.RemoveServer(((ConsoleTab)e.Control).Connection.ServerSetting);
-                    FormMain.Instance.ServerTree.Invalidate();
+                    if (((ConsoleTab)e.Control).Connection.ServerSetting.ID > 50000)
+                    {
+                        //temporary server, remove it from ServerTree
+                        FormMain.Instance.ServerTree.ServersCollection.RemoveServer(((ConsoleTab)e.Control).Connection.ServerSetting);
+                        FormMain.Instance.ServerTree.Invalidate();
+                    }
+                    ((TextWindow)((ConsoleTab)e.Control).Controls[0]).Dispose();
                 }
-                ((TextWindow)((ConsoleTab)e.Control).Controls[0]).Dispose();
             }
+            catch { }
         }
 
         private void OnTabConsoleDrawItem(object sender, DrawItemEventArgs e)

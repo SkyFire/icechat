@@ -1,7 +1,10 @@
+Build RC 1.41 August 4, 2011
+* Fix issue with Auto starting server connections and Exception Errors
+
+
 Build RC 1.4 August 3, 2011
 * Fix some glitches caused by running server connections in seperate threads
 * Plugin Framework reworked, now can use overriden methods, not interface
-
 
 
 Build RC 1.3 August 1, 2011

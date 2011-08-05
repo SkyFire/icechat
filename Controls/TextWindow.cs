@@ -862,7 +862,6 @@ namespace IceChat
         {
             try
             {
-
                 //adds a new line to the Text Window
                 if (newLine.Length == 0)
                     return;
@@ -872,7 +871,7 @@ namespace IceChat
                     _unreadMarker = 0;
                     _unreadReset = false;
                 }
-                
+
                 ++_unreadMarker;
 
                 newLine = newLine.Replace("\n", " ");
@@ -926,11 +925,11 @@ namespace IceChat
                         _textLines[x].totalLines = _textLines[i].totalLines;
                         _textLines[x].width = _textLines[i].width;
                         _textLines[x].line = _textLines[i].line;
-                        
+
                         _textLines[x].textColor = _textLines[i].textColor;
                         x++;
                     }
-                    
+
                     for (int i = (_totalLines - 49); i < _totalLines; i++)
                     {
                         _textLines[i].totalLines = 0;
@@ -986,6 +985,10 @@ namespace IceChat
                 UpdateScrollBar(_totaldisplayLines);
 
                 Invalidate();
+            }
+            catch (OutOfMemoryException)
+            {
+                //System.Diagnostics.Debug.WriteLine("Out of Memory Exception:" + oe.Message + ":" + oe.StackTrace);
             }
             catch (Exception e)
             {

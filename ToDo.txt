@@ -24,3 +24,5 @@ Fix scrollbar in channel list / search bar
 *Add /clearall command to clear all the text windows and console tab windows (RC1.3)
 Flash Tray icon on new message option
 Change plugin framework from an Interface type to a Abstract class, with Methods that get overriden in plugins (RC1.4)
+Add to Highlite Plugin, ability to match message, nick or message and nick
+

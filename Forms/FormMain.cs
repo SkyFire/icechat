@@ -133,7 +133,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 1.4";
+        public const string VersionID = "Release Candidate 1.41";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -330,7 +330,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 3 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 4 2011";
             
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
@@ -517,18 +517,11 @@ namespace IceChat
 
             if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
         
-            //auto start any Auto Connect Servers
-            foreach (ServerSetting s in serverTree.ServersCollection.listServers)
-            {
-                if (s.AutoStart)
-                    NewServerConnection(s);
-            }
-
             WindowMessage(null, "Console", "Data Folder: " + currentFolder, 4, true);
             WindowMessage(null, "Console", "Plugins Folder: " + pluginsFolder, 4, true);
 
             //check for an update
-            //checkForUpdate();
+            checkForUpdate();
 
             splash.Close();
             splash.Dispose();
@@ -546,7 +539,17 @@ namespace IceChat
             {
                 minimizeToTrayToolStripMenuItem.PerformClick();
             }
-            
+
+            //auto start any Auto Connect Servers
+            foreach (ServerSetting s in serverTree.ServersCollection.listServers)
+            {
+                if (s.AutoStart)
+                {
+                    System.Diagnostics.Debug.WriteLine("new connection:" + s.ID);
+                    NewConnection(s);
+                }
+            }
+
             //remove the event handler, because it only needs to be run once, on startup
             this.Activated -= FormMainActivated;
         }
@@ -1340,9 +1343,10 @@ namespace IceChat
         /// <param name="serverSetting">Which ServerSetting to use</param>
         private void NewServerConnection(ServerSetting serverSetting)
         {
-            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(NewConnection));
-            t.Start(serverSetting);
-
+            System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(NewConnection);
+            System.Threading.Thread thread = new System.Threading.Thread(threadStart);
+            thread.IsBackground = true;
+            thread.Start(serverSetting);
         }
 
         #region Tab Events and Methods
@@ -3175,6 +3179,19 @@ namespace IceChat
                                 {
                                     CurrentWindowMessage(connection, "No Default Nick Name Assigned. Go to Server Settings and set one under the Default Server Settings section.", 4, false);
                                 }
+                                else if (data.StartsWith("id="))
+                                {
+                                    string serverID = data.Substring(3);
+                                    System.Diagnostics.Debug.WriteLine(serverID);
+                                    foreach (ServerSetting s in serverTree.ServersCollection.listServers)
+                                    {
+                                        if (s.ID.ToString() == serverID)
+                                            NewServerConnection(s);
+                                    
+                                    }
+
+
+                                }
                                 else
                                 {
                                     ServerSetting s = new ServerSetting();
@@ -3186,7 +3203,7 @@ namespace IceChat
                                         s.ServerPort = data.Substring(data.IndexOf(' ') + 1);
                                         if (s.ServerPort.IndexOf(' ') > 0)
                                         {
-                                            s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));                                            
+                                            s.ServerPort = s.ServerPort.Substring(0, s.ServerPort.IndexOf(' '));
                                         }
                                         //check for + in front of port, SSL Connection
                                         if (s.ServerPort.StartsWith("+"))
@@ -3223,7 +3240,7 @@ namespace IceChat
                                     s.AwayNickName = iceChatOptions.DefaultNick + "[A]";
                                     s.FullName = iceChatOptions.DefaultFullName;
                                     s.QuitMessage = iceChatOptions.DefaultQuitMessage;
-                                    s.IdentName = iceChatOptions.DefaultIdent;                                    
+                                    s.IdentName = iceChatOptions.DefaultIdent;
                                     s.IAL = new Hashtable();
 
                                     Random r = new Random();
@@ -4930,7 +4947,7 @@ namespace IceChat
         {
             System.Diagnostics.Debug.WriteLine(e.Message + ":" + e.StackTrace);
             System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace(e, true);
-            WindowMessage(connection, "Console", "Error:" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber(), 4, true);
+            WindowMessage(connection, "Console", "Error:" + method + ":" + e.Message + ":" + e.StackTrace, 4, true);
             
             if (errorFile != null)
             {
