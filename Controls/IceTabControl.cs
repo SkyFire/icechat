@@ -318,12 +318,12 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
-            menu.Items.Add(NewMenuItem("Clear All", "/clear all console", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Clear", "/clear $1"));
+            menu.Items.Add(NewMenuItem("Clear All", "/clear all console"));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(NewMenuItem("Quit Server", "//quit", StaticMethods.LoadResourceImage("disconected.png")));
-            menu.Items.Add(NewMenuItem("Auto Join", "/autojoin", null));
-            menu.Items.Add(NewMenuItem("Auto Perform", "/autoperform", null));
+            menu.Items.Add(NewMenuItem("Quit Server", "//quit"));
+            menu.Items.Add(NewMenuItem("Auto Join", "/autojoin"));
+            menu.Items.Add(NewMenuItem("Auto Perform", "/autoperform"));
             
             if (FormMain.Instance.IceChatPlugins != null)
             {
@@ -346,12 +346,12 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
-            menu.Items.Add(NewMenuItem("Close Channel", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
-            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1", StaticMethods.LoadResourceImage("refresh.png")));
-            menu.Items.Add(NewMenuItem("Add to Autojoin Channel", "/autojoin $1", StaticMethods.LoadResourceImage("info.png")));
-            menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1", StaticMethods.LoadResourceImage("info.png")));
-            menu.Items.Add(NewMenuItem("Change Font", "/font $1", StaticMethods.LoadResourceImage("fonts.png")));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
+            menu.Items.Add(NewMenuItem("Close Channel", "/part $1"));
+            menu.Items.Add(NewMenuItem("Rejoin Channel", "/hop $1"));
+            menu.Items.Add(NewMenuItem("Add to Autojoin Channel", "/autojoin $1"));
+            menu.Items.Add(NewMenuItem("Channel Information", "/chaninfo $1"));
+            menu.Items.Add(NewMenuItem("Change Font", "/font $1"));
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
@@ -372,10 +372,10 @@ namespace IceChat
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
-            menu.Items.Add(NewMenuItem("Close Window", "/part $1", StaticMethods.LoadResourceImage("CloseButton.png")));
-            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1", StaticMethods.LoadResourceImage("refresh.png")));
-            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1", StaticMethods.LoadResourceImage("info.png")));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
+            menu.Items.Add(NewMenuItem("Close Window", "/part $1"));
+            menu.Items.Add(NewMenuItem("User Information", "/userinfo $1"));
+            menu.Items.Add(NewMenuItem("Silence User", "/silence +$1"));
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
@@ -395,9 +395,9 @@ namespace IceChat
         private ContextMenuStrip DCCChatPopupMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1", StaticMethods.LoadResourceImage("clear.png")));
-            menu.Items.Add(NewMenuItem("Close Window", "/close $1", StaticMethods.LoadResourceImage("CloseButton.png")));
-            menu.Items.Add(NewMenuItem("Disconnect", "/disconnect $1", StaticMethods.LoadResourceImage("clear.png")));
+            menu.Items.Add(NewMenuItem("Clear Window", "/clear $1"));
+            menu.Items.Add(NewMenuItem("Close Window", "/close $1"));
+            menu.Items.Add(NewMenuItem("Disconnect", "/disconnect $1"));
 
             //AddPopupMenu("DCCChat", menu);
             return menu;
@@ -407,18 +407,16 @@ namespace IceChat
         private ContextMenuStrip ChannelListPopupMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            menu.Items.Add(NewMenuItem("Close Window", "/close $1", StaticMethods.LoadResourceImage("CloseButton.png")));
+            menu.Items.Add(NewMenuItem("Close Window", "/close $1"));
 
             AddPopupMenu("ChannelList", menu);
             return menu;
 
         }
 
-        private ToolStripMenuItem NewMenuItem(string caption, string command, Bitmap icon)
+        private ToolStripMenuItem NewMenuItem(string caption, string command)
         {
             ToolStripMenuItem t = new ToolStripMenuItem(caption);
-            //if (icon != null)
-            //    t.Image = icon;
             t.Tag = command;
             return t;
         }
@@ -703,17 +701,17 @@ namespace IceChat
                         break;
                     case IceTabPage.WindowType.Query:
                     case IceTabPage.WindowType.DCCChat:
-                        img = StaticMethods.LoadResourceImage("query.png");
+                        img = StaticMethods.LoadResourceImage("new-query.ico");
                         break;
                     case IceTabPage.WindowType.ChannelList:
                         img = StaticMethods.LoadResourceImage("channellist.png");
                         break;
                     case IceTabPage.WindowType.Window:
                     case IceTabPage.WindowType.Debug:
-                        img = StaticMethods.LoadResourceImage("window.png");
+                        img = StaticMethods.LoadResourceImage("window-icon.ico");
                         break;
                     default:
-                        img = StaticMethods.LoadResourceImage("window.png");
+                        img = StaticMethods.LoadResourceImage("window-icon.ico");
                         break;
 
                 }

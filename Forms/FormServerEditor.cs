@@ -50,7 +50,6 @@ namespace IceChat
         public FormServers()
         {
             InitializeComponent();
-            AddImagesToTabs();
             newServer = true;
             
             this.Text = "Server Editor: New Server";
@@ -81,7 +80,6 @@ namespace IceChat
         public FormServers(ServerSetting s)
         {
             InitializeComponent();
-            AddImagesToTabs();
             serverSetting = s;
 
             foreach (EncodingInfo ei in System.Text.Encoding.GetEncodings())
@@ -131,18 +129,7 @@ namespace IceChat
 
             this.tabControlSettings.TabPages.Add(tabPageDefault);
         }
-
-        private void AddImagesToTabs()
-        {
-            this.imageListEditor.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListEditor.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imageListEditor.Images.Add(StaticMethods.LoadResourceImage("quickconnect.png"));
-            this.imageListEditor.Images.Add(StaticMethods.LoadResourceImage("info.png"));
-            this.imageListEditor.Images.Add(StaticMethods.LoadResourceImage("refresh.png"));
-            this.imageListEditor.Images.Add(StaticMethods.LoadResourceImage("autoperform.png"));
-        }
-
-
+        
         private void ApplyLanguage()
         {
 

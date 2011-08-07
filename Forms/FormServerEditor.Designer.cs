@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.tabControlSettings = new System.Windows.Forms.TabControl();
@@ -138,7 +137,6 @@
             this.checkIdentServer = new System.Windows.Forms.CheckBox();
             this.textDefaultNick = new System.Windows.Forms.TextBox();
             this.labelDefaultNickName = new System.Windows.Forms.Label();
-            this.imageListEditor = new System.Windows.Forms.ImageList(this.components);
             this.buttonRemoveServer = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -207,7 +205,6 @@
             this.tabControlSettings.Controls.Add(this.tabPageBNC);
             this.tabControlSettings.Controls.Add(this.tabPageDefault);
             this.tabControlSettings.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControlSettings.ImageList = this.imageListEditor;
             this.tabControlSettings.Location = new System.Drawing.Point(0, 0);
             this.tabControlSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tabControlSettings.Multiline = true;
@@ -1312,12 +1309,6 @@
             this.labelDefaultNickName.TabIndex = 46;
             this.labelDefaultNickName.Text = "Nick name";
             // 
-            // imageListEditor
-            // 
-            this.imageListEditor.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageListEditor.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageListEditor.TransparentColor = System.Drawing.Color.Transparent;
-            // 
             // buttonRemoveServer
             // 
             this.buttonRemoveServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1540,7 +1531,6 @@
         private System.Windows.Forms.Label labelServerPassword;
         private System.Windows.Forms.TextBox textServerPassword;
         private System.Windows.Forms.CheckBox checkAutoJoinDelay;
-        private System.Windows.Forms.ImageList imageListEditor;
         private System.Windows.Forms.TextBox textNickservPassword;
         private System.Windows.Forms.Label labelNickservPassword;
         private System.Windows.Forms.TabPage tabPageIgnore;

@@ -1031,21 +1031,6 @@ namespace IceChat
 
                 args.Message = args.Message.Replace("$message", message);
 
-                /*
-                foreach (object o in loadedScripts)
-                {
-                    MethodInfo info = o.GetType().GetMethod("OnText");
-                    if (info != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("run ontext");
-                        string retval = (string)info.Invoke(o, new object[] { msg, channel, nick, host, connection });
-
-                        if (!retval.Equals(""))
-                            args.Message = retval;
-                    }
-                }
-                */
-
                 if (args.Message.Contains(connection.ServerSetting.NickName))
                 {
                     //check if sounds are disabled for this window

@@ -379,27 +379,12 @@
     <EmbeddedResource Include="Icons\channellist.png" />
     <EmbeddedResource Include="Icons\channel.png" />
     <EmbeddedResource Include="Icons\facebook.png" />
-    <EmbeddedResource Include="Icons\icechat2009.ico" />
     <EmbeddedResource Include="Icons\Smile.png" />
-    <EmbeddedResource Include="Icons\window.png" />
-    <EmbeddedResource Include="Icons\query.png" />
     <None Include="IceChat2009.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Icons\pin.png" />
     <EmbeddedResource Include="Icons\codeplex.ico" />
     <EmbeddedResource Include="Icons\smf.ico" />
-    <EmbeddedResource Include="Icons\autoperform.png" />
-    <EmbeddedResource Include="Icons\fonts.png" />
-    <EmbeddedResource Include="Icons\user-info.png" />
-    <EmbeddedResource Include="Icons\clear.png" />
-    <EmbeddedResource Include="Icons\save.png" />
-    <EmbeddedResource Include="Icons\refresh.png" />
-    <EmbeddedResource Include="Icons\info.png" />
-    <EmbeddedResource Include="Icons\folder.png" />
-    <EmbeddedResource Include="Icons\disconected.png" />
-    <EmbeddedResource Include="Icons\connected.png" />
-    <EmbeddedResource Include="Icons\quickconnect.png" />
     <EmbeddedResource Include="Icons\previous.svg.png" />
     <EmbeddedResource Include="Icons\next.svg.png" />
   </ItemGroup>
@@ -419,6 +404,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icechat9.ico" />
+    <EmbeddedResource Include="Icons\home.png" />
+    <EmbeddedResource Include="Icons\window-icon.ico" />
+    <EmbeddedResource Include="Icons\tray-icon-flash.ico" />
+    <EmbeddedResource Include="Icons\new-tray-icon.ico" />
+    <EmbeddedResource Include="Icons\editormenu.png" />
+    <EmbeddedResource Include="Icons\plug-icon.png" />
+    <EmbeddedResource Include="Icons\mute.png" />
+    <EmbeddedResource Include="Icons\folder.ico" />
+    <EmbeddedResource Include="Icons\connect-icon.png" />
+    <EmbeddedResource Include="Icons\disconnect-icon.png" />
+    <EmbeddedResource Include="Icons\refresh-icon.png" />
+    <EmbeddedResource Include="Icons\new-query.ico" />
     <Content Include="ToDo.txt" />
     <EmbeddedResource Include="Icons\update-menu.png" />
     <EmbeddedResource Include="Icons\update.png" />

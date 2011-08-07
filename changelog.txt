@@ -1,4 +1,10 @@
-Build RC 1.41 August 4, 2011
+Build RC 1.5 August 7, 2011
+* Flash Tray icon command /flashtray added with optional message (/flashtray The Message to show)
+* Fix Highlite plugin to run optional command if added
+* Change some of the icons for the program
+
+
+Build RC 1.41 August 5, 2011
 * Add missing file for Highlight Plugin
 
 Build RC 1.41 August 4, 2011

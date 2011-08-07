@@ -83,7 +83,6 @@ namespace IceChat
         //private System.Threading.Mutex mutex;
 
         private ArrayList loadedPlugins;
-        //private ArrayList loadedScripts;
 
         private IdentServer identServer;
         
@@ -97,6 +96,9 @@ namespace IceChat
         private delegate void CurrentWindowDelegate(string data, int color);
         private delegate void WindowMessageDelegate(IRCConnection connection, string name, string data, int color, bool scrollToBottom);
         private delegate void CurrentWindowMessageDelegate(IRCConnection connection, string data, int color, bool scrollToBottom);
+
+        private System.Timers.Timer flashTrayIconTimer;
+        private int flashTrayCount;
 
         private System.Media.SoundPlayer player;
         private bool muteAllSounds;
@@ -133,7 +135,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 1.41";
+        public const string VersionID = "Release Candidate 1.5";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -294,19 +296,24 @@ namespace IceChat
             //disable this by default
             this.toolStripUpdate.Visible = false;
 
-            this.minimizeToTrayToolStripMenuItem.Image = StaticMethods.LoadResourceImage("icechat2009.ico");
-            this.debugWindowToolStripMenuItem.Image = StaticMethods.LoadResourceImage("window.png");
+            this.minimizeToTrayToolStripMenuItem.Image = StaticMethods.LoadResourceImage("new-tray-icon.ico");
+            this.debugWindowToolStripMenuItem.Image = StaticMethods.LoadResourceImage("window-icon.ico");
             this.exitToolStripMenuItem.Image = StaticMethods.LoadResourceImage("disconected.png");
             this.iceChatSettingsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("settings.png");
             this.iceChatColorsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("colors.png");
-            this.iceChatEditorToolStripMenuItem.Image = StaticMethods.LoadResourceImage("editor.png");
+            this.iceChatEditorToolStripMenuItem.Image = StaticMethods.LoadResourceImage("editormenu.png");
             this.codePlexPageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("codeplex.ico");
             this.forumsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("smf.ico");
             this.facebookFanPageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("facebook.png");
             this.checkForUpdateToolStripMenuItem.Image = StaticMethods.LoadResourceImage("update-menu.png");
+            this.iceChatHomePageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("home.png");
+            this.downloadPluginsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("plug-icon.png");
+            this.pluginsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("plug-icon.png");
+            this.muteAllSoundsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("mute.png");
+            this.browseDataFolderToolStripMenuItem.Image = StaticMethods.LoadResourceImage("folder.ico");
 
-            this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
-            this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("icechat2009.ico").GetHicon());
+            this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+            this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
 
             this.toolStripMain.VisibleChanged += new EventHandler(toolStripMain_VisibleChanged);
 
@@ -330,8 +337,9 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 4 2011";
-            
+            this.Text = ProgramID + " :: " + VersionID + " :: August 7 2011";
+            this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
+
             if (!Directory.Exists(logsFolder))
                 Directory.CreateDirectory(logsFolder);
             
@@ -503,11 +511,9 @@ namespace IceChat
                 identServer = new IdentServer();
 
             loadedPlugins = new ArrayList();
-            //loadedScripts = new ArrayList();
 
             //load any plugin addons
             LoadPlugins();
-            LoadScripts();
 
             //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
@@ -531,6 +537,44 @@ namespace IceChat
             nickList.ShowNickButtons = iceChatOptions.ShowNickButtons;
             serverTree.ShowServerButtons = iceChatOptions.ShowServerButtons;
 
+            this.flashTrayIconTimer = new System.Timers.Timer(2000);
+            this.flashTrayIconTimer.Enabled = true;            
+            this.flashTrayIconTimer.Elapsed += new System.Timers.ElapsedEventHandler(flashTrayIconTimer_Elapsed);
+            this.notifyIcon.Tag = "off";
+            this.flashTrayCount = 0;
+        }
+
+        private void flashTrayIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (this.notifyIcon.Visible == true)
+            {
+                if (this.notifyIcon.Tag.Equals("on"))
+                {
+                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+                    this.notifyIcon.Tag = "off";
+                }
+                else
+                {
+                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("tray-icon-flash.ico").GetHicon()); ;
+                    this.notifyIcon.Tag = "on";
+                }
+                
+                flashTrayCount++;
+
+                if (flashTrayCount == 5)
+                {
+                    this.flashTrayIconTimer.Stop();
+                    this.notifyIcon.Tag = "off";
+                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+                    flashTrayCount = 0;
+                }
+            }
+            else
+            {
+                this.flashTrayIconTimer.Stop();
+                this.notifyIcon.Tag = "off";
+                this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+            }
         }
 
         private void FormMainActivated(object sender, EventArgs e)
@@ -545,7 +589,6 @@ namespace IceChat
             {
                 if (s.AutoStart)
                 {
-                    System.Diagnostics.Debug.WriteLine("new connection:" + s.ID);
                     NewConnection(s);
                 }
             }
@@ -2603,6 +2646,19 @@ namespace IceChat
                             
                             }
                             break;                        
+                        case "/flashtray":
+                            if (this.notifyIcon.Visible == true)
+                            {
+                                this.flashTrayIconTimer.Start();
+                                //show a message in a balloon
+                                if (data.Length > 0)
+                                {
+                                    this.notifyIcon.BalloonTipTitle = "IceChat 9";
+                                    this.notifyIcon.BalloonTipText = data;
+                                    this.notifyIcon.ShowBalloonTip(1000);
+                                }
+                            }
+                            break;
                         case "/font":
                             //change the font of the current window
                             //check if data is a channel
@@ -3182,15 +3238,14 @@ namespace IceChat
                                 else if (data.StartsWith("id="))
                                 {
                                     string serverID = data.Substring(3);
-                                    System.Diagnostics.Debug.WriteLine(serverID);
                                     foreach (ServerSetting s in serverTree.ServersCollection.listServers)
                                     {
                                         if (s.ID.ToString() == serverID)
+                                        {
                                             NewServerConnection(s);
-                                    
+                                            break;
+                                        }
                                     }
-
-
                                 }
                                 else
                                 {
@@ -4406,16 +4461,16 @@ namespace IceChat
 
         private void minimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Hide();
-            notifyIcon.Visible = true;
+            this.Hide();
+            this.notifyIcon.Visible = true;
         }
 
         private void NotifyIconMouseDoubleClick(object sender, MouseEventArgs e)
         {
-            iceChatOptions.IsOnTray = false;
-            Show();
+            this.iceChatOptions.IsOnTray = false;
+            this.Show();
             this.WindowState = FormWindowState.Normal;
-            notifyIcon.Visible = false;
+            this.notifyIcon.Visible = false;
         }
 
         private void iceChatSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4747,62 +4802,6 @@ namespace IceChat
         }
         
         #endregion
-
-        public void LoadScripts()
-        {
-            // loads all script 
-            //loadedScripts.Clear();
-
-            if (FormMain.Instance.IceChatOptions.ScriptFiles == null) return;
-            /*
-            foreach (string scriptFile in iceChatOptions.ScriptFiles)
-            {
-                System.Diagnostics.Debug.WriteLine("Load Script " + scriptFile);
-
-                System.CodeDom.Compiler.CodeDomProvider cp = new Microsoft.CSharp.CSharpCodeProvider();
-                string[] referenceAssemblies = { "System.dll", "System.Windows.Forms.dll" };
-
-                System.CodeDom.Compiler.CompilerParameters par = new System.CodeDom.Compiler.CompilerParameters(referenceAssemblies);
-                //par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChatScript.dll");
-                par.ReferencedAssemblies.Add(Application.StartupPath + System.IO.Path.DirectorySeparatorChar + "IceChat2009.exe");
-                
-                par.GenerateExecutable = false;
-                par.GenerateInMemory = true;
-                par.CompilerOptions = "/target:library";
-                par.IncludeDebugInformation = true;
-                par.TreatWarningsAsErrors = false;
-                par.MainClass = "IceChat.Script";
-
-                System.Diagnostics.Debug.WriteLine("Total References Assemblies " + par.ReferencedAssemblies.Count);
-
-                System.CodeDom.Compiler.CompilerResults err = cp.CompileAssemblyFromSource(par, File.ReadAllText(scriptFile));
-                if (err.Errors.Count > 0)
-                {
-                    foreach (System.CodeDom.Compiler.CompilerError ce in err.Errors)
-                    {                        
-                        FormMain.Instance.WindowMessage(null, "Console", "Script Error: " + ce.ErrorNumber + ":" + ce.ToString(), 4, true);
-                    }
-                    FormMain.Instance.WindowMessage(null, "Console", "ERROR: Script \"" + scriptFile + "\". has " + err.Errors.Count + " errors. Script not loaded", 4, true);
-                    
-                    continue;  // jump to next script without loading this. 
-                }
-                
-                object o = err.CompiledAssembly.CreateInstance("IceChat.Script");
-                if (o == null)
-                    continue;
-
-                FormMain.Instance.WindowMessage(null, "Console", "Script \"" + scriptFile + "\". loaded.", 4, true);
-                loadedScripts.Add(o);
-                // run the loaded event. gives the script a change to initialize.
-                MethodInfo info = o.GetType().GetMethod("script_loaded");
-                if (info != null)
-                {
-                    info.Invoke(o, new object[] { (IntPtr) this.Handle});
-                }
-            }
-            */
-        }
-
 
         //http://www.codeproject.com/KB/cs/dynamicpluginmanager.aspx
 

@@ -348,6 +348,17 @@ namespace IceChatPlugin
                             OnCommand(args);
 
                         }
+
+                        if (hli.Command != null)
+                        {
+                            if (hli.Command.Length > 0)
+                            {
+                                args.Command = hli.Command.Replace("$message", args.Extra);
+                                args.Command = args.Command.Replace("$match", hli.Match);
+                                OnCommand(args);
+                            }                                
+                        }
+
                         break;
                     }
                 }

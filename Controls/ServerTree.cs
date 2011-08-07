@@ -92,11 +92,15 @@ namespace IceChat
 
             serversCollection = LoadServers();
 
+            //renumber the server ID's if needed
+            int serverID = 1;
             foreach (ServerSetting s in serversCollection.listServers)
             {
                 if (s.AltNickName == null)
                     s.AltNickName = s.NickName + "_";
                 s.IAL = new Hashtable();
+                s.ID = serverID;
+                serverID++;
             }
 
             toolTip = new ToolTip();
@@ -965,13 +969,13 @@ namespace IceChat
                     switch (nodes[1])
                     {
                         case "0":   //disconnected
-                            g.DrawImage(StaticMethods.LoadResourceImage("disconected.png"), x, currentY, 16, 16);
+                            g.DrawImage(StaticMethods.LoadResourceImage("disconnect-icon.png"), x, currentY, 16, 16);
                             break;
                         case "1":   //connected
-                            g.DrawImage(StaticMethods.LoadResourceImage("connected.png"), x, currentY, 16, 16);
+                            g.DrawImage(StaticMethods.LoadResourceImage("connect-icon.png"), x, currentY, 16, 16);
                             break;
                         case "2":   //connecting
-                            g.DrawImage(StaticMethods.LoadResourceImage("refresh.png"), x, currentY, 16, 16);
+                            g.DrawImage(StaticMethods.LoadResourceImage("refresh-icon.png"), x, currentY, 16, 16);
                             break;
                         case "3":   //channel
                             //check if we are flashing or not
@@ -988,16 +992,16 @@ namespace IceChat
                             if (((IceTabPage)value).FlashTab == true)
                             {
                                 if (((IceTabPage)value).CheckFlashValue == 1)
-                                    g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
+                                    g.DrawImage(StaticMethods.LoadResourceImage("new-query.ico"), x, currentY, 16, 16);
                             }
                             else
-                                g.DrawImage(StaticMethods.LoadResourceImage("query.png"), x, currentY, 16, 16);
+                                g.DrawImage(StaticMethods.LoadResourceImage("new-query.ico"), x, currentY, 16, 16);
                             break;
                         case "6":   //channel list
                             g.DrawImage(StaticMethods.LoadResourceImage("channellist.png"), x, currentY, 16, 16);
                             break;
                         case "7":
-                            g.DrawImage(StaticMethods.LoadResourceImage("window.png"), x, currentY, 16, 16);
+                            g.DrawImage(StaticMethods.LoadResourceImage("window-icon.ico"), x, currentY, 16, 16);
                             break;
                     }
 

@@ -116,10 +116,10 @@ namespace IceChat
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.splitterBottom = new System.Windows.Forms.Splitter();
-            this.mainTabControl = new IceChat.IceTabControl();
-            this.panelDockRight = new IceChat.IceDockPanel();
-            this.panelDockLeft = new IceChat.IceDockPanel();
-            this.inputPanel = new IceChat.InputPanel();
+            this.panelDockRight = new IceDockPanel();
+            this.panelDockLeft = new IceDockPanel();
+            this.inputPanel = new InputPanel();
+            this.mainTabControl = new IceTabControl();
             this.menuMainStrip.SuspendLayout();
             this.contextMenuNotify.SuspendLayout();
             this.toolStripMain.SuspendLayout();
@@ -467,7 +467,7 @@ namespace IceChat
             // notifyIcon
             // 
             this.notifyIcon.ContextMenuStrip = this.contextMenuNotify;
-            this.notifyIcon.Text = "IceChat 2009";
+            this.notifyIcon.Text = "IceChat";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconMouseDoubleClick);
             // 
             // contextMenuNotify
@@ -640,17 +640,6 @@ namespace IceChat
             this.splitterBottom.TabStop = false;
             this.splitterBottom.Visible = false;
             // 
-            // mainTabControl
-            // 
-            this.mainTabControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainTabControl.Location = new System.Drawing.Point(164, 50);
-            this.mainTabControl.Margin = new System.Windows.Forms.Padding(0);
-            this.mainTabControl.Name = "mainTabControl";
-            this.mainTabControl.SelectedIndex = -1;
-            this.mainTabControl.Size = new System.Drawing.Size(476, 455);
-            this.mainTabControl.TabIndex = 20;
-            // 
             // panelDockRight
             // 
             this.panelDockRight.Dock = System.Windows.Forms.DockStyle.Right;
@@ -668,6 +657,17 @@ namespace IceChat
             this.panelDockLeft.Name = "panelDockLeft";
             this.panelDockLeft.Size = new System.Drawing.Size(161, 455);
             this.panelDockLeft.TabIndex = 13;
+            // 
+            // mainTabControl
+            // 
+            this.mainTabControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainTabControl.Location = new System.Drawing.Point(164, 50);
+            this.mainTabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.mainTabControl.Name = "mainTabControl";
+            this.mainTabControl.SelectedIndex = -1;
+            this.mainTabControl.Size = new System.Drawing.Size(476, 455);
+            this.mainTabControl.TabIndex = 20;
             // 
             // inputPanel
             // 
