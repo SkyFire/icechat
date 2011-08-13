@@ -1,29 +1,43 @@
 ﻿To Do List for IceChat 9
 
 
-Further testing of DCC File Sending and Receiving
 *Add DCC Chat Events to Plugin Framework (RC1.3)
-Add DCC File Events to Plugin Framework
-Allow DCC Chat messages to show and parse ACTION /me messages
 *BNC Settings need to be added to server editor and tested (RC1.3)
-Emoticons that are larger then font sizes, allowed
 *Add in server editor "Show Advanced Settings" to show proxy/bnc/notes tabs (RC1.3)
 *Change for /run command, params to be added inside ' ' single quotes (RC1.3)
-Add $mask() identifier 
 *Add $md5() identifier (RC1.3)
-Add settingfile IceChatPlugins.xml for allowing to enable/disable plugins, add/remove items if DLL is added/removed from Plugins folder
 *Server Editor, fix AutoJoin, Ignore, Buddy List , make slightly taller to coincide with AutoPerform checkbox (RC1.3)
-Build main menu bar from an XML File, all menu items need to be run from a command
-Allow plugins to change the colors/appearance of IceChat, w/o needing an external Theme file
-Fix scrollbar in channel list / search bar
 *Strip colors out of channel list topics (RC1.3)
 *Option to keep channel tab open if you get kicked (add to display settings) (RC1.3)
 *Add 'add to autojoin' for popupmenu for channel in server tree (RC1.3)
-*Add right click menu for channel list, add 'add to autojoin' and 'join channel'(RC1.3)
+*Add right click menu for channel list, add 'add to autojoin' and 'join channel' (RC1.3)
 *Add ctrl-backspace to erase a word at a time (RC1.3)
 *Add /clearall command to clear all the text windows and console tab windows (RC1.3)
+*Change plugin framework from an Interface type to an Abstract class, with Methods that get overriden in plugins (RC1.4)
 *Flash Tray icon command /flashtray added with optional message (/flashtray The Message to show) (RC1.5)
-*Change plugin framework from an Interface type to a Abstract class, with Methods that get overriden in plugins (RC1.4)
 *Change program icons and some internal ones as well (RC1.5)
 *Fix Highlite plugin to run optional command if added (RC1.5)
+
+*Ability to Enable/Disable a Plugin, does not unload it, just disables it (RC2.0)
+*Fix scrollbar in channel list/search bar and make search ability to search channel name and topic (RC2.0)
+*Add a background image to a channel,query,console, @window with a command, all, none, clear, etc with /bg command (RC2.0)
+*Allow to use a web image for a background image using full URL /bg console http://www.icechat.net/icechat_logo.jpg (RC2.0)
+*Allow DCC Chat messages to show and parse /me messages (RC2.0)
+*Add option to Autoget IP Router IP Address (RC2.0)
+*Add menu item for Server Tree popup menu to remove a Server (RC2.0)
+
+Add DCC File Events to Plugin Framework
+Further testing of DCC File Sending and Receiving
+Add $mask() identifier (in progress)
+Add option to Duplicate Server Settings,create a new server
+Add that when autojoining channels, it opens them , but set as active
+Add option to automatically allow accept with DCC from people in buddy list
 Add to Highlite Plugin, ability to match message, nick or message and nick
+Allow plugins to change the colors/appearance of IceChat, w/o needing an external Theme file
+Need to save the background image settings to a config file so they save on exit and show again in reload
+Add a background image to the nicklist, server list
+Add settingfile IceChatPlugins.xml for allowing to enable/disable plugins, add/remove items if DLL is added/removed from Plugins folder
+Add background color for html logging
+Emoticons that are larger then font sizes, allowed
+Build main menu bar from an XML File, all menu items need to be run from a command
+When a plugin is loaded, allow it to check if there is a newer version online

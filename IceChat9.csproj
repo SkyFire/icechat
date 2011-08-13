@@ -410,8 +410,6 @@
     <EmbeddedResource Include="Icons\new-tray-icon.ico" />
     <EmbeddedResource Include="Icons\editormenu.png" />
     <EmbeddedResource Include="Icons\plug-icon.png" />
-    <EmbeddedResource Include="Icons\mute.png" />
-    <EmbeddedResource Include="Icons\folder.ico" />
     <EmbeddedResource Include="Icons\connect-icon.png" />
     <EmbeddedResource Include="Icons\disconnect-icon.png" />
     <EmbeddedResource Include="Icons\refresh-icon.png" />

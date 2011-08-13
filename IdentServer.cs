@@ -40,6 +40,7 @@ namespace IceChat
         public IdentServer()
         {
             identThread = new Thread(new ThreadStart(Listen));
+            identThread.Name = "IdentServerThread";
             identThread.Start();
         }
 
@@ -50,13 +51,11 @@ namespace IceChat
                 identServer = new TcpListener(IPAddress.Any, 113);
                 identServer.Start();
 
-                //System.Diagnostics.Debug.WriteLine("Ident Server Started");
-
                 while (true)
                 {
                     TcpClient client = identServer.AcceptTcpClient();
-                    System.Diagnostics.Debug.WriteLine("Ident Server Connection");
                     Thread clientThread = new Thread(new ParameterizedThreadStart(IncomingData));
+                    clientThread.Name = "IdentClientThread";
                     clientThread.Start(client);
                 }
 
@@ -144,11 +143,11 @@ namespace IceChat
             }
             catch (SocketException)
             {
-                System.Diagnostics.Debug.WriteLine("ident stop error");
+                //
             }
             catch (Exception)
             {
-
+                //
             }
         }
     }

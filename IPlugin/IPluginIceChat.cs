@@ -49,6 +49,9 @@ namespace IceChatPlugin
         }
 
         public AppDomain domain { get; set; }
+        
+        //if the plugin is enabled or disabled
+        public bool Enabled { get; set; }
 
         //the mainform menu
         public MenuStrip MainMenuStrip { get; set; }

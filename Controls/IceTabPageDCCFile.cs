@@ -390,6 +390,7 @@ namespace IceChat
                     */
 
                     dccFiles[i].Thread = new Thread(new ParameterizedThreadStart(ResumeDCC));
+                    dccFiles[i].Thread.Name = "DCCFileThread";
                     dccFiles[i].Thread.Start(dccFiles[i]);
                     
                     break;
@@ -493,6 +494,7 @@ namespace IceChat
 
                 dcc.PassiveSocket = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
                 dcc.PassiveThread = new Thread(new ParameterizedThreadStart(StartPassiveSocket));
+                dcc.PassiveThread.Name = "DCCPassiveThread";
                 dcc.PassiveThread.Start(dcc);
             }
             catch (Exception ex)
@@ -506,11 +508,26 @@ namespace IceChat
         internal void RequestDCCFile(IRCConnection connection , string nick, string file)
         {
             //send out a dccfile request
-            string localIP = IPAddressToLong(connection.ServerSetting.LocalIP).ToString();
+            string localIP = "";
             if (FormMain.Instance.IceChatOptions.DCCLocalIP != null && FormMain.Instance.IceChatOptions.DCCLocalIP.Length > 0)
             {
                 localIP = IPAddressToLong(IPAddress.Parse(FormMain.Instance.IceChatOptions.DCCLocalIP)).ToString();
             }
+            else
+            {
+                if (connection.ServerSetting.LocalIP == null || connection.ServerSetting.LocalIP.ToString().Length == 0)
+                {
+                    //error. no local IP found
+                    FormMain.Instance.WindowMessage(connection, "Console", "DCC ERROR, no Router/Firewall IP Address specified in DCC Settings", 4, true);
+                    return;
+                }
+                else
+                {
+                    localIP = IPAddressToLong(connection.ServerSetting.LocalIP).ToString();
+                }
+            }
+
+            
             Random port = new Random();
             int p = port.Next(FormMain.Instance.IceChatOptions.DCCPortLower, FormMain.Instance.IceChatOptions.DCCPortUpper);
 
@@ -531,7 +548,8 @@ namespace IceChat
             dcc.ListingTag = RandomListingTag();
             
             dcc.ListenerSocket = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
-            dcc.ListenerThread = new Thread(new ParameterizedThreadStart(ListenForConnection));  
+            dcc.ListenerThread = new Thread(new ParameterizedThreadStart(ListenForConnection));
+            dcc.ListenerThread.Name = "DCCListenerThread";
             dcc.ListenerThread.Start(dcc);
                 
             string fname = dcc.FileName.Replace(' ', '_'); // strip spaces from filename
@@ -580,6 +598,7 @@ namespace IceChat
                     dcc.Ip = dcc.Socket.Client.RemoteEndPoint.ToString();
                     dcc.ListenerSocket.Stop();
                     dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
+                    dcc.Thread.Name = "DCCListenThread";
                     dcc.Thread.Start(dcc);
 
                     dcc.keepListening = false;
@@ -690,6 +709,7 @@ namespace IceChat
                 UpdateDCCFileStatus(dcc, "Waiting");
 
                 dcc.Thread = new Thread(new ParameterizedThreadStart(ConnectDCC));
+                dcc.Thread.Name = "StartDCCFileThread";
                 dcc.Thread.Start(dcc);
                 
                 /*
@@ -922,10 +942,23 @@ namespace IceChat
             dcc.PassiveSocket.Start();
             bool keepListeningPassive = true;
 
-            string localIP = IPAddressToLong(dcc.Connection.ServerSetting.LocalIP).ToString();
+            string localIP = "";
             if (FormMain.Instance.IceChatOptions.DCCLocalIP != null && FormMain.Instance.IceChatOptions.DCCLocalIP.Length > 0)
             {
                 localIP = IPAddressToLong(IPAddress.Parse(FormMain.Instance.IceChatOptions.DCCLocalIP)).ToString();
+            }
+            else
+            {
+                if (dcc.Connection.ServerSetting.LocalIP == null)
+                {
+                    //error. no local IP found
+                    FormMain.Instance.WindowMessage(dcc.Connection, "Console", "DCC ERROR, no Router/Firewall IP Address specified in DCC Settings", 4, true);
+                    return;
+                }
+                else
+                {
+                    localIP = IPAddressToLong(dcc.Connection.ServerSetting.LocalIP).ToString();
+                }
             }
 
             dcc.Connection.SendData("PRIVMSG " + dcc.Nick + " :DCC SEND " + dcc.FileName + " " + localIP + " " + dcc.Port + " " + dcc.FileSize + " " + dcc.passiveID + "");
@@ -938,6 +971,7 @@ namespace IceChat
 
                 System.Diagnostics.Debug.WriteLine("dcc passive socket connected with " + dcc.Nick);
                 dcc.Thread = new Thread(new ParameterizedThreadStart(GetDCCData));
+                dcc.Thread.Name = "DCCPassiveThread";
                 dcc.Thread.Start(dcc);
                 
                 keepListeningPassive = false;

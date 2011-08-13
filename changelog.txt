@@ -1,3 +1,16 @@
+Build RC 2.0 August 12, 2011
+* Add ability to Enable/Disable a Plugin from Options Menu
+* Fix loading of plugins in Mono from start of Program
+* Ability to Enable/Disable a Plugin, does not unload it, just disables it 
+* Fix scrollbar in channel list/search bar and make search ability to search channel name and topic 
+* Add a background image to a channel,query,console, @window from /bg command
+* Allow to use a web image for a background image using full URL 
+* Allow DCC Chat messages to show and parse /me messages 
+* Add option to Autoget IP Router IP Address 
+* Add menu item for Server Tree popup menu to remove a Server 
+
+
+
 Build RC 1.5 August 7, 2011
 * Flash Tray icon command /flashtray added with optional message (/flashtray The Message to show)
 * Fix Highlite plugin to run optional command if added

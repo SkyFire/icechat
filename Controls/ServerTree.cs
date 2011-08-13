@@ -299,7 +299,7 @@ namespace IceChat
             
             SelectNodeByIndex(nodeNumber, true);
             
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && serverNodes.Count > 1)
             {
                 object findNode = FindNodeValue(nodeNumber);
                 if (findNode != null)
@@ -339,8 +339,9 @@ namespace IceChat
             int _lineSize = Convert.ToInt32(this.Font.GetHeight(g));
             //find the server number, add 1 to it to make it a non-zero value
             int nodeNumber = Convert.ToInt32((e.Location.Y - headerHeight) / _lineSize) + 1 + topIndex;
-
-            if (e.Button == MouseButtons.Left)
+            
+            //dont bother moving anything if we have 1 or less servers
+            if (e.Button == MouseButtons.Left && serverNodes.Count > 1)
             {
                 //try dragging a node
                 if (nodeNumber <= serverNodes.Count)
@@ -606,6 +607,8 @@ namespace IceChat
                             this.forceDisconnectToolStripMenuItem,
                             this.toolStripMenuItemBlank,
                             this.editToolStripMenuItem,
+                            this.removeServerToolStripMenuItem,
+                            this.toolStripMenuItem1,
                             this.autoJoinToolStripMenuItem,
                             this.autoPerformToolStripMenuItem,
                             this.openLogFolderToolStripMenuItem});
@@ -615,11 +618,13 @@ namespace IceChat
                         foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                         {
                             //ipc.ServerTreeCurrentConnection = ((ServerSetting)findNode).
-                            
-                            ToolStripItem[] popServer = ipc.AddServerPopups();
-                            if (popServer != null && popServer.Length > 0)
+                            if (ipc.Enabled == true)
                             {
-                                this.contextMenuServer.Items.AddRange(popServer);
+                                ToolStripItem[] popServer = ipc.AddServerPopups();
+                                if (popServer != null && popServer.Length > 0)
+                                {
+                                    this.contextMenuServer.Items.AddRange(popServer);
+                                }
                             }
                         }
 
@@ -648,13 +653,16 @@ namespace IceChat
                             //add the menu's created by plugins
                             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                             {
-                                ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
-                                ipc.ServerTreeCurrentTab =  ((IceTabPage)findNode).TabCaption;
-
-                                ToolStripItem[] popChan = ipc.AddChannelPopups();
-                                if (popChan != null && popChan.Length > 0)
+                                if (ipc.Enabled == true)
                                 {
-                                    this.contextMenuChannel.Items.AddRange(popChan);
+                                    ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
+                                    ipc.ServerTreeCurrentTab = ((IceTabPage)findNode).TabCaption;
+
+                                    ToolStripItem[] popChan = ipc.AddChannelPopups();
+                                    if (popChan != null && popChan.Length > 0)
+                                    {
+                                        this.contextMenuChannel.Items.AddRange(popChan);
+                                    }
                                 }
                             }
 
@@ -675,13 +683,16 @@ namespace IceChat
                             //add the menu's created by plugins
                             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                             {
-                                ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
-                                ipc.ServerTreeCurrentTab = ((IceTabPage)findNode).TabCaption;
-
-                                ToolStripItem[] popQuery = ipc.AddQueryPopups();
-                                if (popQuery != null && popQuery.Length > 0)
+                                if (ipc.Enabled == true)
                                 {
-                                    this.contextMenuQuery.Items.AddRange(popQuery);
+                                    ipc.ServerTreeCurrentConnection = ((IceTabPage)findNode).Connection;
+                                    ipc.ServerTreeCurrentTab = ((IceTabPage)findNode).TabCaption;
+
+                                    ToolStripItem[] popQuery = ipc.AddQueryPopups();
+                                    if (popQuery != null && popQuery.Length > 0)
+                                    {
+                                        this.contextMenuQuery.Items.AddRange(popQuery);
+                                    }
                                 }
                             }
 
@@ -1166,7 +1177,7 @@ namespace IceChat
                                 int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
 
                                 nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":6:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":6:" + colorQ.ToString() + ":" + t.TabCaption + " (" + t.TotalChannels + ")", t));
                             }
                         }
                     }
@@ -1658,6 +1669,26 @@ namespace IceChat
             if (findNode.GetType() == typeof(IceTabPage))
                 ((IceTabPage)findNode).DisconnectDCC();
         }
+
+        private void removeServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormMain.Instance.FocusInputBox();
+
+            if (selectedNodeIndex == 0 || selectedServerID == 0) return;
+
+            ServerSetting s = GetServerSetting(selectedServerID);
+            if (s != null)
+            {                
+                DialogResult ask = MessageBox.Show("Are you sure you want to remove  " + s.ServerName + " from the Server Tree?", "Remove Server", MessageBoxButtons.OKCancel);
+                if (ask == DialogResult.OK)
+                {
+                    serversCollection.RemoveServer(s);
+                    SaveServerSettings();
+                }
+                return;
+            }
+        }
+
 
         #endregion
 

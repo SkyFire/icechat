@@ -49,7 +49,11 @@ namespace IceChat
 
             this.plugin = plugin;
             this.menuItem = menuItem;
-
+            if (this.plugin.Enabled)
+                this.buttonEnable.Text = "Disable";
+            else
+                this.buttonEnable.Text = "Enable";
+            
             ApplyLanguage();
         }
 
@@ -66,6 +70,19 @@ namespace IceChat
         private void buttonUnload_Click(object sender, EventArgs e)
         {
             FormMain.Instance.UnloadPlugin(menuItem);
+            this.Close();
+        }
+
+        private void buttonEnable_Click(object sender, EventArgs e)
+        {
+            if (this.plugin.Enabled)
+                this.buttonEnable.Text = "Enable";
+            else
+                this.buttonEnable.Text = "Disable";
+
+            this.plugin.Enabled = !this.plugin.Enabled;
+
+            FormMain.Instance.StatusPlugin(menuItem, this.plugin.Enabled);
             this.Close();
         }
 

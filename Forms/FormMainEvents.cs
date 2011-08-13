@@ -70,7 +70,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ServerPreConnect(args);
+                if (ipc.Enabled == true)
+                    ipc.ServerPreConnect(args);
             }
         }
 
@@ -113,7 +114,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ServerConnect(args);
+                if (ipc.Enabled == true)
+                    ipc.ServerConnect(args);
             }
         }
 
@@ -159,7 +161,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ServerConnect(args);
+                if (ipc.Enabled == true)
+                    ipc.ServerConnect(args);
             }
 
         }
@@ -357,7 +360,8 @@ namespace IceChat
                             args.Extra = "online";
                             foreach (IPluginIceChat ipc in loadedPlugins)
                             {
-                                ipc.BuddyList(args);
+                                if (ipc.Enabled == true)
+                                    ipc.BuddyList(args);
                             }
                         }
                     }
@@ -370,7 +374,8 @@ namespace IceChat
                         args.Extra = "offline";
                         foreach (IPluginIceChat ipc in loadedPlugins)
                         {
-                            ipc.BuddyList(args);
+                            if (ipc.Enabled == true)
+                                ipc.BuddyList(args);
                         }
                     }
                 }
@@ -470,7 +475,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.CtcpReply(args); ;
+                if (ipc.Enabled == true)
+                    args = ipc.CtcpReply(args); ;
             }
 
             CurrentWindowMessage(connection, args.Message, 7, false);
@@ -495,7 +501,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.CtcpMessage(args);
+                if (ipc.Enabled == true)
+                    args = ipc.CtcpMessage(args);
             }
 
             //check if CTCP's are enabled
@@ -559,7 +566,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.UserNotice(args);
+                if (ipc.Enabled == true)
+                    args = ipc.UserNotice(args);
             }
             
             CurrentWindowMessage(connection, args.Message, 1, false);
@@ -610,7 +618,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.ServerNotice(args);
+                if (ipc.Enabled == true)
+                    args = ipc.ServerNotice(args);
             }
             
             mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
@@ -650,7 +659,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.ServerMessage(args);
+                if (ipc.Enabled == true)
+                    args = ipc.ServerMessage(args);
             }
 
             mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
@@ -737,7 +747,8 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        ipc.ServerError(args);
+                        if (ipc.Enabled == true)
+                            ipc.ServerError(args);
                     }
 
                     mainTabControl.GetTabPage("Console").AddText(connection, error, 4, false);
@@ -796,7 +807,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.WhoisUser(args);
+                if (ipc.Enabled == true)
+                    ipc.WhoisUser(args);
             }
 
             if (iceChatOptions.WhoisEventLocation == 2) //hide the event
@@ -854,7 +866,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.QueryAction(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.QueryAction(args);
                 }
 
                 t.TextWindow.AppendText(args.Message, 1);
@@ -893,7 +906,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.QueryMessage(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.QueryMessage(args);
                 }
 
                 if (args.Message.Contains(connection.ServerSetting.NickName))
@@ -940,7 +954,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelMessage(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelMessage(args);
                 }
 
                 if (iceChatOptions.ChannelActionEventLocation == 0)
@@ -1026,7 +1041,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelMessage(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelMessage(args);
                 }
 
                 args.Message = args.Message.Replace("$message", message);
@@ -1095,7 +1111,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.ServerQuit(args);
+                if (ipc.Enabled == true)
+                    args = ipc.ServerQuit(args);
             }
 
             foreach (IceTabPage t in mainTabControl.TabPages)
@@ -1155,8 +1172,8 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        //mainTabControl.GetTabPage("Console").AddText(connection, "Channel Join :" + args.Channel, 4, false);
-                        args = ipc.ChannelJoin(args);
+                        if (ipc.Enabled == true)
+                            args = ipc.ChannelJoin(args);
                     }
 
                     if (iceChatOptions.JoinEventLocation == 0)
@@ -1196,8 +1213,10 @@ namespace IceChat
                 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelPart(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelPart(args);
                 }
+
                 if (iceChatOptions.PartEventLocation == 0)
                 {
                     //send it to the channel
@@ -1242,7 +1261,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelKick(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelKick(args);
                 }
 
                 if (iceChatOptions.KickEventLocation == 0)
@@ -1279,7 +1299,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    ipc.ChannelJoin(args);
+                    if (ipc.Enabled == true)
+                        ipc.ChannelJoin(args);
                 }
 
                 serverTree.Invalidate();
@@ -1291,7 +1312,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    ipc.ChannelJoin(args);
+                    if (ipc.Enabled == true)
+                        ipc.ChannelJoin(args);
                 }
 
                 serverTree.Invalidate();
@@ -1324,7 +1346,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                args = ipc.ChannelPart(args);
+                if (ipc.Enabled == true)
+                    args = ipc.ChannelPart(args);
             }
 
             mainTabControl.GetTabPage("Console").AddText(connection, args.Message, 1, false);
@@ -1383,7 +1406,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelKick(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelKick(args);
                 }
                 if (iceChatOptions.ChannelOpenKick)
                 {
@@ -1446,7 +1470,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    ipc.NickChange(args);
+                    if (ipc.Enabled == true)
+                        ipc.NickChange(args);
                 }
 
                 foreach (IceTabPage t in mainTabControl.TabPages)
@@ -1585,7 +1610,8 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        ipc.ChannelTopic(args);
+                        if (ipc.Enabled == true)
+                            ipc.ChannelTopic(args);
                     }
 
                 }
@@ -1603,7 +1629,8 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        ipc.ChannelTopic(args);
+                        if (ipc.Enabled == true)
+                            ipc.ChannelTopic(args);
                     }
                 
                 }
@@ -1676,7 +1703,8 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in loadedPlugins)
                     {
-                        ipc.ChannelMode(args);
+                        if (ipc.Enabled == true)
+                            ipc.ChannelMode(args);
                     }                    
                     
                     if (modeSetter != channel)
@@ -1868,7 +1896,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ChannelInvite(args);
+                if (ipc.Enabled == true)
+                    ipc.ChannelInvite(args);
             }
 
         }
@@ -1903,7 +1932,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.ChannelNotice(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.ChannelNotice(args);
                 }
 
                 t.TextWindow.AppendText(args.Message, 1);
@@ -1928,7 +1958,8 @@ namespace IceChat
             
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ServerRaw(args);
+                if (ipc.Enabled == true)
+                    ipc.ServerRaw(args);
             }
 
         }
@@ -1945,7 +1976,8 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                ipc.ServerRaw(args);
+                if (ipc.Enabled == true)
+                    ipc.ServerRaw(args);
             }
 
         }
@@ -2046,7 +2078,8 @@ namespace IceChat
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
                     //new dcc chat started
-                    args = ipc.DCCChatOpen(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.DCCChatOpen(args);
                 }
                 
                 t.TextWindow.AppendText(args.Message, 1);

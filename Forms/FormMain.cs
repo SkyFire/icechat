@@ -100,6 +100,9 @@ namespace IceChat
         private System.Timers.Timer flashTrayIconTimer;
         private int flashTrayCount;
 
+        private System.Timers.Timer flashTaskBarIconTimer;
+        private int flashTaskBarCount;
+
         private System.Media.SoundPlayer player;
         private bool muteAllSounds;
 
@@ -135,7 +138,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 1.5";
+        public const string VersionID = "Release Candidate 2.0";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -309,8 +312,9 @@ namespace IceChat
             this.iceChatHomePageToolStripMenuItem.Image = StaticMethods.LoadResourceImage("home.png");
             this.downloadPluginsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("plug-icon.png");
             this.pluginsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("plug-icon.png");
-            this.muteAllSoundsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("mute.png");
-            this.browseDataFolderToolStripMenuItem.Image = StaticMethods.LoadResourceImage("folder.ico");
+            
+            //this.muteAllSoundsToolStripMenuItem.Image = StaticMethods.LoadResourceImage("mute.png");
+            //this.browseDataFolderToolStripMenuItem.Image = StaticMethods.LoadResourceImage("folder.ico");
 
             this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
             this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
@@ -337,7 +341,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 7 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 12 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -421,7 +425,6 @@ namespace IceChat
 
                 }
             }
-
             if (iceChatOptions.Themes == null)
             {
                 iceChatOptions.Themes = new string[1];
@@ -498,10 +501,11 @@ namespace IceChat
             panelDockLeft.Initialize();
             panelDockRight.Initialize();
 
-            menuMainStrip.Font = new Font(iceChatFonts.FontSettings[7].FontName, iceChatFonts.FontSettings[7].FontSize);
+            //menuMainStrip.Font = new Font(iceChatFonts.FontSettings[7].FontName, iceChatFonts.FontSettings[7].FontSize);
 
             serverTree.NewServerConnection += new NewServerConnectionDelegate(NewServerConnection);
             serverTree.SaveDefault += new ServerTree.SaveDefaultDelegate(OnDefaultServerSettings);
+
             CreateDefaultConsoleWindow();
 
             this.FormClosing += new FormClosingEventHandler(FormMainClosing);
@@ -512,25 +516,36 @@ namespace IceChat
 
             loadedPlugins = new ArrayList();
 
+            if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
+        
+            WindowMessage(null, "Console", "Data Folder: " + currentFolder, 4, true);
+            WindowMessage(null, "Console", "Plugins Folder: " + pluginsFolder, 4, true);
+
+            //check for an update            
+            System.Threading.Thread checkThread = new System.Threading.Thread(checkForUpdate);
+            checkThread.Name = "CheckUpdateThread";
+            checkThread.Start();
+
+            //check for router ip
+            if (iceChatOptions.DCCLocalIP == null || iceChatOptions.DCCLocalIP.Length == 0)
+            {
+                System.Threading.Thread thread = new System.Threading.Thread(getLocalIPAddress);
+                thread.Name = "DCCIP";
+                thread.Start();
+            }
+
+            splash.Close();
+            splash.Dispose();
+
             //load any plugin addons
             LoadPlugins();
 
             //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ipc.MainProgramLoaded();
+                if (ipc.Enabled == true)
+                    ipc.MainProgramLoaded();
             }
-
-            if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
-        
-            WindowMessage(null, "Console", "Data Folder: " + currentFolder, 4, true);
-            WindowMessage(null, "Console", "Plugins Folder: " + pluginsFolder, 4, true);
-
-            //check for an update
-            checkForUpdate();
-
-            splash.Close();
-            splash.Dispose();
 
             this.Activated += new EventHandler(FormMainActivated);
 
@@ -538,10 +553,64 @@ namespace IceChat
             serverTree.ShowServerButtons = iceChatOptions.ShowServerButtons;
 
             this.flashTrayIconTimer = new System.Timers.Timer(2000);
-            this.flashTrayIconTimer.Enabled = true;            
+            this.flashTrayIconTimer.Enabled = false;            
             this.flashTrayIconTimer.Elapsed += new System.Timers.ElapsedEventHandler(flashTrayIconTimer_Elapsed);
             this.notifyIcon.Tag = "off";
             this.flashTrayCount = 0;
+
+            this.flashTaskBarIconTimer = new System.Timers.Timer(2000);
+            this.flashTaskBarIconTimer.Enabled = false;
+            this.flashTaskBarIconTimer.Elapsed += new System.Timers.ElapsedEventHandler(flashTaskBarIconTimer_Elapsed);
+            this.Tag = "off";
+            this.flashTrayCount = 0;
+        }
+
+        private void UpdateIcon(string iconName, string tag)
+        {
+            this.Invoke((MethodInvoker)delegate()
+            {
+                this.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage(iconName).GetHicon());
+                this.Tag = tag;
+            });
+        }
+
+        private void UpdateTrayIcon(string iconName, string tag)
+        {
+            this.Invoke((MethodInvoker)delegate()
+            {
+                this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage(iconName).GetHicon());
+                this.notifyIcon.Tag = tag;
+            });
+        }
+
+        private void flashTaskBarIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                if (this.Tag.Equals("on"))
+                {
+                    UpdateIcon("new-tray-icon.ico", "off");
+                }
+                else
+                {
+                    UpdateIcon("tray-icon-flash.ico", "on");
+                }
+
+                flashTaskBarCount++;
+
+                if (flashTaskBarCount == 5)
+                {
+                    this.flashTaskBarIconTimer.Stop();
+                    UpdateIcon("new-tray-icon.ico", "off");
+                    flashTaskBarCount = 0;
+                }
+
+            }
+            else
+            {
+                this.flashTaskBarIconTimer.Stop();
+                UpdateIcon("new-tray-icon.ico", "off");
+            }
         }
 
         private void flashTrayIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -550,13 +619,11 @@ namespace IceChat
             {
                 if (this.notifyIcon.Tag.Equals("on"))
                 {
-                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
-                    this.notifyIcon.Tag = "off";
+                    UpdateTrayIcon("new-tray-icon.ico", "off");
                 }
                 else
                 {
-                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("tray-icon-flash.ico").GetHicon()); ;
-                    this.notifyIcon.Tag = "on";
+                    UpdateTrayIcon("tray-icon-flash.ico", "on");
                 }
                 
                 flashTrayCount++;
@@ -564,16 +631,14 @@ namespace IceChat
                 if (flashTrayCount == 5)
                 {
                     this.flashTrayIconTimer.Stop();
-                    this.notifyIcon.Tag = "off";
-                    this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+                    UpdateTrayIcon("new-tray-icon.ico", "off");
                     flashTrayCount = 0;
                 }
             }
             else
             {
                 this.flashTrayIconTimer.Stop();
-                this.notifyIcon.Tag = "off";
-                this.notifyIcon.Icon = System.Drawing.Icon.FromHandle(StaticMethods.LoadResourceImage("new-tray-icon.ico").GetHicon());
+                UpdateTrayIcon("new-tray-icon.ico", "off");
             }
         }
 
@@ -719,8 +784,8 @@ namespace IceChat
             {
                 if (c.IsConnected)
                 {
-                    DialogResult dr = MessageBox.Show("You are connected to a Server(s), are you sure you want to close IceChat?", "Close IceChat", MessageBoxButtons.YesNo);
-                    if (e.CloseReason == CloseReason.UserClosing && dr == DialogResult.No)
+                    DialogResult dr = MessageBox.Show("You are connected to a Server(s), are you sure you want to close IceChat?", "Close IceChat", MessageBoxButtons.OKCancel);
+                    if (e.CloseReason == CloseReason.UserClosing && dr == DialogResult.Cancel)
                     {
                         e.Cancel = true;
                         return;
@@ -742,7 +807,7 @@ namespace IceChat
             //unload and dispose of all the plugins
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
-                AppDomain.Unload(ipc.domain);
+                //AppDomain.Unload(ipc.domain);
                 ipc.Dispose();
             }
 
@@ -825,11 +890,11 @@ namespace IceChat
             mainTabControl.TabPages.Add(p);
 
             WindowMessage(null, "Console", "\x00034Welcome to " + ProgramID + " " + VersionID, 1, false);
-            WindowMessage(null, "Console", "\x00034** This is a Beta version, not fully functional, not all options are added **", 1, false);
+            WindowMessage(null, "Console", "\x00034** This is a Release Candidate version, fully functional, not all the options are added **", 1, false);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
-            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat\x0003 on \x00030,2irc://ice.SyntaxNode.net/icechat\x0003 if you wish to help with this project", 1, true);
+            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat\x0003 on \x00030,2irc://irc.quakenet.org/icechat2009\x0003 if you wish to help with this project", 1, true);
 
-            StatusText("Welcome to " + ProgramID + " " + VersionID);
+            //StatusText("Welcome to " + ProgramID + " " + VersionID);
         }
 
         #region Internal Properties
@@ -1706,7 +1771,8 @@ namespace IceChat
 
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
-                    args = ipc.InputText(args);
+                    if (ipc.Enabled == true)
+                        args = ipc.InputText(args);
                 }
 
                 data = args.Command;
@@ -1771,6 +1837,7 @@ namespace IceChat
                             }
                             break;
 
+                        case "/background":
                         case "/bg": //change background image for a window(s)
                             if (data.Length > 0)
                             {
@@ -1785,32 +1852,131 @@ namespace IceChat
                                 switch (window.ToLower())
                                 {
                                     case "console":
-                                        if (file.Length > 0 && File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
-                                            mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                        //check if the file is a URL
+                                        if (file.StartsWith("http://"))
+                                        {
+                                            System.Net.HttpWebRequest myRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(file);
+                                            myRequest.Method = "GET";
+                                            System.Net.HttpWebResponse myResponse = (System.Net.HttpWebResponse)myRequest.GetResponse();
+                                            mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImageURL = myResponse.GetResponseStream();
+                                        }
                                         else
-                                            mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = "";
+                                        {
+                                            if (file.Length > 0 && File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
+                                                mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                            else
+                                                mainTabControl.GetTabPage("Console").CurrentConsoleWindow().BackGroundImage = "";
+                                        }
                                         break;
                                     case "channel":
                                         //get the channel name
                                         if (file.IndexOf(' ') > -1)
                                         {
                                             string channel = file.Split(' ')[0];
+                                            //if channel == "all" do it for all
+
                                             file = file.Substring(channel.Length + 1);
-                                            IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
-                                            if (t != null)
+                                            if (channel.ToLower() == "all")
                                             {
-                                                if (File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
-                                                    t.TextWindow.BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
-                                                else
-                                                    t.TextWindow.BackGroundImage = "";
+                                                foreach (IceTabPage t in mainTabControl.TabPages)
+                                                {
+                                                    if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                                                    {
+                                                        if (file.StartsWith("http://"))
+                                                        {
+                                                            System.Net.HttpWebRequest myRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(file);
+                                                            myRequest.Method = "GET";
+                                                            System.Net.HttpWebResponse myResponse = (System.Net.HttpWebResponse)myRequest.GetResponse();
+                                                            t.TextWindow.BackGroundImageURL = myResponse.GetResponseStream();
+                                                        }
+                                                        else
+                                                        {
+                                                            if (File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
+                                                                t.TextWindow.BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                                            else
+                                                                t.TextWindow.BackGroundImage = "";
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                IceTabPage t = GetWindow(connection, channel, IceTabPage.WindowType.Channel);
+                                                if (t != null)
+                                                {
+                                                    if (file.StartsWith("http://"))
+                                                    {
+                                                        System.Net.HttpWebRequest myRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(file);
+                                                        myRequest.Method = "GET";
+                                                        System.Net.HttpWebResponse myResponse = (System.Net.HttpWebResponse)myRequest.GetResponse();
+                                                        t.TextWindow.BackGroundImageURL = myResponse.GetResponseStream();
+                                                    }
+                                                    else
+                                                    {
+                                                        if (File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
+                                                            t.TextWindow.BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                                        else
+                                                            t.TextWindow.BackGroundImage = "";
+                                                    }
+                                                }
                                             }
                                         }
                                         else
                                         {
                                             //only a channel name specified, no file, erase the image
-                                            IceTabPage t = GetWindow(connection, file, IceTabPage.WindowType.Channel);
+                                            //if file == "all" clear em all
+                                            if (file.ToLower() == "all")
+                                            {
+                                                foreach (IceTabPage t in mainTabControl.TabPages)
+                                                {
+                                                    if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                                                        t.TextWindow.BackGroundImage = "";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                IceTabPage t = GetWindow(connection, file, IceTabPage.WindowType.Channel);
+                                                if (t != null)
+                                                    t.TextWindow.BackGroundImage = "";
+                                            }
+                                        }
+                                        break;
+                                    case "query":
+                                        
+                                        break;
+                                    case "window":
+                                        if (file.IndexOf(' ') > -1)
+                                        {
+                                            string windowName = file.Split(' ')[0];
+
+                                            file = file.Substring(windowName.Length + 1);
+                                            IceTabPage t = GetWindow(connection, windowName, IceTabPage.WindowType.Window);
+                                            if (t != null)
+                                            {
+                                                if (file.StartsWith("http://"))
+                                                {
+                                                    System.Net.HttpWebRequest myRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(file);
+                                                    myRequest.Method = "GET";
+                                                    System.Net.HttpWebResponse myResponse = (System.Net.HttpWebResponse)myRequest.GetResponse();
+                                                    t.TextWindow.BackGroundImageURL = myResponse.GetResponseStream();
+                                                }
+                                                else
+                                                {
+                                                    if (File.Exists(picturesFolder + System.IO.Path.DirectorySeparatorChar + file))
+                                                        t.TextWindow.BackGroundImage = (picturesFolder + System.IO.Path.DirectorySeparatorChar + file);
+                                                    else
+                                                        t.TextWindow.BackGroundImage = "";
+                                                }
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            IceTabPage t = GetWindow(connection, file, IceTabPage.WindowType.Window);
                                             if (t != null)
                                                 t.TextWindow.BackGroundImage = "";
+
                                         }
                                         break;
                                 }
@@ -1836,8 +2002,8 @@ namespace IceChat
                                     menuItem.Click -= new EventHandler(OnPluginMenuItemClick);
                                     pluginsToolStripMenuItem.DropDownItems.Remove(menuItem);
 
-                                    AppDomain.Unload(plugin.domain);
-                                    plugin.domain = null;
+                                    //AppDomain.Unload(plugin.domain);
+                                    //plugin.domain = null;
                                     
                                     plugin.Dispose();
 
@@ -1846,7 +2012,36 @@ namespace IceChat
                                 }
                             }
                             break;                        
-                        
+                        case "/statusplugin":
+                            if (data.Length > 0 && data.IndexOf(' ') > 0)
+                            {
+                                string[] values = data.Split(new char[] { ' ' }, 2);
+
+                                ToolStripMenuItem menuItem = null;
+                                foreach (ToolStripMenuItem t in pluginsToolStripMenuItem.DropDownItems)
+                                    if (t.ToolTipText.ToLower() == values[1].ToLower())
+                                        menuItem = t;
+
+                                if (menuItem != null)
+                                {
+                                    //match
+                                    IPluginIceChat plugin = (IPluginIceChat)menuItem.Tag;
+                                    plugin.Enabled = Convert.ToBoolean(values[0]);
+
+                                    if (plugin.Enabled == true)
+                                    {
+                                        WindowMessage(null, "Console", "Enabled Plugin - " + plugin.Name + " v" + plugin.Version + " by " + plugin.Author, 4, true);
+                                        //remove the icon
+                                        menuItem.Image = null;
+                                    }
+                                    else
+                                    {
+                                        WindowMessage(null, "Console", "Disabled Plugin - " + plugin.Name + " v" + plugin.Version + " by " + plugin.Author, 4, true);
+                                        menuItem.Image = StaticMethods.LoadResourceImage("CloseButton.png");
+                                    }
+                                }
+                            }
+                            break;
                         case "/loadplugin":
                             if (data.Length > 0)                            
                             {
@@ -2647,8 +2842,16 @@ namespace IceChat
                             }
                             break;                        
                         case "/flashtray":
+                            //check if we are minimized
+                            if (this.WindowState == FormWindowState.Minimized)
+                            {
+                                this.flashTaskBarIconTimer.Enabled = true;
+                                this.flashTaskBarIconTimer.Start();
+                            }
+                            
                             if (this.notifyIcon.Visible == true)
                             {
+                                this.flashTrayIconTimer.Enabled = true;
                                 this.flashTrayIconTimer.Start();
                                 //show a message in a balloon
                                 if (data.Length > 0)
@@ -2832,6 +3035,24 @@ namespace IceChat
                                     CurrentWindow.TextWindow.AppendText(msg, 1);
                                     CurrentWindow.TextWindow.ScrollToBottom();
                                     CurrentWindow.LastMessageType = ServerMessageType.Action;
+                                }
+                                else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
+                                {
+                                    
+                                    IceTabPage c = GetWindow(connection, CurrentWindow.TabCaption, IceTabPage.WindowType.DCCChat);
+                                    if (c != null)
+                                    {
+                                        c.SendDCCData("ACTION " + data + "");
+                                        
+                                        string msg = GetMessageFormat("DCC Chat Action");
+                                        msg = msg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName);
+                                        msg = msg.Replace("$message", data);
+
+                                        CurrentWindow.TextWindow.AppendText(msg, 1);
+                                        CurrentWindow.TextWindow.ScrollToBottom();
+                                        CurrentWindow.LastMessageType = ServerMessageType.Action;
+
+                                    }
                                 }
                             }
                             break;
@@ -3512,7 +3733,6 @@ namespace IceChat
 
                                 CurrentWindow.TextWindow.AppendText(msg, 1);
                                 CurrentWindow.LastMessageType = ServerMessageType.Message;
-
                             }
                             else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
                             {
@@ -3536,7 +3756,10 @@ namespace IceChat
                     }
                     else
                     {
-                        WindowMessage(null, "Console", data, 4, true);
+                        if (CurrentWindowType == IceTabPage.WindowType.Window)
+                            CurrentWindow.TextWindow.AppendText(data, 1);
+                        else                        
+                            WindowMessage(null, "Console", data, 4, true);
                     }
                 }
             }
@@ -3664,6 +3887,12 @@ namespace IceChat
                     case "$servermode":
                         data = ReplaceFirst(data, m.Value, string.Empty);
                         break;
+                    case "$serverid":
+                        if (connection != null)
+                            data = ReplaceFirst(data, m.Value, connection.ServerSetting.ID.ToString());
+                        else
+                            data = ReplaceFirst(data, m.Value, "$null");
+                        break;                    
                     case "$server":
                         if (connection != null)
                         {
@@ -3776,8 +4005,7 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine(pd.Value.ToString());
                         data = pd.Value.ToString();                        
                         */
-                        break;
-                    
+                        break;                    
                     case "$uptime2":
                         int systemUpTime = System.Environment.TickCount / 1000;
                         TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);
@@ -4452,6 +4680,11 @@ namespace IceChat
             this.Close();
         }
 
+        private void iceChatChannelStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            ParseOutGoingCommand(null, "/joinserv irc.quakenet.org #icechat2009");
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //show the about box
@@ -4821,21 +5054,23 @@ namespace IceChat
             //setup.ShadowCopyFiles = "true";
             //setup.ShadowCopyDirectories = pluginsFolder;
 
-            AppDomain appDomain = AppDomain.CreateDomain(args + "_AppDomain", null, setup);
+            //AppDomain appDomain = AppDomain.CreateDomain(args + "_AppDomain", null, setup);
 
-            Type loaderType = typeof(AssemblyLoader);
+            //Type loaderType = typeof(AssemblyLoader);
 
-            AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstance(Assembly.GetExecutingAssembly().FullName, loaderType.FullName).Unwrap();
+            //AssemblyLoader l = (AssemblyLoader)appDomain.CreateInstance(Assembly.GetExecutingAssembly().FullName, loaderType.FullName).Unwrap();
             
             Type ObjType = null;
             try
             {
                 //System.Diagnostics.Debug.WriteLine(fileName);
-                Assembly ass = l.LoadAssembly(args);
+                //Assembly ass = l.LoadAssembly(args);
                 //Assembly ass = l.LoadAssembly(fileName);
                 //ObjType = l.LoadAssembly(fileName);
                 //System.Diagnostics.Debug.WriteLine(ObjType.Asse);
-                
+                Assembly ass = null;
+                ass = Assembly.LoadFile(fileName);
+
                 if (ass != null)
                 {
                     ObjType = ass.GetType("IceChatPlugin.Plugin");
@@ -4849,7 +5084,6 @@ namespace IceChat
             }
             catch (Exception ex)
             {
-                //System.Diagnostics.Debug.WriteLine("ERROR:" +ex.Message);
                 WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin Error ", ex);
                 return;
             }
@@ -4868,7 +5102,9 @@ namespace IceChat
                     ipi.LeftPanel = panelDockLeft.TabControl;
                     ipi.RightPanel = panelDockRight.TabControl;
 
-                    ipi.domain = appDomain;
+                    //ipi.domain = appDomain;
+                    ipi.domain = null;
+                    ipi.Enabled = true; //enable it by default
 
                     WindowMessage(null, "Console", "Loaded Plugin - " + ipi.Name + " v" + ipi.Version + " by " + ipi.Author, 4, true);
 
@@ -4901,16 +5137,13 @@ namespace IceChat
 
         private void LoadPlugins()
         {
-            string[] pluginFiles = Directory.GetFiles(pluginsFolder, "*.DLL");
+            string[] pluginFiles = Directory.GetFiles(pluginsFolder, "*.dll");
             
             for (int i = 0; i < pluginFiles.Length; i++)
             {
-                //System.Diagnostics.Debug.WriteLine("checking:" + pluginFiles[i]);
-
-                string args = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
-                args = args.Substring(0, args.Length - 4);
-                loadPlugin(pluginFiles[i]);
-                
+                //string args = pluginFiles[i].Substring(pluginFiles[i].LastIndexOf("\\") + 1);
+                //args = args.Substring(0, args.Length - 4);
+                loadPlugin(pluginFiles[i]);                
             }
         }
 
@@ -4931,9 +5164,9 @@ namespace IceChat
             ParseOutGoingCommand(null, "/unloadplugin " + menuItem.ToolTipText);
         }
                 
-        internal void ReloadPlugin(ToolStripMenuItem menuItem)
+        internal void StatusPlugin(ToolStripMenuItem menuItem, bool enable)
         {
-            ParseOutGoingCommand(null, "/reloadplugin " + menuItem.ToolTipText);
+            ParseOutGoingCommand(null, "/statusplugin " + enable.ToString() + " " + menuItem.ToolTipText);
         }
                 
         /// <summary>
@@ -4978,6 +5211,24 @@ namespace IceChat
                 errorFile.WriteLine(DateTime.Now.ToString("G") + ":" + method + ":" + e.Message + ":" + e.StackTrace + ":" + trace.GetFrame(0).GetFileLineNumber());
                 errorFile.Flush();
             }
+        }
+
+        private void getLocalIPAddress()
+        {            
+            //find your internet IP Address
+            System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.icechat.net/_ipaddress.php");
+            System.Net.WebResponse response = request.GetResponse();
+            StreamReader stream = new StreamReader(response.GetResponseStream());
+            string data = stream.ReadToEnd();
+            stream.Close();
+            response.Close();
+            
+            //remove any linefeeds and such
+            data = data.Replace("\n", "");            
+            iceChatOptions.DCCLocalIP = data.Trim();
+            
+            //save the settings
+            SaveOptions();
         }
 
         private void checkForUpdate()
@@ -5345,16 +5596,7 @@ namespace IceChat
             //works but loads twice
             //byte[] assemblyFileBuffer = File.ReadAllBytes(assemblyName);
             //return Assembly.Load(assemblyFileBuffer);
-            
-            /*
-            //works but no point in using
-            System.IO.FileStream fs = new FileStream(assemblyName, FileMode.Open);
-            byte[] buffer = new byte[(int)fs.Length];
-            fs.Read(buffer, 0, buffer.Length);
-            fs.Close();
-            return Assembly.Load(buffer).GetType();
-            */
-            
+                        
         }
     }
 

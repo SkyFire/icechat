@@ -116,7 +116,6 @@
             this.labelProxyIP = new System.Windows.Forms.Label();
             this.checkUseProxy = new System.Windows.Forms.CheckBox();
             this.tabPageBNC = new System.Windows.Forms.TabPage();
-            this.label9 = new System.Windows.Forms.Label();
             this.textBNCPass = new System.Windows.Forms.TextBox();
             this.labelBNCPass = new System.Windows.Forms.Label();
             this.textBNCUser = new System.Windows.Forms.TextBox();
@@ -265,6 +264,7 @@
             this.checkUseIPv6.TabIndex = 52;
             this.checkUseIPv6.Text = "Connect with IPv6";
             this.checkUseIPv6.UseVisualStyleBackColor = true;
+            this.checkUseIPv6.Visible = false;
             // 
             // checkUseSSL
             // 
@@ -1091,7 +1091,6 @@
             // 
             // tabPageBNC
             // 
-            this.tabPageBNC.Controls.Add(this.label9);
             this.tabPageBNC.Controls.Add(this.textBNCPass);
             this.tabPageBNC.Controls.Add(this.labelBNCPass);
             this.tabPageBNC.Controls.Add(this.textBNCUser);
@@ -1108,16 +1107,6 @@
             this.tabPageBNC.TabIndex = 9;
             this.tabPageBNC.Text = "BNC Settings";
             this.tabPageBNC.UseVisualStyleBackColor = true;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(242, 12);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(164, 16);
-            this.label9.TabIndex = 66;
-            this.label9.Text = "NOT FUNCTIONAL YET";
             // 
             // textBNCPass
             // 
@@ -1604,7 +1593,6 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox checkAdvancedSettings;
     }
 }

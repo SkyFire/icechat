@@ -137,8 +137,9 @@ namespace IceChat
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {                
-                ipc.LoadColorsForm(this.tabControlColors);
+            {
+                if (ipc.Enabled == true)
+                    ipc.LoadColorsForm(this.tabControlColors);
             }
 
             ApplyLanguage();
@@ -1139,7 +1140,8 @@ namespace IceChat
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ipc.SaveColorsForm();
+                if (ipc.Enabled == true)
+                    ipc.SaveColorsForm();
             }
 
             //save the icechat themes

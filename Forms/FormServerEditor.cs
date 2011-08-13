@@ -74,6 +74,8 @@ namespace IceChat
             this.textFullName.Text = textDefaultFullName.Text;
             this.textQuitMessage.Text = textDefaultQuitMessage.Text;
 
+            this.checkAdvancedSettings.CheckedChanged += new System.EventHandler(this.checkAdvancedSettings_CheckedChanged);
+
             ApplyLanguage();
         }
 

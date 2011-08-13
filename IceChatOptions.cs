@@ -314,6 +314,7 @@ namespace IceChat
         private string _dccReceiveFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private string _dccSendFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private int _dccBufferSize = 1024;
+        private bool _autoGetRouterIP = true;
 
         private string _language = "English";
         private string _identName = "IceChat9";
@@ -514,7 +515,6 @@ namespace IceChat
             set { this._showServerButtons = value; }
         }
 
-
         [XmlElement("DisableQueries")]
         public bool DisableQueries
         {
@@ -630,6 +630,13 @@ namespace IceChat
         [XmlElement("DCCLocalIP")]
         public string DCCLocalIP
         { get; set; }
+
+        [XmlElement("DCCAutoGetRouterIP")]
+        public bool DCCAutogetRouterIP
+        {
+            get { return this._autoGetRouterIP; }
+            set { this._autoGetRouterIP = value; }
+        }
 
         [XmlElement("DCCBufferSize")]
         public int DCCBufferSize

@@ -730,8 +730,27 @@ namespace IceChat
                     this._backgroundImage = null;
 
                 this._backgroundImageFile = value;
+                
                 Invalidate();
             }
+        }
+
+        internal System.IO.Stream BackGroundImageURL
+        {
+            get
+            {
+                return null;
+            }
+            set 
+            {
+                if (value != null)
+                    this._backgroundImage = new Bitmap(value);
+                else
+                    this._backgroundImage = null;
+
+                Invalidate();
+            }
+
         }
 
         internal int IRCBackColor

@@ -78,7 +78,7 @@ namespace IceChat
         private WindowType windowType;
         private FlickerFreeListView channelList;
         private TextBox searchText;
-        private ListView.ListViewItemCollection listItems = null;
+        private List<ListViewItem> listItems;
         private TabControl consoleTab;
 
         private FormMain.ServerMessageType lastMessageType;
@@ -552,16 +552,33 @@ namespace IceChat
         internal void RequestDCCChat()
         {
             //send out a dcc chat request
-            string localIP = IPAddressToLong(this.connection.ServerSetting.LocalIP).ToString();
+            string localIP = "";
             if (FormMain.Instance.IceChatOptions.DCCLocalIP != null && FormMain.Instance.IceChatOptions.DCCLocalIP.Length > 0)
             {
                 localIP = IPAddressToLong(IPAddress.Parse(FormMain.Instance.IceChatOptions.DCCLocalIP)).ToString();
             }
+            else
+            {
+                if (connection.ServerSetting.LocalIP == null || connection.ServerSetting.LocalIP.ToString().Length == 0)
+                {
+                    //error. no local IP found
+                    FormMain.Instance.WindowMessage(connection, _tabCaption, "DCC ERROR, no Router/Firewall IP Address specified in DCC Settings", 4, true);
+                    this.LastMessageType = FormMain.ServerMessageType.ServerMessage; 
+                    return;
+                }
+                else
+                {
+                    localIP = IPAddressToLong(connection.ServerSetting.LocalIP).ToString();
+                }
+            }
+            
+
             Random port = new Random();
             int p = port.Next(FormMain.Instance.IceChatOptions.DCCPortLower, FormMain.Instance.IceChatOptions.DCCPortUpper);
 
             dccSocketListener = new TcpListener(new IPEndPoint(IPAddress.Any, Convert.ToInt32(p)));
             listenThread = new Thread(new ThreadStart(ListenForConnection));
+            listenThread.Name = "DCCListenThread";
             listenThread.Start();
 
             connection.SendData("PRIVMSG " + _tabCaption + " :DCC CHAT chat " + localIP + " " + p.ToString() + "");
@@ -581,10 +598,12 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                args = ipc.DCCChatTimeOut(args);
+                if (ipc.Enabled == true)
+                    args = ipc.DCCChatTimeOut(args);
             }            
             
             textWindow.AppendText(args.Message, 1);
+            this.LastMessageType = FormMain.ServerMessageType.ServerMessage;
 
             dccTimeOutTimer.Stop();
             dccSocketListener.Stop();
@@ -602,6 +621,7 @@ namespace IceChat
                 {
                     dccSocket = dccSocketListener.AcceptTcpClient();
                     dccSocketListener.Stop();
+                    dccTimeOutTimer.Stop();
 
                     string msg = FormMain.Instance.GetMessageFormat("DCC Chat Connect");
                     msg = msg.Replace("$nick", _tabCaption);
@@ -611,12 +631,15 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                     {
-                        args = ipc.DCCChatConnected(args);
+                        if (ipc.Enabled == true)
+                            args = ipc.DCCChatConnected(args);
                     }
 
                     textWindow.AppendText(args.Message, 1);
+                    this.LastMessageType = FormMain.ServerMessageType.ServerMessage;
 
                     dccThread = new Thread(new ThreadStart(GetDCCData));
+                    dccThread.Name = "DCCDataThread";
                     dccThread.Start();
                     keepListening = false;
                 }
@@ -648,12 +671,17 @@ namespace IceChat
 
                     foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                     {
-                        args = ipc.DCCChatConnected(args);
+                        if (ipc.Enabled == true)
+                            args = ipc.DCCChatConnected(args);
                     }
-                    
+
+                    dccTimeOutTimer.Stop();
+
                     textWindow.AppendText(args.Message, 1);
+                    this.LastMessageType = FormMain.ServerMessageType.ServerMessage;
 
                     dccThread = new Thread(new ThreadStart(GetDCCData));
+                    dccThread.Name = "DCCChatThread_" + nick;
                     dccThread.Start();
                 }
             }
@@ -696,12 +724,16 @@ namespace IceChat
                     Decoder d = Encoding.GetEncoding(this.connection.ServerSetting.Encoding).GetDecoder();
                     char[] chars = new char[buffSize];
                     int charLen = d.GetChars(buffer, 0, buffSize, chars, 0);
+
                     System.String strData = new System.String(chars);
                     if (bytesRead == 0)
                     {
                         //we have a disconnection
                         break;
                     }
+                    //cut off the null chars
+                    strData = strData.Substring(0, strData.IndexOf(Convert.ToChar(0x0).ToString()));
+
                     AddDCCMessage(strData);
                 }
                 catch (Exception)
@@ -719,10 +751,13 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                args = ipc.DCCChatClosed(args);
+                if (ipc.Enabled == true)
+                    args = ipc.DCCChatClosed(args);
             }
             
             textWindow.AppendText(msg, 1);
+            this.LastMessageType = FormMain.ServerMessageType.ServerMessage;
+
             System.Diagnostics.Debug.WriteLine("dcc chat disconnect");
             dccSocket.Close();
         }
@@ -739,7 +774,7 @@ namespace IceChat
                 string[] lines = message.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string line in lines)
                 {
-                    if (line[0] != (char)0)
+                    if (line[0] != (char)0 && line[0] != (char)1)
                     {
                         string msg = FormMain.Instance.GetMessageFormat("DCC Chat Message");
                         msg = msg.Replace("$nick", _tabCaption);
@@ -750,10 +785,36 @@ namespace IceChat
 
                         foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                         {
-                            args = ipc.DCCChatMessage(args);
+                            if (ipc.Enabled == true)
+                                args = ipc.DCCChatMessage(args);
                         }
 
                         textWindow.AppendText(args.Message, 1);
+                        this.LastMessageType = FormMain.ServerMessageType.Message;
+
+                    }
+                    else if (line[0] == (char)1)
+                    {
+                        //action
+                        string action = line.Substring(8);
+                        action = action.Substring(0, action.Length - 1);
+                        
+                        string msg = FormMain.Instance.GetMessageFormat("DCC Chat Action");
+                        msg = msg.Replace("$nick", _tabCaption);
+                        msg = msg.Replace("$message", action);
+
+                        PluginArgs args = new PluginArgs(this.textWindow, "", _tabCaption, "", msg);
+                        args.Connection = this.connection;
+
+                        foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                        {
+                            if (ipc.Enabled == true)
+                                args = ipc.DCCChatMessage(args);
+                        }
+
+                        textWindow.AppendText(args.Message, 1);
+                        this.LastMessageType = FormMain.ServerMessageType.Action;
+
                     }
                 }
             }
@@ -1091,15 +1152,13 @@ namespace IceChat
                 StatusChange();
                 
                 //highlite the proper item in the server tree
-                FormMain.Instance.ServerTree.SelectTab(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting, false);
-                
+                FormMain.Instance.ServerTree.SelectTab(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting, false);                
             }
             else
             {
                 FormMain.Instance.InputPanel.CurrentConnection = null;
                 FormMain.Instance.StatusText("Welcome to " + FormMain.ProgramID + " " + FormMain.VersionID);
-            }
-            
+            }            
         }
 
         private void OnTabConsoleMouseUp(object sender, MouseEventArgs e)
@@ -1311,11 +1370,12 @@ namespace IceChat
             if (searchText.Text.Length == 0)
             {
                 //restore the original list
-                //channelList.Items = listItems;
                 if (listItems != null)
-                {
+                {                    
                     channelList.Items.Clear();
-                    channelList.Items.AddRange(listItems);
+                    ListViewItem[] items = new ListViewItem[listItems.Count];
+                    listItems.CopyTo(items);
+                    channelList.Items.AddRange(items);
                 }
                 listItems = null;
             }
@@ -1323,25 +1383,20 @@ namespace IceChat
             {
                 if (listItems == null)
                 {
-
+                    listItems = new List<ListViewItem>();
+                    ListViewItem[] items = new ListViewItem[channelList.Items.Count];
+                    channelList.Items.CopyTo(items, 0);
+                    listItems.AddRange(items);
                 }
-                listItems = new ListView.ListViewItemCollection(channelList);
-                //channelList.BeginUpdate
-
-                System.Diagnostics.Debug.WriteLine(listItems.Count);
-
-                channelList.Items.Clear();
                 
-                System.Diagnostics.Debug.WriteLine(listItems.Count);
+                channelList.Items.Clear();
                 
                 foreach (ListViewItem item in listItems)
                 {
-                    System.Diagnostics.Debug.WriteLine(item.Text + ":" + item.Text.Contains(searchText.Text));
                     if (item.Text.Contains(searchText.Text))
-                    {
                         channelList.Items.Add(item);        
-
-                    }
+                    else if (item.SubItems[2].Text.Contains(searchText.Text))
+                        channelList.Items.Add(item);        
                 }
 
             }

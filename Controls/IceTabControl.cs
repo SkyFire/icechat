@@ -100,8 +100,6 @@ namespace IceChat
             flashTabTimer = new System.Timers.Timer();
             flashTabTimer.Interval = 1000;
             flashTabTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnFlashTabTimerElapsed);
-
-
         }
 
         private void OnFlashTabTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -329,10 +327,13 @@ namespace IceChat
             {
                 foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
                 {
-                    ToolStripItem[] popServer = ipc.AddServerPopups();
-                    if (popServer != null && popServer.Length > 0)
+                    if (ipc.Enabled == true)
                     {
-                        menu.Items.AddRange(popServer);
+                        ToolStripItem[] popServer = ipc.AddServerPopups();
+                        if (popServer != null && popServer.Length > 0)
+                        {
+                            menu.Items.AddRange(popServer);
+                        }
                     }
                 }
             }
@@ -355,10 +356,13 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ToolStripItem[] popServer = ipc.AddChannelPopups();
-                if (popServer != null && popServer.Length > 0)
+                if (ipc.Enabled == true)
                 {
-                    menu.Items.AddRange(popServer);
+                    ToolStripItem[] popServer = ipc.AddChannelPopups();
+                    if (popServer != null && popServer.Length > 0)
+                    {
+                        menu.Items.AddRange(popServer);
+                    }
                 }
             }
 
@@ -379,10 +383,13 @@ namespace IceChat
 
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
-                ToolStripItem[] popServer = ipc.AddQueryPopups();
-                if (popServer != null && popServer.Length > 0)
+                if (ipc.Enabled == true)
                 {
-                    menu.Items.AddRange(popServer);
+                    ToolStripItem[] popServer = ipc.AddQueryPopups();
+                    if (popServer != null && popServer.Length > 0)
+                    {
+                        menu.Items.AddRange(popServer);
+                    }
                 }
             }
 
@@ -728,14 +735,15 @@ namespace IceChat
                 else
                 {
                     rimage.Offset(4, 6);
-                    if (tabPage.FlashTab == true)
+                    if (tabPage.FlashTab == true && flashTabTimer.Enabled == true)
                     {
                         if (tabPage.FlashValue == 1)
                             g.DrawImage(img, rimage);
                     }
                     else
+                    {
                         g.DrawImage(img, rimage);
-                    
+                    }
                 }
 
                 StringFormat stringFormat = new StringFormat();

@@ -36,6 +36,7 @@
             this.labelName = new System.Windows.Forms.Label();
             this.labelAuthor = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
+            this.buttonEnable = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -114,11 +115,23 @@
             this.labelVersion.Size = new System.Drawing.Size(0, 16);
             this.labelVersion.TabIndex = 10;
             // 
+            // buttonEnable
+            // 
+            this.buttonEnable.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonEnable.Location = new System.Drawing.Point(102, 110);
+            this.buttonEnable.Name = "buttonEnable";
+            this.buttonEnable.Size = new System.Drawing.Size(75, 23);
+            this.buttonEnable.TabIndex = 11;
+            this.buttonEnable.Text = "Disable";
+            this.buttonEnable.UseVisualStyleBackColor = true;
+            this.buttonEnable.Click += new System.EventHandler(this.buttonEnable_Click);
+            // 
             // FormPluginInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(289, 140);
+            this.Controls.Add(this.buttonEnable);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelAuthor);
             this.Controls.Add(this.labelName);
@@ -152,5 +165,6 @@
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.Label labelAuthor;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.Button buttonEnable;
     }
 }

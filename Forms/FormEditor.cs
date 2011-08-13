@@ -81,8 +81,9 @@ namespace IceChat
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {                
-                ipc.LoadEditorForm(this.tabControlEditor);
+            {
+                if (ipc.Enabled == true)
+                    ipc.LoadEditorForm(this.tabControlEditor);
             }
 
             ApplyLanguage();

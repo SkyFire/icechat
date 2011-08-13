@@ -173,11 +173,13 @@ namespace IceChat
             textDCCSendFolder.Text = iceChatOptions.DCCSendFolder;
             textDCCLocalIP.Text = iceChatOptions.DCCLocalIP;
             comboBufferSize.Text = iceChatOptions.DCCBufferSize.ToString();
+            checkAutoGetLocalIP.Checked = iceChatOptions.DCCAutogetRouterIP;
 
             //load any plugin addons
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {                
-                ipc.LoadSettingsForm(this.tabControlOptions);
+            {
+                if (ipc.Enabled == true)
+                    ipc.LoadSettingsForm(this.tabControlOptions);
             }
 
             comboBoxLanguage.DataSource = FormMain.Instance.IceChatLanguageFiles;
@@ -307,6 +309,7 @@ namespace IceChat
             iceChatOptions.DCCSendFolder = textDCCSendFolder.Text;
             iceChatOptions.DCCLocalIP = textDCCLocalIP.Text;
             iceChatOptions.DCCBufferSize = Convert.ToInt32(comboBufferSize.Text);
+            iceChatOptions.DCCAutogetRouterIP = checkAutoGetLocalIP.Checked;
 
             //save the emoticons
             iceChatEmoticons.listEmoticons.Clear();
@@ -589,7 +592,7 @@ namespace IceChat
             try
             {
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
-
+                fbd.Description = "Select DCC Receive Folder";
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     textDCCReceiveFolder.Text = fbd.SelectedPath;
@@ -607,7 +610,7 @@ namespace IceChat
             try
             {
                 FolderBrowserDialog fbd = new FolderBrowserDialog();
-                
+                fbd.Description = "Select DCC Send Folder";                
                 if (fbd.ShowDialog() == DialogResult.OK)
                 {
                     textDCCSendFolder.Text = fbd.SelectedPath;
@@ -627,7 +630,6 @@ namespace IceChat
 
         private void trackTransparency_Scroll(object sender, EventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine(trackTransparency.Value);
             FormMain.Instance.Opacity = (double)trackTransparency.Value / 100;
         }
 
