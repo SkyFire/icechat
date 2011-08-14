@@ -1,4 +1,4 @@
-Build RC 2.0 August 12, 2011
+Build RC 2.0 August 14, 2011
 * Add ability to Enable/Disable a Plugin from Options Menu
 * Fix loading of plugins in Mono from start of Program
 * Ability to Enable/Disable a Plugin, does not unload it, just disables it 

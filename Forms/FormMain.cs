@@ -341,7 +341,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 12 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 14 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -563,6 +563,12 @@ namespace IceChat
             this.flashTaskBarIconTimer.Elapsed += new System.Timers.ElapsedEventHandler(flashTaskBarIconTimer_Elapsed);
             this.Tag = "off";
             this.flashTrayCount = 0;
+
+            //System.Diagnostics.Debug.WriteLine(System.Environment.Version.ToString());
+            //System.Version v = new Version();
+            //System.Diagnostics.Debug.WriteLine(System.Runtime.InteropServices.RuntimeEnvironment.GetSystemVersion());
+
+
         }
 
         private void UpdateIcon(string iconName, string tag)
@@ -654,7 +660,7 @@ namespace IceChat
             {
                 if (s.AutoStart)
                 {
-                    NewConnection(s);
+                    NewServerConnection(s);
                 }
             }
 
@@ -1352,7 +1358,7 @@ namespace IceChat
 
         #endregion
 
-        private void NewConnection(Object setting)
+        private void NewConnection2(Object setting)
         {
             ServerSetting serverSetting = (ServerSetting)setting;
 
@@ -1450,11 +1456,99 @@ namespace IceChat
         /// </summary>
         /// <param name="serverSetting">Which ServerSetting to use</param>
         private void NewServerConnection(ServerSetting serverSetting)
-        {
-            System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(NewConnection);
-            System.Threading.Thread thread = new System.Threading.Thread(threadStart);
-            thread.IsBackground = true;
-            thread.Start(serverSetting);
+        {            
+            //System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(NewConnection);
+            //System.Threading.Thread thread = new System.Threading.Thread(threadStart);
+            //thread.IsBackground = true;
+            //thread.Start(serverSetting);
+
+            IRCConnection c = new IRCConnection(serverSetting);
+
+            c.ChannelMessage += new ChannelMessageDelegate(OnChannelMessage);
+            c.ChannelAction += new ChannelActionDelegate(OnChannelAction);
+            c.QueryMessage += new QueryMessageDelegate(OnQueryMessage);
+            c.QueryAction += new QueryActionDelegate(OnQueryAction);
+            c.ChannelNotice += new ChannelNoticeDelegate(OnChannelNotice);
+
+            c.ChangeNick += new ChangeNickDelegate(OnChangeNick);
+            c.ChannelKick += new ChannelKickDelegate(OnChannelKick);
+
+            c.OutGoingCommand += new OutGoingCommandDelegate(OutGoingCommand);
+            c.JoinChannel += new JoinChannelDelegate(OnChannelJoin);
+            c.PartChannel += new PartChannelDelegate(OnChannelPart);
+            c.QuitServer += new QuitServerDelegate(OnServerQuit);
+
+            c.JoinChannelMyself += new JoinChannelMyselfDelegate(OnChannelJoinSelf);
+            c.PartChannelMyself += new PartChannelMyselfDelegate(OnChannelPartSelf);
+            c.ChannelKickSelf += new ChannelKickSelfDelegate(OnChannelKickSelf);
+
+            c.ChannelTopic += new ChannelTopicDelegate(OnChannelTopic);
+            c.ChannelMode += new ChannelModeChangeDelegate(OnChannelMode);
+            c.UserMode += new UserModeChangeDelegate(OnUserMode);
+            c.ChannelInvite += new ChannelInviteDelegate(OnChannelInvite);
+
+            c.ServerMessage += new ServerMessageDelegate(OnServerMessage);
+            c.ServerError += new ServerErrorDelegate(OnServerError);
+            c.ServerMOTD += new ServerMOTDDelegate(OnServerMOTD);
+            c.WhoisData += new WhoisDataDelegate(OnWhoisData);
+            c.UserNotice += new UserNoticeDelegate(OnUserNotice);
+            c.CtcpMessage += new CtcpMessageDelegate(OnCtcpMessage);
+            c.CtcpReply += new CtcpReplyDelegate(OnCtcpReply);
+            c.GenericChannelMessage += new GenericChannelMessageDelegate(OnGenericChannelMessage);
+            c.ServerNotice += new ServerNoticeDelegate(OnServerNotice);
+            c.ChannelListStart += new ChannelListStartDelegate(OnChannelListStart);
+            c.ChannelList += new ChannelListDelegate(OnChannelList);
+            c.DCCChat += new DCCChatDelegate(OnDCCChat);
+            c.DCCFile += new DCCFileDelegate(OnDCCFile);
+            c.DCCPassive += new DCCPassiveDelegate(OnDCCPassive);
+            c.UserHostReply += new UserHostReplyDelegate(OnUserHostReply);
+            c.IALUserData += new IALUserDataDelegate(OnIALUserData);
+            c.IALUserChange += new IALUserChangeDelegate(OnIALUserChange);
+            c.IALUserPart += new IALUserPartDelegate(OnIALUserPart);
+            c.IALUserQuit += new IALUserQuitDelegate(OnIALUserQuit);
+
+            c.BuddyListData += new BuddyListDelegate(OnBuddyList);
+            c.BuddyListClear += new BuddyListClearDelegate(OnBuddyListClear);
+            c.RawServerIncomingData += new RawServerIncomingDataDelegate(OnRawServerData);
+            c.RawServerOutgoingData += new RawServerOutgoingDataDelegate(OnRawServerOutgoingData);
+
+            c.AutoJoin += new AutoJoinDelegate(OnAutoJoin);
+            c.AutoRejoin += new AutoRejoinDelegate(OnAutoRejoin);
+            c.AutoPerform += new AutoPerformDelegate(OnAutoPerform);
+
+            c.EndofNames += new EndofNamesDelegate(OnEndofNames);
+            c.EndofWhoReply += new EndofWhoReplyDelegate(OnEndofWhoReply);
+            c.WhoReply += new WhoReplyDelegate(OnWhoReply);
+            c.ChannelUserList += new ChannelUserListDelegate(OnChannelUserList);
+
+            c.StatusText += new IceChat.StatusTextDelegate(OnStatusText);
+            c.RefreshServerTree += new RefreshServerTreeDelegate(OnRefreshServerTree);
+            c.ServerReconnect += new ServerReconnectDelegate(OnServerReconnect);
+            c.ServerDisconnect += new ServerReconnectDelegate(OnServerDisconnect);
+            c.ServerConnect += new ServerConnectDelegate(OnServerConnect);
+            c.ServerForceDisconnect += new ServerForceDisconnectDelegate(OnServerForceDisconnect);
+            c.ServerPreConnect += new ServerPreConnectDelegate(OnServerPreConnect);
+            c.UserInfoWindowExists += new UserInfoWindowExistsDelegate(OnUserInfoWindowExists);
+            c.UserInfoHostFullName += new UserInfoHostFullnameDelegate(OnUserInfoHostFullName);
+            c.UserInfoIdleLogon += new UserInfoIdleLogonDelegate(OnUserInfoIdleLogon);
+            c.UserInfoAddChannels += new UserInfoAddChannelsDelegate(OnUserInfoAddChannels);
+
+            c.ChannelInfoWindowExists += new ChannelInfoWindowExistsDelegate(OnChannelInfoWindowExists);
+            c.ChannelInfoAddBan += new ChannelInfoAddBanDelegate(OnChannelInfoAddBan);
+            c.ChannelInfoAddException += new ChannelInfoAddExceptionDelegate(OnChannelInfoAddException);
+            c.ChannelInfoTopicSet += new ChannelInfoTopicSetDelegate(OnChannelInfoTopicSet);
+
+            c.WriteErrorFile += new WriteErrorFileDelegate(OnWriteErrorFile);
+
+            OnAddConsoleTab(c);
+
+            mainTabControl.SelectTab(mainTabControl.GetTabPage("Console"));
+
+            inputPanel.CurrentConnection = c;
+            serverTree.AddConnection(c);
+
+            c.ConnectSocket();
+
         }
 
         #region Tab Events and Methods
@@ -1683,9 +1777,20 @@ namespace IceChat
                             network = " (" + inputPanel.CurrentConnection.ServerSetting.NetworkName + ")";
 
                         if (inputPanel.CurrentConnection.IsConnected)
-                            StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName + network);
+                        {
+                            if (inputPanel.CurrentConnection.ServerSetting.UseBNC)
+                                StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.BNCIP);
+                            else
+                                StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " connected to " + inputPanel.CurrentConnection.ServerSetting.RealServerName + network);
+                        }
                         else
-                            StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected from " + inputPanel.CurrentConnection.ServerSetting.ServerName + network);
+                        {
+                            if (inputPanel.CurrentConnection.ServerSetting.UseBNC)
+                                StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected from " + inputPanel.CurrentConnection.ServerSetting.BNCIP);
+                            else
+                                StatusText(inputPanel.CurrentConnection.ServerSetting.NickName + " disconnected from " + inputPanel.CurrentConnection.ServerSetting.ServerName + network);
+
+                        }
 
                         if (!e.IsHandled)
                             serverTree.SelectTab(mainTabControl.GetTabPage("Console").CurrentConnection.ServerSetting, false);
@@ -3996,16 +4101,9 @@ namespace IceChat
                     case "$totalwindows":
                         data = ReplaceFirst(data, m.Value, mainTabControl.TabCount.ToString());
                         break;
-                    case "$uptime3":
-                        /*
-                        System.Management.ManagementObject mObject = new System.Management.ManagementObject("Win32_OperatingSystem");
-                        System.Management.PropertyData pd = mObject.Properties["LastBootUpTime"];
-                        //string name = pd.Name.ToString();
-                        //DateTime lastBoot = parseCmiDateTime(pd.Value.ToString());
-                        System.Diagnostics.Debug.WriteLine(pd.Value.ToString());
-                        data = pd.Value.ToString();                        
-                        */
-                        break;                    
+                    case "$framework":
+                        data = ReplaceFirst(data, m.Value, System.Environment.Version.ToString());
+                        break;
                     case "$uptime2":
                         int systemUpTime = System.Environment.TickCount / 1000;
                         TimeSpan ts = TimeSpan.FromSeconds(systemUpTime);

@@ -226,7 +226,12 @@ namespace IceChat
             }
             else            
             {
-                ConsoleTab t = new ConsoleTab(connection.ServerSetting.ServerName);
+                ConsoleTab t;
+                if (connection.ServerSetting.UseBNC)                
+                    t = new ConsoleTab(connection.ServerSetting.BNCIP);
+                else
+                    t = new ConsoleTab(connection.ServerSetting.ServerName);
+
                 t.Connection = connection;
 
                 TextWindow w = new TextWindow();
@@ -234,13 +239,6 @@ namespace IceChat
                 w.Font = new System.Drawing.Font(FormMain.Instance.IceChatFonts.FontSettings[0].FontName, FormMain.Instance.IceChatFonts.FontSettings[0].FontSize);
                 w.IRCBackColor = FormMain.Instance.IceChatColors.ConsoleBackColor;
                 w.NoEmoticons = true;
-
-                //t.Controls.Add(w);
-                //if (FormMain.Instance.IceChatOptions.LogConsole)
-                //    w.SetLogFile();
-
-                //consoleTab.TabPages.Add(t);
-                //consoleTab.SelectedTab = t;
                 
                 AddConsole(t, w);
             }
@@ -1133,14 +1131,23 @@ namespace IceChat
 
             if (((ConsoleTab)consoleTab.SelectedTab).Connection.IsConnected)
             {
-                if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName != null)
-                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName + network);
+                if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.UseBNC)
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.BNCIP);
                 else
-                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
+                {
+                    if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName != null)
+                        FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.RealServerName + network);
+                    else
+                        FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " connected to " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
+                }
             }
             else
-                FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected from " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
-
+            {
+                if (((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.UseBNC)
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected from " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.BNCIP);
+                else
+                    FormMain.Instance.StatusText(((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.NickName + " disconnected from " + ((ConsoleTab)consoleTab.SelectedTab).Connection.ServerSetting.ServerName + network);
+            }
         }
 
         private void OnTabConsoleSelectedIndexChanged(object sender, EventArgs e)

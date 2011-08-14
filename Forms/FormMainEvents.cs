@@ -1970,7 +1970,7 @@ namespace IceChat
             IceTabPage t = GetWindow(null, "Debug", IceTabPage.WindowType.Debug);
             if (t != null)
                 t.TextWindow.AppendText("-" + connection.ServerSetting.ID + ":" + data, 1);
-
+            
             PluginArgs args = new PluginArgs(connection);
             args.Message = data;
 

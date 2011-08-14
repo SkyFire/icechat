@@ -65,7 +65,7 @@ namespace IceChat
                 io.Flush();
                 io.Close();
                 io.Dispose();
-                MessageBox.Show("IceChat 2009 Unhandled Exception Error\n\n" + ex.Message + ex.StackTrace, "Fatal Error - Written to Error Log", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("IceChat 9 Unhandled Exception Error\n\n" + ex.Message + ex.StackTrace, "Fatal Error - Written to Error Log", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
             finally
             {

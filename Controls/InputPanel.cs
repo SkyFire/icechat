@@ -121,6 +121,7 @@ namespace IceChat
         {
             if (OnCommand != null)
             {
+                System.Diagnostics.Debug.WriteLine("OnCommand:" + data);
                 string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 if (lines.Length == 1)
                 {
@@ -142,6 +143,17 @@ namespace IceChat
                                     textInput.addToBuffer(line);
                                     OnCommand(this, line);
                                 }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (string line in lines)
+                        {
+                            if (line.Length > 0)
+                            {
+                                textInput.addToBuffer(line);
+                                OnCommand(this, line);
                             }
                         }
                     }

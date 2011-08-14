@@ -39,6 +39,8 @@ namespace IceChat
         private Socket serverSocket = null;
         private NetworkStream socketStream = null;
         private SslStream sslStream = null;
+        
+        private bool m_PendingWriteSSL = false;
 
         private string dataBuffer = "";
         private Queue<string> sendBuffer;
@@ -257,7 +259,10 @@ namespace IceChat
             ServerDisconnect(this);
 
             RefreshServerTree(this);
-            StatusText(this, serverSetting.NickName + " disconnected (" + serverSetting.ServerName + ")");
+            if (serverSetting.UseBNC == true)
+                StatusText(this, serverSetting.NickName + " disconnected (" + serverSetting.BNCIP + ")");
+            else
+                StatusText(this, serverSetting.NickName + " disconnected (" + serverSetting.ServerName + ")");
 
             serverSocket = null;
             serverSetting.ConnectedTime = DateTime.Now;
@@ -333,6 +338,7 @@ namespace IceChat
             }
 
             socketStream = new NetworkStream(serverSocket, true);
+            
             if (serverSetting.UseSSL)
             {
                 try
@@ -344,14 +350,15 @@ namespace IceChat
                 catch (System.Security.Authentication.AuthenticationException ae)
                 {
                     if (ServerError != null)
-                        ServerError(this, "Authentication Error :" + ae.Message.ToString(), false);
+                        ServerError(this, "SSL Authentication Error :" + ae.Message.ToString(), false);
                 }
                 catch (Exception e)
                 {
                     if (ServerError != null)
-                        ServerError(this, "Exception Error :" + e.Message.ToString(), false);
+                        ServerError(this, "SSL Exception Error :" + e.Message.ToString(), false);
                 }
             }
+            
 
             try
             {
@@ -371,6 +378,7 @@ namespace IceChat
                         socketStream.BeginRead(readBuffer, 0, readBuffer.Length, new AsyncCallback(OnReceivedData), socketStream);
                     }
                 }
+                
                 this.serverSetting.ConnectedTime = DateTime.Now;
 
                 RefreshServerTree(this);
@@ -418,16 +426,20 @@ namespace IceChat
                     if (serverSetting.Password != null && serverSetting.Password.Length > 0)
                         SendData("PASS " + serverSetting.Password);
 
-                    if (serverSetting.UseBNC && serverSetting.BNCPass != null && serverSetting.BNCPass.Length > 0)
+                    if (serverSetting.UseBNC == true && serverSetting.BNCPass != null && serverSetting.BNCPass.Length > 0)
                         SendData("PASS " + serverSetting.BNCPass);
-
+                    
                     //send the USER / NICK stuff
                     SendData("NICK " + serverSetting.NickName);
-                    SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
+
+                    if (serverSetting.UseBNC == true && serverSetting.BNCUser != null && serverSetting.BNCUser.Length > 0)
+                        SendData("USER " + serverSetting.BNCUser + " \"localhost\" \"" + serverSetting.BNCIP + "\" :" + serverSetting.FullName);
+                    else
+                        SendData("USER " + serverSetting.IdentName + " \"localhost\" \"" + serverSetting.ServerName + "\" :" + serverSetting.FullName);
 
                     whichAddressinList = whichAddressCurrent;
                     
-                    if (serverSetting.UseBNC)
+                    if (serverSetting.UseBNC == true)
                         this.fullyConnected = true;
                     
                     this.pongTimer.Start();
@@ -449,7 +461,7 @@ namespace IceChat
             catch (Exception e)
             {
                 if (ServerError != null)
-                    ServerError(this, "Exception Error:" + e.Message.ToString(), false);
+                    ServerError(this, "Exception Error:" + serverSetting.UseBNC + ":" + e.Message.ToString(), false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -520,39 +532,61 @@ namespace IceChat
             byte[] bytData = Encoding.GetEncoding(serverSetting.Encoding).GetBytes(data + "\r\n");
             if (bytData.Length > 0)
             {
-                if (socketStream.CanWrite)
+                if (serverSetting.UseSSL == true)
                 {
-                    try
+                    if (sslStream.CanWrite)
                     {
-                        if (serverSetting.UseSSL)
+                        try
                         {
-                            sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
+                            //raise an event for the debug window
+                            //if (sendBuffer.Count
+                            if (m_PendingWriteSSL == false)
+                            {
+                                if (sendBuffer.Count > 0)
+                                    m_PendingWriteSSL = true;
+
+                                sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
+                                
+                                System.Diagnostics.Debug.WriteLine("sending data:" + data + ":");
+                                                                
+                                if (RawServerOutgoingData != null)
+                                    RawServerOutgoingData(this, data);
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine("queue:" + sendBuffer.Count + ":" + data);
+                                sendBuffer.Enqueue(data);
+                            }
+
                         }
-                        else
-                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
+                        catch (SocketException se)
+                        {
+                            //some kind of a socket error
+                            if (ServerError != null)
+                                ServerError(this, "You are not Connected - Can not send (SSL):  " + se.Message, false);
 
-                        //raise an event for the debug window
-                        if (RawServerOutgoingData != null)
-                            RawServerOutgoingData(this, data);
-                    }
-                    catch (SocketException se)
-                    {
-                        //some kind of a socket error
-                        if (ServerError != null)
-                            ServerError(this, "You are not Connected - Can not send:" + se.Message, false);
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
+                        catch (NotSupportedException nse)
+                        {
+                            //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
+                            System.Diagnostics.Debug.WriteLine("nse:" + nse.Message);
+                            sendBuffer.Enqueue(data);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ServerError != null)
+                                ServerError(this, "SSL Exception Error - Can not send:" + ex.Message, false);
 
-                        disconnectError = true;
-                        ForceDisconnect();
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
                     }
-                    catch (NotSupportedException)
-                    {
-                        //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
-                        sendBuffer.Enqueue(data);
-                    }
-                    catch (Exception ex)
+                    else
                     {
                         if (ServerError != null)
-                            ServerError(this, "Exception Error - Can not send:" + ex.Message, false);
+                            ServerError(this, "You are not Connected (SSL Socket Disconnected) - Can not send:" + data, false);
 
                         disconnectError = true;
                         ForceDisconnect();
@@ -560,12 +594,51 @@ namespace IceChat
                 }
                 else
                 {
-                    if (ServerError != null)
-                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data, false);
+                    if (socketStream.CanWrite)
+                    {
+                        try
+                        {
+                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
 
-                    disconnectError = true;
-                    ForceDisconnect();
+                            //raise an event for the debug window
+                            if (RawServerOutgoingData != null)
+                                RawServerOutgoingData(this, data);
+                        }
+                        catch (SocketException se)
+                        {
+                            //some kind of a socket error
+                            if (ServerError != null)
+                                ServerError(this, "You are not Connected - Can not send: " + serverSetting.UseSSL + " : " + se.Message, false);
+
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
+                        catch (NotSupportedException)
+                        {
+                            //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
+                            sendBuffer.Enqueue(data);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ServerError != null)
+                                ServerError(this, "Exception Error - Can not send:" + serverSetting.UseBNC + ":" + ex.Message, false);
+
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
+                    }
+                    else
+                    {
+                        if (ServerError != null)
+                            ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + data, false);
+
+                        disconnectError = true;
+                        ForceDisconnect();
+                    }
+
+
                 }
+               
             }
         }
 
@@ -588,44 +661,82 @@ namespace IceChat
             //get the proper encoding            
             if (bytData.Length > 0)
             {
-                if (socketStream.CanWrite)
+                if (serverSetting.UseSSL == true)
                 {
-                    try
+                    if (sslStream.CanWrite == true)
                     {
-                        if (serverSetting.UseSSL)
+                        try
                         {
-                            sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
-                        }
-                        else
-                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
+                            //raise an event for the debug window
+                            string strData = Encoding.GetEncoding("Windows-1252").GetString(readBuffer);
+                            if (RawServerOutgoingData != null)
+                                RawServerOutgoingData(this, strData);
 
-                        //raise an event for the debug window
-                        string strData = Encoding.GetEncoding("Windows-1252").GetString(readBuffer);
-                        if (RawServerOutgoingData != null)
-                            RawServerOutgoingData(this, strData);
+                            sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
+
+                        }
+                        catch (SocketException se)
+                        {
+                            //some kind of a socket error
+                            if (ServerError != null)
+                                ServerError(this, "You are not Connected - Can not send (SSL):" + se.Message, false);
+
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
+                        catch (NotSupportedException)
+                        {
+                            //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
+                            //sendBuffer.Enqueue(data);
+                        }
                     }
-                    catch (SocketException se)
+                    else
                     {
-                        //some kind of a socket error
                         if (ServerError != null)
-                            ServerError(this, "You are not Connected - Can not send:" + se.Message, false);
+                            ServerError(this, "You are not Connected (SSL Socket Disconnected) - Can not send:" + bytData.ToString(), false);
 
                         disconnectError = true;
                         ForceDisconnect();
                     }
-                    catch (NotSupportedException)
-                    {
-                        //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
-                        //sendBuffer.Enqueue(data);
-                    }
+
                 }
                 else
                 {
-                    if (ServerError != null)
-                        ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + bytData.ToString(), false);
+                    if (socketStream.CanWrite == true)
+                    {
+                        try
+                        {
+                            //raise an event for the debug window
+                            string strData = Encoding.GetEncoding("Windows-1252").GetString(readBuffer);
+                            if (RawServerOutgoingData != null)
+                                RawServerOutgoingData(this, strData);
 
-                    disconnectError = true;
-                    ForceDisconnect();
+                            socketStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), socketStream);
+
+                        }
+                        catch (SocketException se)
+                        {
+                            //some kind of a socket error
+                            if (ServerError != null)
+                                ServerError(this, "You are not Connected - Can not send:" + serverSetting.UseBNC + ":" + se.Message, false);
+
+                            disconnectError = true;
+                            ForceDisconnect();
+                        }
+                        catch (NotSupportedException)
+                        {
+                            //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
+                            //sendBuffer.Enqueue(data);
+                        }
+                    }
+                    else
+                    {
+                        if (ServerError != null)
+                            ServerError(this, "You are not Connected (Socket Disconnected) - Can not send:" + bytData.ToString(), false);
+
+                        disconnectError = true;
+                        ForceDisconnect();
+                    }
                 }
             }
         }
@@ -638,7 +749,7 @@ namespace IceChat
             SslStream sl = null;
             NetworkStream ns = null;
 
-            if (serverSetting.UseSSL)
+            if (serverSetting.UseSSL == true)
                 sl = (SslStream)ar.AsyncState;
             else
                 ns = (NetworkStream)ar.AsyncState;
@@ -653,7 +764,11 @@ namespace IceChat
 
                 //Check if anything in the sendBuffer Queue, if so, send it
                 if (sendBuffer.Count > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("run queue:" + sendBuffer.Count + ":");
+                    m_PendingWriteSSL = false;
                     SendData(sendBuffer.Dequeue());
+                }
 
             }
             catch (SocketException se)
@@ -681,7 +796,7 @@ namespace IceChat
 
             try
             {
-                if (serverSetting.UseSSL)
+                if (serverSetting.UseSSL == true)
                     bytesRead = sslStream.EndRead(ar);
                 else
                     bytesRead = socketStream.EndRead(ar);
@@ -786,7 +901,7 @@ namespace IceChat
 
                         string strData = "";
                         //check if AutoDetect of Encoding is enabled
-                        if (this.serverSetting.AutoDecode)
+                        if (this.serverSetting.AutoDecode == true)
                         {
                             UTF8Encoding enc = new UTF8Encoding(false, true);
                             try
@@ -899,7 +1014,7 @@ namespace IceChat
             try
             {
                 // Get host related information.
-                if (serverSetting.UseProxy)
+                if (serverSetting.UseProxy == true)
                 {
                     whichAddressCurrent = 1;
                     totalAddressinDNS = 1;
@@ -937,7 +1052,7 @@ namespace IceChat
                         System.Diagnostics.Debug.WriteLine("Exception Proxy Connect");
                     }
                 }
-                else if (serverSetting.UseBNC)
+                else if (serverSetting.UseBNC == true)
                 {
                     //start connection with BNC server
                     whichAddressCurrent = 1;
@@ -959,25 +1074,21 @@ namespace IceChat
                         Socket bncSocket = new Socket(bncEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
                         ServerConnect(this, bncIP.ToString());
-
-                        //string msg = FormMain.Instance.GetMessageFormat("Server Connect");
-                        //msg = msg.Replace("$serverip", bncIP.ToString()).Replace("$server", serverSetting.BNCIP).Replace("$port", serverSetting.BNCPort);
-                        //ServerMessage(this, msg);
-
+                        
                         serverSocket = bncSocket;
                         bncSocket.BeginConnect(bncEndPoint, new AsyncCallback(OnConnectionReady), null);
                     }
                     catch (SocketException)
                     {
-                        System.Diagnostics.Debug.WriteLine("Socket Exception Proxy Connect");
+                        System.Diagnostics.Debug.WriteLine("Socket Exception BNC Connect");
                     }
                     catch (Exception)
                     {
-                        System.Diagnostics.Debug.WriteLine("Exception Proxy Connect");
+                        System.Diagnostics.Debug.WriteLine("Exception BNC Connect");
                     }
 
                 }
-                else if (serverSetting.UseIPv6)
+                else if (serverSetting.UseIPv6 == true)
                 {
                     //connect to an IPv6 Server
                     IPAddress ipAddress = null;

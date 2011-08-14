@@ -26,6 +26,8 @@
 *Add option to Autoget IP Router IP Address (RC2.0)
 *Add menu item for Server Tree popup menu to remove a Server (RC2.0)
 
+Try and remove bold/itaiic from font selection dialog
+
 Add DCC File Events to Plugin Framework
 Further testing of DCC File Sending and Receiving
 Add $mask() identifier (in progress)

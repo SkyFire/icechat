@@ -181,6 +181,7 @@ namespace IceChat
             if ((keyData == (Keys.Control | Keys.V)) || keyData == (Keys.Shift | Keys.Insert))
             {
                 string data = Clipboard.GetText(TextDataFormat.Text);
+                System.Diagnostics.Debug.WriteLine(data + ":" + data.Contains(Environment.NewLine));
                 if (data.Contains(Environment.NewLine))
                 {
                     OnCommand(this, data);
