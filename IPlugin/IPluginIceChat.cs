@@ -42,6 +42,7 @@ namespace IceChatPlugin
         //sets the MainForm for IceChat
         public Form MainForm { get; set; }
         public string CurrentFolder { get; set; }
+        public string FileName { get; set; }
         
         public virtual void ShowInfo()
         {
@@ -60,6 +61,9 @@ namespace IceChatPlugin
 
         public TabControl LeftPanel { get; set; }
         public TabControl RightPanel { get; set; }
+
+        public virtual bool HaveSettingsForm() { return false; }
+        public virtual void ShowSettingsForm() { }
 
         public virtual void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab) { }
         public virtual void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab) { }

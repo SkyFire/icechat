@@ -267,8 +267,7 @@ namespace IceChat
         public bool OtherMessageColorChange
         { get { return this._otherMessageEnabled; } set { this._otherMessageEnabled = value; } }
 
-    }
-    
+    }    
     
     [XmlRoot("IceChatOptions")]
     public class IceChatOptions
@@ -294,7 +293,6 @@ namespace IceChat
         private bool _showServerTree = true;
         private bool _showNickList = true;
         private bool _showToolBar = true;
-        private bool _showTabBar = true;
         private bool _disableQueries = false;
         private bool _showQueryForegound = true;
         private bool _whoisNewQuery = true;
@@ -471,13 +469,6 @@ namespace IceChat
         {
             get { return this._showToolBar; }
             set { this._showToolBar = value; }
-        }
-
-        [XmlElement("ShowTabBar")]
-        public bool ShowTabBar
-        {
-            get { return this._showTabBar; }
-            set { this._showTabBar = value; }
         }
 
         [XmlElement("ShowServerTree")]
@@ -766,16 +757,43 @@ namespace IceChat
 
     }
 
+    public class IceChatPluginFile
+    {
+        [XmlArray("Plugins")]
+        [XmlArrayItem("Item", typeof(PluginItem))]
+        public List<PluginItem> listPlugins;
+
+        public IceChatPluginFile()
+        {
+            listPlugins = new List<PluginItem>();
+        }
+        public void AddPlugin(PluginItem plugin)
+        {
+            listPlugins.Add(plugin);
+        }
+    }
+
+    public class PluginItem
+    {
+        [XmlElement("PluginFile")]
+        public string PluginFile
+        { get; set; }
+
+        [XmlElement("Enabled")]
+        public bool Enabled
+        { get; set; }
+    }
+
     //seperate file(s) for all the aliases
     public class IceChatAliases
     {
         [XmlArray("Aliases")]
         [XmlArrayItem("Item", typeof(AliasItem))]
-        public ArrayList listAliases;
+        public List<AliasItem> listAliases;
 
         public IceChatAliases()
         {
-            listAliases = new ArrayList();
+            listAliases = new List<AliasItem>();
         }
         public void AddAlias(AliasItem alias)
         {
@@ -799,10 +817,10 @@ namespace IceChat
     {
         [XmlArray("Emoticons")]
         [XmlArrayItem("Item", typeof(EmoticonItem))]
-        public ArrayList listEmoticons;
+        public List<EmoticonItem> listEmoticons;
         public IceChatEmoticon()
         {
-            listEmoticons = new ArrayList();
+            listEmoticons = new List<EmoticonItem>();
         }
         public void AddEmoticon(EmoticonItem item)
         {
@@ -830,11 +848,11 @@ namespace IceChat
     {
         [XmlArray("Popups")]
         [XmlArrayItem("Item",typeof(PopupMenuItem))]
-        public ArrayList listPopups;
+        public List<PopupMenuItem> listPopups;
 
         public IceChatPopupMenus() 
         {
-            listPopups = new ArrayList();
+            listPopups = new List<PopupMenuItem>();
         }
         
         public void ReplacePopup(string popupType, PopupMenuItem menu)
@@ -872,20 +890,20 @@ namespace IceChat
     [XmlRoot("IceChatSounds")]
     public class IceChatSounds
     {
-        public class soundEntry
+        public class SoundEntry
         {
-            public soundEntry() { }
-            public soundEntry(string k, string d)
+            public SoundEntry() { }
+            public SoundEntry(string k, string d)
             {
                 key = k; desc = d;
             }
 
-            public soundEntry(string k, string d, string f)
+            public SoundEntry(string k, string d, string f)
             {
                 key=k; desc=d; file=f;
             }
 
-            public soundEntry(string k, string d, soundEntry p)
+            public SoundEntry(string k, string d, SoundEntry p)
             {
                 key = k; desc = d; parent = p;
             }
@@ -893,7 +911,7 @@ namespace IceChat
             private string key;
             private string desc;
             private string file;
-            soundEntry parent;
+            SoundEntry parent;
 
             [XmlElement("Key")]
             public string Key
@@ -919,7 +937,7 @@ namespace IceChat
                 set { file = value; }
             }
 
-            public soundEntry Parent
+            public SoundEntry Parent
             {
                 get {return parent;}
                 set { parent = value; }
@@ -935,30 +953,30 @@ namespace IceChat
         }
 
         [XmlArray("soundList")]
-        [XmlArrayItem("soundEntry", typeof(soundEntry))]
-        public ArrayList soundList;
+        [XmlArrayItem("soundEntry", typeof(SoundEntry))]
+        public List<SoundEntry> soundList;
 
         public IceChatSounds()
         {
-            soundList = new ArrayList();
+            soundList = new List<SoundEntry>();
         }
 
         public void AddDefaultSounds()
         {
-            Add(new soundEntry("conmsg", "New Message in Console"));
-            Add(new soundEntry("chanmsg", "New Channel Message"));
-            Add(new soundEntry("privmsg", "New Private Message"));
-            Add(new soundEntry("notice", "New User Notice"));
-            Add(new soundEntry("nickchan", "Nickname said in channel"));
-            Add(new soundEntry("nickpriv", "Nickname said in private message"));
-            Add(new soundEntry("buddy", "A buddy has come online"));
-            Add(new soundEntry("dropped", "Server Disconnection"));
-            Add(new soundEntry("operping", "Request for operator"));
+            Add(new SoundEntry("conmsg", "New Message in Console"));
+            Add(new SoundEntry("chanmsg", "New Channel Message"));
+            Add(new SoundEntry("privmsg", "New Private Message"));
+            Add(new SoundEntry("notice", "New User Notice"));
+            Add(new SoundEntry("nickchan", "Nickname said in channel"));
+            Add(new SoundEntry("nickpriv", "Nickname said in private message"));
+            Add(new SoundEntry("buddy", "A buddy has come online"));
+            Add(new SoundEntry("dropped", "Server Disconnection"));
+            Add(new SoundEntry("operping", "Request for operator"));
         }
 
-        public void Add(soundEntry s)
+        public void Add(SoundEntry s)
         {
-            foreach (soundEntry x in soundList)
+            foreach (SoundEntry x in soundList)
             {
                 if (x.Key.Equals(s.Key))
                 {
@@ -969,9 +987,9 @@ namespace IceChat
             soundList.Add(s);
         }
 
-        public soundEntry getSound(string key)
+        public SoundEntry getSound(string key)
         {
-            foreach (soundEntry x in soundList)
+            foreach (SoundEntry x in soundList)
             {
                 if (x.Key.Equals(key))
                 {
@@ -981,9 +999,9 @@ namespace IceChat
             return null;
         }
 
-        public soundEntry getSound(int index)
+        public SoundEntry getSound(int index)
         {
-            return (soundEntry)soundList[index];
+            return soundList[index];
         }
 
     }

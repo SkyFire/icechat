@@ -56,7 +56,7 @@ namespace IceChat
         private string serversFile;
         private string aliasesFile;
         private string popupsFile;
-        private string highlitesFile;
+        private string pluginsFile;
 
         private string currentFolder;
         private string logsFolder;
@@ -80,9 +80,11 @@ namespace IceChat
         private IceChatEmoticon iceChatEmoticons;
         private IceChatLanguage iceChatLanguage;
         private IceChatSounds iceChatSounds;
+        private IceChatPluginFile iceChatPlugins;
+
         //private System.Threading.Mutex mutex;
 
-        private ArrayList loadedPlugins;
+        private List<IPluginIceChat> loadedPlugins;
 
         private IdentServer identServer;
         
@@ -138,7 +140,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.0";
+        public const string VersionID = "Release Candidate 2.1";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -214,7 +216,7 @@ namespace IceChat
             favoriteChannelsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatChannels.xml";
             aliasesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatAliases.xml";
             popupsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPopups.xml";
-            highlitesFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatHighLites.xml";
+            pluginsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "IceChatPlugins.xml";
             emoticonsFile = currentFolder + System.IO.Path.DirectorySeparatorChar + "Emoticons" + System.IO.Path.DirectorySeparatorChar + "IceChatEmoticons.xml";
 
             logsFolder = currentFolder + System.IO.Path.DirectorySeparatorChar + "Logs";
@@ -335,13 +337,10 @@ namespace IceChat
             toolBarToolStripMenuItem.Checked = iceChatOptions.ShowToolBar;
             toolStripMain.Visible = toolBarToolStripMenuItem.Checked;
 
-            channelBarToolStripMenuItem.Checked = iceChatOptions.ShowTabBar;
-            mainTabControl.ShowTabs = iceChatOptions.ShowTabBar;
-
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 14 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 18 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -514,7 +513,7 @@ namespace IceChat
             if (iceChatOptions.IdentServer)
                 identServer = new IdentServer();
 
-            loadedPlugins = new ArrayList();
+            loadedPlugins = new List<IPluginIceChat>();
 
             if (iceChatLanguage.LanguageName != "English") ApplyLanguage(); // ApplyLanguage can first be called after all child controls are created
         
@@ -539,12 +538,78 @@ namespace IceChat
 
             //load any plugin addons
             LoadPlugins();
+            
+            //load the plugin settings file
+            LoadPluginFiles();
+
+            //set any plugins as disabled
+            
+
+            //add any items top the pluginsFile if they do not exist, or remove any that do not
+
 
             //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
+                bool found = false;
+                for (int i = 0; i < iceChatPlugins.listPlugins.Count; i++)
+                {
+                    if (iceChatPlugins.listPlugins[i].PluginFile.Equals(ipc.FileName))
+                    {
+                        found = true;
+                        
+                        //check if the plugin is enabled or not
+                        if (iceChatPlugins.listPlugins[i].Enabled == false)
+                        {
+                            WindowMessage(null, "Console", "Disabled Plugin - " + ipc.Name + " v" + ipc.Version, 4, true);
+
+                            foreach (ToolStripMenuItem t in pluginsToolStripMenuItem.DropDownItems)
+                                if (t.ToolTipText.ToLower() == ipc.FileName.ToLower())
+                                    t.Image = StaticMethods.LoadResourceImage("CloseButton.png");
+
+                            ipc.Enabled = false;
+                        }
+                    }
+                }
+                
+                if (found == false)
+                {
+                    //plugin file not found in plugin Items file, add it
+                    PluginItem item = new PluginItem();
+                    item.Enabled = true;
+                    item.PluginFile = ipc.FileName;
+                    iceChatPlugins.AddPlugin(item);
+                    SavePluginFiles();
+                }
+
                 if (ipc.Enabled == true)
                     ipc.MainProgramLoaded();
+            }
+
+            if (iceChatPlugins.listPlugins.Count != loadedPlugins.Count)
+            {
+                //find the file that is missing
+                List<int> removeItems = new List<int>();
+                for (int i = 0; i < iceChatPlugins.listPlugins.Count; i++)
+                {
+                    bool found = false;
+                    foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                    {
+                        if (iceChatPlugins.listPlugins[i].PluginFile.Equals(ipc.FileName))
+                            found = true;
+                    }
+
+                    if (found == false)
+                        removeItems.Add(i);        
+                }
+
+                if (removeItems.Count > 0)
+                {
+                    foreach(int i in removeItems)                        
+                        iceChatPlugins.listPlugins.Remove(iceChatPlugins.listPlugins[i]);
+                    
+                    SavePluginFiles();
+                }
             }
 
             this.Activated += new EventHandler(FormMainActivated);
@@ -564,11 +629,16 @@ namespace IceChat
             this.Tag = "off";
             this.flashTrayCount = 0;
 
-            //System.Diagnostics.Debug.WriteLine(System.Environment.Version.ToString());
-            //System.Version v = new Version();
-            //System.Diagnostics.Debug.WriteLine(System.Runtime.InteropServices.RuntimeEnvironment.GetSystemVersion());
+            ToolStripMenuItem closeWindow = new ToolStripMenuItem(StaticMethods.LoadResourceImage("CloseButton.png"));
+            closeWindow.Alignment = ToolStripItemAlignment.Right;
+            closeWindow.Click += new EventHandler(closeWindow_Click);
+            menuMainStrip.Items.Add(closeWindow);
+        }
 
-
+        private void closeWindow_Click(object sender, EventArgs e)
+        {
+            //close the current window
+            mainTabControl.CloseCurrentTab();
         }
 
         private void UpdateIcon(string iconName, string tag)
@@ -604,7 +674,7 @@ namespace IceChat
 
                 flashTaskBarCount++;
 
-                if (flashTaskBarCount == 5)
+                if (flashTaskBarCount == 10)
                 {
                     this.flashTaskBarIconTimer.Stop();
                     UpdateIcon("new-tray-icon.ico", "off");
@@ -634,7 +704,7 @@ namespace IceChat
                 
                 flashTrayCount++;
 
-                if (flashTrayCount == 5)
+                if (flashTrayCount == 10)
                 {
                     this.flashTrayIconTimer.Stop();
                     UpdateTrayIcon("new-tray-icon.ico", "off");
@@ -865,7 +935,7 @@ namespace IceChat
         /// <param name="sound"></param>
         internal void PlaySoundFile(string key)
         {
-            IceChatSounds.soundEntry sound = IceChatSounds.getSound(key);
+            IceChatSounds.SoundEntry sound = IceChatSounds.getSound(key);
             if (sound != null && !muteAllSounds)
             {
                 string file = sound.getSoundFile();
@@ -898,9 +968,7 @@ namespace IceChat
             WindowMessage(null, "Console", "\x00034Welcome to " + ProgramID + " " + VersionID, 1, false);
             WindowMessage(null, "Console", "\x00034** This is a Release Candidate version, fully functional, not all the options are added **", 1, false);
             WindowMessage(null, "Console", "\x00033If you want a fully working version of \x0002IceChat\x0002, visit http://www.icechat.net and download IceChat 7.70", 1, false);
-            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat\x0003 on \x00030,2irc://irc.quakenet.org/icechat2009\x0003 if you wish to help with this project", 1, true);
-
-            //StatusText("Welcome to " + ProgramID + " " + VersionID);
+            WindowMessage(null, "Console", "\x00034Please visit \x00030,4#icechat\x0003 on \x00030,2irc://irc.quakenet.org/icechat\x0003 if you wish to help with this project", 1, true);
         }
 
         #region Internal Properties
@@ -1118,7 +1186,7 @@ namespace IceChat
             }
         }
 
-        internal ArrayList IceChatPlugins
+        internal List<IPluginIceChat> IceChatPlugins
         {
             get
             {
@@ -1956,6 +2024,12 @@ namespace IceChat
 
                                 switch (window.ToLower())
                                 {
+                                    case "nicklist":
+                                    
+                                        break;                                    
+                                    case "serverlist":
+                                        
+                                        break;                                    
                                     case "console":
                                         //check if the file is a URL
                                         if (file.StartsWith("http://"))
@@ -2135,13 +2209,13 @@ namespace IceChat
 
                                     if (plugin.Enabled == true)
                                     {
-                                        WindowMessage(null, "Console", "Enabled Plugin - " + plugin.Name + " v" + plugin.Version + " by " + plugin.Author, 4, true);
+                                        WindowMessage(null, "Console", "Enabled Plugin - " + plugin.Name + " v" + plugin.Version, 4, true);
                                         //remove the icon
                                         menuItem.Image = null;
                                     }
                                     else
                                     {
-                                        WindowMessage(null, "Console", "Disabled Plugin - " + plugin.Name + " v" + plugin.Version + " by " + plugin.Author, 4, true);
+                                        WindowMessage(null, "Console", "Disabled Plugin - " + plugin.Name + " v" + plugin.Version, 4, true);
                                         menuItem.Image = StaticMethods.LoadResourceImage("CloseButton.png");
                                     }
                                 }
@@ -4260,7 +4334,9 @@ namespace IceChat
                 {
                      switch (word)
                      {
+                         case "$+":
 
+                             break;
                          default:
                              //search for identifiers that are numbers
                              //used for replacing values passed to the function
@@ -4905,12 +4981,6 @@ namespace IceChat
             iceChatOptions.ShowToolBar = toolBarToolStripMenuItem.Checked;
         }
 
-        private void channelBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            iceChatOptions.ShowTabBar = channelBarToolStripMenuItem.Checked;
-            mainTabControl.ShowTabs = iceChatOptions.ShowTabBar;
-        }
-
         private void codePlexPageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -5196,7 +5266,7 @@ namespace IceChat
                     ipi.MainMenuStrip = menuMainStrip;
                     ipi.CurrentFolder = currentFolder;
                     ipi.BottomPanel = panelDockBottom;
-                    
+                    ipi.FileName = fileName.Substring(fileName.LastIndexOf("\\") + 1);
                     ipi.LeftPanel = panelDockLeft.TabControl;
                     ipi.RightPanel = panelDockRight.TabControl;
 
@@ -5264,6 +5334,15 @@ namespace IceChat
                 
         internal void StatusPlugin(ToolStripMenuItem menuItem, bool enable)
         {
+            for (int i = 0; i < iceChatPlugins.listPlugins.Count; i++)
+            {
+                if (((PluginItem)iceChatPlugins.listPlugins[i]).PluginFile.Equals(menuItem.ToolTipText))
+                {
+                    ((PluginItem)iceChatPlugins.listPlugins[i]).Enabled = enable;
+                    SavePluginFiles();
+                }
+            }
+
             ParseOutGoingCommand(null, "/statusplugin " + enable.ToString() + " " + menuItem.ToolTipText);
         }
                 

@@ -36,11 +36,11 @@ namespace IceChat
     {
         [XmlArray("Servers")]
         [XmlArrayItem("Item",typeof(ServerSetting))]
-        public ArrayList listServers;
+        public List<ServerSetting> listServers;
 
         public IceChatServers() 
         {
-            listServers = new ArrayList();
+            listServers = new List<ServerSetting>();
         }
 
         public void AddServer(ServerSetting server)
@@ -57,7 +57,7 @@ namespace IceChat
         {
             if (listServers.Count ==0)
                 return 1;
-            return ((ServerSetting)listServers[listServers.Count-1]).ID+1;
+            return listServers[listServers.Count-1].ID+1;
         }
     }
     

@@ -330,6 +330,10 @@ namespace IceChat
         public bool AutoDecode
         { get { return this._autoDecode; } set { this._autoDecode = value; } }
 
+        [XmlIgnore()]
+        public int TreeCollapse
+        { get; set; }
+
     }
 
 }

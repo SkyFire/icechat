@@ -36,7 +36,7 @@ namespace IceChat
         [STAThread]
         static void Main(string[] args)
         {
-            //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             //AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(ShowAssemblyLoad);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -59,7 +59,6 @@ namespace IceChat
                 Exception ex = (Exception)e.ExceptionObject;
                 
                 System.Diagnostics.Debug.WriteLine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "UnHandledException.log");
-                //System.IO.StreamWriter io = new System.IO.StreamWriter(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "UnHandledException.log", true);
                 System.IO.StreamWriter io = new System.IO.StreamWriter(FormMain.Instance.CurrentFolder + System.IO.Path.DirectorySeparatorChar + "Logs" + System.IO.Path.DirectorySeparatorChar + "UnHandledException.log", true);
                 io.WriteLine(ex.Message + ":" + ex.StackTrace);
                 io.Flush();

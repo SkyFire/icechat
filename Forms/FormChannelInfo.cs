@@ -54,7 +54,6 @@ namespace IceChat
             this.textTopic.KeyDown += new KeyEventHandler(textTopic_KeyDown);
 
             this.channel = Channel;
-            //this.textTopic.Text = StripAllCodes(channel.ChannelTopic);
             this.textTopic.Text = channel.ChannelTopic.Replace("&#x3;", ((char)3).ToString());
             this.topic = textTopic.Text;
 
@@ -65,16 +64,19 @@ namespace IceChat
             buttonRemoveBan.Enabled = false;
 
             User u = channel.GetNick(channel.Connection.ServerSetting.NickName);
-            for (int y = 0; y < u.Level.Length; y++)
+            if (u != null && u.Level != null)
             {
-                if (u.Level[y])
+                for (int y = 0; y < u.Level.Length; y++)
                 {
-                    if (channel.Connection.ServerSetting.StatusModes[0][y] == 'q')
-                        buttonRemoveBan.Enabled = true;
-                    else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'a')
-                        buttonRemoveBan.Enabled = true;
-                    else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'o')
-                        buttonRemoveBan.Enabled = true;
+                    if (u.Level[y])
+                    {
+                        if (channel.Connection.ServerSetting.StatusModes[0][y] == 'q')
+                            buttonRemoveBan.Enabled = true;
+                        else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'a')
+                            buttonRemoveBan.Enabled = true;
+                        else if (channel.Connection.ServerSetting.StatusModes[0][y] == 'o')
+                            buttonRemoveBan.Enabled = true;
+                    }
                 }
             }
 

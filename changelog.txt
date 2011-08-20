@@ -1,3 +1,9 @@
+Build RC 2.1 August 19, 2011
+* Add ability to show a settings form for a plugin, from the Plugins Menu 
+* Plugins settings (if enabled or disabled) remembered in IceChatPlugins.xml file 
+* Remove the channel bar completely 
+* Add a close button menu item to the Menu bar to close the current window 
+
 Build RC 2.0 August 14, 2011
 * Add ability to Enable/Disable a Plugin from Options Menu
 * Fix loading of plugins in Mono from start of Program

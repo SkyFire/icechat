@@ -29,6 +29,7 @@ namespace IceChat
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControlOptions = new System.Windows.Forms.TabControl();
@@ -206,6 +207,7 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -1294,6 +1296,7 @@ namespace IceChat
             // 
             // tabSounds
             // 
+            this.tabSounds.Controls.Add(this.label18);
             this.tabSounds.Controls.Add(this.textExternalPlayCommand);
             this.tabSounds.Controls.Add(this.checkExternalPlayCommand);
             this.tabSounds.Controls.Add(this.buttonTest);
@@ -2015,6 +2018,14 @@ namespace IceChat
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
             // 
+            // label18
+            // 
+            this.label18.Location = new System.Drawing.Point(442, 23);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(203, 148);
+            this.label18.TabIndex = 9;
+            this.label18.Text = resources.GetString("label18.Text");
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2233,5 +2244,6 @@ namespace IceChat
         private System.Windows.Forms.CheckBox checkAutoDCCChatBuddy;
         private System.Windows.Forms.CheckBox checkAutoDCCFileBuddy;
         private System.Windows.Forms.CheckBox checkAutoGetLocalIP;
+        private System.Windows.Forms.Label label18;
     }
 }

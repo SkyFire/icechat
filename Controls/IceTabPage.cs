@@ -530,7 +530,7 @@ namespace IceChat
                 return _flashValue;
             }
         }
-
+        /*
         internal int CheckFlashValue
         {
             get
@@ -538,7 +538,7 @@ namespace IceChat
                 return _flashValue;
             }
         }
-
+        */
         internal void DisconnectDCC()
         {
             if (dccSocket != null)
@@ -1226,9 +1226,9 @@ namespace IceChat
                     {
                         //temporary server, remove it from ServerTree
                         FormMain.Instance.ServerTree.ServersCollection.RemoveServer(((ConsoleTab)e.Control).Connection.ServerSetting);
-                        FormMain.Instance.ServerTree.Invalidate();
                     }
                     ((TextWindow)((ConsoleTab)e.Control).Controls[0]).Dispose();
+                    FormMain.Instance.ServerTree.Invalidate();
                 }
             }
             catch { }

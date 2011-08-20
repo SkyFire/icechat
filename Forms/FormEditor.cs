@@ -151,7 +151,6 @@ namespace IceChat
             //reload the aliases from the actual file
             ReLoadAliases();
 
-
             foreach (AliasItem alias in aliasList.listAliases)
             {
                 if (alias.Command.Length == 1)

@@ -37,6 +37,7 @@
             this.labelAuthor = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.buttonEnable = new System.Windows.Forms.Button();
+            this.buttonSettings = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -72,7 +73,7 @@
             // buttonClose
             // 
             this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonClose.Location = new System.Drawing.Point(202, 110);
+            this.buttonClose.Location = new System.Drawing.Point(292, 110);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 6;
@@ -126,11 +127,23 @@
             this.buttonEnable.UseVisualStyleBackColor = true;
             this.buttonEnable.Click += new System.EventHandler(this.buttonEnable_Click);
             // 
+            // buttonSettings
+            // 
+            this.buttonSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonSettings.Location = new System.Drawing.Point(195, 110);
+            this.buttonSettings.Name = "buttonSettings";
+            this.buttonSettings.Size = new System.Drawing.Size(75, 23);
+            this.buttonSettings.TabIndex = 12;
+            this.buttonSettings.Text = "Settings";
+            this.buttonSettings.UseVisualStyleBackColor = true;
+            this.buttonSettings.Click += new System.EventHandler(this.buttonSettings_Click);
+            // 
             // FormPluginInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(289, 140);
+            this.ClientSize = new System.Drawing.Size(379, 140);
+            this.Controls.Add(this.buttonSettings);
             this.Controls.Add(this.buttonEnable);
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelAuthor);
@@ -166,5 +179,6 @@
         private System.Windows.Forms.Label labelAuthor;
         private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Button buttonEnable;
+        private System.Windows.Forms.Button buttonSettings;
     }
 }

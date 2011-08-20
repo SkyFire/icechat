@@ -26,19 +26,27 @@
 *Add option to Autoget IP Router IP Address (RC2.0)
 *Add menu item for Server Tree popup menu to remove a Server (RC2.0)
 
+Add ability to show a settings form for a plugin, from the Plugins Menu (RC2.1)
+Plugins settings (if enabled or disabled) remembered in IceChatPlugins.xml file (RC2.1)
+Remove the channel bar completely (RC2.1)
+Add a close button menu item to the Menu bar to close the current window (RC2.1)
+
+
 Try and remove bold/itaiic from font selection dialog
+Add options for how many times to flash taskbar/system tray icons
+Make Tab Complete loop through a SORTED Nicklist, not the raw un-sorted list
+Add in the $+ identifier
 
 Add DCC File Events to Plugin Framework
 Further testing of DCC File Sending and Receiving
 Add $mask() identifier (in progress)
-Add option to Duplicate Server Settings,create a new server
-Add that when autojoining channels, it opens them , but set as active
+Add option to Duplicate Server Settings, create a new server
+Add that when autojoining channels, it opens them , but not set as active
 Add option to automatically allow accept with DCC from people in buddy list
 Add to Highlite Plugin, ability to match message, nick or message and nick
 Allow plugins to change the colors/appearance of IceChat, w/o needing an external Theme file
 Need to save the background image settings to a config file so they save on exit and show again in reload
 Add a background image to the nicklist, server list
-Add settingfile IceChatPlugins.xml for allowing to enable/disable plugins, add/remove items if DLL is added/removed from Plugins folder
 Add background color for html logging
 Emoticons that are larger then font sizes, allowed
 Build main menu bar from an XML File, all menu items need to be run from a command

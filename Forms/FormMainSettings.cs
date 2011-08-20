@@ -416,8 +416,34 @@ namespace IceChat
             textWriter.Dispose();
         }
 
+        private void LoadPluginFiles()
+        {
+            if (File.Exists(pluginsFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(IceChatPluginFile));
+                TextReader textReader = new StreamReader(pluginsFile);
+                iceChatPlugins = (IceChatPluginFile)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+            }
+            else
+            {
+                iceChatPlugins = new IceChatPluginFile();
+                SavePluginFiles();
+            }
+        }
 
-       private void LoadEmoticons()
+        private void SavePluginFiles()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(IceChatPluginFile));
+            TextWriter textWriter = new StreamWriter(pluginsFile);
+            serializer.Serialize(textWriter, iceChatPlugins);
+            textWriter.Close();
+            textWriter.Dispose();
+        }
+
+
+        private void LoadEmoticons()
         {
             if (File.Exists(emoticonsFile))
             {

@@ -47,7 +47,7 @@ namespace IceChat
 
         public delegate void SaveOptionsDelegate();
         public event SaveOptionsDelegate SaveOptions;
-
+        /*
         private enum FontType
         {
             Console = 0,
@@ -58,7 +58,7 @@ namespace IceChat
             InputBox = 5,
             ChannelBar = 6
         }
-
+        */
 
         public FormSettings(IceChatOptions Options, IceChatFontSetting Fonts, IceChatEmoticon Emoticons, IceChatSounds Sounds)
         {
@@ -75,7 +75,7 @@ namespace IceChat
             listBoxSounds.Items.Add("Server Disconnection");
             */
 
-            foreach(IceChatSounds.soundEntry x in Sounds.soundList)
+            foreach(IceChatSounds.SoundEntry x in Sounds.soundList)
             {
                 listBoxSounds.Items.Add(x.Description);
             }
@@ -353,7 +353,11 @@ namespace IceChat
         {
             FontDialog fd = new FontDialog();
             //load the current font
-            fd.Font = new Font(textConsoleFont.Text,float.Parse( textConsoleFontSize.Text) , textConsoleFont.Font.Style);
+            fd.ShowEffects = false;
+            fd.ShowColor = false;
+            fd.FontMustExist = true;
+                    
+            fd.Font = new Font(textConsoleFont.Text,float.Parse( textConsoleFontSize.Text) , FontStyle.Regular);
             if (fd.ShowDialog() != DialogResult.Cancel && fd.Font.Style == FontStyle.Regular)
             {
                 textConsoleFont.Text = fd.Font.Name;

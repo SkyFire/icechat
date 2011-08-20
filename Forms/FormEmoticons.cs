@@ -91,7 +91,7 @@ namespace IceChat
             int emot = (y * 22) + x;
             if (emot < FormMain.Instance.IceChatEmoticons.listEmoticons.Count)
             {
-                FormMain.Instance.InputPanel.AppendText(((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emot]).Trigger);
+                FormMain.Instance.InputPanel.AppendText(FormMain.Instance.IceChatEmoticons.listEmoticons[emot].Trigger);
                 this.Close();
             }
         }

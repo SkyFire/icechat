@@ -736,16 +736,6 @@ namespace IceChat
                             break;
                         case "396":     //mode X message                            
                             msg = ircData[3] + " " + JoinString(ircData, 4, true);
-                            //IALUserData(this, this.serverSetting.NickName, 
-                            /*
-                            if (this.serverSetting.IAL.ContainsKey(this.serverSetting.NickName))
-                            {
-                                host = ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host;
-                                if (host.IndexOf("@") > -1)
-                                    ((InternalAddressList)this.serverSetting.IAL[this.serverSetting.NickName]).Host = host.Substring(0, host.IndexOf("@") + 1) + ircData[3];
-                                
-                            }
-                            */
                             ServerMessage(this, msg);
                             break;
                         case "439":

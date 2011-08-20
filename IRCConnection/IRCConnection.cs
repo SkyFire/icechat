@@ -539,7 +539,8 @@ namespace IceChat
                         try
                         {
                             //raise an event for the debug window
-                            //if (sendBuffer.Count
+                            System.Diagnostics.Debug.WriteLine(m_PendingWriteSSL + ":" + sendBuffer.Count);
+
                             if (m_PendingWriteSSL == false)
                             {
                                 if (sendBuffer.Count > 0)
@@ -547,14 +548,11 @@ namespace IceChat
 
                                 sslStream.BeginWrite(bytData, 0, bytData.Length, new AsyncCallback(OnSendData), sslStream);
                                 
-                                System.Diagnostics.Debug.WriteLine("sending data:" + data + ":");
-                                                                
                                 if (RawServerOutgoingData != null)
                                     RawServerOutgoingData(this, data);
                             }
                             else
                             {
-                                System.Diagnostics.Debug.WriteLine("queue:" + sendBuffer.Count + ":" + data);
                                 sendBuffer.Enqueue(data);
                             }
 
@@ -568,10 +566,10 @@ namespace IceChat
                             disconnectError = true;
                             ForceDisconnect();
                         }
-                        catch (NotSupportedException nse)
+                        catch (NotSupportedException)
                         {
                             //BeginWrite failed because of already trying to send, so add to the sendBuffer Queue
-                            System.Diagnostics.Debug.WriteLine("nse:" + nse.Message);
+                            //System.Diagnostics.Debug.WriteLine("nse SSL:" + nse.Message);
                             sendBuffer.Enqueue(data);
                         }
                         catch (Exception ex)
@@ -765,7 +763,6 @@ namespace IceChat
                 //Check if anything in the sendBuffer Queue, if so, send it
                 if (sendBuffer.Count > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("run queue:" + sendBuffer.Count + ":");
                     m_PendingWriteSSL = false;
                     SendData(sendBuffer.Dequeue());
                 }

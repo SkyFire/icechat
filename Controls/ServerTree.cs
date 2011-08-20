@@ -37,7 +37,6 @@ using IceChatPlugin;
 
 namespace IceChat
 {
-
     public partial class ServerTree : UserControl
     {
 
@@ -57,6 +56,7 @@ namespace IceChat
         private int toolTipNode = -1;
 
         private List<KeyValuePair<string,object>> serverNodes;
+        private System.Timers.Timer flashTabTimer;
 
         public event NewServerConnectionDelegate NewServerConnection;
 
@@ -98,15 +98,25 @@ namespace IceChat
             {
                 if (s.AltNickName == null)
                     s.AltNickName = s.NickName + "_";
+                
                 s.IAL = new Hashtable();
                 s.ID = serverID;
                 serverID++;
             }
 
+            flashTabTimer = new System.Timers.Timer();
+            flashTabTimer.Interval = 1000;
+            flashTabTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnFlashTabTimerElapsed);
+
             toolTip = new ToolTip();
             toolTip.AutoPopDelay = 3000;
             Invalidate();
             
+        }
+
+        private void OnFlashTabTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Invalidate();
         }
 
         private void panelButtons_VisibleChanged(object sender, EventArgs e)
@@ -299,6 +309,29 @@ namespace IceChat
             
             SelectNodeByIndex(nodeNumber, true);
             
+            //check if we have clicked the + or - to collapse or not collapse the tree
+
+            if (e.Button == MouseButtons.Left && serverNodes.Count > 0 && e.X < 16)
+            {
+                object findNode = FindNodeValue(nodeNumber);
+                if (findNode != null)
+                {
+                    if (findNode.GetType() == typeof(ServerSetting))
+                    {
+                        int t = ((ServerSetting)findNode).TreeCollapse;
+                        if (t == 0)
+                            return;
+                        else if (t == 1)
+                            ((ServerSetting)findNode).TreeCollapse = 2;
+                        else
+                            ((ServerSetting)findNode).TreeCollapse = 1;
+
+                        return;
+                    }
+                }
+            }
+
+
             if (e.Button == MouseButtons.Left && serverNodes.Count > 1)
             {
                 object findNode = FindNodeValue(nodeNumber);
@@ -931,6 +964,31 @@ namespace IceChat
 
                 int nodeCount = 0;
 
+                bool flashTabs = false;
+                
+                //check if we have any flashing tabs
+                for (int i = 0; i < FormMain.Instance.TabMain.TabPages.Count ; i++)
+                {
+                    if (FormMain.Instance.TabMain.TabPages[i].FlashTab == true)
+                    {
+                        flashTabs = true;
+                        break;
+                    }
+                }
+
+                if (flashTabs == true)
+                {
+                    //enable the flash tab timer
+                    flashTabTimer.Enabled = true;
+                    flashTabTimer.Start();
+                }
+                else
+                {
+                    //disable the flash tab timer
+                    flashTabTimer.Stop();
+                    flashTabTimer.Enabled = false;
+                }                
+
                 foreach (KeyValuePair<string, object> de in serverNodes)
                 {
                     //get the object type for this node
@@ -939,8 +997,9 @@ namespace IceChat
 
                     object value = de.Value;
 
-                    int x = 0;
+                    int x = 16;
                     Brush b;
+                    Pen p = new Pen(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
                     nodeCount++;
                     if (nodeCount <= topIndex)
                         continue;
@@ -951,7 +1010,10 @@ namespace IceChat
                         b = new SolidBrush(SystemColors.HighlightText);
                     }
                     else
+                    {
                         b = new SolidBrush(IrcColor.colors[Convert.ToInt32(nodes[2])]);
+                    }
+
 
                     if (value.GetType() == typeof(ServerSetting))
                     {
@@ -959,22 +1021,43 @@ namespace IceChat
                         {
                             selectedServerID = ((ServerSetting)value).ID;
                         }
+                        //TreeCollapse -- 0 - no items :: 1- show + sign (not collapsed) :: 2- show - sign (collapsed)
 
-                        x = 0;
+                        if (((ServerSetting)value).TreeCollapse > 0)
+                            g.DrawRectangle(p, x - 12, currentY + 2, 8, 8);
+                        
+                        //now draw the + or - if it is collapsed or not
+
+                        if (((ServerSetting)value).TreeCollapse == 1)
+                        {
+                            //the plus sign
+                            g.DrawLine(p, x - 12, currentY + 6, x - 4, currentY + 6);
+                            g.DrawLine(p, x - 8, currentY + 2, x - 8, currentY + 10);
+                        }
+                        else if (((ServerSetting)value).TreeCollapse == 2)
+                        {
+                            //the minus sign
+                            g.DrawLine(p, x - 12, currentY + 6, x - 4, currentY + 6);
+                        }
+                       
+                        x = 16;
                     }
 
                     if (value.GetType() == typeof(IceTabPage))
                     {
-                        x = 16;
+                        x = 32;
                         if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Channel || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Query || ((IceTabPage)value).WindowStyle == IceTabPage.WindowType.DCCChat)
                         {
                             if (nodeCount == selectedNodeIndex)
+                            {
                                 selectedServerID = ((IceTabPage)value).Connection.ServerSetting.ID;
+                                ((IceTabPage)value).FlashTab = false;
+                            }
                         }
                         else if (((IceTabPage)value).WindowStyle == IceTabPage.WindowType.Window)
                         {
                             if (((IceTabPage)value).Connection == null)
-                                x = 0;
+                                x = 16;
                         }
                     }
                     switch (nodes[1])
@@ -992,7 +1075,7 @@ namespace IceChat
                             //check if we are flashing or not
                             if (((IceTabPage)value).FlashTab == true)
                             {
-                                if (((IceTabPage)value).CheckFlashValue == 1)
+                                if (((IceTabPage)value).FlashValue == 1)
                                     g.DrawImage(StaticMethods.LoadResourceImage("channel.png"), x, currentY, 16, 16);
                             }
                             else
@@ -1002,7 +1085,7 @@ namespace IceChat
                         case "5":   //dcc chat
                             if (((IceTabPage)value).FlashTab == true)
                             {
-                                if (((IceTabPage)value).CheckFlashValue == 1)
+                                if (((IceTabPage)value).FlashValue == 1)
                                     g.DrawImage(StaticMethods.LoadResourceImage("new-query.ico"), x, currentY, 16, 16);
                             }
                             else
@@ -1016,7 +1099,7 @@ namespace IceChat
                             break;
                     }
 
-                    g.DrawString(nodes[3], this.Font, b, x + 16, currentY);
+                    g.DrawString(nodes[4], this.Font, b, x + 16, currentY);
 
                     b.Dispose();
 
@@ -1075,7 +1158,10 @@ namespace IceChat
                                 colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
 
                             nodeCount++;
-                            serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                            //check if it is collapsed or has any sub items
+
+
+                            serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
                         }
                     }
                 }
@@ -1086,102 +1172,134 @@ namespace IceChat
                     nodeCount++;
                     //icon_number:color:text
                     //1st check for server name/connected
+                    int windowCount = 0;
+                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    {
+                        if (t.Connection != null && t.Connection.ServerSetting == s)
+                        {
+                            if (t.WindowStyle == IceTabPage.WindowType.Channel)
+                                windowCount++;
+                            else if (t.WindowStyle == IceTabPage.WindowType.Query)
+                                windowCount++;
+                            else if (t.WindowStyle == IceTabPage.WindowType.DCCChat)
+                                windowCount++;
+                            else if (t.WindowStyle == IceTabPage.WindowType.ChannelList)
+                                windowCount++;
+                        }
+                    }
+
+                    if (windowCount == 0)
+                        s.TreeCollapse = 0;
+                    else if (windowCount > 0 && s.TreeCollapse == 0)
+                        s.TreeCollapse = 2;
+
                     if (s.DisplayName.Length > 0)
-                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.DisplayName, s));
+                    {
+                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault +":" + s.TreeCollapse + ":" + s.DisplayName, s));
+                    }
                     else
-                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.ServerName, s));
+                    {
+                        serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":" + IsServerConnected(s) + ":" + FormMain.Instance.IceChatColors.TabBarDefault + ":" + s.TreeCollapse + ":" + s.ServerName, s));
+                    }
 
                     //find all open windows for this server                
                     //add the channels 1st
-                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                    if (s.TreeCollapse == 2)
                     {
-                        if (t.Connection != null)
+                        foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
                         {
-                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Channel)
+                            if (t.Connection != null)
                             {
-                                int color = 0;
-                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
-                                    color = FormMain.Instance.IceChatColors.TabBarCurrent;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.JoinChannel)
-                                    color = FormMain.Instance.IceChatColors.TabBarChannelJoin;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.PartChannel)
-                                    color = FormMain.Instance.IceChatColors.TabBarChannelPart;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
-                                    color = FormMain.Instance.IceChatColors.TabBarNewMessage;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.ServerMessage)
-                                    color = FormMain.Instance.IceChatColors.TabBarServerMessage;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.QuitServer)
-                                    color = FormMain.Instance.IceChatColors.TabBarServerQuit;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.Other)
-                                    color = FormMain.Instance.IceChatColors.TabBarOtherMessage;
-                                else
-                                    color = FormMain.Instance.IceChatColors.TabBarDefault;
+                                if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Channel)
+                                {
+                                    int color = 0;
+                                    if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                        color = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.JoinChannel)
+                                        color = FormMain.Instance.IceChatColors.TabBarChannelJoin;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.PartChannel)
+                                        color = FormMain.Instance.IceChatColors.TabBarChannelPart;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                        color = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.ServerMessage)
+                                        color = FormMain.Instance.IceChatColors.TabBarServerMessage;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.QuitServer)
+                                        color = FormMain.Instance.IceChatColors.TabBarServerQuit;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.Other)
+                                        color = FormMain.Instance.IceChatColors.TabBarOtherMessage;
+                                    else
+                                        color = FormMain.Instance.IceChatColors.TabBarDefault;
 
-                                nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":3:" + color.ToString() + ":" + t.TabCaption, t));
+                                    nodeCount++;
+                                    //check if it is collapsed or has any sub items
+
+
+                                    serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":3:" + color.ToString() + ":0:" + t.TabCaption, t));
+                                }
+                            }
+                        }
+
+                        //add the queries next
+                        foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                        {
+                            if (t.Connection != null)
+                            {
+                                if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Query)
+                                {
+                                    //get the color
+                                    int colorQ = 0;
+                                    if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                    else
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                    nodeCount++;
+                                    serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":4:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
+                                }
+                            }
+                        }
+
+                        //add dcc chat windows
+                        foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                        {
+                            if (t.Connection != null)
+                            {
+                                if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.DCCChat)
+                                {
+                                    //get the color
+                                    int colorQ = 0;
+                                    if (t.LastMessageType == FormMain.ServerMessageType.Default)
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
+                                    else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
+                                    else
+                                        colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                    nodeCount++;
+                                    serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":5:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
+                                }
+                            }
+                        }
+                        //add any channel lists
+                        foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
+                        {
+                            if (t.Connection != null)
+                            {
+                                if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.ChannelList)
+                                {
+                                    //get the color
+                                    int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+
+                                    nodeCount++;
+                                    serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":6:" + colorQ.ToString() + ":0:" + t.TabCaption + " (" + t.TotalChannels + ")", t));
+                                }
                             }
                         }
                     }
 
-                    //add the queries next
-                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
-                    {
-                        if (t.Connection != null)
-                        {
-                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.Query)
-                            {
-                                //get the color
-                                int colorQ = 0;
-                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
-                                else
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
-
-                                nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":4:" + colorQ.ToString() + ":" + t.TabCaption, t));
-                            }
-                        }
-                    }
-
-                    //add dcc chat windows
-                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
-                    {
-                        if (t.Connection != null)
-                        {
-                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.DCCChat)
-                            {
-                                //get the color
-                                int colorQ = 0;
-                                if (t.LastMessageType == FormMain.ServerMessageType.Default)
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarCurrent;
-                                else if (t.LastMessageType == FormMain.ServerMessageType.Message || t.LastMessageType == FormMain.ServerMessageType.Action)
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarNewMessage;
-                                else
-                                    colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
-
-                                nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":5:" + colorQ.ToString() + ":" + t.TabCaption, t));
-                            }
-                        }
-                    }
-                    //add any channel lists
-                    foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
-                    {
-                        if (t.Connection != null)
-                        {
-                            if (t.Connection.ServerSetting == s && t.WindowStyle == IceTabPage.WindowType.ChannelList)
-                            {
-                                //get the color
-                                int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
-
-                                nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":6:" + colorQ.ToString() + ":" + t.TabCaption + " (" + t.TotalChannels + ")", t));
-                            }
-                        }
-                    }
-
+                    /*
                     //add @window windows
                     foreach (IceTabPage t in FormMain.Instance.TabMain.TabPages)
                     {
@@ -1199,11 +1317,11 @@ namespace IceChat
                                     colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
 
                                 nodeCount++;
-                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":" + t.TabCaption, t));
+                                serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
                             }
                         }
                     }
-
+                    */
 
                 }
             }

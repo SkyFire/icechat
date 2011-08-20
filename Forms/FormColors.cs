@@ -608,7 +608,6 @@ namespace IceChat
             }
 
             //get the window type and set the background color
-            //System.Diagnostics.Debug.WriteLine(e.Node.Text);
             string type = e.Node.Text.Split(' ').GetValue(0).ToString();
             if (type == "Server")
                 textFormattedText.IRCBackColor = iceChatColors.ConsoleBackColor;

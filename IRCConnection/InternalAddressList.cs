@@ -34,13 +34,13 @@ namespace IceChat
     {
         private string _nick;
         private string _host;
-        private ArrayList _channels;
+        private List<String> _channels;
 
         public InternalAddressList(string nick, string host, string channel)
         {
             _nick = nick;
             _host = host;
-            _channels = new ArrayList();
+            _channels = new List<String>();
             _channels.Add(channel);
         }
 
@@ -56,7 +56,7 @@ namespace IceChat
             set { _host = value; }
         }
 
-        public ArrayList Channels
+        public List<String> Channels
         {
             get { return this._channels; }
         }

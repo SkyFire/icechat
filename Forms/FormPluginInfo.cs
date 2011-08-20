@@ -49,11 +49,17 @@ namespace IceChat
 
             this.plugin = plugin;
             this.menuItem = menuItem;
+            
             if (this.plugin.Enabled)
                 this.buttonEnable.Text = "Disable";
             else
                 this.buttonEnable.Text = "Enable";
             
+            if (plugin.HaveSettingsForm())
+                this.buttonSettings.Visible = true;
+            else
+                this.buttonSettings.Visible = false;
+
             ApplyLanguage();
         }
 
@@ -84,6 +90,11 @@ namespace IceChat
 
             FormMain.Instance.StatusPlugin(menuItem, this.plugin.Enabled);
             this.Close();
+        }
+
+        private void buttonSettings_Click(object sender, EventArgs e)
+        {
+            plugin.ShowSettingsForm();
         }
 
     }

@@ -1789,7 +1789,7 @@ namespace IceChat
                                     if (!isInUrl)
                                     {
                                         //select the emoticon here
-                                        Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + ((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).EmoticonImage);
+                                        Bitmap bm = new Bitmap(FormMain.Instance.EmoticonsFolder + System.IO.Path.DirectorySeparatorChar + FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber].EmoticonImage);
 
                                         if (curBackColor != _backColor)
                                         {
@@ -1831,7 +1831,7 @@ namespace IceChat
                                     }
                                     else
                                     {
-                                        buildString.Append(((EmoticonItem)FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber]).Trigger);
+                                        buildString.Append(FormMain.Instance.IceChatEmoticons.listEmoticons[emotNumber].Trigger);
                                     }
                                     break;
                                 case urlStart:

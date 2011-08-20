@@ -54,7 +54,7 @@ namespace IceChat
         private ToolTip toolTip;
         private int toolTipNode = -1;
 
-        private ArrayList sortedNickNames = null;
+        private List<Nick> sortedNickNames = null;
         private int totalSelected = 0;
 
         private ContextMenuStrip popupMenu;
@@ -278,8 +278,7 @@ namespace IceChat
 
             if (selectedIndex >= 0)
             {
-                //string nick = sortedNicks[selectedIndex].ToString();
-                string nick = ((Nick)sortedNickNames[selectedIndex]).nick;
+                string nick = sortedNickNames[selectedIndex].nick;
 
                 //replace any of the modes
                 for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
@@ -368,7 +367,7 @@ namespace IceChat
                 if (nickNumber < currentWindow.Nicks.Count)
                 {
                     selectedIndex = nickNumber;
-                    bool selected = ((Nick)sortedNickNames[selectedIndex]).selected;
+                    bool selected = sortedNickNames[selectedIndex].selected;
 
                     if (selected)
                         totalSelected--;
@@ -378,8 +377,8 @@ namespace IceChat
                     //if the CTRL-Key is down, we can do a multi-select
                     if (controlKeyDown)
                     {
-                        ((Nick)sortedNickNames[selectedIndex]).selected = !selected;
-                        currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = !selected;
+                        sortedNickNames[selectedIndex].selected = !selected;
+                        currentWindow.GetNick(sortedNickNames[selectedIndex].nick).Selected = !selected;
                     }
                     else
                     {
@@ -391,8 +390,8 @@ namespace IceChat
                             totalSelected = 1;
                         }
 
-                        ((Nick)sortedNickNames[selectedIndex]).selected = !selected;
-                        currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = !selected;
+                        sortedNickNames[selectedIndex].selected = !selected;
+                        currentWindow.GetNick(sortedNickNames[selectedIndex].nick).Selected = !selected;
 
                     }
                 }
@@ -415,8 +414,8 @@ namespace IceChat
 
             for (int i = 0; i < sortedNickNames.Count; i++)
             {
-                ((Nick)sortedNickNames[i]).selected = false;
-                currentWindow.GetNick(((Nick)sortedNickNames[i]).nick).Selected = false;
+                sortedNickNames[i].selected = false;
+                currentWindow.GetNick(sortedNickNames[i].nick).Selected = false;
             }
         }
 
@@ -439,13 +438,13 @@ namespace IceChat
                 {
                     if (toolTipNode != nickNumber)
                     {
-                        string nick = ((Nick)sortedNickNames[nickNumber]).nick;
+                        string nick = sortedNickNames[nickNumber].nick;
                         for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                             nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
                         toolTip.ToolTipTitle = "User Information";
-                        if (((Nick)sortedNickNames[nickNumber]).host.Length > 0)
-                            toolTip.SetToolTip(this, nick + Environment.NewLine + ((Nick)sortedNickNames[nickNumber]).host);
+                        if (sortedNickNames[nickNumber].host.Length > 0)
+                            toolTip.SetToolTip(this, nick + Environment.NewLine + sortedNickNames[nickNumber].host);
                         else
                             toolTip.SetToolTip(this, nick);
 
@@ -479,7 +478,7 @@ namespace IceChat
                 sortedNickNames = null;
             }
             
-            sortedNickNames = new ArrayList();
+            sortedNickNames = new List<Nick>();
             
             try
             {
@@ -491,7 +490,6 @@ namespace IceChat
                     n.nickColor = nick.nickColor;
                     n.Level = nick.Level;
 
-                    //System.Diagnostics.Debug.WriteLine(n.nick + ":" + nick.Level.Length + ":" + n.Level.Length);
                     if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(nick.NickName))
                         n.host = ((InternalAddressList)currentWindow.Connection.ServerSetting.IAL[nick.NickName]).Host;
                     else
@@ -579,7 +577,7 @@ namespace IceChat
                     for (int i = topIndex; i < sortedNickNames.Count; i++)
                     {
                         Brush b = null;
-                        User u = currentWindow.GetNick(((Nick)sortedNickNames[i]).nick);
+                        User u = currentWindow.GetNick(sortedNickNames[i].nick);
                         if (FormMain.Instance.IceChatColors.RandomizeNickColors)
                         {
                             randColor++;
@@ -635,7 +633,7 @@ namespace IceChat
                                 b = new SolidBrush(IrcColor.colors[FormMain.Instance.IceChatColors.ChannelRegularColor]);
                         }
                         //check if selected, if so, draw the selector bar
-                        if (((Nick)sortedNickNames[i]).selected)
+                        if (sortedNickNames[i].selected)
                         {
                             g.FillRectangle(new SolidBrush(SystemColors.Highlight), 0, currentY, this.Width, _lineSize);
                             b = null;
@@ -643,7 +641,7 @@ namespace IceChat
                         }
                         
                         //draw the nickname
-                        g.DrawString(((Nick)sortedNickNames[i]).nick, this.Font, b, 2, currentY);
+                        g.DrawString(sortedNickNames[i].nick, this.Font, b, 2, currentY);
                         
 
                         //draw the host
@@ -651,9 +649,9 @@ namespace IceChat
                         {
                             if (currentWindow.Connection.ServerSetting.IAL.ContainsKey(u.NickName))
                             {
-                                string host = ((Nick)sortedNickNames[i]).host;
-                                if (((Nick)sortedNickNames[i]).host.Length > 0)
-                                    g.DrawString(((Nick)sortedNickNames[i]).host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
+                                string host = sortedNickNames[i].host;
+                                if (sortedNickNames[i].host.Length > 0)
+                                    g.DrawString(sortedNickNames[i].host, this.Font, b, (this.Font.SizeInPoints * 14), currentY);
                             }
                         }
 
@@ -716,7 +714,7 @@ namespace IceChat
                         for (int i = 0; i < currentWindow.Connection.ServerSetting.StatusModes[1].Length; i++)
                             nick = nick.Replace(currentWindow.Connection.ServerSetting.StatusModes[1][i].ToString(), string.Empty);
 
-                        Nick u = ((Nick)sortedNickNames[selectedIndex]);
+                        Nick u = sortedNickNames[selectedIndex];
 
                         foreach (string menu in menuItems)
                         {
@@ -807,8 +805,8 @@ namespace IceChat
                     else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
 
-                    ((Nick)sortedNickNames[selectedIndex]).selected = true;
-                    currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = true;
+                    sortedNickNames[selectedIndex].selected = true;
+                    currentWindow.GetNick(sortedNickNames[selectedIndex].nick).Selected = true;
 
                     Invalidate();
                     return;
@@ -826,8 +824,8 @@ namespace IceChat
                     else if ((topIndex > selectedIndex) && vScrollBar.Visible)
                         topIndex = (p * vScrollBar.LargeChange);
 
-                    ((Nick)sortedNickNames[selectedIndex]).selected = true;
-                    currentWindow.GetNick(((Nick)sortedNickNames[selectedIndex]).nick).Selected = true;
+                    sortedNickNames[selectedIndex].selected = true;
+                    currentWindow.GetNick(sortedNickNames[selectedIndex].nick).Selected = true;
 
                     Invalidate();
                     return;
@@ -987,11 +985,11 @@ namespace IceChat
                     string removeNicks = "";
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
                             if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                Nick u = ((Nick)sortedNickNames[i]);
+                                Nick u = sortedNickNames[i];
                                 string nickName = u.nick;
                                 for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                                 {
@@ -1059,11 +1057,11 @@ namespace IceChat
                     string removeNicks = "";
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
                             if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                Nick u = ((Nick)sortedNickNames[i]);
+                                Nick u = sortedNickNames[i];
                                 string nickName = u.nick;
                                 for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                                 {
@@ -1125,9 +1123,9 @@ namespace IceChat
                 {
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
-                            Nick u = ((Nick)sortedNickNames[i]);
+                            Nick u = sortedNickNames[i];
                             string nickName = u.nick;
                             for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                             {
@@ -1165,11 +1163,11 @@ namespace IceChat
                     string removeNicks = "";
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
                             if (totalSelected <= currentWindow.Connection.ServerSetting.MaxModes)
                             {
-                                Nick u = ((Nick)sortedNickNames[i]);
+                                Nick u = sortedNickNames[i];
                                 string nickName = u.nick;
                                 for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                                 {
@@ -1232,10 +1230,9 @@ namespace IceChat
                 {
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
-                            Nick u = ((Nick)sortedNickNames[i]);
-                            string nickName = u.nick;
+                            string nickName = sortedNickNames[i].nick;
                             for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                             {
                                 if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
@@ -1265,9 +1262,9 @@ namespace IceChat
                 {
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
-                            Nick u = ((Nick)sortedNickNames[i]);
+                            Nick u = sortedNickNames[i];
                             string nickName = u.nick;
                             for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                             {
@@ -1300,10 +1297,9 @@ namespace IceChat
                 {
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
-                            Nick u = ((Nick)sortedNickNames[i]);
-                            string nickName = u.nick;
+                            string nickName = sortedNickNames[i].nick;
                             for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                             {
                                 if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))
@@ -1333,10 +1329,9 @@ namespace IceChat
                 {
                     for (int i = 0; i < sortedNickNames.Count; i++)
                     {
-                        if (((Nick)sortedNickNames[i]).selected == true)
+                        if (sortedNickNames[i].selected == true)
                         {
-                            Nick u = ((Nick)sortedNickNames[i]);
-                            string nickName = u.nick;
+                            string nickName = sortedNickNames[i].nick;
                             for (int x = 0; x < currentWindow.Connection.ServerSetting.StatusModes[1].Length; x++)
                             {
                                 if (nickName.StartsWith(currentWindow.Connection.ServerSetting.StatusModes[1][x].ToString()))

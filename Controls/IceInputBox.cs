@@ -23,7 +23,7 @@
 \******************************************************************************/
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
@@ -34,13 +34,13 @@ namespace IceChat
 	public partial class IceInputBox : System.Windows.Forms.TextBox
 	{
 		private System.ComponentModel.Container components = null;
-		private ArrayList _buffer;		
+		private List<String> _buffer;		
 		private int _currentHistoryItem = -1;
 
 		//Nick complete variables
         private int _nickNumber = -1;
         private string _partialNick;
-        private ArrayList _nickCompleteNames;
+        private List<String> _nickCompleteNames;
 		
 		//store the maximum number of lines in the back _buffer
 		private const int _maxBufferSize = 100;
@@ -59,10 +59,10 @@ namespace IceChat
 		{
 			InitializeComponent();
 
-            _buffer = new ArrayList();
+            _buffer = new List<String>();
             this.MouseWheel += new MouseEventHandler(OnMouseWheel);
 
-            _nickCompleteNames = new ArrayList();
+            _nickCompleteNames = new List<String>();
 
 		}
         
@@ -181,7 +181,6 @@ namespace IceChat
             if ((keyData == (Keys.Control | Keys.V)) || keyData == (Keys.Shift | Keys.Insert))
             {
                 string data = Clipboard.GetText(TextDataFormat.Text);
-                System.Diagnostics.Debug.WriteLine(data + ":" + data.Contains(Environment.NewLine));
                 if (data.Contains(Environment.NewLine))
                 {
                     OnCommand(this, data);
@@ -264,7 +263,7 @@ namespace IceChat
                         _nickNumber = 0;
                 }
                 
-                this.Text = this.Text.Substring(0,this.Text.Length - _partialNick.Length) + _nickCompleteNames[_nickNumber].ToString();
+                this.Text = this.Text.Substring(0,this.Text.Length - _partialNick.Length) + _nickCompleteNames[_nickNumber];
                 this.SelectionStart = this.Text.Length;
 
             }
@@ -408,7 +407,7 @@ namespace IceChat
 						return;
 				}
 				
-				if ((_currentHistoryItem != _buffer.Count-1) || (base.Text.ToString() == _buffer[_buffer.Count-1].ToString()))
+				if ((_currentHistoryItem != _buffer.Count-1) || (base.Text.ToString() == _buffer[_buffer.Count-1]))
 				{
 					_currentHistoryItem--;
 				}
@@ -419,7 +418,7 @@ namespace IceChat
 				
 				if (_currentHistoryItem > -1)
 				{
-					base.Text = _buffer[_currentHistoryItem].ToString();					
+					base.Text = _buffer[_currentHistoryItem];					
 					base.SelectionStart = base.Text.Length;
 				}
 				return;
@@ -443,7 +442,7 @@ namespace IceChat
 				}
 				
 				_currentHistoryItem++;
-				base.Text = _buffer[_currentHistoryItem].ToString();
+				base.Text = _buffer[_currentHistoryItem];
 				base.SelectionStart = base.Text.Length;
 				return;
 			}
