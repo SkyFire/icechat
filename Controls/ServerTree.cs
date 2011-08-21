@@ -240,8 +240,11 @@ namespace IceChat
             }
 
             if (selectedServerID == 0)
-                return;            
-            
+                return;
+
+            if (p.X < 16)
+                return;
+
             //only disconnect/connect if an actual server is selected, not just any window
             object findNode = FindNodeValue(selectedNodeIndex);
             if (findNode != null)

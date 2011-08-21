@@ -31,6 +31,12 @@ Plugins settings (if enabled or disabled) remembered in IceChatPlugins.xml file 
 Remove the channel bar completely (RC2.1)
 Add a close button menu item to the Menu bar to close the current window (RC2.1)
 
+Double clicking the expand/collapse icon in the server tree does not cause a connect/disconnect (RC2.2)
+Added $osbits to return if we are using a 32bit or 64bit OS (RC2.2)
+Fixed issue with pasting 2 lines, but 2nd line was blank, would paste as 2 lines (RC2.2)
+Add scrollbar to Topic Bar (RC2.2)
+
+
 
 Try and remove bold/itaiic from font selection dialog
 Add options for how many times to flash taskbar/system tray icons

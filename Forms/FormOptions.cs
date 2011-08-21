@@ -343,6 +343,12 @@ namespace IceChat
             iceChatOptions.SoundUseExternalCommand = checkExternalPlayCommand.Checked;
             iceChatOptions.SoundExternalCommand = textExternalPlayCommand.Text;
 
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                if (ipc.Enabled)
+                    ipc.SaveSettingsForm();
+            }
+
             if (SaveOptions != null)
                 SaveOptions();
 

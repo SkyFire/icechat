@@ -140,7 +140,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.1";
+        public const string VersionID = "Release Candidate 2.2";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -340,7 +340,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 18 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 21 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -4124,6 +4124,27 @@ namespace IceChat
                         break;
                     case "$osplatform":
                         data = ReplaceFirst(data, m.Value, Environment.OSVersion.Platform.ToString());
+                        break;
+                    case "$osbits":
+                        //8 on 64bit -- AMD64
+                        string arch = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE").ToString();
+                        switch (arch)
+                        {
+                            case "x86":
+                                string arch2 = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432").ToString();
+                                if (arch2 == "AMD64")
+                                    data = ReplaceFirst(data, m.Value, "64bit");                                
+                                else
+                                    data = ReplaceFirst(data, m.Value, "32bit");                                                                    
+                                break;
+                            case "AMD64":
+                            case "IA64":
+                                data = ReplaceFirst(data, m.Value, "64bit");
+                                break;
+                        
+                        }
+                        //System.Diagnostics.Debug.WriteLine(System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE").ToString());
+                        //System.Diagnostics.Debug.WriteLine(IntPtr.Size);
                         break;
                     case "$os":
                         data = ReplaceFirst(data, m.Value, GetOperatingSystemName());

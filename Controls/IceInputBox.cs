@@ -181,7 +181,8 @@ namespace IceChat
             if ((keyData == (Keys.Control | Keys.V)) || keyData == (Keys.Shift | Keys.Insert))
             {
                 string data = Clipboard.GetText(TextDataFormat.Text);
-                if (data.Contains(Environment.NewLine))
+                string[] lines = data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines.Length > 1)
                 {
                     OnCommand(this, data);
                     return true;
@@ -484,7 +485,7 @@ namespace IceChat
             {
                 e.Handled = true;
                 //show or hide the search panel
-                ((InputPanel)this.Parent).ShowSearchPanel = !((InputPanel)this.Parent).ShowSearchPanel;
+                //((InputPanel)this.Parent).ShowSearchPanel = !((InputPanel)this.Parent).ShowSearchPanel;
                 return;
             }
 

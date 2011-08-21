@@ -32,6 +32,8 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
+            this.mainToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.popupTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nickListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,8 +48,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.textAliases = new System.Windows.Forms.TextBox();
             this.tabControlEditor = new System.Windows.Forms.TabControl();
-            this.closeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelBottom.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -104,6 +105,22 @@
             this.menuStripMain.Size = new System.Drawing.Size(663, 24);
             this.menuStripMain.TabIndex = 2;
             this.menuStripMain.Text = "menuStrip1";
+            // 
+            // mainToolStripMenuItem2
+            // 
+            this.mainToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem,
+            this.closeToolStripMenuItem1});
+            this.mainToolStripMenuItem2.Name = "mainToolStripMenuItem2";
+            this.mainToolStripMenuItem2.Size = new System.Drawing.Size(42, 20);
+            this.mainToolStripMenuItem2.Text = "File";
+            // 
+            // closeToolStripMenuItem1
+            // 
+            this.closeToolStripMenuItem1.Name = "closeToolStripMenuItem1";
+            this.closeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem1.Text = "Exit";
+            this.closeToolStripMenuItem1.Click += new System.EventHandler(this.closeToolStripMenuItem1_Click);
             // 
             // popupTypeToolStripMenuItem
             // 
@@ -224,20 +241,12 @@
             this.tabControlEditor.Size = new System.Drawing.Size(663, 271);
             this.tabControlEditor.TabIndex = 0;
             // 
-            // closeToolStripMenuItem1
+            // saveToolStripMenuItem
             // 
-            this.closeToolStripMenuItem1.Name = "closeToolStripMenuItem1";
-            this.closeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.closeToolStripMenuItem1.Text = "Exit";
-            this.closeToolStripMenuItem1.Click += new System.EventHandler(this.closeToolStripMenuItem1_Click);
-            // 
-            // mainToolStripMenuItem2
-            // 
-            this.mainToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.closeToolStripMenuItem1});
-            this.mainToolStripMenuItem2.Name = "mainToolStripMenuItem2";
-            this.mainToolStripMenuItem2.Size = new System.Drawing.Size(42, 20);
-            this.mainToolStripMenuItem2.Text = "File";
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // FormEditor
             // 
@@ -292,5 +301,6 @@
         private System.Windows.Forms.TabControl tabControlEditor;
         private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
     }
 }

@@ -1,3 +1,9 @@
+Build RC 2.2 August 21, 2011
+* Double clicking the expand/collapse icon in the server tree does not cause a connect/disconnect
+* Added $osbits to return if we are using a 32bit or 64bit OS
+* Fixed issue with pasting 2 lines, but 2nd line was blank, would paste as 2 lines
+* Add scrollbar to Topic Bar
+
 Build RC 2.1 August 19, 2011
 * Add ability to show a settings form for a plugin, from the Plugins Menu 
 * Plugins settings (if enabled or disabled) remembered in IceChatPlugins.xml file 

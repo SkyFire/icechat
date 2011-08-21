@@ -1136,13 +1136,6 @@ namespace IceChat
 
             //FormMain.Instance.MessageFormats = this.iceChatMessages;
 
-            //load any plugin addons
-            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {
-                if (ipc.Enabled == true)
-                    ipc.SaveColorsForm();
-            }
-
             //save the icechat themes
             if (comboTheme.Items.Count > 0)
             {
@@ -1161,10 +1154,15 @@ namespace IceChat
                 FormMain.Instance.IceChatOptions.Themes[0] = "Default";
                 FormMain.Instance.IceChatOptions.CurrentTheme = "Default";
             }
-            
+
+            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+            {
+                if (ipc.Enabled)
+                    ipc.SaveColorsForm();
+            }
+
             if (SaveColors != null)
                 SaveColors(this.iceChatColors, this.iceChatMessages);
-            
 
             this.Close();
         }

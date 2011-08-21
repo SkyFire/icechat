@@ -125,7 +125,7 @@ namespace IceChat
                 if (lines.Length == 1)
                 {
                     //just 1 line, add to end of text box
-                    OnCommand(this, data);
+                    OnCommand(this, lines[0]);
                 }
                 else
                 {

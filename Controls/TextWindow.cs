@@ -152,6 +152,7 @@ namespace IceChat
             _displayLines = new DisplayLine[_maxTextLines * 4];
             _textLines = new TextLine[_maxTextLines];
 
+            //this.vScrollBar.ValueChanged += new EventHandler(vScrollBar_ValueChanged);
 
             if (FormMain.Instance != null && FormMain.Instance.IceChatEmoticons != null)
             {
@@ -167,6 +168,13 @@ namespace IceChat
 
             _popupMenu = new ContextMenuStrip();
 
+        }
+
+        private void vScrollBar_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.Parent != null)
+                if (this.Parent.Name == "panelTopic")
+                    System.Diagnostics.Debug.WriteLine("value changed:" + ((VScrollBar)sender).Value);
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
@@ -788,7 +796,7 @@ namespace IceChat
             set
             {
                 _singleLine = value;
-                vScrollBar.Visible = !value;
+                //vScrollBar.Visible = !value;
                 Invalidate();
             }
         }
@@ -931,7 +939,7 @@ namespace IceChat
 
                 newLine = ParseEmoticons(newLine);
 
-                if (_singleLine) _totalLines = 1;
+                //if (_singleLine) _totalLines = 1;
 
                 if (_totalLines >= (_maxTextLines - 10))
                 {
@@ -993,15 +1001,10 @@ namespace IceChat
 
                 _totaldisplayLines += addedLines;
 
-                if (_singleLine)
-                {
-                    _totalLines = 1;
-                    _totaldisplayLines = 1;
-                    _displayLines[1].textLine = 1;
-                    _textLines[1].totalLines = 1;
-                }
-
                 UpdateScrollBar(_totaldisplayLines);
+
+                if (_singleLine)
+                    vScrollBar.Value = 1;
 
                 Invalidate();
             }
@@ -1058,7 +1061,7 @@ namespace IceChat
                 {
                     if (vScrollBar.Value > vScrollBar.LargeChange)
                     {
-                        vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
+                        //vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
                         Invalidate();
                     }
                 }
@@ -1212,7 +1215,7 @@ namespace IceChat
         private void UpdateScrollBar(int newValue)
         {
             _showMaxLines = (this.Height / _lineSize) + 1;
-            //_totaldisplayLines = FormatLines(_totalLines, 1, 0);
+            
             if (this.InvokeRequired)
             {
                 ScrollValueDelegate s = new ScrollValueDelegate(UpdateScrollBar);
@@ -1231,13 +1234,34 @@ namespace IceChat
                     vScrollBar.Enabled = false;
                 }
 
+                if (_singleLine && _totaldisplayLines == 1)
+                {
+                    vScrollBar.Visible = false;
+                    vScrollBar.Enabled = true;
+                }
+                else if (_singleLine)
+                {
+                    vScrollBar.Visible = true;
+                    vScrollBar.Enabled = true;
+                }
+
                 if (newValue != 0)
                 {
                     vScrollBar.Minimum = 1;
                     vScrollBar.Maximum = newValue + vScrollBar.LargeChange - 1;
 
-                    if (newValue <= (vScrollBar.Value + (vScrollBar.LargeChange /2)) || vScrollBar.Enabled == false)
+                    //if (this.Parent != null)
+                    //    if (this.Parent.Name == "panelTopic")
+                    //        System.Diagnostics.Debug.WriteLine(_showMaxLines + ":" + _totaldisplayLines + ":" + newValue + ":" + vScrollBar.Value + ":" + vScrollBar.LargeChange + ":" + vScrollBar.Maximum);
+
+                    if (newValue <= (vScrollBar.Value + (vScrollBar.LargeChange / 2)) || vScrollBar.Enabled == false)
+                    {
+                        if (this.Parent != null)
+                            if (this.Parent.Name == "panelTopic")
+                                return;
+                        
                         vScrollBar.Value = newValue;
+                    }
                 }
             }
         }
@@ -1250,7 +1274,8 @@ namespace IceChat
 
         private void OnScroll(object sender, EventArgs e)
         {
-            if (((VScrollBar)sender).Value <= 1)
+            //System.Diagnostics.Debug.WriteLine("on scroll " + ((VScrollBar)sender).Value + ":" + ((VScrollBar)sender).Maximum);
+            if (((VScrollBar)sender).Value < 1)
             {
                 ((VScrollBar)sender).Value = 1;
             }
@@ -1637,21 +1662,21 @@ namespace IceChat
                 int val = vScrollBar.Value;
 
                 LinesToDraw = (_showMaxLines > val ? val : _showMaxLines);
-
                 curLine = val - LinesToDraw;
-
+                
                 if (_singleLine)
                 {
                     startY = 0;
                     LinesToDraw = 1;
-                    curLine = 0;
+                    curLine = vScrollBar.Value-1;
+                    //_showMaxLines = 1;
                 }
                 else
                     startY = this.Height - (_lineSize * LinesToDraw) - (_lineSize / 2);
 
                 if (!FormMain.Instance.IceChatOptions.EmoticonsFixedSize)
                 {
-                    System.Diagnostics.Debug.WriteLine("old Start Y:" + startY + ":" + LinesToDraw + ":" + this.Height);
+                    //System.Diagnostics.Debug.WriteLine("old Start Y:" + startY + ":" + LinesToDraw + ":" + this.Height);
 
                     int totalHeight = 0;
                     int newLinesDraw = LinesToDraw;
@@ -1664,7 +1689,7 @@ namespace IceChat
                         {
                             if ((this.Height - totalHeight) < (_lineSize * -1))
                             {
-                                System.Diagnostics.Debug.WriteLine("need to adjust lines:" + totalHeight + ":" + this.Height);
+                                //System.Diagnostics.Debug.WriteLine("need to adjust lines:" + totalHeight + ":" + this.Height);
                                 newLinesDraw--;
                                 //totalHeight -= _displayLines[i].lineHeight - _lineSize;
                                 //LinesToDraw
@@ -1681,12 +1706,12 @@ namespace IceChat
                     {
                         count++;
                         th += _displayLines[x].lineHeight;
-                        System.Diagnostics.Debug.WriteLine("calc size:" + x + ":" + _displayLines[x].lineHeight + ":" + _displayLines[x].line);
+                        //System.Diagnostics.Debug.WriteLine("calc size:" + x + ":" + _displayLines[x].lineHeight + ":" + _displayLines[x].line);
                         if ((this.Height - th) < (_lineSize * -1))
                         {
                             newLinesDraw = count;
                             totalHeight = th;
-                            System.Diagnostics.Debug.WriteLine("reached limit:" + count + ":" + th + ":" + this.Height);
+                            //System.Diagnostics.Debug.WriteLine("reached limit:" + count + ":" + th + ":" + this.Height);
                             break;
                         }
                         x--;
@@ -1711,7 +1736,7 @@ namespace IceChat
                     LinesToDraw = newLinesDraw;
 
                     //System.Diagnostics.Debug.WriteLine("NEW Y:" + startY + ":" + ((this.Height - totalHeight)- (_lineSize / 2)) + ":" + newLinesDraw + ":" + LinesToDraw);
-                    System.Diagnostics.Debug.WriteLine("NEW Y:" + startY + ":" + newLinesDraw + ":" + LinesToDraw + ":" + totalHeight);
+                    //System.Diagnostics.Debug.WriteLine("NEW Y:" + startY + ":" + newLinesDraw + ":" + LinesToDraw + ":" + totalHeight);
                 }
 
 
@@ -1738,6 +1763,10 @@ namespace IceChat
                         }
                     }
                 }
+
+                //if (this.Parent != null)
+                //    if (this.Parent.Name == "panelTopic")
+                //        System.Diagnostics.Debug.WriteLine("linestodraw=" + LinesToDraw + ":Max=" + _showMaxLines + ":value=" + vScrollBar.Value + ":cur=" + curLine);
 
                 while (lineCounter < LinesToDraw)
                 {
@@ -1772,7 +1801,7 @@ namespace IceChat
                         font = new Font(this.Font.Name, this.Font.Size, FontStyle.Regular);
                     }
 
-                    //System.Diagnostics.Debug.WriteLine(lineCounter + ":" + _displayLines[curLine].lineHeight);     
+                    //System.Diagnostics.Debug.WriteLine(lineCounter + ":" + _displayLines[curLine].line + ":" + _displayLines.Length + ":" + line);     
 
                     if (line.Length > 0)
                     {
@@ -1815,7 +1844,7 @@ namespace IceChat
                                                 {
                                                     _displayLines[curLine].lineHeight = bm.Height;
                                                     //this causes a SCREEN FLASH, need to find out why
-                                                    System.Diagnostics.Debug.WriteLine("FORCE REDRAW");
+                                                    //System.Diagnostics.Debug.WriteLine("FORCE REDRAW");
                                                     buffer.Dispose();
                                                     g.Dispose();
                                                     Invalidate();

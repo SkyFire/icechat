@@ -134,6 +134,7 @@ namespace IceChat
             this.checkIgnoreDCCChat = new System.Windows.Forms.CheckBox();
             this.checkAutoDCCChat = new System.Windows.Forms.CheckBox();
             this.tabSounds = new System.Windows.Forms.TabPage();
+            this.label18 = new System.Windows.Forms.Label();
             this.textExternalPlayCommand = new System.Windows.Forms.TextBox();
             this.checkExternalPlayCommand = new System.Windows.Forms.CheckBox();
             this.buttonTest = new System.Windows.Forms.Button();
@@ -207,7 +208,6 @@ namespace IceChat
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
             this.tabControlOptions.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabDisplay.SuspendLayout();
@@ -1314,6 +1314,14 @@ namespace IceChat
             this.tabSounds.Text = "Sounds";
             this.tabSounds.UseVisualStyleBackColor = true;
             // 
+            // label18
+            // 
+            this.label18.Location = new System.Drawing.Point(442, 23);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(203, 148);
+            this.label18.TabIndex = 9;
+            this.label18.Text = resources.GetString("label18.Text");
+            // 
             // textExternalPlayCommand
             // 
             this.textExternalPlayCommand.Location = new System.Drawing.Point(230, 230);
@@ -2017,14 +2025,6 @@ namespace IceChat
             this.label14.Size = new System.Drawing.Size(45, 13);
             this.label14.TabIndex = 0;
             this.label14.Text = "Console";
-            // 
-            // label18
-            // 
-            this.label18.Location = new System.Drawing.Point(442, 23);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(203, 148);
-            this.label18.TabIndex = 9;
-            this.label18.Text = resources.GetString("label18.Text");
             // 
             // FormSettings
             // 
