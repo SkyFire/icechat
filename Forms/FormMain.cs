@@ -140,7 +140,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.2";
+        public const string VersionID = "Release Candidate 2.21";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -605,8 +605,11 @@ namespace IceChat
 
                 if (removeItems.Count > 0)
                 {
-                    foreach(int i in removeItems)                        
-                        iceChatPlugins.listPlugins.Remove(iceChatPlugins.listPlugins[i]);
+                    foreach (int i in removeItems)
+                    {
+                        if (iceChatPlugins.listPlugins.IndexOf(iceChatPlugins.listPlugins[i]) > -1)
+                            iceChatPlugins.listPlugins.Remove(iceChatPlugins.listPlugins[i]);
+                    }
                     
                     SavePluginFiles();
                 }
