@@ -38,7 +38,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 
-using IceChat.Properties;
 using IceChatPlugin;
 
 namespace IceChat
@@ -140,7 +139,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.21";
+        public const string VersionID = "Release Candidate 2.3";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -160,7 +159,7 @@ namespace IceChat
         public FormMain(string[] args, Form splash)
         {
             FormMain.Instance = this;
-
+               
             player = new System.Media.SoundPlayer();
 
             bool forceCurrentFolder = false;
@@ -244,9 +243,7 @@ namespace IceChat
             #endregion
 
             languageFiles = new List<LanguageItem>();
-            currentLanguageFile = new LanguageItem();
-            languageFiles.Add(currentLanguageFile);     // default language English
-
+            
             DirectoryInfo languageDirectory = null;
 
             languageDirectory = new DirectoryInfo(currentFolder + System.IO.Path.DirectorySeparatorChar + "Languages");
@@ -258,10 +255,16 @@ namespace IceChat
                 // scan the language directory for xml files and make LanguageItems for each file
                 FileInfo[] langFiles = languageDirectory.GetFiles("*.xml");
                 foreach (FileInfo fi in langFiles)
-                {
+                {                    
                     string langFile = languageDirectory.FullName + System.IO.Path.DirectorySeparatorChar + fi.Name;
                     LanguageItem languageItem = LoadLanguageItem(langFile);
-                    if (languageItem != null) languageFiles.Add(languageItem);
+                    if (languageItem != null) languageFiles.Add(languageItem);                    
+                }
+
+                if (languageFiles.Count == 0)
+                {
+                    currentLanguageFile = new LanguageItem();
+                    languageFiles.Add(currentLanguageFile);     // default language English
                 }
             }
 
@@ -340,7 +343,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 21 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: August 30 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -605,12 +608,13 @@ namespace IceChat
 
                 if (removeItems.Count > 0)
                 {
-                    foreach (int i in removeItems)
+                    try
                     {
-                        if (iceChatPlugins.listPlugins.IndexOf(iceChatPlugins.listPlugins[i]) > -1)
+                        foreach (int i in removeItems)
                             iceChatPlugins.listPlugins.Remove(iceChatPlugins.listPlugins[i]);
                     }
-                    
+                    catch { }
+
                     SavePluginFiles();
                 }
             }
@@ -810,6 +814,12 @@ namespace IceChat
             else
             {
                 iceChatLanguage = new IceChatLanguage();
+                //write the language file
+                XmlSerializer serializer = new XmlSerializer(typeof(IceChatLanguage));
+                TextWriter textWriter = new StreamWriter(currentFolder + Path.DirectorySeparatorChar + "Languages" + Path.DirectorySeparatorChar + "English.xml");
+                serializer.Serialize(textWriter,iceChatLanguage);
+                textWriter.Close();
+                textWriter.Dispose();
             }
         }
 
@@ -3507,6 +3517,10 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/redrawtree":
+                            System.Diagnostics.Debug.WriteLine(mainTabControl.CurrentTab.TabCaption);
+                            this.serverTree.Invalidate();
+                            break;
                         case "/run":
                             if (data.Length > 0)
                             {
@@ -3707,6 +3721,18 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "/timers":
+                            if (connection != null)
+                            {
+                                if (connection.IRCTimers.Count == 0)
+                                    OnServerMessage(connection, "No Timers");
+                                else
+                                {
+                                    foreach (IrcTimer timer in connection.IRCTimers)
+                                        OnServerMessage(connection, "[ID=" + timer.TimerID + "] [Interval=" + timer.TimerInterval + "] [Reps=" + timer.TimerRepetitions + "] [Counter=" + timer.TimerCounter + "] [Command=" + timer.TimerCommand + "]");
+                                }
+                            }
+                            break;                        
                         case "/timer":
                             if (connection != null)
                             {
@@ -4359,7 +4385,6 @@ namespace IceChat
                      switch (word)
                      {
                          case "$+":
-
                              break;
                          default:
                              //search for identifiers that are numbers
@@ -4698,6 +4723,49 @@ namespace IceChat
                                                         break;
                                                     default:
                                                         break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (word.StartsWith("$timer(") && word.IndexOf(')') > word.IndexOf('('))
+                                    {
+                                        //get the value between and after the brackets
+                                        string timerid = ReturnBracketValue(word);
+                                        string prop = ReturnPropertyValue(word);
+
+                                        //find the timer
+                                        foreach (IrcTimer timer in connection.IRCTimers)
+                                        {
+                                            if (timer.TimerID == timerid)
+                                            {
+                                                if (prop.Length == 0)
+                                                {
+                                                    //replace with timer id
+                                                    changedData[count] = timer.TimerID;
+                                                }
+                                                else
+                                                {
+                                                    switch (prop)
+                                                    {
+                                                        case "id":
+                                                            changedData[count] = timer.TimerID;
+                                                            break;
+                                                        case "reps":
+                                                            changedData[count] = timer.TimerRepetitions.ToString();
+                                                            break;
+                                                        case "count":
+                                                            changedData[count] = timer.TimerCounter.ToString();
+                                                            break;
+                                                        case "command":
+                                                            changedData[count] = timer.TimerCommand;
+                                                            break;
+                                                        case "interval":
+                                                            changedData[count] = timer.TimerInterval.ToString();
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -5321,7 +5389,7 @@ namespace IceChat
             }
             catch (Exception ex)
             {
-                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin", ex);
+                WriteErrorFile(inputPanel.CurrentConnection, "LoadPlugin Error", ex);
             }
 
 
@@ -5346,7 +5414,12 @@ namespace IceChat
                 if (e.Connection != null)
                     ParseOutGoingCommand(e.Connection, e.Command);
                 else
-                    ParseOutGoingCommand(null, e.Command);
+                {
+                    if (e.Extra == "current")
+                        ParseOutGoingCommand(inputPanel.CurrentConnection, e.Command);
+                    else
+                        ParseOutGoingCommand(null, e.Command);
+                }
             }
 
         }
@@ -5549,7 +5622,12 @@ namespace IceChat
 
         private void browseDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ParseOutGoingCommand(null, "//run $icechatdir");
+            ParseOutGoingCommand(null, "/run " + currentFolder);
+        }
+
+        private void browsePluginsFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ParseOutGoingCommand(null, "/run " + pluginsFolder);
         }
 
         private void closeCurrentWindowToolStripMenuItem_Click(object sender, EventArgs e)

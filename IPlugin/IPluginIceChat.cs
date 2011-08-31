@@ -67,7 +67,7 @@ namespace IceChatPlugin
 
         public virtual void LoadSettingsForm(System.Windows.Forms.TabControl SettingsTab) { }
         public virtual void LoadColorsForm(System.Windows.Forms.TabControl ColorsTab) { }
-        public virtual void LoadEditorForm(System.Windows.Forms.TabControl ScriptsTab) { }
+        public virtual void LoadEditorForm(System.Windows.Forms.TabControl ScriptsTab, System.Windows.Forms.MenuStrip MainMenu) { }
         public virtual void SaveColorsForm() { }
         public virtual void SaveSettingsForm() { }
         public virtual void SaveEditorForm() { }

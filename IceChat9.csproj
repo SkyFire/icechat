@@ -403,7 +403,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icechat9.ico" />
+    <Content Include="icechat9.ico">
+    </Content>
     <EmbeddedResource Include="Icons\home.png" />
     <EmbeddedResource Include="Icons\window-icon.ico" />
     <EmbeddedResource Include="Icons\tray-icon-flash.ico" />

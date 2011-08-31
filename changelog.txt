@@ -1,3 +1,10 @@
+Build RC 2.3 August 30, 2011
+* Automatically export English.xml Language file to Languages folder if it does not exist 
+* Add /timers command to show all timers for current connection, shows in Console
+* Add $timer(id) identifier, with properties .id, .reps, .count, .interval and .command
+* Fix issue with closing a window, Server Tree does not show proper window highlighted 
+* Add in the $+ identifier, used for joining to other words/identifiers
+
 Build RC 2.2 August 21, 2011
 * Double clicking the expand/collapse icon in the server tree does not cause a connect/disconnect
 * Added $osbits to return if we are using a 32bit or 64bit OS

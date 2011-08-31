@@ -94,6 +94,7 @@ namespace IceChat
             this.downloadPluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.browseDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.browsePluginsFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iceChatChannelStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -362,6 +363,7 @@ namespace IceChat
             this.toolStripMenuItem1,
             this.checkForUpdateToolStripMenuItem,
             this.browseDataFolderToolStripMenuItem,            
+            this.browsePluginsFolderToolStripMenuItem,
             this.iceChatChannelStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -414,6 +416,13 @@ namespace IceChat
             this.browseDataFolderToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.browseDataFolderToolStripMenuItem.Text = "Browse Data Folder";
             this.browseDataFolderToolStripMenuItem.Click += new System.EventHandler(this.browseDataFolderToolStripMenuItem_Click);
+            // 
+            // browsePluginsFolderToolStripMenuItem
+            // 
+            this.browsePluginsFolderToolStripMenuItem.Name = "browsePluginsFolderToolStripMenuItem";
+            this.browsePluginsFolderToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.browsePluginsFolderToolStripMenuItem.Text = "Browse Plugins Folder";
+            this.browsePluginsFolderToolStripMenuItem.Click += new System.EventHandler(this.browsePluginsFolderToolStripMenuItem_Click);
             // 
             // checkForUpdateToolStripMenuItem
             // 
@@ -722,6 +731,7 @@ namespace IceChat
         private System.Windows.Forms.ToolStripMenuItem facebookFanPageToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem browseDataFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem browsePluginsFolderToolStripMenuItem;        
         internal System.Windows.Forms.ToolStripMenuItem closeCurrentWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem selectNickListToolStripMenuItem;

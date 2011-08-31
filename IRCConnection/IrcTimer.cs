@@ -66,7 +66,39 @@ namespace IceChat
             base.Dispose();
         }
 
-        internal string TimerID
+        public int TimerCounter
+        {
+            get
+            {
+                return this.timerCounter;
+            }
+        }
+
+        public double TimerInterval
+        {
+            get
+            {
+                return (this.Interval / 1000);
+            }
+        }
+
+        public int TimerRepetitions
+        {
+            get
+            {
+                return this.timerRepetitions;
+            }
+        }
+
+        public string TimerCommand
+        {
+            get
+            {
+                return this.timerCommand;
+            }
+        }
+
+        public string TimerID
         {
             get
             {

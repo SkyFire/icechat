@@ -55,7 +55,7 @@ namespace IceChat
         private ServerSetting serverSetting;
         private bool fullyConnected = false;
         private ArrayList commandQueue;
-        private ArrayList ircTimers;
+        private List<IrcTimer> ircTimers;
 
         private System.Timers.Timer pongTimer;
 
@@ -86,7 +86,7 @@ namespace IceChat
             pongTimer = new System.Timers.Timer(60000 * serverSetting.PongTimerMinutes);    //15 minutes
             pongTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnPongTimerElapsed);
 
-            ircTimers = new ArrayList();
+            ircTimers = new List<IrcTimer>();
         }
 
         public void Dispose()
@@ -331,6 +331,15 @@ namespace IceChat
             {
                 if (ServerError != null)
                     ServerError(this, "Socket Exception Error " + se.ErrorCode + ":" + se.Message, false);
+
+                disconnectError = true;
+                ForceDisconnect();
+                return;
+            }
+            catch (Exception e)
+            {
+                if (ServerError != null)
+                    ServerError(this, "Exception Error: " + e.Message, false);
 
                 disconnectError = true;
                 ForceDisconnect();
@@ -1262,19 +1271,25 @@ namespace IceChat
             timer.Start();
         }
 
+        public List<IrcTimer> IRCTimers
+        {
+            get { return this.ircTimers; }
+        }
+
         public void DestroyTimer(string id)
         {
-            object remove = null;
-            foreach (object key in ircTimers)
+            IrcTimer remove = null;
+
+            foreach (IrcTimer timer in ircTimers)
             {
-                if (((IrcTimer)key).TimerID == id)
+                if (timer.TimerID == id)
                 {
-                    ((IrcTimer)key).DisableTimer();
-                    remove = key;
+                    timer.DisableTimer();
+                    remove = timer;
                 }
             }
             if (remove != null)
-                ircTimers.Remove(((IrcTimer)remove));
+                ircTimers.Remove(remove);
 
         }
 

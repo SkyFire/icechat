@@ -83,7 +83,7 @@ namespace IceChat
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
                 if (ipc.Enabled == true)
-                    ipc.LoadEditorForm(this.tabControlEditor);
+                    ipc.LoadEditorForm(this.tabControlEditor, this.menuStripMain);
             }
 
             ApplyLanguage();

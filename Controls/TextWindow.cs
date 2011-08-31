@@ -1061,7 +1061,7 @@ namespace IceChat
                 {
                     if (vScrollBar.Value > vScrollBar.LargeChange)
                     {
-                        //vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
+                        vScrollBar.Value = vScrollBar.Value - (vScrollBar.LargeChange - 1);
                         Invalidate();
                     }
                 }

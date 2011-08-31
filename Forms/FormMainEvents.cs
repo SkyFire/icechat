@@ -162,7 +162,7 @@ namespace IceChat
             foreach (IPluginIceChat ipc in loadedPlugins)
             {
                 if (ipc.Enabled == true)
-                    ipc.ServerConnect(args);
+                    ipc.ServerDisconnect(args);
             }
 
         }
@@ -337,10 +337,7 @@ namespace IceChat
 
         private void OnBuddyList(IRCConnection connection, string[] buddies)
         {
-
-
             PluginArgs args = new PluginArgs(connection);
-            
             
             foreach (BuddyListItem b in connection.ServerSetting.BuddyList)
             {
@@ -523,13 +520,13 @@ namespace IceChat
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "TIME " + System.DateTime.Now.ToString() + ((char)1).ToString());
                     break;
                 case "USERINFO":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://icechat.codeplex.com" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "USERINFO IceChat IRC Client : Download at http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "CLIENTINFO":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "CLIENTINFO This client supports: UserInfo, Finger, Version, Source, Ping, Time and ClientInfo" + ((char)1).ToString());
                     break;
                 case "SOURCE":
-                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + FormMain.ProgramID + " " + FormMain.VersionID + " http://icechat.codeplex.com" + ((char)1).ToString());
+                    SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "SOURCE " + FormMain.ProgramID + " " + FormMain.VersionID + " http://www.icechat.net" + ((char)1).ToString());
                     break;
                 case "FINGER":
                     SendData(connection, "NOTICE " + nick + " :" + ((char)1).ToString() + "FINGER Stop fingering me" + ((char)1).ToString());
@@ -955,7 +952,7 @@ namespace IceChat
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
                     if (ipc.Enabled == true)
-                        args = ipc.ChannelMessage(args);
+                        args = ipc.ChannelAction(args);
                 }
 
                 if (iceChatOptions.ChannelActionEventLocation == 0)
@@ -1209,6 +1206,7 @@ namespace IceChat
                 msg = msg.Replace("$channel", channel).Replace("$nick", nick).Replace("$host", host).Replace("$reason", reason);
 
                 PluginArgs args = new PluginArgs(t.TextWindow, channel, nick, host, msg);
+                args.Extra = reason;
                 args.Connection = connection;
                 
                 foreach (IPluginIceChat ipc in loadedPlugins)

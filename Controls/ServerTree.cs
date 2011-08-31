@@ -1003,7 +1003,8 @@ namespace IceChat
                     int x = 16;
                     Brush b;
                     Pen p = new Pen(IrcColor.colors[FormMain.Instance.IceChatColors.TabBarCurrent]);
-                    nodeCount++;
+                    
+                    nodeCount++;                    
                     if (nodeCount <= topIndex)
                         continue;
 
@@ -1162,7 +1163,6 @@ namespace IceChat
 
                             nodeCount++;
                             //check if it is collapsed or has any sub items
-
 
                             serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
                         }
