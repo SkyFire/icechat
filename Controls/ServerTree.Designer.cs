@@ -51,6 +51,7 @@
             this.toolStripMenuItemBlank = new System.Windows.Forms.ToolStripSeparator();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.autoJoinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openLogFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuQuery = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -62,12 +63,14 @@
             this.clearWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.closeWindowDCCChat = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectDCCChat = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.contextMenuChannelList = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.closeChannenListToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.panelButtons.SuspendLayout();
             this.contextMenuChannel.SuspendLayout();
             this.contextMenuServer.SuspendLayout();
             this.contextMenuQuery.SuspendLayout();
             this.contextMenuDCCChat.SuspendLayout();
+            this.contextMenuChannelList.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelButtons
@@ -237,7 +240,7 @@
             this.autoPerformToolStripMenuItem,
             this.openLogFolderToolStripMenuItem});
             this.contextMenuServer.Name = "contextMenuServer";
-            this.contextMenuServer.Size = new System.Drawing.Size(166, 214);
+            this.contextMenuServer.Size = new System.Drawing.Size(166, 192);
             // 
             // connectToolStripMenuItem
             // 
@@ -278,6 +281,11 @@
             this.removeServerToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.removeServerToolStripMenuItem.Text = "Remove Server";
             this.removeServerToolStripMenuItem.Click += new System.EventHandler(this.removeServerToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(162, 6);
             // 
             // autoJoinToolStripMenuItem
             // 
@@ -361,10 +369,19 @@
             this.disconnectDCCChat.Text = "Disconnect";
             this.disconnectDCCChat.Click += new System.EventHandler(this.disconnectDCCChat_Click);
             // 
-            // toolStripMenuItem1
+            // contextMenuChannelList
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(162, 6);
+            this.contextMenuChannelList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeChannenListToolStripMenuItem1});
+            this.contextMenuChannelList.Name = "contextMenuChannelList";
+            this.contextMenuChannelList.Size = new System.Drawing.Size(153, 48);
+            // 
+            // closeChannenListToolStripMenuItem1
+            // 
+            this.closeChannenListToolStripMenuItem1.Name = "closeChannenListToolStripMenuItem1";
+            this.closeChannenListToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.closeChannenListToolStripMenuItem1.Text = "Close Window";
+            this.closeChannenListToolStripMenuItem1.Click += new System.EventHandler(this.closeChannenListToolStripMenuItem1_Click);
             // 
             // ServerTree
             // 
@@ -384,6 +401,7 @@
             this.contextMenuServer.ResumeLayout(false);
             this.contextMenuQuery.ResumeLayout(false);
             this.contextMenuDCCChat.ResumeLayout(false);
+            this.contextMenuChannelList.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -426,5 +444,7 @@
         private System.Windows.Forms.ToolStripMenuItem addToAutoJoinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuChannelList;
+        private System.Windows.Forms.ToolStripMenuItem closeChannenListToolStripMenuItem1;
     }
 }

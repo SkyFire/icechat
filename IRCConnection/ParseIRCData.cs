@@ -322,13 +322,22 @@ namespace IceChat
                                 }
                             }
                             break;
+                        case "006": // map data
+                            ServerMessage(this, JoinString(ircData, 3, true));                            
+                            break;
+                        case "007": //could be end of map
+                            if (ircData[3] == ":End")
+                            {
+                                ServerMessage(this, JoinString(ircData, 3, true));
+                            }
+                            else
+                            {
+                                DateTime date5 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                date5 = date5.AddSeconds(Convert.ToDouble(ircData[4]));
 
-                        case "007":
-                            DateTime date5 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                            date5 = date5.AddSeconds(Convert.ToDouble(ircData[4]));
-
-                            msg = ircData[3] + " " + date5.ToShortTimeString() + " " + JoinString(ircData, 5, true);
-                            ServerMessage(this, msg);
+                                msg = ircData[3] + " " + date5.ToShortTimeString() + " " + JoinString(ircData, 5, true);
+                                ServerMessage(this, msg);
+                            }
                             break;
                         case "014":
                             ServerMessage(this, JoinString(ircData, 3, false));

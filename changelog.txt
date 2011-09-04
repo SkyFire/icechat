@@ -1,3 +1,8 @@
+Build RC 2.4 September 4, 2011
+* Fix issue with Debug window not showing in the Server Tree 
+* Add popup menu for Channel List in the Server Tree 
+* Fix issue with ChannelKick event in Plugins, Host now passes self nick
+
 Build RC 2.3 August 30, 2011
 * Automatically export English.xml Language file to Languages folder if it does not exist 
 * Add /timers command to show all timers for current connection, shows in Console

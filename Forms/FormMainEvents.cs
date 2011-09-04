@@ -1398,14 +1398,17 @@ namespace IceChat
                 msg = msg.Replace("$channel", channel);
                 msg = msg.Replace("$reason", reason);
 
-                PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, channel, nick, kickUser, msg);
+                PluginArgs args = new PluginArgs(mainTabControl.GetTabPage("Console").TextWindow, channel, nick, connection.ServerSetting.NickName, msg);
                 args.Extra = reason;
                 args.Connection = connection;
-
+                
                 foreach (IPluginIceChat ipc in loadedPlugins)
                 {
                     if (ipc.Enabled == true)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ipc.Name);
                         args = ipc.ChannelKick(args);
+                    }
                 }
                 if (iceChatOptions.ChannelOpenKick)
                 {

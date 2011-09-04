@@ -741,6 +741,10 @@ namespace IceChat
                         {
                             this.contextMenuDCCChat.Show(this, new Point(e.X, e.Y));
                         }
+                        else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.ChannelList)
+                        {
+                            this.contextMenuChannelList.Show(this, new Point(e.X, e.Y));
+                        }
                     }
                 }
             }
@@ -1164,6 +1168,13 @@ namespace IceChat
                             nodeCount++;
                             //check if it is collapsed or has any sub items
 
+                            serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
+                        }
+                        else if (t.WindowStyle == IceTabPage.WindowType.Debug)
+                        {
+                            nodeCount++;
+                            //check if it is collapsed or has any sub items
+                            int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
                             serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
                         }
                     }
@@ -1784,6 +1795,17 @@ namespace IceChat
                 FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/close " + ((IceTabPage)findNode).TabCaption);
         }
 
+        private void closeChannenListToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //close the channel list window
+            object findNode = FindNodeValue(selectedNodeIndex);
+            if (findNode.GetType() == typeof(IceTabPage))
+                FormMain.Instance.TabMain.Controls.Remove(((IceTabPage)findNode));
+
+        }
+
+
+
         private void disconnectDCCChat_Click(object sender, EventArgs e)
         {
             object findNode = FindNodeValue(selectedNodeIndex);
@@ -1812,7 +1834,6 @@ namespace IceChat
 
 
         #endregion
-
 
 
     }

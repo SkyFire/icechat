@@ -139,7 +139,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.3";
+        public const string VersionID = "Release Candidate 2.4";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -343,7 +343,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: August 30 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: September 4 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -1962,6 +1962,9 @@ namespace IceChat
                 }
 
                 data = args.Command;
+                
+                if (data.Length == 0)
+                    return;
 
                 if (data.StartsWith("//"))
                 {
@@ -2986,7 +2989,6 @@ namespace IceChat
                                     msg = msg.Replace("$message", data);
 
                                     CurrentWindow.TextWindow.AppendText(msg, 1);
-                                    CurrentWindow.LastMessageType = ServerMessageType.Other;
                                 }
                                 else if (CurrentWindowType == IceTabPage.WindowType.Console)
                                 {
@@ -2994,6 +2996,13 @@ namespace IceChat
                                     msg = msg.Replace("$message", data);
 
                                     mainTabControl.GetTabPage("Console").CurrentConsoleWindow().AppendText(msg, 1);
+                                }
+                                else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
+                                {
+                                    string msg = GetMessageFormat("User Echo");
+                                    msg = msg.Replace("$message", data);
+                                    
+                                    CurrentWindow.TextWindow.AppendText(msg, 1);
                                 }
                             }
                             break;
@@ -3591,6 +3600,18 @@ namespace IceChat
                                     CurrentWindow.TextWindow.AppendText(msg, 1);
                                     CurrentWindow.LastMessageType = ServerMessageType.Message;
                                 }
+                                else if (CurrentWindowType == IceTabPage.WindowType.DCCChat)
+                                {
+                                    CurrentWindow.SendDCCData(data);
+
+                                    string msg = GetMessageFormat("Self DCC Chat Message");
+                                    msg = msg.Replace("$nick", inputPanel.CurrentConnection.ServerSetting.NickName).Replace("$message", data);
+                                    CurrentWindow.TextWindow.AppendText(msg, 1);
+                                }
+                                else if (CurrentWindowType == IceTabPage.WindowType.Console)
+                                {
+                                    WindowMessage(connection, "Console", data, 4, true);
+                                }
                             }
                             break;
                         case "/joinserv":       //joinserv irc.server.name #channel
@@ -3729,7 +3750,7 @@ namespace IceChat
                                 else
                                 {
                                     foreach (IrcTimer timer in connection.IRCTimers)
-                                        OnServerMessage(connection, "[ID=" + timer.TimerID + "] [Interval=" + timer.TimerInterval + "] [Reps=" + timer.TimerRepetitions + "] [Counter=" + timer.TimerCounter + "] [Command=" + timer.TimerCommand + "]");
+                                        OnServerMessage(connection, "[ID=" + timer.TimerID + "] [Interval=" + timer.TimerInterval + "] [Reps=" + timer.TimerRepetitions + "] [Count=" + timer.TimerCounter + "] [Command=" + timer.TimerCommand + "]");
                                 }
                             }
                             break;                        
@@ -3982,12 +4003,15 @@ namespace IceChat
         /// <param name="sender"></param>
         /// <param name="data"></param>
         private void inputPanel_OnCommand(object sender, string data)
-        {                        
-            ParseOutGoingCommand(inputPanel.CurrentConnection, data);
-            if (CurrentWindowType == IceTabPage.WindowType.Console)
-                mainTabControl.CurrentTab.CurrentConsoleWindow().ScrollToBottom();
-            else if (CurrentWindowType != IceTabPage.WindowType.DCCFile && CurrentWindowType != IceTabPage.WindowType.ChannelList)
-                CurrentWindow.TextWindow.ScrollToBottom();
+        {
+            if (data.Length > 0)
+            {
+                ParseOutGoingCommand(inputPanel.CurrentConnection, data);
+                if (CurrentWindowType == IceTabPage.WindowType.Console)
+                    mainTabControl.CurrentTab.CurrentConsoleWindow().ScrollToBottom();
+                else if (CurrentWindowType != IceTabPage.WindowType.DCCFile && CurrentWindowType != IceTabPage.WindowType.ChannelList)
+                    CurrentWindow.TextWindow.ScrollToBottom();
+            }
         }
 
         #endregion
@@ -4596,7 +4620,7 @@ namespace IceChat
                                                 changedData[count] = ial.Nick;
                                             else
                                             {
-                                                switch (prop)
+                                                switch (prop.ToLower())
                                                 {
                                                     case "nick":
                                                         changedData[count] = ial.Nick;
@@ -4649,7 +4673,7 @@ namespace IceChat
                                                     //$nick(#channel,1).op , .voice, .halfop, .admin,.owner. 
                                                     //.mode, .host, .nick,.ident
                                                     InternalAddressList ial = (InternalAddressList)connection.ServerSetting.IAL[u.NickName];
-                                                    switch (prop)
+                                                    switch (prop.ToLower())
                                                     {
                                                         case "host":
                                                             if (ial != null && ial.Host != null && ial.Host.Length > 0)
@@ -4713,7 +4737,7 @@ namespace IceChat
                                             }
                                             else
                                             {
-                                                switch (prop)
+                                                switch (prop.ToLower())
                                                 {
                                                     case "mode":
                                                         changedData[count] = t.ChannelModes;
@@ -4746,7 +4770,7 @@ namespace IceChat
                                                 }
                                                 else
                                                 {
-                                                    switch (prop)
+                                                    switch (prop.ToLower())
                                                     {
                                                         case "id":
                                                             changedData[count] = timer.TimerID;
@@ -5113,7 +5137,7 @@ namespace IceChat
         {
             try
             {
-                ParseOutGoingCommand(null, "/browser http://www.icechat.net/site/downloads/?category=7");
+                ParseOutGoingCommand(null, "/browser http://www.icechat.net/site/downloads/?category=4");
             }
             catch { }
         }
