@@ -1,3 +1,7 @@
+Build RC 2.5 September 14, 2011
+* Add in better error reporting for saving in the IceChat Editor 
+* Fix showing of DCC Files Window in Server Tree 
+
 Build RC 2.4 September 4, 2011
 * Fix issue with Debug window not showing in the Server Tree 
 * Add popup menu for Channel List in the Server Tree 

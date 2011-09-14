@@ -360,6 +360,11 @@ namespace IceChat
                             FormMain.Instance.ParseOutGoingCommand(((IceTabPage)findNode).Connection, "/part " + ((IceTabPage)findNode).TabCaption);
                         }
                     }
+                    else if (findNode.GetType() == typeof(IceTabPageDCCFile))
+                    {
+                        //close dcc file/send window
+
+                    }
                 }
             }
 
@@ -454,6 +459,11 @@ namespace IceChat
                             toolTipNode = nodeNumber;
                         }
                     }
+                    else if (findNode.GetType() == typeof(IceTabPageDCCFile))
+                    {
+
+
+                    }
                 }
             }
             else
@@ -517,6 +527,12 @@ namespace IceChat
                             FormMain.Instance.TabMain.SelectTab((IceTabPage)findNode);
                         return;
                     }
+                    else if (findNode.GetType() == typeof(IceTabPageDCCFile))
+                    {
+                        if (RefreshMainTab)
+                            FormMain.Instance.TabMain.SelectTab((IceTabPageDCCFile)findNode);
+                        return;
+                    }
                 }
             }
             catch (Exception e)
@@ -546,8 +562,7 @@ namespace IceChat
             {
                 //this is a window tab
                 //check if it is a console tab or not
-                //System.Diagnostics.Debug.WriteLine("select tab:" + ((IceTabPage)selectedNode).WindowStyle);
-                
+                //System.Diagnostics.Debug.WriteLine("select tab:" + ((IceTabPage)selectedNode).WindowStyle);                
                 if (((IceTabPage)selectedNode).WindowStyle == IceTabPage.WindowType.Console)
                 {
                     if (((ConsoleTab)((IceTabPage)selectedNode).ConsoleTab.SelectedTab).Connection != null)
@@ -557,7 +572,6 @@ namespace IceChat
                 }
                 else
                     SelectNodeByIndex(FindWindowNodeMatch(selectedNode), RefreshMainTab);
-
 
             }
             
@@ -744,6 +758,10 @@ namespace IceChat
                         else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.ChannelList)
                         {
                             this.contextMenuChannelList.Show(this, new Point(e.X, e.Y));
+                        }
+                        else if (((IceTabPage)findNode).WindowStyle == IceTabPage.WindowType.DCCFile)
+                        {
+                            //
                         }
                     }
                 }
@@ -1171,6 +1189,13 @@ namespace IceChat
                             serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
                         }
                         else if (t.WindowStyle == IceTabPage.WindowType.Debug)
+                        {
+                            nodeCount++;
+                            //check if it is collapsed or has any sub items
+                            int colorQ = FormMain.Instance.IceChatColors.TabBarDefault;
+                            serverNodes.Add(new KeyValuePair<string, object>(nodeCount.ToString() + ":7:" + colorQ.ToString() + ":0:" + t.TabCaption, t));
+                        }
+                        else if (t.WindowStyle == IceTabPage.WindowType.DCCFile)
                         {
                             nodeCount++;
                             //check if it is collapsed or has any sub items

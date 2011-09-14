@@ -139,7 +139,7 @@ namespace IceChat
         private const int VER_SUITE_BLADE = 1024;
 
         public const string ProgramID = "IceChat 9";
-        public const string VersionID = "Release Candidate 2.4";
+        public const string VersionID = "Release Candidate 2.5";
 
         /// <summary>
         /// All the Window Message Types used for Coloring the Tab Text for Different Events
@@ -343,7 +343,7 @@ namespace IceChat
             serverTree = new ServerTree();
             serverTree.Dock = DockStyle.Fill;
             
-            this.Text = ProgramID + " :: " + VersionID + " :: September 4 2011";
+            this.Text = ProgramID + " :: " + VersionID + " :: September 14 2011";
             this.notifyIcon.Text = ProgramID + " :: " + VersionID;            
 
             if (!Directory.Exists(logsFolder))
@@ -546,12 +546,7 @@ namespace IceChat
             LoadPluginFiles();
 
             //set any plugins as disabled
-            
-
             //add any items top the pluginsFile if they do not exist, or remove any that do not
-
-
-            //fire the event that the program has fully loaded
             foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
             {
                 bool found = false;
@@ -585,6 +580,7 @@ namespace IceChat
                     SavePluginFiles();
                 }
 
+                //fire the event that the program has fully loaded
                 if (ipc.Enabled == true)
                     ipc.MainProgramLoaded();
             }

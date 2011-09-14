@@ -229,26 +229,33 @@ namespace IceChat
 		
         private void UpdateCurrentPopupMenus()
         {
-            string[] popups = textPopups.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
-         
-            if (currentPopup == "NickList")
-                nickListPopup = popups;
-            if (currentPopup == "Console")
-                consolePopup = popups;
-            if (currentPopup == "Channel")
-                channelPopup = popups;
-            if (currentPopup == "Query")
-                queryPopup = popups;
+            try
+            {
+                string[] popups = textPopups.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
+
+                if (currentPopup == "NickList")
+                    nickListPopup = popups;
+                if (currentPopup == "Console")
+                    consolePopup = popups;
+                if (currentPopup == "Channel")
+                    channelPopup = popups;
+                if (currentPopup == "Query")
+                    queryPopup = popups;
 
 
-            PopupMenuItem p = new PopupMenuItem();
-            p.PopupType = currentPopup;
-            p.Menu = popups;
-            popupList.ReplacePopup(p.PopupType, p);
+                PopupMenuItem p = new PopupMenuItem();
+                p.PopupType = currentPopup;
+                p.Menu = popups;
+                popupList.ReplacePopup(p.PopupType, p);
 
-            FormMain.Instance.IceChatPopupMenus = popupList;
+                FormMain.Instance.IceChatPopupMenus = popupList;
 
-            currentPopupMenu.Checked = false;
+                currentPopupMenu.Checked = false;
+            }
+            catch (Exception ex)
+            {
+                FormMain.Instance.WindowMessage(FormMain.Instance.InputPanel.CurrentConnection, "Console", "UpdatePopupMenus Error:" + ex.Message + ":" + ex.Source, 4, true);
+            }
 
         }
         private void nickListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -303,68 +310,76 @@ namespace IceChat
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //save all the settings
-
-            //parse out all the aliases
-            textAliases.Text = textAliases.Text.Replace(((char)3).ToString(), "&#x3;").Replace(((char)2).ToString(), "&#x2;");
-
-            aliasList.listAliases.Clear();
-
-            string[] aliases = textAliases.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
-            bool isMultiLine = false;
-            AliasItem multiLineAlias = null;
-            string aliasCommands = "";
-
-            foreach (string alias in aliases)
+            try
             {
-                if (alias.Length > 0)
+                //parse out all the aliases
+                textAliases.Text = textAliases.Text.Replace(((char)3).ToString(), "&#x3;").Replace(((char)2).ToString(), "&#x2;");
+
+                aliasList.listAliases.Clear();
+
+                string[] aliases = textAliases.Text.Trim().Split(new String[] { Environment.NewLine }, StringSplitOptions.None);
+                bool isMultiLine = false;
+                AliasItem multiLineAlias = null;
+                string aliasCommands = "";
+
+                foreach (string alias in aliases)
                 {
-                    //check if it is a multilined alias
-                    if (alias.EndsWith("{") && !isMultiLine)
+                    if (alias.Length > 0)
                     {
-                        //start of a multilined alias
-                        isMultiLine = true;
-                        multiLineAlias = new AliasItem();
-                        multiLineAlias.AliasName = alias.Substring(0, alias.IndexOf(' '));
-                        aliasCommands = "";
-                    }
-                    else if (alias == "}")
-                    {
-                        //end of multiline alias
-                        isMultiLine = false;
-                        multiLineAlias.Command = aliasCommands.Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                        aliasList.AddAlias(multiLineAlias);
-                        multiLineAlias = null;
-                    }
-                    else if (!isMultiLine)
-                    {
-                        //just a normal alias
-                        AliasItem a = new AliasItem();
-                        a.AliasName = alias.Substring(0, alias.IndexOf(' '));
-                        a.Command = new String[] { alias.Substring(alias.IndexOf(' ') + 1) };
-                        aliasList.AddAlias(a);
-                        a = null;
-                    }
-                    else
-                    {
-                        //add a line to the multiline alias
-                        aliasCommands += alias + Environment.NewLine;
+                        //check if it is a multilined alias
+                        if (alias.EndsWith("{") && !isMultiLine)
+                        {
+                            //start of a multilined alias
+                            isMultiLine = true;
+                            multiLineAlias = new AliasItem();
+                            multiLineAlias.AliasName = alias.Substring(0, alias.IndexOf(' '));
+                            aliasCommands = "";
+                        }
+                        else if (alias == "}")
+                        {
+                            //end of multiline alias
+                            isMultiLine = false;
+                            multiLineAlias.Command = aliasCommands.Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                            aliasList.AddAlias(multiLineAlias);
+                            multiLineAlias = null;
+                        }
+                        else if (!isMultiLine)
+                        {
+                            //just a normal alias
+                            AliasItem a = new AliasItem();
+                            a.AliasName = alias.Substring(0, alias.IndexOf(' '));
+                            a.Command = new String[] { alias.Substring(alias.IndexOf(' ') + 1) };
+                            aliasList.AddAlias(a);
+                            a = null;
+                        }
+                        else
+                        {
+                            //add a line to the multiline alias
+                            aliasCommands += alias + Environment.NewLine;
+                        }
                     }
                 }
+
+                FormMain.Instance.IceChatAliases = aliasList;
+
+                //save the current popup menu
+                UpdateCurrentPopupMenus();
+
+                //save any plugin addons for the Script Editor
+                foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
+                {
+                    if (ipc.Enabled)
+                        ipc.SaveEditorForm();
+                }
             }
-
-            FormMain.Instance.IceChatAliases = aliasList;
-
-            //save the current popup menu
-            UpdateCurrentPopupMenus();
-
-            //save any plugin addons for the Script Editor
-            foreach (IPluginIceChat ipc in FormMain.Instance.IceChatPlugins)
-            {                
-                if (ipc.Enabled)
-                    ipc.SaveEditorForm();
+            catch (Exception ex)
+            {
+                FormMain.Instance.WindowMessage(FormMain.Instance.InputPanel.CurrentConnection, "Console", "SaveEditor Error:" + ex.Message + ":" + ex.Source, 4, true);
             }
-
-            this.Close();
+            finally
+            {
+                this.Close();
+            }
         }
 
     }

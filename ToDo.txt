@@ -46,7 +46,11 @@
 * Add popup menu for Channel List in the Server Tree (RC2.4)
 * Fix issue with ChannelKick event in Plugins, Host now passes self nick (RC2.4)
 
+* Add in better error reporting for saving in the IceChat Editor (RC2.5)
+* Fix showing of DCC Files Window in Server Tree (RC2.5)
 
+
+(for RC3, upload Buzzen auth Plugin)
 Try and remove bold/italic from font selection dialog
 Add options for how many times to flash taskbar/system tray icons
 Make Tab Complete loop through a SORTED Nicklist, not the raw un-sorted list
